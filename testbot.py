@@ -15,7 +15,7 @@ from aiogram.utils.chat_action import ChatActionSender
 import db
 
 
-API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
+API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
 # Базовые пути
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -255,16 +255,10 @@ async def cmd_start(call: CallbackQuery):
     if correct == ans_id :
             msg_text = "Верно!  / Great!"
             reply=inline_kb_next(top,j)
-            #   5044134455711629726
-            #   5046509860389126442
-            message_effect_id="5044134455711629726"
             ansok=1
     else :
             msg_text = "Нет, это не так( / Sorry, you are wrong"+"\n\n"
-          #  if j > 2 and j < 6  : 
-          #    msg_text += "Не знаешь как решить?  https://t.me/milgecru/385"
             reply=inline_kb_explain(top,j,k)
-            message_effect_id=""
             ansok =0 
     
     # Сохраняем ответ в БД
@@ -283,7 +277,7 @@ async def cmd_start(call: CallbackQuery):
     
     log(call.from_user,[top,j,ans_id,ansok])
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
-        await call.message.answer(msg_text, reply_markup=reply, message_effect_id=message_effect_id)
+        await call.message.answer(msg_text, reply_markup=reply)
 
 @router.message(Command("start"))
 async def cmd_start(message: types.Message):
