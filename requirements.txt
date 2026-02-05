@@ -1,5 +1,4 @@
-python-telegram-bot
-telegram
-aiogram 
+aiogram
+aiosqlite
 asyncio
 logging
