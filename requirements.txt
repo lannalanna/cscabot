@@ -1,4 +1,2 @@
 aiogram
 aiosqlite
-asyncio
-logging
