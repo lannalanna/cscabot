@@ -1,0 +1,30 @@
+отфильтруй type=dec  сделай latex,  ответы из поля answer сделай в конце отдельным списком. 
+Не решай задачи, бери ответ из поля answer.
+Используй dfrac вместо frac. 
+Текст ссылки - link to the video 
+Используй \documentclass{ctexart}. 
+Текст на китайском и английском. Юникод преобразуй в формулы latex
+не используй textbf
+Заголовок CSCA Mathematics Test  21 Dec 2025
+
+
+
+Каждую задачу переведи на английский и оставь текст на китайском чтобы было на двух языках
+Сделай html по шаблону
+<span class="math-tex">\(\mathbb{Q}=\{ x | x = \dfrac{p}{q} , p \in \Z, q \in \N \}\)
+
+
+
+Сделай json по шаблону
+{
+        "chinese": "设 A={a∈Z ∣ −2<a<3}，B={偶数}。那么 A∩B 中的元素是什么？",
+        "english": "Let A={a∈Z ∣ −2<a<3} and B={even integers}. Which element belongs to  A∩B?",
+        "options": ["A. -1", "B. 0", "C. 3", "D. 4"],
+        "answer": "B",
+        "topic" : "sets",
+        "type" : "jan"
+       
+        
+    },
+
+

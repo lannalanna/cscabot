@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+
+# Секреты и локальные данные
+.env
+.env.local
+*.env
+
+# Логи и пользовательские данные (генерируются при работе бота)
+usr.txt
+res.txt
+tmp.txt
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

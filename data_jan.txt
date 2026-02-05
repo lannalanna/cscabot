@@ -1,0 +1,468 @@
+[
+    {
+        "chinese": "设 A = {6,7,8,9,10} 是一个集合，Φ 表示空集。那么下列哪个陈述是正确的？",
+        "english": "Let A = {6,7,8,9,10} be a set, and Φ denote the empty set. Then which of the following statements is correct?",
+        "options": ["A. 9 ∈ A", "B. {6} ∈ A", "C. 6 ⊆ A", "D. Φ ∈ A"],
+        "answer": "A",
+        "topic": "sets",
+        "type": "jan",
+        "link" : "https://t.me/c/3305923058/380",
+        "n": 1
+    },
+    {
+        "chinese": "设 A = {x | -2 ≤ x ≤ 2} 和 B = {x | x > 0} 是两个集合。那么 A ∪ B =",
+        "english": "Let A = {x | -2 ≤ x ≤ 2} and B = {x | x > 0} be two sets. Then A ∪ B =",
+        "options": ["A. {x | x ≤ -2}", "B. {x | 0 < x ≤ 2}", "C. {x | x ≥ -2}", "D. {x | -2 ≤ x < 0}"],
+        "answer": "C",
+        "topic": "sets",
+        "type": "jan",
+        "link" : "https://t.me/c/3305923058/375",
+        "n": 2
+    },
+    {
+        "chinese": "不等式 x² - x - 2 > 0 的解集是（ ）。",
+        "english": "The solution set of the inequality x² - x - 2 > 0 is ( ).",
+        "options": ["A. {x | x < -1 or x > 2}", "B. {x | -1 < x < 2}", "C. {x | x < -2 or x > -1}", "D. {x | -2 < x ≤ 1}"],
+        "answer": "A",
+        "topic": "inequalities",
+        "link" : "https://t.me/c/3305923058/375",
+        "type": "jan",
+        "n": 3
+    },
+    {
+        "chinese": "设 {aₙ} 是一个等差数列，首项 a₁ = 2，公差 d = 3。那么 a₁₀₀ = ( )。",
+        "english": "Let {aₙ} be an arithmetic sequence, with the first term a₁ = 2 and common difference d = 3. Then a₁₀₀ = ( ).",
+        "options": ["A. 299", "B. 302", "C. 305", "D. 298"],
+        "answer": "A",
+        "topic": "sequences",
+        "link" : "https://t.me/c/3305923058/375",
+        "type": "jan",
+        "n": 4
+    },
+    {
+        "chinese": "函数 f(x) = 1/x + √(1 - x) 的定义域是（ ）。",
+        "english": "The domain of the function f(x) = 1/x + √(1 - x) is ( ).",
+        "options": ["A. (-∞, 1]", "B. (-∞, 0) ∪ (0, 1)", "C. (-∞, 0) ∪ (0, 1]", "D. [1, +∞)"],
+        "answer": "C",
+        "topic": "functions",
+        "link" : "https://t.me/c/3305923058/375",
+        "type": "jan",
+        "n": 5
+    },
+    {
+        "chinese": "设 P(1,2) 是直角坐标系中的一个点。如果一个点 Q 与 P 关于 x 轴对称，那么 Q 的坐标是（ ）。",
+        "english": "Let P(1,2) be a point in the rectangular coordinate system. If a point Q together with P are symmetrical about the x axis, then the coordinates of Q are ( ).",
+        "options": ["A. (2,1)", "B. (1,-2)", "C. (-1,2)", "D. (-1,-2)"],
+        "answer": "B",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 6
+    },
+    {
+        "chinese": "假设一个角 α = 30°。那么下列哪个陈述是正确的？（ ）。",
+        "english": "Suppose that an angle α = 30°. Then which of the following statements is correct? ( ).",
+        "options": ["A. sin α = √2/2", "B. cos α = √3/2", "C. cos α = 1/2", "D. tan α = √3"],
+        "answer": "B",
+        "topic": "trigonometry (simple)",
+        "type": "jan",
+        "n": 7
+    },
+    {
+        "chinese": "关于函数 f(x) = x⁴ + 3，下列哪个陈述是正确的？（ ）。",
+        "english": "About the function f(x) = x⁴ + 3, which of the following statements is correct? ( ).",
+        "options": ["A. 函数是奇函数 / The function is odd", "B. 以上都不是 / None is true", "C. 函数既不是奇函数也不是偶函数 / Neither odd nor even", "D. 函数是偶函数 / The function is even"],
+        "answer": "D",
+        "topic": "functions",
+        "type": "jan",
+        "n": 8
+    },
+    {
+        "chinese": "函数 y = x³ + 3, x ∈ ℝ 的反函数是（ ）。",
+        "english": "The inverse function of the function y = x³ + 3, x ∈ ℝ is ( ).",
+        "options": ["A. y = ∛(x - 3), x ∈ ℝ", "B. y = ∛(x + 3), x ≥ -3", "C. y = ∛(x + 3), x ∈ ℝ", "D. y = ∛(x - 3), x ≥ 3"],
+        "answer": "A",
+        "topic": "functions",
+        "type": "jan",
+        "n": 9
+    },
+    {
+        "chinese": "下列哪个点在第三象限？（ ）。",
+        "english": "Which of the following points is in the third quadrant? ( ).",
+        "options": ["A. (-1,2)", "B. (-1,-2)", "C. (1,2)", "D. (1,-2)"],
+        "answer": "B",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 10
+    },
+    {
+        "chinese": "已知 y = |x|，下列哪个结论是正确的？（）。",
+        "english": "Given that y = |x|, which of the following conclusions is correct? ().",
+        "options": ["A. 当 x < 0 时，函数是增函数 When x<0 it's an increasing function", 
+                    "B. 当 x > 0 时，函数是增函数 When x>0 it's an increasing function", 
+                    "C. 当 x ∈ ℝ 时，函数是减函数 When x∈R is's a decreasing function", 
+                    "D. 当 x ∈ ℝ 时，函数是增函数 When x∈R is's a increasing function"],
+        "answer": "B",
+        "topic": "functions",
+        "type": "jan",
+        "n": 11
+    },
+    {
+        "chinese": "有理不等式 (2x + 1)/(x - 2) ≤ 0 的解集是（）。",
+        "english": "The solution set of the rational inequality (2x + 1)/(x - 2) ≤ 0 is ().",
+        "options": ["A. [-1/2, 2)", "B. (-∞, -1/2] ∪ (2, +∞)", "C. [-1/2, 2]", "D. (-∞, -1/2]"],
+        "answer": "A",
+        "topic": "inequalities",
+        "type": "jan",
+        "n": 12
+    },
+    {
+        "chinese": "已知 a = 2 - √3 和 b = 2 + √3，a 和 b 的算术平均数是（）。",
+        "english": "Given that a = 2 - √3 and b = 2 + √3, the arithmetic mean of a and b is ().",
+        "options": ["A. 1", "B. 2", "C. ±1", "D. -1"],
+        "answer": "B",
+        "topic": "algebra",
+        "type": "jan",
+        "n": 13
+    },
+    {
+        "chinese": "如果直线 l 经过点 A(-2,3) 和 B(3,1)，那么 l 的斜率是（）。",
+        "english": "If the straight line l passes through the points A(-2,3) and B(3,1), then the slope of l is ().",
+        "options": ["A. 2/5", "B. 5/2", "C. -2/5", "D. -5/2"],
+        "answer": "C",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 14
+    },
+    {
+        "chinese": "如果 α 是 x 轴与一条过点 P(1,3) 的直线之间的夹角，那么 sin α = ( )。",
+        "english": "If α is the angle between the x-axis and a line containing the point P(1,3), then sin α = ( ).",
+        "options": ["A. 3", "B. 3√10/10", "C. 1/3", "D. √10/10"],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "jan",
+        "n": 15
+    },
+    {
+        "chinese": "在以下四个数列中，等差数列的个数是（ ）。",
+        "english": "Among the four sequences below, the number of arithmetic sequences is ( ).  \n  (1) 7,13,19,25  (2) 2,4,7,11   (3) -1,-3,-5,-7    (4) 2,4,8,16",
+        "options": ["A. 2", "B. 3", "C. 1", "D. 4"],
+        "answer": "A",
+        "topic": "sequences",
+        "type": "jan",
+        "n": 16
+    },
+    {
+        "chinese": "平面上从点 A(3, -2) 到 B(-5, -1) 的距离是 |AB| = ( )。",
+        "english": "The distance from a point A(3, -2) to B(-5, -1) on the plane is |AB| = ( ).",
+        "options": ["A. 65", "B. √65", "C. 13", "D. √13"],
+        "answer": "B",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 17
+    },
+    {
+        "chinese": "如果一条直线 l 的倾斜角为 45°，并且它经过点 (0,2)，那么 l 的方程是（ ）。",
+        "english": "If a straight line l has an angle of inclination of 45°, and it passes through the point (0,2), then the equation of l is ( ).",
+        "options": ["A. y = 2x - 2", "B. y = x + 2", "C. y = 2x + 2", "D. y = x - 2"],
+        "answer": "B",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 18
+    },
+    {
+        "chinese": "如果一个圆的方程是 x² + y² - 4x - 3 = 0，那么圆心和半径由（ ）给出。",
+        "english": "If the equation of a circle is x² + y² - 4x - 3 = 0, then the center and radius are given by ( ).",
+        "options": ["A. (0,2) 和 √7", "B. (0,2) 和 7", "C. (2,0) 和 √7", "D. (2,0) 和 7"],
+        "answer": "C",
+        "topic": "conic curves",
+        "type": "jan",
+        "n": 19
+    },
+    {
+        "chinese": "已知 sin α = 4/5，并且角 α 属于第二象限，那么下列哪个陈述是正确的？（ ）",
+        "english": "Given that sin α = 4/5, and the angle α belongs to the second quadrant, then which of the following statements is correct? ( )",
+        "options": ["A. cos α = 3/5", "B. cos α = -3/5", "C. tan α = -3/4", "D. tan α = 4/3"],
+        "answer": "B",
+        "topic": "trigonometry (simple)",
+        "type": "jan",
+        "n": 20
+    },
+    {
+        "chinese": "在等差数列 {aₙ} 中，如果 a₂ = 1 且 a₄ = 5，那么首项 a₁ 和公差 d 分别是（ ）。",
+        "english": "In an arithmetic sequence {aₙ}, if a₂ = 1 and a₄ = 5, then the first term a₁ and common difference d are ( ) respectively.",
+        "options": ["A. -1,2", "B. 1, -2", "C. -1, -2", "D. 1,2"],
+        "answer": "A",
+        "topic": "sequences",
+        "type": "jan",
+        "n": 21
+    },
+    {
+        "chinese": "设 a, b, c 是三个实数。下列哪个陈述是正确的？（ ）",
+        "english": "Let a, b, c be three real numbers. Which of the following statements is correct? ( )",
+        "options": ["A. 如果 If a > b，那么 then ac > bc", "B. 如果 If a > b，那么 then a + c > b + c", "C. 如果 If ac > bc，那么 then a > b", "D. 如果 If a > b，那么 then a² > b²"],
+        "answer": "B",
+        "topic": "inequalities",
+        "type": "jan",
+        "n": 22
+    },
+    {
+        "chinese": "关于指数函数 y = aˣ (a > 0, 且 a ≠ 1)，下列哪个陈述是不正确的？（ ）",
+        "english": "About the exponential function y = aˣ (a > 0, and a ≠ 1), which of the following statements is incorrect? ( )",
+        "options": ["A. 值域是  The range is (0, +∞)", "B. 图像经过 Graph passes through (0, 1)", "C. 函数在定义域上是增函数  It's increasing", "D. 定义域是 The domain is ℝ"],
+        "answer": "C",
+        "topic": "functions",
+        "type": "jan",
+        "n": 23
+    },
+    {
+        "chinese": "如果 sin α = 3/5，并且 α 属于第一象限，那么 sin 2α = ( )。",
+        "english": "If sin α = 3/5, and α belongs to the first quadrant, then sin 2α = ( ).",
+        "options": ["A. 12/25", "B. 24/25", "C. 18/25", "D. 7/25"],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "jan",
+        "n": 24
+    },
+    {
+        "chinese": "直线 l₁: 3x - y + 8 = 0 和 l₂: x + 2y - 9 = 0 的交点坐标是（ ）。",
+        "english": "The intersection of the lines l₁: 3x - y + 8 = 0 and l₂: x + 2y - 9 = 0 has coordinates ( ).",
+        "options": ["A. (-5,1)", "B. (1,-5)", "C. (5,-1)", "D. (-1,5)"],
+        "answer": "D",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 25
+    },
+    {
+        "chinese": "已知双曲线的方程是 x²/64 - y²/16 = 1，下列哪个陈述是正确的？（ ）",
+        "english": "Given that the equation of a hyperbola is x²/64 - y²/16 = 1, which of the following statements is correct? ( )",
+        "options": ["A. 焦距是 / focal distance = 8√5", 
+                    "B. 半长轴的长度是 / semi-major axis  = 4", 
+                    "C. 双曲线的离心率是 /eccentricity  = √5", 
+                    "D. 半短轴的长度是 / semi-minor axis = 8"],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "jan",
+        "n": 26
+    },
+    {
+        "chinese": "下列哪个不等式是正确的？（ ）",
+        "english": "Which of the following inequalities is correct? ( )",
+        "options": ["A. 2.1⁻² > 1.2⁻²", "B. 0.75⁻⁰·² > 0.75⁻⁰·⁴", "C. 3²·²⁵ > 3³", "D. 2.1^(2/3) > 1.2^(2/3)"],
+        "answer": "D",
+        "topic": "inequalities",
+        "type": "jan",
+        "n": 27
+    },
+    {
+        "chinese": "一个圆的圆心在 (-3,2)，半径为 4。那么该圆的方程是（ ）。",
+        "english": "A circle has center at (-3,2) and radius 4. Then the equation of the circle is ( ).",
+        "options": ["A. (x + 3)² + (y - 2)² = 4", "B. (x - 3)² + (y + 2)² = 4", "C. (x - 3)² + (y + 2)² = 16", "D. (x + 3)² + (y - 2)² = 16"],
+        "answer": "D",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 28
+    },
+    {
+        "chinese": "设 a > 0, b > 0 为实数。那么下列哪个陈述是不正确的？（ ）",
+        "english": "Let a > 0, and b > 0 be real numbers. Then which of the following statements is incorrect? ( )",
+        "options": ["A. ln(aᵇ) = b ln a", "B. logₐ b = ln a / ln b (a≠1, b≠1)", "C. ln(a/b) = ln a - ln b", "D. ln(ab) = ln a + ln b"],
+        "answer": "B",
+        "topic": "logarithmic functions",
+        "type": "jan",
+        "n": 29
+    },
+    {
+        "chinese": "给定正弦函数 y = sin x，下列哪个陈述是不正确的？（ ）",
+        "english": "Given the sine function y = sin x, which of the following statements is incorrect? ( )",
+        "options": ["A. 最大值和最小值分别是 1 和 -1 / ​The max and min values are 1 and −1", 
+                    "B. 该函数是周期函数 / It'a s periodic function", 
+                    "C. 该函数是偶函数 / It is even", 
+                    "D. 定义域是 ℝ / ​Domain is R​"],
+        "answer": "C",
+        "topic": "trigonometry",
+        "type": "jan",
+        "n": 30
+    },
+    {
+        "chinese": "设抛物线 y² = 4x 的焦点为 F。假设抛物线上的一个点 P 的横坐标是 4。那么 |PF| = ( )。",
+        "english": "Let the focus of the parabola y² = 4x be F. Suppose that a point P is on the parabola, and the horizontal coordinate of P is 4. Then |PF| = ( ).",
+        "options": ["A. 2", "B. 3", "C. 4", "D. 5"],
+        "answer": "D",
+        "topic": "conic curves",
+        "type": "jan",
+        "n": 31
+    },
+    {
+        "chinese": "给定两条直线 l₁: ax + (a - 1)y + 3 = 0 和 l₂: 2x + ay - 1 = 0。如果 l₁ ⊥ l₂，那么 a 的值是（ ）。",
+        "english": "Given two straight lines l₁: ax + (a - 1)y + 3 = 0 and l₂: 2x + ay - 1 = 0. If l₁ ⊥ l₂, then the value of a is ( ).",
+        "options": ["A. -1", "B. -1 或 1", "C. 1", "D. 0 或 -1"],
+        "answer": "D",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 32
+    },
+    {
+        "chinese": "点 P(-1,2) 和 Q(3,1) 之间的距离是（ ）。",
+        "english": "The distance between the points P(-1,2) and Q(3,1) is ( ).",
+        "options": ["A. √5", "B. √17", "C. √13", "D. 5"],
+        "answer": "B",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 33
+    },
+    {
+        "chinese": "设 cos α = -√5/5，并且 α ∈ (π/2, π)。那么 sin(π/6 + α) = ( )。",
+        "english": "Let cos α = -√5/5, and α ∈ (π/2, π). Then sin(π/6 + α) = ( ).",
+        "options": ["A. (2√5 - √15)/10", "B. (2√15 + √5)/10", "C. (2√15 - √5)/10", "D. (2√5 + √15)/10"],
+        "answer": "C",
+        "topic": "trigonometry",
+        "type": "jan",
+        "n": 34
+    },
+    {
+        "chinese": "下列哪个陈述是正确的？（ ）",
+        "english": "Which of the following are the same function ? ( )",
+        "options": ["A. y = (√x)² 和 and y = √(x²) 是同一个函数", "B. y = (x⁴ - 1)/(x² + 1) 和  and y = x² - 1 是同一个函数", "C. y = 1 和 and y = x² 是同一个函数", "D. y = x 和 and y = √(x²) 是同一个函数"],
+        "answer": "B",
+        "topic": "functions",
+        "type": "jan",
+        "n": 35
+    },
+    {
+        "chinese": "设 sin α = -12/13，并且 α ∈ (π, 3π/2)。那么 cos(α/2) = ( )。",
+        "english": "Let sin α = -12/13, and α ∈ (π, 3π/2). Then cos(α/2) = ( ).",
+        "options": ["A. 3√13/13", "B. -3√13/13", "C. -2√13/13", "D. 2√13/13"],
+        "answer": "C",
+        "topic": "trigonometry",
+        "type": "jan",
+        "n": 36
+    },
+    {
+        "chinese": "假设 cos α = -1/2，α ∈ (π/2, π)，那么 sin(α/2) 的值是（ ）。",
+        "english": "Suppose that cos α = -1/2, α ∈ (π/2, π), then the value of sin(α/2) is ( ).",
+        "options": ["A. -√3/2", "B. √3/2", "C. -1/2", "D. 1/2"],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "jan",
+        "n": 37
+    },
+    {
+        "chinese": "下列哪个陈述是正确的？（ ）",
+        "english": "Which of the following statements is correct? ( )",
+        "options": ["A. sin(π + α) = sin α", "B. cos(π + α) = cos α", "C. sin(-α) = sin α", "D. cos(-α) = cos α"],
+        "answer": "D",
+        "topic": "trigonometry",
+        "type": "jan",
+        "n": 38
+    },
+    {
+        "chinese": "关于正切函数 y = tan x，下列哪个陈述是正确的？（ ）",
+        "english": "About the tangent function y = tan x, which of the following statements is correct? ( )",
+        "options": ["A. 值域是 / The  range is [-1,1]", 
+                    "B. 定义域是 / The domain is ℝ", 
+                    "C. 该函数是偶函数 / It is even", 
+                    "D. 该函数的最小正周期是 π / ​Minimum positive period = π"],
+        "answer": "D",
+        "topic": "trigonometry",
+        "type": "jan",
+        "n": 39
+    },
+    {
+        "chinese": "数列 -1/5, 1/7, -1/9, 1/11 的通项公式是 aₙ = ( )。",
+        "english": "The general formula for the sequence -1/5, 1/7, -1/9, 1/11 is aₙ = ( ).",
+        "options": ["A. (-1)^(n-1) / (3n + 2)", "B. (-1)^n / (2n + 3)", "C. (-1)^(n-1) / (2n + 3)", "D. (-1)^n / (3n + 2)"],
+        "answer": "B",
+        "topic": "sequences",
+        "type": "jan",
+        "n": 40
+    },
+    {
+        "chinese": "如果函数 f(x) = 2 + logₐ(x - 3) (a > 0, 且 a ≠ 1) 的图像经过一个定点 P，那么 P 的坐标是（ ）。",
+        "english": "If the graph of the function f(x) = 2 + logₐ(x - 3) (a > 0, and a ≠ 1) passes through a fixed point P, then the coordinates of P are ( ).",
+        "options": ["A. (3,1)", "B. (3,0)", "C. (4,0)", "D. (4,2)"],
+        "answer": "D",
+        "topic": "functions",
+        "type": "jan",
+        "n": 41
+    },
+    {
+        "chinese": "抛物线 y² = -x 的准线方程是（ ）。",
+        "english": "The equation of the directrix of the parabola y² = -x is ( ).",
+        "options": ["A. x = 1/4", "B. x = -1/4", "C. x = -1/2", "D. x = 1/2"],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "jan",
+        "n": 42
+    },
+    {
+        "chinese": "假设椭圆 x²/4 + y²/2 = 1 的焦点是 F₁, F₂，并且点 P 在椭圆上。那么 |PF₁| + |PF₂| = ( )。",
+        "english": "Suppose that the foci of the ellipse x²/4 + y²/2 = 1 are F₁, F₂, and the point P is on the ellipse. Then |PF₁| + |PF₂| = ( ).",
+        "options": ["A. 2", "B. 4", "C. 8", "D. 6"],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "jan",
+        "n": 43
+    },
+    {
+        "chinese": "已知向量 AB = a + 5b, BC = -2a + 8b, CD = 3a - 3b。因此，（ ）。",
+        "english": "Given that vector AB = a + 5b, BC = -2a + 8b, CD = 3a - 3b. Thus, ( ).",
+        "options": ["A. A, C, D 在同一直线上 аre on the same line", "B. A, B, D 在同一直线上 аre on the same line", "C. B, C, D 在同一直线上 аre on the same line", "D. A, B, C 在同一直线上 аre on the same line"],
+        "answer": "Bs",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 44
+    },
+    {
+        "chinese": "假设一条直线 l 垂直于另一条直线 l₁: x + 2y + 4 = 0，并且经过 l₂: x + y + 1 = 0 和 l₃: 2x + y - 1 = 0 的交点。l 的方程是（ ）。",
+        "english": "Suppose that a straight line l is perpendicular to another line l₁: x + 2y + 4 = 0 and passes through the intersection of l₂: x + y + 1 = 0 and l₃: 2x + y - 1 = 0. The equation of l is ( ).",
+        "options": ["A. 2x - y - 7 = 0", "B. 2x + y - 5 = 0", "C. x - 2y - 1 = 0", "D. x + 2y - 3 = 0"],
+        "answer": "A",
+        "topic": "geometry",
+        "type": "jan",
+        "n": 45
+    },
+    {
+        "chinese": "在复平面上，表示复数 z 的点在直线 x - y = 0 上。如果 z 是二次方程 x² + mx + 4 = 0 的一个根，那么 m = ( )。",
+        "english": "On the complex plane, the point representing a complex number z is on the straight line x - y = 0. If z is a root of a quadratic equation x² + mx + 4 = 0, then m = ( ).",
+        "options": ["A. √2 或 or 2√2", "B. 2√2 或 or -2√2", "C. -√2 或 or -2√2", "D. √2 或 or -√2"],
+        "answer": "B",
+        "topic": "complex numbers",
+        "type": "jan",
+        "n": 46
+    },
+    {
+        "chinese": "假设在一个数列 {aₙ} 中，我们有 a₁ = 1，并且 1/aₙ + 2/aₙ₊₁ = 0 (n = 1,2,…)。假设另一个数列 {bₙ} 满足 bₙ = |aₙ| (n = 1,2,…)。那么，数列 {bₙ} 的前 n 项和 Sₙ = ( )。",
+        "english": "Suppose that, in a sequence {aₙ}, we have a₁ = 1, and 1/aₙ + 2/aₙ₊₁ = 0 (n = 1,2,…). Suppose that another sequence {bₙ} satisfies bₙ = |aₙ| (n = 1,2,…). Then, the sum of the first n terms of the sequence {bₙ} is Sₙ = ( ).",
+        "options": ["A. (1 + 2ⁿ)/3", "B. |1 - (-2)ⁿ|/3", "C. 2ⁿ - 1", "D. (-2)ⁿ - 1"],
+        "answer": "C",
+        "topic": "sequences",
+        "type": "jan",
+        "n": 47
+    },
+    {
+        "chinese": "在日常生活中，人们喜欢使用跑步应用来跟踪和分享他们的运动路线。为了了解某个地区高中和大学生使用跑步应用的情况，随机选择了 200 名高中生和 80 名大学生，他们最喜欢的跑步应用记录如下。假设大学生和高中生对跑步应用的偏好是相互独立的，如果从每组中随机选择一个人，他们最喜欢的跑步应用不同的概率是（ ）。",
+        "english": "In daily life, people enjoy using running apps to track and share their exercise routes. To understand the usage of running apps among high school and college students in a certain region, 200 high school students and 80 college students were randomly chosen, and their favorite running apps were recorded as follows. Assuming that college students' and high school students' preferences for running apps are independent of each other, if one person is randomly selected from each group, the probability that their favorite running apps are different is ( ).",
+        "options": ["A. 23/80", "B. 57/80", "C. 9/20", "D. 11/20"],
+        "answer": "B",
+        "topic": "probability",
+        "type": "jan",
+        "img": "48_jan.png",
+        "n": 48
+    }, 
+     {
+        "chinese": "不等式 x² - 6 x + 9 ≤ 0  的解集是（ ）。",
+        "english": "The solution set of the inequality x² - 6 x +9 ≤ 0  is ( ).",
+        "options": ["A. {x | x < 3 或 or x > 3}", "B. {x | -3 < x < 3}", "C. {3}", "D. {x | x ≤ 3}"],
+        "answer": "C",
+        "topic": "inequalities"
+       
+    },
+     {
+        "chinese": "不等式 x² + 2 x + 4  >0  的解集是（ ）。",
+        "english": "The solution set of the inequality x² + 2 x + 4  >0  is ( ).",
+        "options": ["A. {x | x < -2  或  or x > -2}", "B. {x | -2 < x < 2}", "C. {-2}", "D. {x | x ≤ -2}"],
+        "answer": "A",
+        "topic": "inequalities"
+       
+    }
+]

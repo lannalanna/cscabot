@@ -1,0 +1,1194 @@
+[
+    {
+        "chinese": "若集合 A = {1, 2}，B = {1, 2, 3}，则以下哪个是正确的？",
+        "english": "If the set A = {1, 2} and B = {1, 2, 3}, then which of the following is true?",
+        "options": ["A. B ⊆ A", "B. A = B", "C. A ⊆ B", "D. A ⊄ B"],
+        "answer": "C",
+        "topic" : "sets",
+        "type" : "dec"       
+    },
+    {
+        "chinese": "设 A={a∈Z ∣ −2<a<3}，B={偶数}。那么 A∩B 中的元素是什么？",
+        "english": "Let A={a∈Z ∣ −2<a<3} and B={even integers}. Which element belongs to  A∩B?",
+        "options": ["A. -1", "B. 0", "C. 3", "D. 4"],
+        "answer": "B",
+        "link" :  "https://t.me/c/3305923058/19",
+        "topic" : "sets",
+        
+    },
+    {
+        "chinese": "若集合 A = (-1, 3)，B = [2, 4]，则 A ∩ B = 什么？",
+        "english": "If the set A = (-1, 3) and B = [2, 4], then what is A ∩ B?",
+        "options": ["A. [2, 3]", "B. [2, 3)", "C. (2, 3]", "D. (2, 3)"],
+        "answer": "B",
+        "topic" : "sets"
+    },
+    {
+        "chinese": "一元二次不等式 x² - 5x + 4 < 0 的解集为",
+        "english": "The solution set of the inequality x² - 5x + 4 < 0 is",
+        "options": ["A. (-4, -1)", "B. (-∞, 1) U (4, +∞)", "C. (-∞, -4) U (-1, +∞)", "D. (1, 4)"],
+        "answer": "D",
+        "topic" : "inequalities",
+        "type" : "dec"
+    },
+    {
+        "chinese": "函数 y = 1/√(x+1) 的定义域为",
+        "english": "The domain of the function y = 1/√(x+1) is",
+        "options": ["A. [-1, +∞)", "B. (-1, +∞)", "C. (0, +∞)", "D. (-∞, -1)"],
+        "answer": "B",
+        "link" : "https://t.me/c/3305923058/109",
+        "topic" : "functions",
+        "subtopic" : "domain",
+        "type" : "dec"
+    },
+    {
+        "chinese": "若{aₙ}为等差数列，首项a₁ = 2，公差d = 3，则a₁₀₀ =",
+        "english": "If {aₙ} is an arithmetic sequence, the first term a₁ = 2, and d = 3, then a₁₀₀ =",
+        "options": ["A. 302", "B. 305", "C. 299", "D. 298"],
+        "answer": "C",
+        "topic" : "sequences",
+        "type" : "dec"
+
+    },   
+    {
+        "chinese": "如果 A⊂B，那么哪个语句总是正确的？",
+        "english": "If A⊂B, which statement is always true?",
+        "options": ["A. A∪B=A", "B. A∩B=B", "C. A∪B=B", "D. B⊂A"],
+        "answer": "C",
+        "link" : "https://t.me/c/3305923058/20",
+        "topic" : "sets"
+    },
+    {
+        "chinese": "不等式 |x−2|<3 的解集是什么？",
+        "english": "The solution set of |x−2|<3 is",
+        "options": ["A. (-1,5)", "B. (-1, 5]", "C. [-1, 5]", "D. other"],
+        "answer": "A",
+        "link" : "https://t.me/c/3305923058/21",
+        "topic" : "inequalities"
+        
+    },
+    {
+        "chinese": "解不等式 x² - 5x + 6 > 0",
+        "english": "Solve x² - 5x + 6 > 0",o
+        "options": ["A. (-∞, 2) ∪ (3, ∞)", "B. (-∞, 2] ∪ [3, ∞)", "C. (2, 3)", "D. ℝ"],
+        "answer": "A",
+        "topic" : "inequalities"
+    },
+    {
+        "chinese": "解不等式 (x - 1)/(x + 2) ≥ 0",
+        "english": "Solve (x - 1)/(x + 2) ≥ 0",
+        "options": ["A. (-∞, -2) ∪ (1, ∞)", "B. (-∞, -2) ∪ [1, ∞)", "C. (-∞, -2] ∪ [1, ∞)", "D. [-2, ∞)"],
+        "answer": "B",
+        "topic" : "inequalities"
+
+    },
+    {
+        "chinese": "点(-1, 3 - π)位于平面直角坐标系的",
+        "english": "The point (-1, 3 - π) is located in the",
+        "options": ["A. 第三象限 Third quadrant", "B. 第一象限 First quadrant", "C. 第二象限 Second quadrant", "D. 第四象限 Fourth quadrant"],
+        "answer": "C",
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+
+    {
+        "chinese": "(sin(π/4) + cos(π/4)) * tan(π/4) =",
+        "english": "",
+        "options": ["A. 2√2", "B. 2", "C. √2", "D. 1"],
+        "answer": "C",
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "下列函数是奇函数的是",
+        "english": "Which of the following functions is an odd function?",
+        "options": ["A. y = x sin x", "B. y = x^4", "C. y = cos x", "D. y = x + x^3"],
+        "answer": "D",
+        "link" : "https://t.me/c/3305923058/112"
+        "topic" : "functions",
+        "type" : "dec"
+    },
+    {
+        "chinese": "下列函数是偶函数的是",
+        "english": "Which of the following functions is an even function?",
+        "options": ["A. y = x sin x", "B. y = x + x²", "C. y = sin x", "D. y = x³"],
+        "answer": "A",
+        "topic" : "functions"
+     },
+     {
+        "chinese": "下列函数是偶函数的是",
+        "english": "Which of the following functions is an even function?",
+        "options": ["A. y = tan x", "B. y = 3", "C. y = sin x", "D. y = sin x +cos x"],
+        "answer": "B",
+        "topic" : "functions"
+     },
+     {
+        "chinese": "下列函数是奇函数的是",
+        "english": "Which of the following functions is an odd function?",
+        "options": ["A. y = (sin x)^2 ", "B. y = 2^x", "C. y = tan x", "D. y = 1 + x^3"],
+        "answer": "C",
+        "link" : "https://t.me/c/3305923058/112"
+        "topic" : "functions"
+    },
+    {
+        "chinese": "函数 y = x^3 的反函数是",
+        "english": "The inverse function of y = x^3 is",
+        "options": ["A. y = x/3", "B. y = 3 x", "C. y = x^3", "D. y = ∛x"],
+        "answer": "D",
+        "topic" : "functions",
+        "type" : "dec"
+    },
+    {
+        "chinese": "下列函数中单调递增的是",
+        "english": "Which of the following functions is monotonically increasing?",
+        "options": ["A. y = (1/3)^x", "B. y = log_0.5 x", "C. y = 2x + 1", "D. y = sin x"],
+        "answer": "C",
+         "link" : "https://t.me/c/3305923058/124",
+        "topic" : "functions",
+        "type" : "dec"
+    },
+    {
+        "chinese": "下列点位于第三象限的是",
+        "english": "The point located in the third quadrant is",
+        "options": ["A. (-1, -2)", "B. (-1, 2)", "C. (2, 2)", "D. (1, -2)"],
+        "answer": "A",
+        "topic"  : "geometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "不等式 (x-1)/(x - 2) ≤ 1 的解集为",
+        "english": "The solution set of the inequality (x-1)/(x - 2) ≤ 1  is",
+        "options": ["A. (2, +∞)", "B. [1, 2]", "C. (-∞, 2)", "D. (-∞, 1]"],
+        "answer": "С",
+        "topic" : "inequalities",
+        "type" : "dec"
+
+    },
+    {
+        "chinese": "已知 a, b 和 c 构成等差数列并且满足 a + c = 20, b =",
+        "english": "Given that a, b and c form an arithmetic sequence and satisfy a + c = 20, then b =",
+        "options": ["A. 10", "B. 5", "C. 20", "D. 0"],
+        "answer": "A",
+        "topic" : "sequences",
+        "type" : "dec"
+        
+    },
+    {
+        "chinese": "直线 y = √3x + 10 的倾斜角为",
+        "english": "The inclination angle of the line y = √3x + 10 is",
+        "options": ["A. 60°", "B. 30°", "C. 45°", "D. 120°"],
+        "answer": "A"
+    }
+    {
+        "chinese": "下列不等式正确的是",
+        "english": "Which of the following inequalities is correct?",
+        "options": ["A. 0.75^(-0.2) > 0.75^(-0.4)", "B. 3^(4.5) > 3^5", 
+                    "C. 2.1^(-2) > 2.1^(-2)", "D. 2.1^(2/3) > 1.2^(2/3)"],
+        "answer": "D",
+        "topic" : "inequalities",
+        "type" : "dec"
+    },
+    {
+        "chinese": "若点 P(1,y) 是角 α 终边上的点，且 tan α = 2，则 y =",
+        "english": "If point P(1,y) is on the terminal side of angle α, and tan α = 2, then y =",
+        "options": ["A. 1", "B. 1/2", "C. √3", "D. 2"],
+        "answer": "D",
+        "link" : "https://t.me/c/3305923058/146"
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "已知 {aₙ} 是等差数列，且 a₁ = 1, a₂ = 2, 则 a₂₀₂₅ =",
+        "english": "Given that {aₙ} is an arithmetic sequence, and a₁ = 1, a₂ = 2, then a₂₀₂₅ =",
+        "options": ["A. 2", "B. 2025", "C. 2024", "D. 20"],
+        "answer": "B",
+        "topic" : "sequences",
+        "type" : "dec"
+    },
+    {
+        "chinese": "若圆的圆心坐标是 (-3,2)，半径是 4，则圆的方程是",
+        "english": "If the center of the circle is (-3,2) and the radius is 4, then the equation of the circle is",
+        "options": ["A. (x + 3)^2 + (y - 2)^2 = 4", "B. (x - 3)^2 + (y + 2)^2 = 4", "C. (x - 3)^2 + (y + 2)^2 = 16", "D. (x + 3)^2 + (y - 2)^2 = 16"],
+        "answer": "D",
+        "topic"  : "conic curves",
+        "type" : "dec"
+    },
+    {
+        "chinese": "已知 sin α = 3/5，且 α 是第二象限角，则 cos α =",
+        "english": "Given that sin α = 3/5, and α is in the second quadrant, then cos α =",
+        "options": ["A. 4/5", "B. -4/5", "C. 3/4", "D. -3/4"],
+        "answer": "B",
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "函数 y = √(x - 1) 的定义域是",
+        "english": "The domain of the function y = √(x - 1) is",
+        "options": ["A. [1, +∞)", "B. (1, +∞)", "C. (-∞, 1]", "D. (-∞, 1)"],
+        "answer": "A",
+        "topic" : "functions",
+        "type" : "dec"
+         
+    },
+    
+
+    {
+        "chinese": "设圆的方程为 x² + y² + 2x - 2y = 0，则该圆的半径为",
+        "english": "Given the equation of the circle is x² + y² + 2x - 2y = 0, then the radius of the circle is",
+        "options": ["A. 2", "B. 1/2", "C. √2", "D. 1"],
+        "answer": "C",
+        "topic"  : "conic curves",
+        "type" : "dec"
+    },
+    {
+        "chinese": "若 α 为锐角，且sin α = √3/2，则 tan α =",
+        "english": "If α is an acute angle, and sin α = √3/2, then tan α =",
+        "options": ["A. 1/2", "B. √3", "C. 1/4", "D. √3/3"],
+        "answer": "B",
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+    
+    {
+        "chinese": "已知等比数列 {aₙ} 的前三项为 1, 2, 4, 则数列的通项公式为",
+        "english": "Given that the first three terms of the geometric sequence {aₙ} are 1, 2, 4, then the general term formula of the sequence is",
+        "options": ["A. aₙ = 2n", "B. aₙ = 8", "C. aₙ = 2^(n-1)", "D. aₙ = 2^n"],
+        "answer": "C",
+        "topic" : "sequences",
+        "type" : "dec"  
+    },
+    {
+        "chinese": "已知 a > b, 则",
+        "english": "Given that a > b, then",
+        "options": ["A. 1/a < 1/b", "B. a^2 > b^2", "C. 5^a > 5^b", "D. sin a > sin b"],
+        "answer": "C",
+        "topic" : "functions",
+        "type" : "dec"
+    },
+    {
+        "chinese": "点 P(-1, 2) 到点 Q(3, 1) 的距离是",
+        "english": "The distance from point P(-1, 2) to point Q(3, 1) is",
+        "options": ["A. √17", "B. √13", "C. √5", "D. 5"],
+        "answer": "A",
+        "link" : "https://t.me/c/3305923058/55",
+        "topic"  : "geometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "下列关于函数 y = (1/2)^x 的描述正确的是",
+        "english": "Which of the following descriptions about the function y = (1/2)^x is correct?",
+        "options": ["A. 该函数属于原点对称 Symmetric about the origin", 
+                    "B. 该函数属于x轴对称 Symmetric about the x-axis", 
+                    "C. 该函数单调递增 Increasing", 
+                    "D. 该函数单调递减 Decreasing"],
+        "answer": "D",
+        "topic" : "functions",
+        "type" : "dec"
+    },
+    {
+        "chinese": "若 sin α = 1/4, 则 cos 2α =",
+        "english": "If sin α = 1/4, then cos 2α =",
+        "options": ["A. -7/8", "B. 1/8", "C. 7/8", "D. -1/8"],
+        "answer": "C",
+        "link" : "https://t.me/c/3305923058/73"
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "直线 l₁: y = 2x + 1 和直线 l₂: x + y + 1 = 0 的交点为",
+        "english": "The intersection point of line l₁: y = 2x + 1 and line l₂: x + y + 1 = 0 is",
+        "options": ["A. (1/3, 2/3)", "B. (2/3, 1/3)", "C. (-1/3, -2/3)", "D. (-2/3, -1/3)"],
+        "answer": "D",
+        "topic"  : "geometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "双曲线 x² - y² = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the hyperbola x² - y² = 1 are",
+        "options": ["A. (±√2, 0)", "B. (0, ±2)", "C. (0, ±√2)", "D. (±2, 0)"],
+        "answer": "A",
+        "topic"  : "geometry",
+        "type" : "dec"
+    },
+    
+    {
+        "chinese": "log₂32 + log_{1/2} 32 =",
+        "english": "",
+        "options": ["A. -5", "B. 10", "C. 0", "D. 5"],
+        "answer": "C",
+        "link" : "https://t.me/c/3305923058/142",
+        "topic" : "logarithmic functions",
+        "type" : "dec"
+       
+    },
+    {
+        "chinese": "关于函数 y = cos x，下列说法正确的是",
+        "english": "Which of the following statements about the function y = cos x is correct?",
+        "options": ["A. cos(x + π) = cos x", 
+                    "B. 该函数是一个奇函数 / Is an odd function", 
+                    "C. 该函数在区间 [0, π] 上单调递增 / Is monotonically increasing on the interval [0,π]", 
+                    "D. 该函数是一个以 2π 为周期的函数 / Is periodic with a period of 2π"],
+        "answer": "D",
+        "topic" : "functions",
+        "type" : "dec"
+    },
+    {
+        "chinese": "关于抛物线 y² = 4x，下列说法正确的是",
+        "english": "Which of the following statements about the parabola y² = 4x is correct?",
+        "options": ["A. 通过点 (Passes through the point)   (-4, 4)", "B. 对称轴为 (The axis of symmetry is) x = 0", "C. 焦点坐标为 (The coordinates of the foci are)  (±1, 0)", "D. 焦点坐标为 (The coordinates of the focus are)  (1, 0)"],
+        "answer": "D",
+        "topic"  : "conic curves",
+         "type" : "dec"
+    },
+    {
+        "chinese": "下列直线和直线l: x + y + 3 = 0 垂直的是",
+        "english": "Which of the following lines is perpendicular to the line l: x + y + 2 = 0?",
+        "options": ["A. y = -2x + 1", "B. y = x + 2", "C. y = 1 - 2", "D. y = 2x + 2"],
+        "answer": "B",
+        "topic"  : "geometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "已知 cos a = -1/2, α∈(π/2, π), 则 sin α 的值是",
+        "english": "Given that cos a = -1/2, α∈(π/2, π), then the value of sin α is",
+        "options": ["A. -√3/2", "B. √3/2", "C. 1/2", "D. -1/2"],
+        "answer": "B",
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "已知 sin π/4 = √2/2, sin π/6 = 1/2, 可以得到 cos π/12 =",
+        "english": "Given that sin π/4 = √2/2, sin π/6 = 1/2, then cos π/12 =",
+        "options": ["A. √6/4", "B. (√6 + √2)/4", "C. (√6 - √2)/2", "D. (1 + √3)/4"],
+        "answer": "B",
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+
+    {
+        "chinese": "下列函数和函数 y = |x| 相同的是",
+        "english": "Which of the following functions is identical to y = |x|?",
+        "options": ["A. y = ³√x³", "B. y = (√x)²", "C. y = x", "D. y = √x²"],
+        "answer": "D",
+        "topic" : "functions",
+        "type" : "dec"
+    },
+    {
+        "chinese": "若 α 为锐角，且 cos α = 1/2，则 sin α =",
+        "english": "If α is an acute angle, and cos α = 1/2, then sin α =",
+        "options": ["A. ±√3/2", "B. ±1/2", "C. √3/2", "D. 1/2"],
+        "answer": "D",
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "关于导数公式，下列式子错误的是",
+        "english": "Which of the following derivative formulas is incorrect?",
+        "options": ["A. cos(2π - α) = cos α", "B. tan(π + α) = -tan α", "C. sin(π - α) = sin α", "D. sin(π/2 - α) = cos α"],
+        "answer": "B",
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "抛物线 y² = -x 的准线方程为",
+        "english": "The equation of the directrix of the parabola y² = -x is",
+        "options": ["A. x = 1/2", "B. x = -1/2", "C. x = 1/4", "D. x = -1/4"],
+        "answer": "A",
+        "topic" : "conic curves",
+        "type" : "dec"
+    },
+    {
+        "chinese": "已知 (cos a - sin a)/(cos a + sin a) = 1/3, 则 tan a =",
+        "english": "Given that (cos a - sin a)/(cos a + sin a) = 1/3, then tan a =",
+        "options": ["A. 1/2", "B. 1/4", "C. 2/3", "D. 1/3"],
+        "answer": "B",
+        "topic" : "trigonometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "若数列 {aₙ} 满足 a₁ = 1, aₙ = 1/(1 + 1/aₙ₋₁) (n ≥ 2), 则 a₁₀₀ =",
+        "english": "Given that the sequence {aₙ} satisfies a₁ = 1, aₙ = 1/(1 + 1/aₙ₋₁) (n ≥ 2), then a₁₀₀ =",
+        "options": ["A. 50", "B. 1/100", "C. 1", "D. 100"],
+        "answer": "C", 
+        "type" : "dec"
+        "topic" : "sequences",
+        "type" : "dec"
+    },
+
+    {
+        "chinese": "关于对数函数 y = logₐx，下面说法正确的是",
+        "english": "Which of the following statements about the logarithmic function y = logₐx is correct?",
+        "options": ["A. 该函数的定义域为 (The domain of this function is) (−∞, +∞)", 
+                    "B. 当 a > 1 时，在定义域上是一个单调递减函数 / When a>1, it is a monotonically decreasing function over its domain", 
+                    "C. 当 a > 1 时，对任意的 x > 0 总有 logₐ x > 1 / When a>1, for any x>0, we always have logₐx>1", 
+                    "D. 当 0 < a < 1 时，在定义域上是一个单调递减函数 / When 0<a<1, it is a monotonically decreasing function over its domain"],
+        "answer": "D",
+        "topic" : "functions",
+        "type" : "dec"
+    },
+    {
+        "chinese": "关于椭圆 x²/4 + y²/20 = 1，下面说法正确的是",
+        "english": "Which of the following statements about the ellipse x²/4 + y²/20 = 1 is correct?",
+        "options": ["A. 该椭圆的两个焦点为 (The foci of this ellipse are) (0, ±4)", "B. 该椭圆的两个焦点为 (The foci of this ellipse are) (±4, 0)", "C. 该椭圆的顶点坐标为 (The vertices of this ellipse are ) (±4, 0) 和 (and) (0, ±20)", "D. 该椭圆长轴和短轴的长度分别是  (The lengths of the major and minor axes of this ellipse are ) 20 和 (and) 4"],
+        "answer": "A",
+        "topic" : "conic curves",
+        "type" : "dec"
+    },
+    {
+        "chinese": "若直线 l 垂直于直线 l₁:x + 2y + 4 = 0， 并且经过直线 l₂:x + y + 1 = 0 和 l₃:x + y - 1 = 0 的交点，则 l 的方程是",
+        "english": "If line l is perpendicular to line l₁:x + 2y + 4 = 0 and passes through the intersection point of lines l₂:x + y + 1 = 0 and l₃:x + y - 1 = 0, then the equation of l is",
+        "options": ["A. x + 2y - 3 = 0", "B. 2x + y - 5 = 0", "C. 2x - y - 7 = 0", "D. x - 2y - 1 = 0"],
+        "answer": "C",
+        "topic"  : "geometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "已知 O 为坐标原点， A 和 B 是平面上的两个点， P 为 AB 中点，则向量 OP=",
+        "english": "Given that O is the origin, A and B are two points on the plane, and P is the midpoint of AB, then the vector OP=",
+        "options": ["A. 1/2(OA + OB)", "B. OA + OB", "C. OB - OA", "D. 1/2(OA - OB)"],
+        "answer": "A",
+        "topic"  : "geometry",
+        "type" : "dec"
+    },
+    {
+        "chinese": "若复数z满足 z³ = 1 且 z ≠ 1，则 1 + z + z² + ... + z⁹⁹⁹ =",
+        "english": "If the complex number z satisfies z³ = 1 and z ≠ 1, then 1 + z + z² + ... + z⁹⁹⁹ =",
+        "options": ["A. (1 ± √3i)/2", "B. (-1 ±√3i)/2", "C. 1", "D. i"],
+        "answer": "C",
+        "topic" : "complex numbers",
+        "type" : "dec"
+    },
+    {
+        "chinese": "已知等差数列 {aₙ} 满足 3(a₂ + a₆) + 2(a₆ + a₁₀ + a₁₄) = 24，则 S₁₃ =",
+        "english": "Given that the arithmetic sequence {aₙ} satisfies 3(a₂ + a₆) + 2(a₆ + a₁₀ + a₁₄) = 24, then S₁₃ =",
+        "options": ["A. 104", "B. 52", "C. 39", "D. 26"],
+        "answer": "D",
+        "topic" : "sequences",
+        "type" : "dec"
+    },
+    {
+        "chinese": "十二生肖又叫属相，是中国用来代表年份的十二种动物，依次为鼠、牛、虎、兔、龙、蛇、马、羊、猴、鸡、狗、猪。比如1984、1996和2008年出生的人属相是鼠，而1985、1997和2009年出生的人属相是牛，以此类推。随机选出的三人中至少有两人属相相同的概率是",
+        "english": "The twelve zodiac signs, also known as 'Sheng Xiao', are twelve animals used in China to represent years, in order: Rat, Ox, Tiger, Rabbit, Dragon, Snake, Horse, Sheep, Monkey, Rooster, Dog, Pig. For example, people born in 1984, 1996, and 2008 are of the Rat sign, while those born in 1985, 1997, and 2009 are of the Ox sign, and so on. The probability that at least two out of three randomly selected people have the same zodiac sign is",
+        "options": ["A. 17/72", "B. 1/12", "C. 55/72", "D. 143/144"],
+        "answer": "A",
+        "topic" : "probability",
+        "type" : "dec"
+    },
+    {
+        "chinese": "已知 a = ln 3, b = log_{0.3} 2, c = log_3 2 ，则 a, b, c 的大小关系是",
+        "english": "Given a = ln 3, b = log_{0.3} 2, c = log_3 2, then the order of a, b, c  is",
+        "options": ["A.  a < c < b ", "B.  c < a < b ", "C. a < b < c ", "D. b < c < a"],
+        "answer": "D",
+        "topic": "logarithmic functions"
+    },
+    {
+        "chinese": " log₉ 8 / log₃ 2 = ",
+        "options": ["A.  3/2", "B.  2/3", "C. -3/2", "D. -2/3"],
+        "answer": "A",
+        "topic": "logarithmic functions"
+    },
+    {
+        "chinese": "关于余弦函数  y = cos x，以下结论中正确的是",
+        "english": "Which is true for  y = cos x",
+        "options": "A. 该函数为周期函数 / Periodic" , 
+               "B. 该函数为减函数 / Decreasing", 
+               "C. 该函数为增函数 / Increasing",
+               "D. 该函数为奇函数 / Odd",
+        "answer" : "A",
+        "topic" : "functions"
+    },
+
+  {
+    "chinese": "下列说法正确的是",
+    "english": "Which of the following statements is correct?",
+    "options": [
+      "A. -2 ∈ N",
+      "B. π ∈ Q",
+      "C. 3/2 ∈ Z",
+      "D. √3 ∈ R"
+    ],
+    "answer" : "A",
+    "topic": "sets",
+    "subtopic": "number sets",
+    "type": "oct",
+    "number": 1
+  },
+  {
+    "chinese": "若集合 A = {1, 2, 3, 4}, B = {3, 4, 5, 6}，则下列运算正确的是",
+    "english": "If sets A = {1, 2, 3, 4}, B = {3, 4, 5, 6}, which operation is correct?",
+    "options": [
+      "A. A ∪ B = {3, 4}",
+      "B. A ∩ B = {5, 6}",
+      "C. A ∩ B = {1, 2, 5, 6}",
+      "D. A ∪ B = {1, 2, 3, 4, 5, 6}"
+    ],
+    "answer" : "D",
+    "topic": "sets",
+    "subtopic": "set operations",
+    "type": "oct",
+    "number": 2
+  },
+  {
+    "chinese": "函数 f(x) = ln x + √(1 - x) 的定义域为",
+    "english": "The domain of the function f(x) = ln x + √(1 - x) is",
+    "options": [
+      "A. {x | 0 < x ≤ 1}",
+      "B. {x | x > 0}",
+      "C. {x | x ≤ 1}",
+      "D. {x | x ≥ 1}"
+    ],
+    "answer" : "A",
+    "topic": "functions",
+    "subtopic": "function domain",
+    "type": "oct",
+    "number": 4
+  },
+  {
+    "chinese": "若点 M(a + 3, a + 1) 在 x 轴上，则点 M 的坐标为",
+    "english": "If point M(a + 3, a + 1) lies on the x-axis, then its coordinates are",
+    "options": [
+      "A. (0, -4)",
+      "B. (0, -2)",
+      "C. (2, 0)",
+      "D. (4, 0)"
+    ],
+    "answer" : "C",
+    "topic": "geometry",
+    "subtopic": "coordinate geometry",
+    "type": "oct",
+    "number": 5
+  },
+  {
+    "chinese": "已知角 α = 5π/6，则下列结论正确的是",
+    "english": "Given angle α = 5π/6, which conclusion is correct?",
+    "options": [
+      "A. sin α = 1/2",
+      "B. sin α = -1/2",
+      "C. sin α = -√3/2",
+      "D. sin α = √3/2"
+    ],
+    "answer" : "A",
+    "topic": "trigonometry",
+    "subtopic": "trigonometric values",
+    "type": "oct",
+    "number": 6
+  },
+  {
+    "chinese": "下列函数是偶函数的是",
+    "english": "Which of the following functions is even?",
+    "options": [
+      "A. f(x) = 2x² + cos x",
+      "B. f(x) = x + 3x²",
+      "C. f(x) = √x",
+      "D. f(x) = x² - sin x"
+    ],
+    "answer" : "A",
+    "topic": "functions",
+    "subtopic": "function properties",
+    "type": "oct",
+    "number": 7
+  },
+  {
+    "chinese": "下列点位于第三象限的是",
+    "english": "Which point lies in the third quadrant?",
+    "options": [
+      "A. (1, -2)",
+      "B. (-1, -2)",
+      "C. (1, 2)",
+      "D. (-1, 2)"
+    ],
+    "answer" : "B",
+    "topic": "geometry",
+    "subtopic": "coordinate geometry",
+    "type": "oct",
+    "number": 8
+  },
+  {
+    "chinese": "设函数 y = 1 - x³，则其反函数为",
+    "english": "Given function y = 1 - x³, its inverse function is",
+    "options": [
+      "A. y = ³√(1 - x)",
+      "B. y = ³√(x - 1)",
+      "C. y = ³√(1 + x)",
+      "D. y = √(1 - x)"
+    ],
+    "answer" : "A",
+    "topic": "functions",
+    "subtopic": "inverse functions",
+    "type": "oct",
+    "number": 9
+  },
+  {
+    "chinese": "下列函数在 (0, +∞) 上是减函数的是",
+    "english": "Which function is decreasing on (0, +∞)?",
+    "options": [
+      "A. y = 3x",
+      "B. y = x²",
+      "C. y = x³",
+      "D. y = 1/x"
+    ],
+    "answer" : "D",
+    "topic": "functions",
+    "subtopic": "function monotonicity",
+    "type": "oct",
+    "number": 10
+  },
+  {
+    "chinese": "分式不等式 (2x - 4)/(x - 1) ≤ 0 的解集为",
+    "english": "The solution set of the fractional inequality (2x - 4)/(x - 1) ≤ 0 is",
+    "options": [
+      "A. {x | 1 < x ≤ 2}",
+      "B. {x | 1 ≤ x < 2}",
+      "C. {x | 1 ≤ x ≤ 2}",
+      "D. {x | x < 1 或 x > 2}"
+    ],
+    "answer" : "A",
+    "topic": "inequalities",
+    "subtopic": "inequalities",
+    "type": "oct",
+    "number": 11
+  },
+  {
+    "chinese": "已知 a = √2 + 1, b = √2 - 1，则 a 和 b 的等比中项为",
+    "english": "Given a = √2 + 1, b = √2 - 1, the geometric mean of a and b is",
+    "options": [
+      "A. ±1",
+      "B. 1",
+      "C. √2",
+      "D. -1"
+    ],
+    "answer" : "B",
+    "topic": "algebra",
+    "subtopic": "geometric mean",
+    "type": "oct",
+    "number": 12
+  },
+  {
+    "chinese": "若 {aₙ} 为等差数列，首项 a₁ = 2，公差 d = 3，则 a₁₀₀ =",
+    "english": "If {aₙ} is an arithmetic sequence with first term a₁ = 2 and common difference d = 3, then a₁₀₀ =",
+    "options": [
+      "A. 299",
+      "B. 302",
+      "C. 298",
+      "D. 305"
+    ],
+    "answer" : "A",
+    "topic": "algebra",
+    "subtopic": "arithmetic sequence",
+    "type": "oct",
+    "number": 13
+  },
+  {
+    "chinese": "经过点 A(-1, 1), B(2, 3) 的直线的斜率为",
+    "english": "The slope of the line passing through points A(-1, 1), B(2, 3) is",
+    "options": [
+      "A. 3/2",
+      "B. -3/2",
+      "C. 2/3",
+      "D. -2/3"
+    ],
+    "answer" : "A",
+    "topic": "geometry",
+    "subtopic": "analytic geometry",
+    "type": "oct",
+    "number": 14
+  },
+  {
+    "chinese": "已知角 α 的终边经过点 M(2, 4)，则 tan α =",
+    "english": "Given that the terminal side of angle α passes through point M(2, 4), then tan α =",
+    "options": [
+      "A. 2",
+      "B. -2",
+      "C. 1/2",
+      "D. -1/2"
+    ],
+    "answer" : "A",
+    "topic": "trigonometry",
+    "subtopic": "trigonometric functions",
+    "type": "oct",
+    "number": 15
+  },
+  {
+    "chinese": "若数列 {aₙ} 是等差数列，且 a₁ = 1, a₂ = 3，则 a₅ =",
+    "english": "If {aₙ} is an arithmetic sequence with a₁ = 1, a₂ = 3, then a₅ =",
+    "options": [
+      "A. 9",
+      "B. 11",
+      "C. 5",
+      "D. 7"
+    ],
+    "answer" : "A",
+    "topic": "algebra",
+    "subtopic": "arithmetic sequence",
+    "type": "oct",
+    "number": 16
+  },
+  {
+    "chinese": "已知点 A(-1,2), B(3,-1)，则这两个点之间的距离 |AB| =",
+    "english": "Given points A(-1,2), B(3,-1), the distance between them |AB| =",
+    "options": [
+      "A. √5",
+      "B. 25",
+      "C. 5",
+      "D. 4"
+    ],
+    "answer" : "C",
+    "topic": "geometry",
+    "subtopic": "distance formula",
+    "type": "oct",
+    "number": 17
+  },
+  {
+    "chinese": "过点 M(-2,3)，斜率 k = 2 的直线方程是",
+    "english": "The equation of the line passing through point M(-2,3) with slope k = 2 is",
+    "options": [
+      "A. y = x + 7",
+      "B. y = 2x - 1",
+      "C. y = 2x + 7",
+      "D. y = x + 5"
+    ],
+    "answer" : "C",
+    "topic": "geometry",
+    "subtopic": "analytic geometry",
+    "type": "oct",
+    "number": 18
+  },
+  {
+    "chinese": "若圆过点 A(2, 2)，圆心为 (2, 0)，则该圆的方程为",
+    "english": "If a circle passes through point A(2, 2) and has center (2, 0), its equation is",
+    "options": [
+      "A. (x - 2)² + y² = 2",
+      "B. x² + (y - 2)² = 2",
+      "C. (x - 2)² + (y - 2)² = 4",
+      "D. (x - 2)² + y² = 4"
+    ],
+    "answer" : "D",
+    "topic": "geometry",
+    "subtopic": "circle equation",
+    "type": "oct",
+    "number": 19
+  },
+  {
+    "chinese": "若 tan α = 2，则 (3 sin α + 2 cos α)/(4 sin α - 3 cos α) =",
+    "english": "If tan α = 2, then (3 sin α + 2 cos α)/(4 sin α - 3 cos α) =",
+    "options": [
+      "A. 8/5",
+      "B. 3/5",
+      "C. -8/5",
+      "D. 5/3"
+    ],
+    "answer" : "A",
+    "topic": "trigonometry",
+    "subtopic": "trigonometric expressions",
+    "type": "oct",
+    "number": 20
+  },
+  {
+    "chinese": "若数列 {aₙ} 是 1/2, -1/4, 1/8, …，则通项 aₙ =",
+    "english": "If sequence {aₙ} is 1/2, -1/4, 1/8, …, then the general term aₙ =",
+    "options": [
+      "A. (-1)ⁿ × 1/2ⁿ",
+      "B. 1/2ⁿ",
+      "C. (-1)ⁿ⁻¹ × 1/2ⁿ",
+      "D. 1/2ⁿ⁻¹"
+    ],
+    "answer" : "C",
+    "topic": "sequences",
+    "subtopic": "sequence general term",
+    "type": "oct",
+    "number": 21
+  },
+  {
+    "chinese": "若 a, b, c 为有理数，且 a > b > c，则下列式子中正确的是",
+    "english": "If a, b, c are rational numbers and a > b > c, which inequality is correct?",
+    "options": [
+      "A. a/c > b/c",
+      "B. a + b > b + c",
+      "C. a - b > b - c",
+      "D. ab > bc"
+    ],
+    "answer" : "B",
+    "topic": "inequalities",
+    "subtopic": "inequalities",
+    "type": "oct",
+    "number": 22
+  },
+  {
+    "chinese": "关于幂函数 y = x³ 和 y = x¹/³，下列结论中正确的是",
+    "english": "Regarding power functions y = x³ and y = x¹/³, which conclusion is correct?",
+    "options": [
+      "A. 两函数的图像关于 x 轴对称 / Graphs are symmetric with respect to the x‑axis",
+      "B. 两函数的图像关于直线 y = x 对称 / Graphs are symmetric with respect to the line y = x",
+      "C. 两函数的图像关于 y 轴对称 / Graphs are symmetric with respect to the y‑axis",
+      "D. 两函数的图像关于原点对称 / Graphs are symmetric with respect the origin"
+    ],
+    "answer" : "B",
+    "topic": "functions",
+    "subtopic": "function graphs",
+    "type": "oct",
+    "number": 23
+  },
+  {
+    "chinese": "若 cos α = 1/3，则 cos 2α =",
+    "english": "If cos α = 1/3, then cos 2α =",
+    "options": [
+      "A. 4√2",
+      "B. 7/9",
+      "C. 4√2/9",
+      "D. -7/9"
+    ],
+    "answer" : "D",
+    "topic": "trigonometry",
+    "subtopic": "double angle formula",
+    "type": "oct",
+    "number": 24
+  },
+  {
+    "chinese": "直线 3x + 2y + 4 = 0 与直线 x - y + 3 = 0 的交点坐标为",
+    "english": "The intersection point of lines 3x + 2y + 4 = 0 and x - y + 3 = 0 is",
+    "options": [
+      "A. (1, -2)",
+      "B. (2, 5)",
+      "C. (-2, 1)",
+      "D. (5, 2)"
+    ],
+    "answer" : "С",
+    "topic": "geometry",
+    "subtopic": "analytic geometry",
+    "type": "oct",
+    "number": 25
+  },
+  {
+    "chinese": "双曲线 x²/7 - y²/9 = 1 的焦点坐标是",
+    "english": "The coordinates of the foci of the hyperbola x²/7 - y²/9 = 1 are",
+    "options": [
+      "A. (0, 4)",
+      "B. (4, 0)",
+      "C. (0, ±4)",
+      "D. (±4, 0)"
+    ],
+    "answer" : "D",
+    "topic": "geometry",
+    "subtopic": "hyperbola",
+    "type": "oct",
+    "number": 26
+  },
+  {
+    "chinese": "下列不等式正确的是",
+    "english": "Which inequality is correct?",
+    "options": [
+      "A. 2.1³ > 1.2³",
+      "B. 2.1⁻² > 1.2⁻²",
+      "C. 0.75⁻⁰·² > 0.75⁻⁰·⁴",
+      "D. 3²·²⁵ > 3³"
+    ],
+    "answer" : "A",
+    "topic": "inequalities",
+    "subtopic": "inequalities",
+    "type": "oct",
+    "number": 27
+  },
+  {
+    "chinese": "log₄27 / log₂3 =",
+    "english": "log₄27 / log₂3 =",
+    "options": [
+      "A. 3/2",
+      "B. -3/2",
+      "C. -2/3",
+      "D. 2/3"
+    ],
+    "answer" : "A",
+    "topic": "logarithms",
+    "subtopic": "logarithms",
+    "type": "oct",
+    "number": 28
+  },
+  {
+    "chinese": "关于余弦函数 y = cos x，以下结论中正确的是",
+    "english": "Regarding the cosine function y = cos x, which conclusion is correct?",
+    "options": [
+      "A. 该函数为周期函数 / It is a periodic function",
+      "B. 该函数为减函数  / It is a decreasing function",
+      "C. 该函数为增函数  / It is an increasing function ",
+      "D. 该函数为奇函数 / It is an odd function "
+    ],
+    "answer" : "A",
+    "topic": "functions",
+    "subtopic": "trigonometric functions",
+    "type": "oct",
+    "number": 29
+  },
+  {
+    "chinese": "顶点在原点，焦点为 F(3/2, 0) 的抛物线的标准方程为",
+    "english": "The standard equation of the parabola with vertex at origin and focus F(3/2, 0) is",
+    "options": [
+      "A. y² = (3/2)x",
+      "B. y² = 3x",
+      "C. y² = 6x",
+      "D. y² = -6x"
+    ],
+    "answer" : "С",
+    "topic": "geometry",
+    "subtopic": "parabola",
+    "type": "oct",
+    "number": 30
+  },
+  {
+    "chinese": "点 P(-1, 2) 到点 Q(3, 1) 的距离是",
+    "english": "The distance from point P(-1, 2) to point Q(3, 1) is",
+    "options": [
+      "A. √5",
+      "B. √13",
+      "C. √17",
+      "D. 5"
+    ],
+    "answer" : "С",
+    "topic": "geometry",
+    "subtopic": "distance formula",
+    "type": "oct",
+    "number": 31
+  },
+  {
+    "chinese": "已知直线 l₁: ax + 2y - 1 = 0 与 l₂: x + (a + 1)y + 4 = 0 平行，则 a =",
+    "english": "Given lines l₁: ax + 2y - 1 = 0 and l₂: x + (a + 1)y + 4 = 0 are parallel, then a =",
+    "options": [
+      "A. 1",
+      "B. -2 或 (and)  1",
+      "C. -2",
+      "D. 2 或  (and) -1"
+    ],
+    "answer" : "B",
+    "topic": "geometry",
+    "subtopic": "analytic geometry",
+    "type": "oct",
+    "number": 32
+  },
+  {
+    "chinese": "若圆的圆心坐标是 (-3, 2)，半径是4，则圆的方程是",
+    "english": "If a circle has center (-3, 2) and radius 4, its equation is",
+    "options": [
+      "A. (x - 3)² + (y + 2)² = 4",
+      "B. (x - 3)² + (y + 2)² = 16",
+      "C. (x + 3)² + (y - 2)² = 4",
+      "D. (x + 3)² + (y - 2)² = 16"
+    ],
+    "answer" : "D",
+    "topic": "geometry",
+    "subtopic": "circle equation",
+    "type": "oct",
+    "number": 33
+  },
+  {
+    "chinese": "已知 cos α = -4/5，且 α ∈ (π/2, π)，则 sin(α + π/4) =",
+    "english": "Given cos α = -4/5, and α ∈ (π/2, π), then sin(α + π/4) =",
+    "options": [
+      "A. -7√2/10",
+      "B. √2/10",
+      "C. -√2/10",
+      "D. 7√2/10"
+    ],
+    "answer" : "C",
+    "topic": "trigonometry",
+    "subtopic": "trigonometric identities",
+    "type": "oct",
+    "number": 34
+  },
+  {
+    "chinese": "下列各对函数中，两函数相同的是",
+    "english": "Which pair of functions are identical?",
+    "options": [
+      "A. y = ln x² 与 y = 2 ln x",
+      "B. y = |x - 1| 与 y = √((x - 1)²)",
+      "C. y = x² + 1 与 y = (x⁴ - 1)/(x² - 1)",
+      "D. y = ln x(x - 1) 与 y = ln x + ln(x - 1)"
+    ],
+    "answer" : "B",
+    "topic": "functions",
+    "subtopic": "function equality",
+    "type": "oct",
+    "number": 35
+  },
+  {
+    "chinese": "已知 sin α = 3/5，且 α ∈ (0, π/2)，则 (2 sin 2α)/(1 + cos 2α) - tan α =",
+    "english": "Given sin α = 3/5, and α ∈ (0, π/2), then (2 sin 2α)/(1 + cos 2α) - tan α =",
+    "options": [
+      "A. 3/5",
+      "B. 4/3",
+      "C. 3/4",
+      "D. 4/5"
+    ],
+    "answer" : "С",
+    "topic": "trigonometry",
+    "subtopic": "trigonometric expressions",
+    "type": "oct",
+    "number": 36
+  },
+  {
+    "chinese": "下列各式中正确的是",
+    "english": "Which of the following equations is correct?",
+    "options": [
+      "A. sin(α + 4π) = cos α",
+      "B. sin(α + 3π) = sin α",
+      "C. cos(α + 3π/2) = sin α",
+      "D. cos(α + π/2) = sin α"
+    ],
+    "answer" : "С",
+    "topic": "trigonometry",
+    "subtopic": "trigonometric identities",
+    "type": "oct",
+    "number": 37
+  },
+  {
+    "chinese": "关于正切函数 y = tan x，下列说法不正确的是",
+    "english": "Regarding the tangent function y = tan x, which statement is incorrect?",
+    "options": [
+      "A. 值域为 R / The range is R",
+      "B. 是奇函数 / It is an odd function",
+      "C. 是周期函数，且最小正周期为 π /  It is a periodic, and its smallest positive period is π",
+      "D. 定义域为 /The domain is {x | x ≠ kπ, k ∈ Z}"
+    ],
+    "answer" : "D",
+    "topic": "functions",
+    "subtopic": "trigonometric functions",
+    "type": "oct",
+    "number": 38
+  },
+  {
+    "chinese": "已知 cos α = -1/2, α ∈ (π/2, π)，则 sin(α/2) 的值是",
+    "english": "Given cos α = -1/2, α ∈ (π/2, π), then sin(α/2) =",
+    "options": [
+      "A. -1/2",
+      "B. -√3/2",
+      "C. 1/2",
+      "D. √3/2"
+    ],
+    "answer" : "D",
+    "topic": "trigonometry",
+    "subtopic": "half-angle formula",
+    "type": "oct",
+    "number": 39
+  },
+  {
+    "chinese": "若数列 {aₙ} 中，a₁ = 1, a₂ = 3，且 aₙ₊₂ = aₙ₊₁ + aₙ (n = 1, 2, …)，则 a₅ =",
+    "english": "If in sequence {aₙ}, a₁ = 1, a₂ = 3, and aₙ₊₂ = aₙ₊₁ + aₙ (n = 1, 2, …), then a₅ =",
+    "options": [
+      "A. 7",
+      "B. -7",
+      "C. 11",
+      "D. -11"
+    ],
+    "answer" : "D",
+    "topic": "sequences",
+    "subtopic": "recursive sequence",
+    "type": "oct",
+    "number": 40
+  },
+  {
+    "chinese": "抛物线 y² = -x 的准线方程为",
+    "english": "The directrix of the parabola y² = -x is",
+    "options": [
+      "A. x = 1/4",
+      "B. x = -1/2",
+      "C. x = -1/4",
+      "D. x = 1/2"
+    ],
+    "answer" : "A",
+    "topic": "geometry",
+    "subtopic": "parabola",
+    "type": "oct",
+    "number": 41
+  },
+  {
+    "chinese": "已知 a = ln 3, b = log_{0.3} 2, c = log_3 2，则 a, b, c 的大小关系是",
+    "english": "Given a = ln 3, b = log_{0.3} 2, c = log_3 2, then the order of a, b, c is",
+    "options": 
+      "A. a < c < b",
+      "B. c < a < b",
+      "C. a < b < c",
+      "D. b < c < a"
+    ],
+    "answer" : "D",
+    "topic": "logarithms",
+    "subtopic": "logarithms",
+    "type": "oct",
+    "number": 42
+  },
+  {
+    "chinese": "已知椭圆的中心在原点，其长轴是短轴的2倍，且过点 P(-2, 0)，则该椭圆方程为",
+    "english": "The center of an ellipse is at origin, its major axis is twice the minor axis, and it passes through point P(-2, 0), then its equation is",
+    "options": [
+      "A. x²/16 + y²/4 = 1 或 x²/4 + y² = 1",
+      "B. x² + y²/4 = 1",
+      "C. x²/4 + y²/16 = 1 或 x²/4 + y² = 1",
+      "D. x²/16 + y²/4 = 1"
+    ],
+    "answer" : "С",
+    "topic": "geometry",
+    "subtopic": "ellipse",
+    "type": "oct",
+    "number": 43
+  },
+  {
+    "chinese": "设向量 a = (-1, 2), b = (3, -1)，则 3a - b =",
+    "english": "Given vectors a = (-1, 2), b = (3, -1), then 3a - b =",
+    "options": [
+      "A. (0, -3)",
+      "B. (0, 5)",
+      "C. (-6, 5)",
+      "D. (-6, 7)"
+    ],
+    "answer" : "D",
+    "topic": "geometry",
+    "subtopic": "vectors",
+    "type": "oct",
+    "number": 44
+  },
+  {
+    "chinese": "若直线 l 垂直于直线 l₁: x + 2y + 4 = 0，并且经过直线 l₂: x + y + 1 = 0 和 l₃: 2x + y - 1 = 0 的交点，则 l 的方程是",
+    "english": "If line l is perpendicular to line l₁: x + 2y + 4 = 0, and passes through the intersection of lines l₂: x + y + 1 = 0 and l₃: 2x + y - 1 = 0, then the equation of l is",
+    "options": [
+      "A. 2x - y - 7 = 0",
+      "B. x + 2y - 3 = 0",
+      "C. 2x + y - 5 = 0",
+      "D. x - 2y - 1 = 0"
+    ],
+    "answer" : "A",
+    "topic": "geometry",
+    "subtopic": "analytic geometry",
+    "type": "oct",
+    "number": 45
+  },
+  {
+    "chinese": "已知复数 |z| = 1，则 |2z + 1| 的最大值为",
+    "english": "Given complex number |z| = 1, then the maximum value of |2z + 1| is",
+    "options": [
+      "A. 2",
+      "B. 1",
+      "C. 5/2",
+      "D. 3"
+    ],
+    "answer" : "D",
+    "topic": "complex numbers",
+    "subtopic": "complex numbers",
+    "type": "oct",
+    "number": 46
+  },
+  {
+    "chinese": "设等比数列 {aₙ} 的前 n 项和为 Sₙ，若 S₂ = 4, S₄ = 20，则 S₈ =",
+    "english": "For geometric sequence {aₙ} with sum of first n terms Sₙ, if S₂ = 4, S₄ = 20, then S₈ =",
+    "options": [
+      "A. 160",
+      "B. 340",
+      "C. 180",
+      "D. 210"
+    ],
+    "answer" : "B",
+    "topic": "sequences",
+    "subtopic": "geometric sequence",
+    "type": "oct",
+    "number": 47
+  }
+]
+]
+
+
