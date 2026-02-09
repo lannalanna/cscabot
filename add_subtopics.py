@@ -157,7 +157,7 @@ def process_file(path):
 
 
 def main():
-    for fname in ("data.txt", "data_jan.txt"):
+    for fname in ("data.txt", "data_jan.txt", "data2.txt", "data_jan2.txt"):
         path = os.path.join(DATA_DIR, fname)
         if not os.path.isfile(path):
             print(f"Пропуск (нет файла): {path}")

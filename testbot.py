@@ -56,7 +56,7 @@ topics = []
 kapibara = {}
 
 # Загружаем вопросы из файлов
-for fname in ['data', 'data_jan'] :
+for fname in ['data2', 'data_jan2'] :
     try:
         with open(os.path.join(DATA_DIR, fname+'.txt'), 'r', encoding='utf-8') as f:  
             kpb = json.load(f) 
