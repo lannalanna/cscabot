@@ -13,6 +13,7 @@ from aiogram.types import CallbackQuery
 from aiogram.types import Message
 from aiogram.utils.chat_action import ChatActionSender
 import db
+import migrate_res_to_db
 
 
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
@@ -25,7 +26,8 @@ DATA_DIR = os.environ.get("BOT_DATA_DIR", os.path.join(BASE_DIR, "data"))
 os.makedirs(DATA_DIR, exist_ok=True)
 
 
-topic_links = { 'parabola' : 'https://t.me/csca_math_exam/22',
+topic_links = { 'Algebraic and geometric mean' : 'https://t.me/csca_math_exam/22',
+                'parabola' : 'https://t.me/csca_math_exam/22',
                 'trigonometry' : 'https://t.me/csca_math_exam/20',
                 'hyperbola' : 'https://t.me/csca_math_exam/33',
                 'sets' : 'https://t.me/csca_math_exam/10',
@@ -36,9 +38,11 @@ topic_links = { 'parabola' : 'https://t.me/csca_math_exam/22',
                 'logarithnic functions' : 'https://t.me/csca_math_exam/24',
                 'complex numbers': 'https://t.me/csca_math_exam/28',
                 'physics' : 'https://t.me/csca_math_exam/55',
-                'hyperbola' : 'https://t.me/csca_math_exam/33',
                 'probability' : 'https://t.me/csca_math_exam/26'
                  }
+
+# Маппинг старых имён тем на новые (для обратной совместимости callback_data)
+TOPIC_ALIASES = {"algebra": "Algebraic and geometric mean"}
 
 # Список пользователей с особым поведением (будет загружен из БД при старте)
 stepik = set()
@@ -242,25 +246,34 @@ async def cmd_start(call: CallbackQuery):
     correct_h={'A' : '0' , 'B' : '1' , 'C' : '2', 'D':'3', 'E':'4'}
     await call.answer()
     ans = call.data.replace('qst_', '').split('_')
-    top = ans[0]
-    if len(top) < 2 :
-       j = 0
-       
-    else :
-       j = int(ans[1])
-    ans_id = ans[2]
+    if len(ans) < 3:
+        await call.message.answer("Ошибка формата. Выберите тему заново.")
+        return
+    try:
+        top = TOPIC_ALIASES.get(ans[0], ans[0])
+        j = int(ans[1])
+        ans_id = ans[2]
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата. Выберите тему заново.")
+        return
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.message.answer("Вопрос не найден. Выберите тему заново.")
+        return
     k = kapibara[top][j]
-    correct = correct_h[k["answer"]]
-    ansok=0
-    if correct == ans_id :
-            msg_text = "Верно!  / Great!"
-            reply=inline_kb_next(top,j)
-            ansok=1
-    else :
-            msg_text = "Нет, это не так( / Sorry, you are wrong"+"\n\n"
-            reply=inline_kb_explain(top,j,k)
-            ansok =0 
-    
+    correct = correct_h.get(k["answer"], "")
+    try:
+        ans_id_int = int(ans_id)
+    except ValueError:
+        await call.message.answer("Ошибка формата. Выберите тему заново.")
+        return
+    ansok = 1 if correct == ans_id else 0
+    if ansok:
+        msg_text = "Верно!  / Great!"
+        reply = inline_kb_next(top, j)
+    else:
+        msg_text = "Нет, это не так) / Sorry, you are wrong" + "\n\n"
+        reply = inline_kb_explain(top, j, k)
+
     # Сохраняем ответ в БД
     if db_conn:
         try:
@@ -269,7 +282,7 @@ async def cmd_start(call: CallbackQuery):
                 call.from_user.id,
                 top,
                 j,
-                int(ans_id),
+                ans_id_int,
                 ansok == 1
             )
         except Exception as e:
@@ -333,9 +346,16 @@ async def cmd_start(message: types.Message):
 async def cmd_start(call: CallbackQuery):
     
     ans = call.data.replace('explain_', '').split('_')
-    top =ans[0]
-    j = int(ans[1])
-    log(call.from_user,['explain', top, j])
+    top = TOPIC_ALIASES.get(ans[0], ans[0])
+    try:
+        j = int(ans[1])
+    except (ValueError, IndexError):
+        await call.answer("Ошибка формата.")
+        return
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.answer("Вопрос не найден.")
+        return
+    log(call.from_user, ['explain', top, j])
     k = kapibara[top][j]
 
     builder = InlineKeyboardBuilder()
@@ -379,7 +399,7 @@ async def cmd_start(call: CallbackQuery):
     
     
     ans = call.data.replace('next_', '').split('_')
-    top =ans[0]
+    top = TOPIC_ALIASES.get(ans[0], ans[0])
     j = int(ans[1])
     log(call.from_user,['next', top, j])
     
@@ -396,27 +416,25 @@ async def cmd_start(call: CallbackQuery):
 
           
           
-    if j>= len(kapibara[top]) :
-            j-=1
-            async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
-                  log(call.from_user,['end'])
-                  kb = await start_kb(call.from_user.id)
-                  await  call.message.answer('Больше нет вопросов по этой теме. Скоро добавлю новые вопросы.',reply_markup=kb)
-                  
-    else :
-     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
-        k = kapibara[top][j]
-        if 'img' in k :
-             photo_path = os.path.join(DATA_DIR, "images", k['img'])
-             await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
-
-            # await bot.send_photo(chat_id=call.message.chat.id, photo=photo)
-           
-        # Формируем текст вопроса с номером
-        total_questions = len(kapibara[top])
-        question_num = f"Вопрос {j+1} из {total_questions} / Question {j+1} of {total_questions}\n\n"
-        question_text = question_num + k["english"]+"\n" + k.get("chinese",'') +k.get("long",'')
-        await  call.message.answer(question_text,  reply_markup=inline_kb(top,j,showvideo))
+    if top not in kapibara:
+        async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
+            kb = await start_kb(call.from_user.id)
+            await call.message.answer("Тема не найдена. Выберите тему из меню.", reply_markup=kb)
+    elif j >= len(kapibara[top]):
+        async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
+            log(call.from_user, ['end'])
+            kb = await start_kb(call.from_user.id)
+            await call.message.answer('Больше нет вопросов по этой теме. Скоро добавлю новые вопросы.', reply_markup=kb)
+    else:
+        async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
+            k = kapibara[top][j]
+            if 'img' in k:
+                photo_path = os.path.join(DATA_DIR, "images", k['img'])
+                await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
+            total_questions = len(kapibara[top])
+            question_num = f"Вопрос {j+1} из {total_questions} / Question {j+1} of {total_questions}\n\n"
+            question_text = question_num + k["english"] + "\n" + k.get("chinese", '') + k.get("long", '')
+            await call.message.answer(question_text, reply_markup=inline_kb(top, j, showvideo))
     
 
 @router.message(Command("stats"))
@@ -488,6 +506,13 @@ async def main():
     try:
         db_conn = await db.init_db()
         logging.info("База данных инициализирована")
+        
+        # Повторный импорт пользователей из res.txt в БД (при каждом запуске)
+        try:
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(None, migrate_res_to_db.migrate_users_from_res)
+        except Exception as e:
+            logging.warning(f"Импорт из res.txt: {e}")
         
         # Загружаем список пользователей с source='stepik' из БД
         stepik_ids = await db.get_users_by_source(db_conn, 'stepik')

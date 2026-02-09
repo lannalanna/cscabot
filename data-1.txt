@@ -658,7 +658,7 @@
       "D. -1"
     ],
     "answer" : "B",
-    "topic": "algebra",
+    "topic": "Algebraic and geometric mean",
     "subtopic": "geometric mean",
     "type": "oct",
     "number": 12
@@ -673,7 +673,7 @@
       "D. 305"
     ],
     "answer" : "A",
-    "topic": "algebra",
+    "topic": "Algebraic and geometric mean",
     "subtopic": "arithmetic sequence",
     "type": "oct",
     "number": 13
@@ -718,7 +718,7 @@
       "D. 7"
     ],
     "answer" : "A",
-    "topic": "algebra",
+    "topic": "Algebraic and geometric mean",
     "subtopic": "arithmetic sequence",
     "type": "oct",
     "number": 16
