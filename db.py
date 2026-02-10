@@ -301,6 +301,83 @@ async def get_user_stats(conn: aiosqlite.Connection, user_id: int) -> Dict:
     }
 
 
+def _get_subtopic_getter(kapibara: dict):
+    """Возвращает функцию get_subtopic(topic, question_index) для использования в get_user_stats_with_subtopics."""
+    def get_subtopic(topic: str, question_index: int) -> str:
+        if topic not in kapibara:
+            return "general"
+        questions = kapibara[topic]
+        if question_index < 0 or question_index >= len(questions):
+            return "general"
+        return (questions[question_index].get("subtopic") or "").strip() or "general"
+    return get_subtopic
+
+
+async def get_user_stats_with_subtopics(
+    conn: aiosqlite.Connection,
+    user_id: int,
+    get_subtopic,
+) -> Dict:
+    """
+    Статистика пользователя с разбивкой по темам и подтемам.
+    get_subtopic(topic, question_index) -> str — функция, возвращающая подтему вопроса (из данных бота).
+    """
+    cursor = await conn.execute("""
+        SELECT topic, question_index, correct
+        FROM answers
+        WHERE user_id = ?
+        ORDER BY topic, question_index
+    """, (user_id,))
+    rows = await cursor.fetchall()
+
+    # Агрегация по теме и подтеме
+    by_topic_raw = {}  # topic -> { subtopic -> (answered, correct) }
+    total_answered = 0
+    total_correct = 0
+
+    for topic, question_index, correct in rows:
+        sub = get_subtopic(topic, question_index)
+        if topic not in by_topic_raw:
+            by_topic_raw[topic] = {}
+        if sub not in by_topic_raw[topic]:
+            by_topic_raw[topic][sub] = [0, 0]
+        by_topic_raw[topic][sub][0] += 1
+        by_topic_raw[topic][sub][1] += 1 if correct else 0
+        total_answered += 1
+        total_correct += 1 if correct else 0
+
+    by_topic = []
+    for topic in sorted(by_topic_raw.keys()):
+        topic_answered = 0
+        topic_correct = 0
+        subtopics = []
+        for sub in sorted(by_topic_raw[topic].keys()):
+            ans, cor = by_topic_raw[topic][sub]
+            topic_answered += ans
+            topic_correct += cor
+            acc = (cor / ans * 100) if ans > 0 else 0
+            subtopics.append({
+                "subtopic": sub,
+                "answered": ans,
+                "correct": cor,
+                "accuracy": acc,
+            })
+        acc_t = (topic_correct / topic_answered * 100) if topic_answered > 0 else 0
+        by_topic.append({
+            "topic": topic,
+            "answered": topic_answered,
+            "correct": topic_correct,
+            "accuracy": acc_t,
+            "subtopics": subtopics,
+        })
+
+    return {
+        "total_answered": total_answered,
+        "total_correct": total_correct,
+        "by_topic": by_topic,
+    }
+
+
 async def get_users_by_source(conn: aiosqlite.Connection, source: str) -> List[int]:
     """
     Возвращает список ID пользователей с указанным source.

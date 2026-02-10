@@ -756,39 +756,43 @@ async def cmd_start(call: CallbackQuery):
 
 @router.message(Command("stats"))
 async def cmd_stats(message: types.Message):
-    """Команда для просмотра статистики пользователя"""
+    """Команда для просмотра статистики пользователя (с учётом подтем)."""
     if not db_conn:
         await message.answer("Статистика временно недоступна.")
         return
-    
+
     try:
-        stats = await db.get_user_stats(db_conn, message.from_user.id)
-        
-        if stats['total_answered'] == 0:
+        get_subtopic = db._get_subtopic_getter(kapibara)
+        stats = await db.get_user_stats_with_subtopics(db_conn, message.from_user.id, get_subtopic)
+
+        if stats["total_answered"] == 0:
             await message.answer("Вы ещё не ответили ни на один вопрос. Начните с команды /start!")
             return
-        
-        # Формируем сообщение со статистикой
-        lang = message.from_user.language_code or 'en'
-        if lang == 'ru':
-            msg = f"📊 Ваша статистика:\n\n"
+
+        lang = message.from_user.language_code or "en"
+        if lang == "ru":
+            msg = "📊 Ваша статистика:\n\n"
             msg += f"Всего ответов: {stats['total_answered']}\n"
             msg += f"Правильных: {stats['total_correct']}\n"
-            accuracy = (stats['total_correct'] / stats['total_answered'] * 100) if stats['total_answered'] > 0 else 0
-            msg += f"Точность: {accuracy:.1f}%\n\n"
-            msg += "По темам:\n"
-            for topic_stat in stats['by_topic']:
-                msg += f"• {topic_stat['topic']}: {topic_stat['answered']} ответов, {topic_stat['correct']} правильных ({topic_stat['accuracy']:.1f}%)\n"
+            acc = (stats["total_correct"] / stats["total_answered"] * 100) if stats["total_answered"] > 0 else 0
+            msg += f"Точность: {acc:.1f}%\n\n"
+            msg += "По темам и подтемам:\n"
+            for t in stats["by_topic"]:
+                msg += f"• {t['topic']}: {t['answered']} ответов, {t['correct']} правильных ({t['accuracy']:.1f}%)\n"
+                for s in t["subtopics"]:
+                    msg += f"    — {s['subtopic']}: {s['answered']} ответов, {s['correct']} правильных ({s['accuracy']:.1f}%)\n"
         else:
-            msg = f"📊 Your statistics:\n\n"
+            msg = "📊 Your statistics:\n\n"
             msg += f"Total answers: {stats['total_answered']}\n"
             msg += f"Correct: {stats['total_correct']}\n"
-            accuracy = (stats['total_correct'] / stats['total_answered'] * 100) if stats['total_answered'] > 0 else 0
-            msg += f"Accuracy: {accuracy:.1f}%\n\n"
-            msg += "By topics:\n"
-            for topic_stat in stats['by_topic']:
-                msg += f"• {topic_stat['topic']}: {topic_stat['answered']} answers, {topic_stat['correct']} correct ({topic_stat['accuracy']:.1f}%)\n"
-        
+            acc = (stats["total_correct"] / stats["total_answered"] * 100) if stats["total_answered"] > 0 else 0
+            msg += f"Accuracy: {acc:.1f}%\n\n"
+            msg += "By topics and subtopics:\n"
+            for t in stats["by_topic"]:
+                msg += f"• {t['topic']}: {t['answered']} answers, {t['correct']} correct ({t['accuracy']:.1f}%)\n"
+                for s in t["subtopics"]:
+                    msg += f"    — {s['subtopic']}: {s['answered']} answers, {s['correct']} correct ({s['accuracy']:.1f}%)\n"
+
         kb = await start_kb(message.from_user.id)
         await message.answer(msg, reply_markup=kb)
     except Exception as e:
