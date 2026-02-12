@@ -4,6 +4,7 @@ import logging
 import datetime
 import json
 import os
+import random
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
@@ -12,18 +13,62 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.types import Message
 from aiogram.utils.chat_action import ChatActionSender
-import db
-import migrate_res_to_db
-
 
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
-# Базовые пути
+# Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.environ.get("BOT_DATA_DIR", os.path.join(BASE_DIR, "data"))
 
-# Создаём директорию data, если её нет
+
+def detect_data_dir() -> str:
+    """
+    Определяет директорию с данными по наличию файла data.txt.
+    Последовательность проверки:
+    1) Значение переменной окружения BOT_DATA_DIR (если задано и содержит data.txt)
+    2) Абсолютная директория /data/ (если содержит data.txt)
+    3) Локальная директория ./data/ рядом со скриптом (если содержит data.txt)
+    Если файл не найден, возвращает локальную ./data/ и пишет предупреждение.
+    """
+    # 1. Явно заданная через окружение
+    env_dir = os.environ.get("BOT_DATA_DIR")
+    candidates = []
+    if env_dir:
+        candidates.append(env_dir)
+
+    # 2. Абсолютная /data/
+    candidates.append(os.path.join(os.sep, "data"))
+
+    # 3. Локальная ./data/ рядом со скриптом
+    candidates.append(os.path.join(BASE_DIR, "data"))
+
+    for d in candidates:
+        if not d:
+            continue
+        data_txt = os.path.join(d, "data.txt")
+        if os.path.exists(data_txt):
+            return d
+
+    # Файл не найден ни в одной из кандидатов — используем локальную data/
+    fallback = os.path.join(BASE_DIR, "data")
+    logging.warning(
+        "Файл data.txt не найден ни в /data/, ни в локальной data/. "
+        "Используем директорию по умолчанию: %s",
+        fallback,
+    )
+    return fallback
+
+
+DATA_DIR = detect_data_dir()
+
+# Гарантируем, что все модули (db, миграции и т.п.) используют ту же директорию данных
+os.environ["BOT_DATA_DIR"] = DATA_DIR
+
+# Создаём директорию данных, если её нет
 os.makedirs(DATA_DIR, exist_ok=True)
+
+# Импортируем db после установки BOT_DATA_DIR,
+# чтобы он взял корректный путь к базе данных.
+import db
 
 
 topic_links = { 'Algebraic and geometric mean' : 'https://t.me/csca_math_exam/22',
@@ -55,36 +100,45 @@ topics = []
 
 kapibara = {}
 
-# Загружаем вопросы из файлов
-for fname in ['data2', 'data_jan2'] :
-    try:
-        with open(os.path.join(DATA_DIR, fname+'.txt'), 'r', encoding='utf-8') as f:  
-            kpb = json.load(f) 
-        
-        for k in kpb :
-            if 'topic' in k and k['topic'] not in topics : 
-                topics = topics+[k['topic']] 
-        
-        for top in topics : 
-            kapibara[top] = kapibara.get(top,[])+[x for x in kpb if x.get('topic','') == top] 
-        kpb = {}
-    except FileNotFoundError:
-        logging.warning(f"Файл {fname}.txt не найден, пропускаем")
-    except Exception as e:
-        logging.error(f"Ошибка загрузки {fname}.txt: {e}")
-
+# Загружаем вопросы из одного агрегированного файла data.txt
 try:
-    with open(os.path.join(DATA_DIR, 'data_physics.txt'), 'r', encoding='utf-8') as f:  
-        kpb = json.load(f) 
-    
-    if 'physics' not in topics:
-        topics = topics+['physics'] 
-    for top in ['physics'] : 
-        kapibara[top] = [x for x in kpb if x.get('topic','') == top]
+    data_path = os.path.join(DATA_DIR, 'data.txt')
+    with open(data_path, 'r', encoding='utf-8') as f:
+        kpb = json.load(f)
+
+    # Собираем список тем
+    for k in kpb:
+        topic = k.get('topic')
+        if topic and topic not in topics:
+            topics.append(topic)
+
+    # Фиксированный порядок тем в главном меню
+    DESIRED_TOPIC_ORDER = [
+        "sets",
+        "inequalities",
+        "functions",
+        "trigonometry (simple)",
+        "trigonometry",
+        "geometry",
+        "conic curves",
+        "logarithmic functions",
+        "Algebraic and geometric mean",
+        "sequences",
+        "complex numbers",
+        "probability",
+        "physics",
+    ]
+    order_index = {name: i for i, name in enumerate(DESIRED_TOPIC_ORDER)}
+    topics.sort(key=lambda t: (order_index.get(t, len(DESIRED_TOPIC_ORDER)), t))
+
+    # Группируем вопросы по темам
+    for top in topics:
+        kapibara[top] = [x for x in kpb if x.get('topic', '') == top]
+    kpb = {}
 except FileNotFoundError:
-    logging.warning("Файл data_physics.txt не найден, пропускаем")
+    logging.warning("Файл data.txt не найден в директории %s, вопросы не загружены", DATA_DIR)
 except Exception as e:
-    logging.error(f"Ошибка загрузки data_physics.txt: {e}") 
+    logging.error(f"Ошибка загрузки data.txt: {e}")
 
 for top in topics :
    for k in kapibara[top] :
@@ -205,15 +259,19 @@ def subtopic_kb(topic_idx: int) -> InlineKeyboardMarkup:
             callback_data=f'next_{topic}_0'
         )
     )
-    for sub_idx, sub_name in enumerate(subs):
-        count = len(questions_by_topic_subtopic.get((topic, sub_name), []))
-        label = sub_name[0].upper() + sub_name[1:] if sub_name else "General"
-        builder.add(
-            InlineKeyboardButton(
-                text=f"{label} ({count})",
-                callback_data=f's_{topic_idx}_{sub_idx}'
+    # Список подтем показываем только если хотя бы в одной подтеме >= 3 задач
+    sub_counts = [len(questions_by_topic_subtopic.get((topic, sub_name), [])) for sub_name in subs]
+    show_subtopics = sub_counts and max(sub_counts) >= 3
+    if show_subtopics:
+        for sub_idx, sub_name in enumerate(subs):
+            count = sub_counts[sub_idx]
+            label = sub_name[0].upper() + sub_name[1:] if sub_name else "General"
+            builder.add(
+                InlineKeyboardButton(
+                    text=f"{label} ({count})",
+                    callback_data=f's_{topic_idx}_{sub_idx}'
+                )
             )
-        )
     builder.add(
         InlineKeyboardButton(
             text="◀️ Назад / Back",
@@ -236,14 +294,6 @@ def inline_kb(top, j : int, showvideo = 1) -> InlineKeyboardMarkup:
                 callback_data=f'qst_{top}_{j}_{i}'
             )
         )
-    if  showvideo and 'link' in kapibara[top][j] :
-        builder.add(
-            InlineKeyboardButton(
-                text='[...link to the video...]',
-                callback_data=f'explain_{top}_{j}'
-            )
-        )
-   
   #  builder.row(
   #      InlineKeyboardButton(
   #          text='Получить подсказку',
@@ -294,13 +344,6 @@ def inline_kb_sub(topic_idx: int, sub_idx: int, k: int, showvideo: int = 1) -> I
             InlineKeyboardButton(
                 text=opts[i].replace('. ', '.     '),
                 callback_data=f'qst_sub_{topic_idx}_{sub_idx}_{k}_{i}'
-            )
-        )
-    if showvideo and kapibara[topic][j].get('link'):
-        builder.add(
-            InlineKeyboardButton(
-                text='[...link to the video...]',
-                callback_data=f'explain_{topic}_{j}'
             )
         )
     builder.adjust(1)
@@ -386,6 +429,59 @@ async def back_to_start(call: CallbackQuery):
         await call.message.answer("Выберите тему / Choose topic:", reply_markup=kb)
 
 
+@router.callback_query(F.data == "random_any")
+async def random_any_task(call: CallbackQuery):
+    """Показать случайную задачу (кроме темы physics)."""
+    await call.answer()
+    # Собираем все (topic, j), кроме physics
+    candidates = []
+    for top in topics:
+        if top == "physics":
+            continue
+        questions = kapibara.get(top, [])
+        for j in range(len(questions)):
+            candidates.append((top, j))
+    if not candidates:
+        await call.message.answer("Пока нет задач для выбора случайной.")
+        return
+    top, j = random.choice(candidates)
+
+    # Определяем, показывать ли ссылку на видео (логика как в next)
+    showvideo = 1
+    user = call.from_user.username
+    if user in ['evangecalista']:
+        showvideo = 0
+    elif db_conn:
+        try:
+            cursor = await db_conn.execute(
+                "SELECT source FROM users WHERE id = ?",
+                (call.from_user.id,)
+            )
+            row = await cursor.fetchone()
+            if row and row[0] == 'stepik':
+                showvideo = 0
+        except:
+            pass
+
+    k = kapibara[top][j]
+    if k.get('img'):
+        photo_path = os.path.join(DATA_DIR, "images", k['img'])
+        await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
+
+    total_questions = len(kapibara[top])
+    question_num = f"Случайная задача (вопрос {j+1} из {total_questions}) / Random task {j+1} of {total_questions}\n\n"
+    difficulty = k.get("difficulty")
+    if isinstance(difficulty, int) and 1 <= difficulty <= 5:
+        stars = "★" * difficulty + "☆" * (5 - difficulty)
+        diff_line = f"Сложность / Difficulty: {stars}\n"
+    else:
+        diff_line = ""
+    question_text = question_num + diff_line + k["english"] + "\n" + k.get("chinese", '') + k.get("long", '')
+    reply = inline_kb(top, j, showvideo)
+    async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
+        await call.message.answer(question_text, reply_markup=reply)
+
+
 @router.callback_query(F.data.startswith('t_'))
 async def on_topic_selected(call: CallbackQuery):
     """Выбрана тема — показываем список подтем."""
@@ -446,8 +542,13 @@ async def on_subtopic_selected(call: CallbackQuery):
     if k.get('img'):
         photo_path = os.path.join(DATA_DIR, "images", k['img'])
         await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
-    total_in_sub = len(questions_by_topic_subtopic.get((topic, subtopics_by_topic[topic][sub_idx]), []))
-    question_num = f"Вопрос 1 из {total_in_sub} (подтема) / Question 1 of {total_in_sub}\n\n"
+    sub_name = subtopics_by_topic[topic][sub_idx]
+    total_in_sub = len(questions_by_topic_subtopic.get((topic, sub_name), []))
+    # Показываем название выбранной подтемы вместо слова "подтема"
+    question_num = (
+        f"Вопрос 1 из {total_in_sub} ({sub_name}) / "
+        f"Question 1 of {total_in_sub} ({sub_name})\n\n"
+    )
     question_text = question_num + k["english"] + "\n" + k.get("chinese", '') + k.get("long", '')
     reply = inline_kb_sub(topic_idx, sub_idx, 0, showvideo)
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
@@ -475,7 +576,8 @@ async def on_next_sub(call: CallbackQuery):
         kb = await start_kb(call.from_user.id)
         await call.message.answer("Тема не найдена.", reply_markup=kb)
         return
-    sub_name = subtopics_by_topic.get(topic, [])[sub_idx] if sub_idx < len(subtopics_by_topic.get(topic, [])) else None
+    subtopics_for_topic = subtopics_by_topic.get(topic, [])
+    sub_name = subtopics_for_topic[sub_idx] if sub_idx < len(subtopics_for_topic) else None
     j_list = questions_by_topic_subtopic.get((topic, sub_name), []) if sub_name else []
     if k >= len(j_list):
         async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
@@ -501,7 +603,17 @@ async def on_next_sub(call: CallbackQuery):
         photo_path = os.path.join(DATA_DIR, "images", q['img'])
         await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
     total_in_sub = len(j_list)
-    question_num = f"Вопрос {k + 1} из {total_in_sub} / Question {k + 1} of {total_in_sub}\n\n"
+    # В заголовке также показываем имя подтемы
+    if sub_name:
+        question_num = (
+            f"Вопрос {k + 1} из {total_in_sub} ({sub_name}) / "
+            f"Question {k + 1} of {total_in_sub} ({sub_name})\n\n"
+        )
+    else:
+        question_num = (
+            f"Вопрос {k + 1} из {total_in_sub} / "
+            f"Question {k + 1} of {total_in_sub}\n\n"
+        )
     question_text = question_num + q["english"] + "\n" + q.get("chinese", '') + q.get("long", '')
     reply = inline_kb_sub(topic_idx, sub_idx, k, showvideo)
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
@@ -673,19 +785,9 @@ async def cmd_start(call: CallbackQuery):
         await call.answer("Вопрос не найден.")
         return
     log(call.from_user, ['explain', top, j])
-    k = kapibara[top][j]
-
-    builder = InlineKeyboardBuilder()
-    builder.row(
-        InlineKeyboardButton(
-            text='Получить доступ в канал',
-            url='https://t.me/+c1ksuGkuO1BiNDk6'
-        )
-    )
-    builder.adjust(1)
-   
+    # Отключаем показ ссылок на видео, но не ломаем старые callback'и
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
-        await call.message.answer(k.get('link', "ooops, no link here"),reply_markup=builder.as_markup())
+        await call.message.answer("Видео‑разборы временно недоступны.")
         
        
 
@@ -756,14 +858,13 @@ async def cmd_start(call: CallbackQuery):
 
 @router.message(Command("stats"))
 async def cmd_stats(message: types.Message):
-    """Команда для просмотра статистики пользователя (с учётом подтем)."""
+    """Команда для просмотра статистики пользователя"""
     if not db_conn:
         await message.answer("Статистика временно недоступна.")
         return
 
     try:
-        get_subtopic = db._get_subtopic_getter(kapibara)
-        stats = await db.get_user_stats_with_subtopics(db_conn, message.from_user.id, get_subtopic)
+        stats = await db.get_user_stats(db_conn, message.from_user.id)
 
         if stats["total_answered"] == 0:
             await message.answer("Вы ещё не ответили ни на один вопрос. Начните с команды /start!")
@@ -776,22 +877,18 @@ async def cmd_stats(message: types.Message):
             msg += f"Правильных: {stats['total_correct']}\n"
             acc = (stats["total_correct"] / stats["total_answered"] * 100) if stats["total_answered"] > 0 else 0
             msg += f"Точность: {acc:.1f}%\n\n"
-            msg += "По темам и подтемам:\n"
+            msg += "По темам:\n"
             for t in stats["by_topic"]:
                 msg += f"• {t['topic']}: {t['answered']} ответов, {t['correct']} правильных ({t['accuracy']:.1f}%)\n"
-                for s in t["subtopics"]:
-                    msg += f"    — {s['subtopic']}: {s['answered']} ответов, {s['correct']} правильных ({s['accuracy']:.1f}%)\n"
         else:
             msg = "📊 Your statistics:\n\n"
             msg += f"Total answers: {stats['total_answered']}\n"
             msg += f"Correct: {stats['total_correct']}\n"
             acc = (stats["total_correct"] / stats["total_answered"] * 100) if stats["total_answered"] > 0 else 0
             msg += f"Accuracy: {acc:.1f}%\n\n"
-            msg += "By topics and subtopics:\n"
+            msg += "By topics:\n"
             for t in stats["by_topic"]:
                 msg += f"• {t['topic']}: {t['answered']} answers, {t['correct']} correct ({t['accuracy']:.1f}%)\n"
-                for s in t["subtopics"]:
-                    msg += f"    — {s['subtopic']}: {s['answered']} answers, {s['correct']} correct ({s['accuracy']:.1f}%)\n"
 
         kb = await start_kb(message.from_user.id)
         await message.answer(msg, reply_markup=kb)
@@ -799,6 +896,26 @@ async def cmd_stats(message: types.Message):
         logging.error(f"Ошибка получения статистики: {e}")
         await message.answer("Ошибка при получении статистики. Попробуйте позже.")
 
+
+@router.message(Command("clearstats"))
+async def cmd_clear_stats(message: types.Message):
+    """Команда для очистки статистики пользователя."""
+    if not db_conn:
+        await message.answer("Статистика временно недоступна.")
+        return
+
+    try:
+        await db.clear_user_stats(db_conn, message.from_user.id)
+        lang = message.from_user.language_code or "en"
+        if lang == "ru":
+            text = "Ваша статистика была очищена."
+        else:
+            text = "Your statistics have been cleared."
+        kb = await start_kb(message.from_user.id)
+        await message.answer(text, reply_markup=kb)
+    except Exception as e:
+        logging.error(f"Ошибка очистки статистики: {e}")
+        await message.answer("Не удалось очистить статистику. Попробуйте позже.")
 
 @router.message()
 async def cmd_start(message: Message):
@@ -828,13 +945,6 @@ async def main():
         db_conn = await db.init_db()
         logging.info("База данных инициализирована")
         
-        # Повторный импорт пользователей из res.txt в БД (при каждом запуске)
-        try:
-            loop = asyncio.get_event_loop()
-            await loop.run_in_executor(None, migrate_res_to_db.migrate_users_from_res)
-        except Exception as e:
-            logging.warning(f"Импорт из res.txt: {e}")
-        
         # Загружаем список пользователей с source='stepik' из БД
         stepik_ids = await db.get_users_by_source(db_conn, 'stepik')
         stepik.update(str(uid) for uid in stepik_ids)
@@ -844,6 +954,18 @@ async def main():
         db_conn = None
     
     try:
+        # Регистрируем команды бота в меню Telegram
+        try:
+            await bot.set_my_commands(
+                [
+                    types.BotCommand(command="start", description="Начать тренировку"),
+                    types.BotCommand(command="stats", description="Показать мою статистику"),
+                    types.BotCommand(command="clearstats", description="Очистить мою статистику"),
+                ]
+            )
+        except Exception as e:
+            logging.warning(f"Не удалось установить команды бота: {e}")
+
         await dp.start_polling(bot)
     finally:
         # Закрываем соединение с БД при остановке

@@ -10,7 +10,13 @@ from typing import Optional, List, Dict, Tuple
 
 # Путь к базе данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.environ.get("BOT_DB_PATH", os.path.join(BASE_DIR, "data", "bot.db"))
+
+# Приоритет выбора пути к БД:
+# 1) Переменная окружения BOT_DB_PATH (если задана)
+# 2) Директория из BOT_DATA_DIR (если задана) + bot.db
+# 3) Локальная ./data/bot.db рядом с модулем
+_data_dir_from_env = os.environ.get("BOT_DATA_DIR", os.path.join(BASE_DIR, "data"))
+DB_PATH = os.environ.get("BOT_DB_PATH", os.path.join(_data_dir_from_env, "bot.db"))
 
 
 async def init_db() -> aiosqlite.Connection:
@@ -396,3 +402,20 @@ async def get_users_by_source(conn: aiosqlite.Connection, source: str) -> List[i
     
     rows = await cursor.fetchall()
     return [row[0] for row in rows]
+
+
+async def clear_user_stats(conn: aiosqlite.Connection, user_id: int) -> None:
+    """
+    Полностью очищает статистику пользователя:
+    - удаляет все ответы из таблицы answers,
+    - удаляет прогресс по темам из таблицы progress.
+    """
+    await conn.execute(
+        "DELETE FROM answers WHERE user_id = ?",
+        (user_id,),
+    )
+    await conn.execute(
+        "DELETE FROM progress WHERE user_id = ?",
+        (user_id,),
+    )
+    await conn.commit()
