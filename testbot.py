@@ -16,6 +16,8 @@ from aiogram.utils.chat_action import ChatActionSender
 
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
+
+API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -165,6 +167,33 @@ for top in topics:
             questions_by_topic_subtopic[key] = []
         questions_by_topic_subtopic[key].append(j)
 
+# Экзамен 25 января: собираем все задачи с type == "jan" (по полю n, отсортированные)
+EXAM_25JAN_ID = "exam_25jan"
+exam_questions = []  # список кортежей (n, topic, j)
+EXAM_TOTAL_DIFFICULTY = 0
+
+for top in topics:
+    for j, item in enumerate(kapibara.get(top, [])):
+        if (item.get("type") or "").strip().lower() == "jan":
+            n_val = item.get("n") or 0
+            exam_questions.append((n_val, top, j))
+
+# Сортируем по n и считаем суммарную сложность экзамена
+exam_questions.sort(key=lambda x: x[0])
+for _, t_top, t_j in exam_questions:
+    q = kapibara[t_top][t_j]
+    try:
+        diff = int(q.get("difficulty") or 1)
+    except (TypeError, ValueError):
+        diff = 1
+    if diff < 1:
+        diff = 1
+    EXAM_TOTAL_DIFFICULTY += diff
+
+# Состояние экзамена по пользователям:
+# user_id -> {"answered": set(), "correct_count": int, "correct_difficulty": int}
+exam_state = {}
+
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 router = Router()
@@ -235,6 +264,14 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
             InlineKeyboardButton(
                 text=top[0].upper() + top[1:],
                 callback_data=f't_{idx}'
+            )
+        )
+    # В конце списка тем добавляем пункт для экзамена 25 января
+    if exam_questions:
+        builder.add(
+            InlineKeyboardButton(
+                text="Сдать экзамен 25 января",
+                callback_data="exam25_start",
             )
         )
     builder.adjust(1)
@@ -315,6 +352,91 @@ def inline_kb_next(top,j) :
     )
    builder.adjust(1)
    return builder.as_markup()
+
+
+def _get_exam_state(user_id: int):
+   """Возвращает или инициализирует состояние экзамена 25 января для пользователя."""
+   state = exam_state.get(user_id)
+   if state is None:
+       state = {
+           "answered": set(),
+           "correct_count": 0,
+           "correct_difficulty": 0,
+       }
+       exam_state[user_id] = state
+   return state
+
+
+def _find_next_exam_index(state):
+   """Ищет индекс следующего экзаменационного вопроса или None, если все решены."""
+   answered = state.get("answered", set())
+   for idx in range(len(exam_questions)):
+       if idx not in answered:
+           return idx
+   return None
+
+
+def inline_kb_exam(idx: int) -> InlineKeyboardMarkup:
+   """Клавиатура вариантов ответа для режима экзамена 25 января."""
+   builder = InlineKeyboardBuilder()
+   if idx < 0 or idx >= len(exam_questions):
+       builder.adjust(1)
+       return builder.as_markup()
+   _, top, j = exam_questions[idx]
+   q = kapibara[top][j]
+   opts = q["options"]
+   for i, opt in enumerate(opts):
+       builder.add(
+           InlineKeyboardButton(
+               text=opt.replace('. ', '.     '),
+               callback_data=f'exam25_q_{idx}_{i}',
+           )
+       )
+   builder.adjust(1)
+   return builder.as_markup()
+
+
+async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
+   """Отправляет пользователю вопрос экзамена 25 января с номером idx."""
+   if idx < 0 or idx >= len(exam_questions):
+       kb = await start_kb(user_id)
+       await call.message.answer("Экзаменационные задачи закончились.", reply_markup=kb)
+       return
+   _, top, j = exam_questions[idx]
+   q = kapibara[top][j]
+   if q.get("img"):
+       photo_path = os.path.join(DATA_DIR, "images", q["img"])
+       await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
+   total = len(exam_questions)
+   header = f"Экзамен 25 января — вопрос {idx + 1} из {total}\n\n"
+   difficulty = q.get("difficulty")
+   if isinstance(difficulty, int) and 1 <= difficulty <= 5:
+       stars = "★" * difficulty + "☆" * (5 - difficulty)
+       diff_line = f"Сложность / Difficulty: {stars}\n"
+   else:
+       diff_line = ""
+   question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
+   reply = inline_kb_exam(idx)
+   async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+       await call.message.answer(question_text, reply_markup=reply)
+
+
+async def _send_exam_summary(call: CallbackQuery, user_id: int):
+   """Показывает пользователю итоговую статистику экзамена 25 января."""
+   state = _get_exam_state(user_id)
+   correct = state.get("correct_count", 0)
+   total_q = len(exam_questions)
+   if EXAM_TOTAL_DIFFICULTY:
+       k = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY
+   else:
+       k = 0.0
+   kb = await start_kb(user_id)
+   msg = (
+       f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов.\n"
+       "Спасибо! Вы можете продолжить тренироваться по обычным темам."
+   )
+   async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+       await call.message.answer(msg, reply_markup=kb)
 
 
 def _get_subtopic_j(topic_idx: int, sub_idx: int, k: int):
@@ -427,6 +549,105 @@ async def back_to_start(call: CallbackQuery):
     kb = await start_kb(call.from_user.id)
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
         await call.message.answer("Выберите тему / Choose topic:", reply_markup=kb)
+
+
+@router.callback_query(F.data == "exam25_start")
+async def on_exam25_start(call: CallbackQuery):
+    """Начало экзамена 25 января."""
+    await call.answer()
+    user_id = call.from_user.id
+    if not exam_questions:
+        kb = await start_kb(user_id)
+        await call.message.answer("Пока нет задач для экзамена 25 января.", reply_markup=kb)
+        return
+    state = _get_exam_state(user_id)
+    next_idx = _find_next_exam_index(state)
+    if next_idx is None:
+        # Все задачи уже пройдены — показываем только итоговую статистику
+        await _send_exam_summary(call, user_id)
+        return
+    # Короткое вступление перед первым вопросом
+    if not state.get("answered"):
+        async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+            await call.message.answer(
+                "Режим «Сдать экзамен 25 января».\n"
+                "Всего 48 задач. Второй раз решить одну и ту же задачу нельзя."
+            )
+    await _send_exam_question(call, user_id, next_idx)
+
+
+@router.callback_query(F.data.startswith("exam25_q_"))
+async def on_exam25_answer(call: CallbackQuery):
+    """Обработка ответа в режиме экзамена 25 января."""
+    correct_h = {'A': '0', 'B': '1', 'C': '2', 'D': '3', 'E': '4'}
+    await call.answer()
+    data = call.data.split("_")
+    # Ожидаемый формат: exam25_q_{idx}_{ans_id}
+    if len(data) < 4:
+        await call.message.answer("Ошибка формата ответа экзамена.")
+        return
+    try:
+        idx = int(data[2])
+        ans_id = data[3]
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата ответа экзамена.")
+        return
+    user_id = call.from_user.id
+    if idx < 0 or idx >= len(exam_questions):
+        await call.message.answer("Экзаменационный вопрос не найден.")
+        return
+    state = _get_exam_state(user_id)
+    if idx in state["answered"]:
+        await call.message.answer("Вы уже решили эту задачу.")
+        return
+    _, top, j = exam_questions[idx]
+    q = kapibara[top][j]
+    correct = correct_h.get(q["answer"], "")
+    try:
+        ans_id_int = int(ans_id)
+    except ValueError:
+        await call.message.answer("Ошибка формата ответа экзамена.")
+        return
+    ansok = 1 if correct == ans_id else 0
+
+    # Обновляем состояние экзамена
+    state["answered"].add(idx)
+    if ansok:
+        state["correct_count"] = state.get("correct_count", 0) + 1
+        try:
+            diff = int(q.get("difficulty") or 1)
+        except (TypeError, ValueError):
+            diff = 1
+        if diff < 1:
+            diff = 1
+        state["correct_difficulty"] = state.get("correct_difficulty", 0) + diff
+
+    # Сохраняем ответ в БД как отдельную "тему" экзамена
+    if db_conn:
+        try:
+            await db.save_answer(
+                db_conn,
+                user_id,
+                EXAM_25JAN_ID,
+                idx,
+                ans_id_int,
+                ansok == 1,
+            )
+        except Exception as e:
+            logging.error(f"Ошибка сохранения ответа экзамена: {e}")
+
+    # Пишем лог в файл res.txt
+    log(call.from_user, [EXAM_25JAN_ID, idx, ans_id, ansok])
+
+    # Сообщаем результат и сразу переходим к следующей задаче (или подводим итог)
+    result_msg = "Правильно!" if ansok else "Неправильно."
+    next_idx = _find_next_exam_index(state)
+    if next_idx is None:
+        await call.message.answer(result_msg)
+        await _send_exam_summary(call, user_id)
+    else:
+        await call.message.answer(result_msg)
+        await _send_exam_question(call, user_id, next_idx)
 
 
 @router.callback_query(F.data == "random_any")
@@ -927,12 +1148,12 @@ async def cmd_start(message: Message):
         question_text = "Выберите тему для начала."
     
     log(message.from_user,['message', message.text.replace("\n"," ") if message.text else "" ])
-    async with ChatActionSender(bot=bot, chat_id=message.chat.id, action="typing"):
-      await message.answer( "Спасибо! Передам сообщение разработчикам")
-      await message.answer( "Чтобы продолжить, ответь на любой предыдущий вопрос")
-      await message.answer( "Или начни сначала")
-      kb = await start_kb(message.from_user.id)
-      await message.answer( question_text, reply_markup=kb)
+   # async with ChatActionSender(bot=bot, chat_id=message.chat.id, action="typing"):
+   #  await message.answer( "Спасибо! Передам сообщение разработчикам")
+   #   await message.answer( "Чтобы продолжить, ответь на любой предыдущий вопрос")
+   #   await message.answer( "Или начни сначала")
+   #   kb = await start_kb(message.from_user.id)
+   #   await message.answer( question_text, reply_markup=kb)
 
 
 

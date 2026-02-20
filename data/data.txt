@@ -270,6 +270,51 @@
         "difficulty": 3
     },
     {
+        "chinese": "圆心在 (4, -1)，半径为 5 的圆的方程是",
+        "english": "The equation of the circle with center (4, -1) and radius 5 is",
+        "options": [
+            "A. (x - 4)² + (y + 1)² = 5",
+            "B. (x + 4)² + (y - 1)² = 25",
+            "C. (x - 4)² + (y + 1)² = 25",
+            "D. (x + 4)² + (y - 1)² = 5"
+        ],
+        "answer": "C",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "circle",
+        "difficulty": 3
+    },
+    {
+        "chinese": "设圆的方程为 x² + y² - 6x + 4y - 3 = 0，则该圆的圆心和半径分别为",
+        "english": "Given the equation of the circle x² + y² - 6x + 4y - 3 = 0, the center and radius are",
+        "options": [
+            "A. (3, -2) 和 4",
+            "B. (-3, 2) 和 4",
+            "C. (3, -2) 和 2",
+            "D. (-3, 2) 和 2"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "circle",
+        "difficulty": 3
+    },
+    {
+        "chinese": "若点 A(0, 0) 和 B(4, 6) 是某圆的直径的两个端点，则该圆的圆心是",
+        "english": "If A(0, 0) and B(4, 6) are endpoints of a diameter of a circle, then the center of the circle is",
+        "options": [
+            "A. (2, 3)",
+            "B. (4, 6)",
+            "C. (0, 0)",
+            "D. (2, 6)"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "circle",
+        "difficulty": 3
+    },
+    {
         "chinese": "假设椭圆 x²/4 + y²/2 = 1 的焦点是 F₁, F₂，并且点 P 在椭圆上。那么 |PF₁| + |PF₂| = ( )。",
         "english": "Suppose that the foci of the ellipse x²/4 + y²/2 = 1 are F₁, F₂, and the point P is on the ellipse. Then |PF₁| + |PF₂| = ( ).",
         "options": [
@@ -316,6 +361,156 @@
         "type": "dec",
         "link": "https://t.me/c/3305923058/245",
         "n": 43,
+        "difficulty": 5
+    },
+    {
+        "chinese": "椭圆 x²/9 + y²/4 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the ellipse x²/9 + y²/4 = 1 are",
+        "options": [
+            "A. (±√5, 0)",
+            "B. (0, ±√5)",
+            "C. (±3, 0)",
+            "D. (0, ±3)"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 5
+    },
+    {
+        "chinese": "椭圆 x²/16 + y²/9 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the ellipse x²/16 + y²/9 = 1 are",
+        "options": [
+            "A. (±√7, 0)",
+            "B. (0, ±√7)",
+            "C. (±4, 0)",
+            "D. (0, ±4)"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 5
+    },
+    {
+        "chinese": "椭圆 x²/5 + y²/9 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the ellipse x²/5 + y²/9 = 1 are",
+        "options": [
+            "A. (±2, 0)",
+            "B. (0, ±2)",
+            "C. (±√5, 0)",
+            "D. (0, ±√5)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 5
+    },
+    {
+        "chinese": "假设椭圆 x²/9 + y²/4 = 1 的焦点是 F₁, F₂，并且点 P 在椭圆上。那么 |PF₁| + |PF₂| =",
+        "english": "Suppose that the foci of the ellipse x²/9 + y²/4 = 1 are F₁, F₂, and the point P is on the ellipse. Then |PF₁| + |PF₂| =",
+        "options": [
+            "A. 4",
+            "B. 6",
+            "C. 8",
+            "D. 10"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 5
+    },
+    {
+        "chinese": "椭圆 x²/25 + y²/16 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the ellipse x²/25 + y²/16 = 1 are",
+        "options": [
+            "A. (±3, 0)",
+            "B. (0, ±3)",
+            "C. (±5, 0)",
+            "D. (0, ±5)"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 5
+    },
+    {
+        "chinese": "椭圆 x²/6 + y²/10 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the ellipse x²/6 + y²/10 = 1 are",
+        "options": [
+            "A. (±2, 0)",
+            "B. (0, ±2)",
+            "C. (±√6, 0)",
+            "D. (0, ±√6)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 5
+    },
+    {
+        "chinese": "椭圆 x²/12 + y²/8 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the ellipse x²/12 + y²/8 = 1 are",
+        "options": [
+            "A. (±2, 0)",
+            "B. (0, ±2)",
+            "C. (±√12, 0)",
+            "D. (0, ±√12)"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 5
+    },
+    {
+        "chinese": "假设椭圆 x²/16 + y²/9 = 1 的焦点是 F₁, F₂，并且点 P 在椭圆上。那么 |PF₁| + |PF₂| =",
+        "english": "Suppose that the foci of the ellipse x²/16 + y²/9 = 1 are F₁, F₂, and the point P is on the ellipse. Then |PF₁| + |PF₂| =",
+        "options": [
+            "A. 6",
+            "B. 8",
+            "C. 10",
+            "D. 12"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 5
+    },
+    {
+        "chinese": "椭圆 x²/7 + y²/11 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the ellipse x²/7 + y²/11 = 1 are",
+        "options": [
+            "A. (±2, 0)",
+            "B. (0, ±2)",
+            "C. (±√7, 0)",
+            "D. (0, ±√7)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 5
+    },
+    {
+        "chinese": "椭圆 x²/20 + y²/15 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the ellipse x²/20 + y²/15 = 1 are",
+        "options": [
+            "A. (±√5, 0)",
+            "B. (0, ±√5)",
+            "C. (±5, 0)",
+            "D. (0, ±5)"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
         "difficulty": 5
     },
     {
@@ -447,6 +642,156 @@
         "topic": "conic curves",
         "type": "jan",
         "n": 42,
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "抛物线 y² = 8x 的焦点坐标是",
+        "english": "The coordinates of the focus of the parabola y² = 8x are",
+        "options": [
+            "A. (0, 2)",
+            "B. (2, 0)",
+            "C. (4, 0)",
+            "D. (0, 4)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "抛物线 y² = 8x 的准线方程是",
+        "english": "The equation of the directrix of the parabola y² = 8x is",
+        "options": [
+            "A. x = 2",
+            "B. x = -2",
+            "C. x = 4",
+            "D. x = -4"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "抛物线 y² = 12x 的焦点坐标是",
+        "english": "The coordinates of the focus of the parabola y² = 12x are",
+        "options": [
+            "A. (3, 0)",
+            "B. (0, 3)",
+            "C. (6, 0)",
+            "D. (0, 6)"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "顶点在原点，焦点为 F(2, 0) 的抛物线的标准方程为",
+        "english": "The standard equation of the parabola with vertex at origin and focus F(2, 0) is",
+        "options": [
+            "A. y² = 4x",
+            "B. y² = 8x",
+            "C. y² = 2x",
+            "D. y² = 16x"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "抛物线 y² = -4x 的焦点坐标是",
+        "english": "The coordinates of the focus of the parabola y² = -4x are",
+        "options": [
+            "A. (1, 0)",
+            "B. (-1, 0)",
+            "C. (0, 1)",
+            "D. (0, -1)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "抛物线 y² = -4x 的准线方程是",
+        "english": "The equation of the directrix of the parabola y² = -4x is",
+        "options": [
+            "A. x = 1",
+            "B. x = -1",
+            "C. x = 1/2",
+            "D. x = -1/2"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "设抛物线 y² = 4x 的焦点为 F。若抛物线上的点 P 的横坐标是 8，则 |PF| =",
+        "english": "Let the focus of the parabola y² = 4x be F. If a point P on the parabola has x-coordinate 8, then |PF| =",
+        "options": [
+            "A. 8",
+            "B. 9",
+            "C. 10",
+            "D. 7"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "抛物线 y² = 6x 的焦点坐标是",
+        "english": "The coordinates of the focus of the parabola y² = 6x are",
+        "options": [
+            "A. (3, 0)",
+            "B. (3/2, 0)",
+            "C. (6, 0)",
+            "D. (0, 3/2)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "顶点在原点，焦点为 F(0, 1) 的抛物线的标准方程为",
+        "english": "The standard equation of the parabola with vertex at origin and focus F(0, 1) is",
+        "options": [
+            "A. y² = 4x",
+            "B. x² = 4y",
+            "C. y² = 2x",
+            "D. x² = 2y"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "parabola",
+        "difficulty": 4
+    },
+    {
+        "chinese": "抛物线 x² = 4y 的焦点坐标是",
+        "english": "The coordinates of the focus of the parabola x² = 4y are",
+        "options": [
+            "A. (1, 0)",
+            "B. (0, 1)",
+            "C. (2, 0)",
+            "D. (0, 2)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
         "subtopic": "parabola",
         "difficulty": 4
     },
@@ -729,6 +1074,44 @@
         "subtopic": "functions properties",
         "difficulty": 2
     },
+
+
+     {
+        "chinese": "log₂32 =",
+        "english": "",
+        "options": [
+            "A. 3",
+            "B. 4",
+            "C. 5",
+            "D. 6"
+        ],
+        "answer": "C",
+        "topic": "logarithmic functions",
+        "subtopic": "logarithms",
+        
+        "link": "https://t.me/c/3305923058/169",
+        "n": 28,
+        "difficulty": 2
+    },
+    {
+        "chinese": "log₂(1/4) =",
+        "english": "",
+        "options": [
+            "A. 3",
+            "B. -3",
+            "C. 2",
+            "D. -2"
+        ],
+        "answer": "D",
+        "topic": "logarithmic functions",
+        "subtopic": "logarithms",
+        
+        "link": "https://t.me/c/3305923058/169",
+        "n": 28,
+        "difficulty": 2
+    },
+
+
     {
         "chinese": "关于对数函数 y = logₐx，下面说法正确的是",
         "english": "Which of the following statements about the logarithmic function y = logₐx is correct?",
@@ -739,11 +1122,11 @@
             "D. 当 0 < a < 1 时，在定义域上是一个单调递减函数 / When 0<a<1, it is a monotonically decreasing function over its domain"
         ],
         "answer": "D",
-        "topic": "functions",
+        "topic": "logarithmic functions",
+        "subtopic": "logarithms",
         "link": "https://t.me/c/3305923058/151",
         "type": "dec",
         "n": 42,
-        "subtopic": "functions properties",
         "difficulty": 2
     },
     {
@@ -932,7 +1315,7 @@
             "C. 2/3",
             "D. -2/3"
         ],
-        "answer": "A",
+        "answer": "C",
         "topic": "geometry",
         "subtopic": "analytic geometry",
         "type": "oct",
@@ -1218,8 +1601,8 @@
         "options": [
             "A. (±5, 0)",
             "B. (0, ±5)",
-            "C. (±√5, 0)",
-            "D. (0, ±√5)"
+            "C. (±√13, 0)",
+            "D. (0, ±√13)"
         ],
         "answer": "C",
         "topic": "conic curves",
@@ -1237,7 +1620,7 @@
             "C. 2√(a² + b²)",
             "D. 2√(a² - b²)"
         ],
-        "answer": "D",
+        "answer": "С",
         "topic": "conic curves",
         "subtopic": "hyperbola",
         "type": "extra",
@@ -1258,6 +1641,156 @@
         "subtopic": "hyperbola",
         "type": "extra",
         "n": 29,
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/25 - y²/9 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the hyperbola x²/25 - y²/9 = 1 are",
+        "options": [
+            "A. (±√34, 0)",
+            "B. (0, ±√34)",
+            "C. (±5, 0)",
+            "D. (0, ±5)"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/4 - y²/12 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the hyperbola x²/4 - y²/12 = 1 are",
+        "options": [
+            "A. (±2, 0)",
+            "B. (±4, 0)",
+            "C. (0, ±4)",
+            "D. (0, ±2)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/9 - y²/16 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the hyperbola x²/9 - y²/16 = 1 are",
+        "options": [
+            "A. (±3, 0)",
+            "B. (±5, 0)",
+            "C. (0, ±5)",
+            "D. (0, ±3)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/4 - y²/5 = 1 的离心率是",
+        "english": "The eccentricity of the hyperbola x²/4 - y²/5 = 1 is",
+        "options": [
+            "A. 2/3",
+            "B. 3/2",
+            "C. √5/2",
+            "D. 2/√5"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/25 - y²/24 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the hyperbola x²/25 - y²/24 = 1 are",
+        "options": [
+            "A. (±5, 0)",
+            "B. (±7, 0)",
+            "C. (0, ±7)",
+            "D. (0, ±5)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/6 - y²/3 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the hyperbola x²/6 - y²/3 = 1 are",
+        "options": [
+            "A. (±√6, 0)",
+            "B. (±3, 0)",
+            "C. (0, ±3)",
+            "D. (±√3, 0)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/11 - y²/5 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the hyperbola x²/11 - y²/5 = 1 are",
+        "options": [
+            "A. (±√11, 0)",
+            "B. (±4, 0)",
+            "C. (0, ±4)",
+            "D. (±√5, 0)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/20 - y²/5 = 1 的离心率是",
+        "english": "The eccentricity of the hyperbola x²/20 - y²/5 = 1 is",
+        "options": [
+            "A. 2/5",
+            "B. 5/2",
+            "C. √5/2",
+            "D. 2/√5"
+        ],
+        "answer": "C",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/5 - y²/4 = 1 的焦点坐标是",
+        "english": "The coordinates of the foci of the hyperbola x²/5 - y²/4 = 1 are",
+        "options": [
+            "A. (±2, 0)",
+            "B. (±3, 0)",
+            "C. (0, ±3)",
+            "D. (±√5, 0)"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/3 - y²/6 = 1 的离心率是",
+        "english": "The eccentricity of the hyperbola x²/3 - y²/6 = 1 is",
+        "options": [
+            "A. √3",
+            "B. √2",
+            "C. 2",
+            "D. 1/√3"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
         "difficulty": 5
     },
     {
@@ -1485,21 +2018,6 @@
         "link": "https://t.me/c/3305923058/309",
         "topic": "inequalities",
         "subtopic": "absolute value",
-        "difficulty": 3
-    },
-    {
-        "chinese": "不等式 |x+1|≥|x-1| 的解集为",
-        "english": "The solution set of |x+1|≥|x-1| is",
-        "options": [
-            "A. (-∞, 0)",
-            "B. (-∞, 0]",
-            "C. [0, +∞)",
-            "D. ℝ"
-        ],
-        "answer": "C",
-        "topic": "inequalities",
-        "subtopic": "absolute value",
-        "type": "extra",
         "difficulty": 3
     },
     {
@@ -1962,7 +2480,7 @@
         "chinese": "分式不等式 (x+4)/(2x-1) ≥ 0 的解集为",
         "english": "The solution set of the rational inequality (x+4)/(2x-1) ≥ 0 is",
         "options": [
-            "A. (-∞, -4] ∪ [1/2, +∞)",
+            "A. (-∞, -4] ∪ (1/2, +∞)",
             "B. (-4, 1/2)",
             "C. (-∞, -4) ∪ (1/2, +∞)",
             "D. [-4, 1/2]"
@@ -3457,6 +3975,81 @@
         "difficulty": 3
     },
     {
+        "chinese": "若 cos α = 2/3，则 cos 2α =",
+        "english": "If cos α = 2/3, then cos 2α =",
+        "options": [
+            "A. 1/9",
+            "B. -1/9",
+            "C. 4/9",
+            "D. -7/9"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "double angle formula",
+        "difficulty": 3
+    },
+    {
+        "chinese": "如果 sin α = 4/5，并且 α 属于第一象限，那么 cos 2α =",
+        "english": "If sin α = 4/5 and α is in the first quadrant, then cos 2α =",
+        "options": [
+            "A. 7/25",
+            "B. -7/25",
+            "C. 24/25",
+            "D. -24/25"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "double angle formula",
+        "difficulty": 3
+    },
+    {
+        "chinese": "若 sin α = 1/3，则 cos 2α =",
+        "english": "If sin α = 1/3, then cos 2α =",
+        "options": [
+            "A. -7/9",
+            "B. 7/9",
+            "C. 1/9",
+            "D. -1/9"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "double angle formula",
+        "difficulty": 3
+    },
+    {
+        "chinese": "已知 cos α = 4/5，且 α 为锐角，则 sin 2α =",
+        "english": "Given cos α = 4/5 and α is an acute angle, then sin 2α =",
+        "options": [
+            "A. 12/25",
+            "B. 24/25",
+            "C. 8/25",
+            "D. 6/25"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "double angle formula",
+        "difficulty": 3
+    },
+    {
+        "chinese": "若 cos α = -1/2，则 cos 2α =",
+        "english": "If cos α = -1/2, then cos 2α =",
+        "options": [
+            "A. 1/2",
+            "B. -1/2",
+            "C. 1",
+            "D. -1"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "double angle formula",
+        "difficulty": 3
+    },
+    {
         "chinese": "设 sin α = -12/13，并且 α ∈ (π, 3π/2)。那么 cos(α/2) = ( )。",
         "english": "Let sin α = -12/13, and α ∈ (π, 3π/2). Then cos(α/2) = ( ).",
         "options": [
@@ -3524,8 +4117,8 @@
         "chinese": "已知 sin α = 1/2，且 α ∈ (0, π/2)，则 sin(α/2) =",
         "english": "Given sin α = 1/2 and α ∈ (0, π/2), then sin(α/2) =",
         "options": [
-            "A. √2/2",
-            "B. 1/2",
+            "A. √(2-√3)/2",
+            "B. √(2+√3)/2",
             "C. √3/2",
             "D. 1/√2"
         ],
@@ -3541,9 +4134,9 @@
         "english": "Given cos α = √2/2 and α ∈ (0, π/2), then sin(α/2) =",
         "options": [
             "A. √2/2",
-            "B. 1/2",
+            "B. √(2-√2)/2",
             "C. √3/2",
-            "D. 1/√2"
+            "D. √(2-√3)/2"
         ],
         "answer": "B",
         "topic": "trigonometry",
@@ -3561,7 +4154,7 @@
             "C. √2/2",
             "D. 1/√2"
         ],
-        "answer": "C",
+        "answer": "A",
         "topic": "trigonometry",
         "subtopic": "half-angle formula",
         "type": "extra",
@@ -3573,8 +4166,8 @@
         "english": "Given tan α = 1 and α ∈ (0, π/2), then sin(α/2) =",
         "options": [
             "A. √2/2",
-            "B. (√2-1)/√2",
-            "C. (√2+1)/√2",
+            "B. √(2-√2)/2",
+            "C. √(√2+2)/2",
             "D. 1/2"
         ],
         "answer": "B",
@@ -3582,6 +4175,66 @@
         "subtopic": "half-angle formula",
         "type": "extra",
         "n": 305,
+        "difficulty": 3
+    },
+    {
+        "chinese": "已知 cos α = 3/5，且 α ∈ (0, π/2)，则 cos(α/2) =",
+        "english": "Given cos α = 3/5 and α ∈ (0, π/2), then cos(α/2) =",
+        "options": [
+            "A. √5/5",
+            "B. 2√5/5",
+            "C. 3/5",
+            "D. 4/5"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "half-angle formula",
+        "difficulty": 3
+    },
+    {
+        "chinese": "已知 cos α = 0，且 α ∈ (0, π)，则 sin(α/2) =",
+        "english": "Given cos α = 0 and α ∈ (0, π), then sin(α/2) =",
+        "options": [
+            "A. 0",
+            "B. 1/2",
+            "C. √2/2",
+            "D. 1"
+        ],
+        "answer": "C",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "half-angle formula",
+        "difficulty": 3
+    },
+    {
+        "chinese": "已知 cos α = -1/3，α ∈ (π/2, π)，则 cos(α/2) =",
+        "english": "Given cos α = -1/3, α ∈ (π/2, π), then cos(α/2) =",
+        "options": [
+            "A. √3/3",
+            "B. -√3/3",
+            "C. √6/3",
+            "D. 2/3"
+        ],
+        "answer": "A",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "half-angle formula",
+        "difficulty": 3
+    },
+    {
+        "chinese": "已知 sin α = 3/5，且 α ∈ (0, π/2)，则 cos(α/2) =",
+        "english": "Given sin α = 3/5 and α ∈ (0, π/2), then cos(α/2) =",
+        "options": [
+            "A. 2√5/5",
+            "B. 3√10/10",
+            "C. √5/5",
+            "D. 1/2"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "half-angle formula",
         "difficulty": 3
     },
     {
@@ -3597,7 +4250,7 @@
         "answer": "D",
         "topic": "trigonometry",
         "type": "choice",
-        "subtopic": "properties",
+        "subtopic": "terminal side through point",
         "difficulty": 1
     },
     {
@@ -3611,7 +4264,7 @@
         ],
         "answer": "A",
         "topic": "trigonometry",
-        "subtopic": "properties",
+        "subtopic": "terminal side through point",
         "link": "https://t.me/c/3305923058/146",
         "type": "oct",
         "n": 15,
@@ -3630,8 +4283,128 @@
         "topic": "trigonometry",
         "type": "jan",
         "n": 15,
-        "subtopic": "properties",
+        "subtopic": "terminal side through point",
         "difficulty": 2
+    },
+    {
+        "chinese": "若角 α 的终边经过点 (3, 4)，则 sin α =",
+        "english": "If the terminal side of angle α passes through point (3, 4), then sin α =",
+        "options": [
+            "A. 3/5",
+            "B. 4/5",
+            "C. 3/4",
+            "D. 4/3"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "terminal side through point",
+        "difficulty": 1
+    },
+    {
+        "chinese": "已知角 α 的终边经过点 (-3, 4)，则 cos α =",
+        "english": "Given that the terminal side of angle α passes through point (-3, 4), then cos α =",
+        "options": [
+            "A. 3/5",
+            "B. -3/5",
+            "C. 4/5",
+            "D. -4/5"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "terminal side through point",
+        "difficulty": 1
+    },
+    {
+        "chinese": "若角 α 的终边经过点 (1, 1)，则 cos α =",
+        "english": "If the terminal side of angle α passes through point (1, 1), then cos α =",
+        "options": [
+            "A. 1/2",
+            "B. √2/2",
+            "C. 1",
+            "D. √2"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "terminal side through point",
+        "difficulty": 1
+    },
+    {
+        "chinese": "已知角 α 的终边经过点 (-1, √3)，则 sin α =",
+        "english": "Given that the terminal side of angle α passes through point (-1, √3), then sin α =",
+        "options": [
+            "A. -1/2",
+            "B. √3/2",
+            "C. -√3/2",
+            "D. 1/2"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "terminal side through point",
+        "difficulty": 2
+    },
+    {
+        "chinese": "若角 α 的终边经过点 (4, -3)，则 cos α =",
+        "english": "If the terminal side of angle α passes through point (4, -3), then cos α =",
+        "options": [
+            "A. -3/5",
+            "B. 3/5",
+            "C. 4/5",
+            "D. -4/5"
+        ],
+        "answer": "C",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "terminal side through point",
+        "difficulty": 1
+    },
+    {
+        "chinese": "已知角 α 的终边经过点 (-4, -3)，则 tan α =",
+        "english": "Given that the terminal side of angle α passes through point (-4, -3), then tan α =",
+        "options": [
+            "A. -3/4",
+            "B. 3/4",
+            "C. -4/3",
+            "D. 4/3"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "terminal side through point",
+        "difficulty": 1
+    },
+    {
+        "chinese": "若角 α 的终边经过点 (√3, 1)，则 tan α =",
+        "english": "If the terminal side of angle α passes through point (√3, 1), then tan α =",
+        "options": [
+            "A. √3",
+            "B. 1/√3",
+            "C. √3/3",
+            "D. 1"
+        ],
+        "answer": "C",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "terminal side through point",
+        "difficulty": 2
+    },
+    {
+        "chinese": "已知角 α 的终边经过点 (6, 8)，则 sin α =",
+        "english": "Given that the terminal side of angle α passes through point (6, 8), then sin α =",
+        "options": [
+            "A. 3/5",
+            "B. 4/5",
+            "C. 3/4",
+            "D. 6/8"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "terminal side through point",
+        "difficulty": 1
     },
     {
         "chinese": "关于余弦函数 y = cos x，以下结论中正确的是",
@@ -3746,6 +4519,51 @@
         "subtopic": "trigonometric expressions",
         "type": "oct",
         "n": 36,
+        "difficulty": 3
+    },
+    {
+        "chinese": "若 tan α = 3，则 (2 sin α + cos α)/(sin α - 2 cos α) =",
+        "english": "If tan α = 3, then (2 sin α + cos α)/(sin α - 2 cos α) =",
+        "options": [
+            "A. 7",
+            "B. -7",
+            "C. 7/5",
+            "D. -7/5"
+        ],
+        "answer": "A",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "trigonometric expressions",
+        "difficulty": 3
+    },
+    {
+        "chinese": "已知 sin α = 4/5，且 α ∈ (0, π/2)，则 (sin α + 2 cos α)/(3 sin α - cos α) =",
+        "english": "Given sin α = 4/5, and α ∈ (0, π/2), then (sin α + 2 cos α)/(3 sin α - cos α) =",
+        "options": [
+            "A. 10/9",
+            "B. 9/10",
+            "C. 2/3",
+            "D. 3/2"
+        ],
+        "answer": "A",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "trigonometric expressions",
+        "difficulty": 3
+    },
+    {
+        "chinese": "已知 cos α = 3/5，且 α ∈ (0, π/2)，则 (4 sin α - 3 cos α)/(2 sin α + cos α) =",
+        "english": "Given cos α = 3/5, and α ∈ (0, π/2), then (4 sin α - 3 cos α)/(2 sin α + cos α) =",
+        "options": [
+            "A. 7/11",
+            "B. 11/7",
+            "C. 1/2",
+            "D. 2/3"
+        ],
+        "answer": "A",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "trigonometric expressions",
         "difficulty": 3
     },
     {
@@ -3888,8 +4706,8 @@
             "D. -1"
         ],
         "answer": "C",
-        "topic": "geometry",
-        "subtopic": "coordinate geometry",
+        "topic": "trigonometry",
+        "subtopic": "terminal side through point",
         "difficulty": 3
     },
     {
