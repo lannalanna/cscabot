@@ -354,15 +354,44 @@ def inline_kb_next(top,j) :
    return builder.as_markup()
 
 
-def _get_exam_state(user_id: int):
-   """Возвращает или инициализирует состояние экзамена 25 января для пользователя."""
+async def _get_exam_state(user_id: int):
+   """Возвращает или инициализирует состояние экзамена 25 января для пользователя.
+   При первом обращении загружает данные из БД."""
    state = exam_state.get(user_id)
    if state is None:
+       # Инициализируем пустое состояние
        state = {
            "answered": set(),
            "correct_count": 0,
            "correct_difficulty": 0,
        }
+       # Загружаем из БД, если есть соединение
+       if db_conn:
+           try:
+               exam_answers = await db.get_exam_answers(db_conn, user_id, EXAM_25JAN_ID)
+               answered_set = set()
+               correct_count = 0
+               correct_difficulty = 0
+               for idx, answer_data in exam_answers.items():
+                   answered_set.add(idx)
+                   if answer_data["correct"]:
+                       correct_count += 1
+                       # Находим задачу и её сложность
+                       if 0 <= idx < len(exam_questions):
+                           _, top, j = exam_questions[idx]
+                           q = kapibara[top][j]
+                           try:
+                               diff = int(q.get("difficulty") or 1)
+                           except (TypeError, ValueError):
+                               diff = 1
+                           if diff < 1:
+                               diff = 1
+                           correct_difficulty += diff
+               state["answered"] = answered_set
+               state["correct_count"] = correct_count
+               state["correct_difficulty"] = correct_difficulty
+           except Exception as e:
+               logging.error(f"Ошибка загрузки состояния экзамена из БД: {e}")
        exam_state[user_id] = state
    return state
 
@@ -426,7 +455,7 @@ async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
 
 async def _send_exam_summary(call: CallbackQuery, user_id: int):
    """Показывает пользователю итоговую статистику экзамена 25 января."""
-   state = _get_exam_state(user_id)
+   state = await _get_exam_state(user_id)
    correct = state.get("correct_count", 0)
    total_q = len(exam_questions)
    if EXAM_TOTAL_DIFFICULTY:
@@ -567,7 +596,7 @@ async def on_exam25_start(call: CallbackQuery):
         kb = await start_kb(user_id)
         await call.message.answer("Пока нет задач для экзамена 25 января.", reply_markup=kb)
         return
-    state = _get_exam_state(user_id)
+    state = await _get_exam_state(user_id)
     next_idx = _find_next_exam_index(state)
     if next_idx is None:
         # Все задачи уже пройдены — показываем только итоговую статистику
@@ -605,7 +634,7 @@ async def on_exam25_answer(call: CallbackQuery):
     if idx < 0 or idx >= len(exam_questions):
         await call.message.answer("Экзаменационный вопрос не найден.")
         return
-    state = _get_exam_state(user_id)
+    state = await _get_exam_state(user_id)
     if idx in state["answered"]:
         await call.message.answer("Вы уже решили эту задачу.")
         return
@@ -1171,7 +1200,7 @@ async def cmd_exam25stats(message: types.Message):
         await message.answer("Экзамен 25 января ещё не настроен.")
         return
     user_id = message.from_user.id
-    state = exam_state.get(user_id)
+    state = await _get_exam_state(user_id)
     if not state or not state.get("answered"):
         await message.answer("Вы ещё не проходили экзамен 25 января.")
         return

@@ -419,3 +419,34 @@ async def clear_user_stats(conn: aiosqlite.Connection, user_id: int) -> None:
         (user_id,),
     )
     await conn.commit()
+
+
+async def get_exam_answers(conn: aiosqlite.Connection, user_id: int, exam_topic: str) -> Dict[int, Dict]:
+    """
+    Возвращает все ответы пользователя по экзамену.
+    
+    Args:
+        conn: соединение с БД
+        user_id: ID пользователя
+        exam_topic: название темы экзамена (например, "exam_25jan")
+    
+    Returns:
+        Словарь: {question_index: {"chosen_index": int, "correct": bool}}
+        где question_index - индекс вопроса в экзамене (0-47)
+    """
+    cursor = await conn.execute("""
+        SELECT question_index, chosen_index, correct
+        FROM answers
+        WHERE user_id = ? AND topic = ?
+        ORDER BY question_index
+    """, (user_id, exam_topic))
+    
+    rows = await cursor.fetchall()
+    result = {}
+    for row in rows:
+        question_index, chosen_index, correct = row
+        result[question_index] = {
+            "chosen_index": chosen_index,
+            "correct": bool(correct)
+        }
+    return result
