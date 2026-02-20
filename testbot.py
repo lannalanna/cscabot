@@ -430,7 +430,7 @@ async def _send_exam_summary(call: CallbackQuery, user_id: int):
    correct = state.get("correct_count", 0)
    total_q = len(exam_questions)
    if EXAM_TOTAL_DIFFICULTY:
-       k = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY
+       k = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY * 100
    else:
        k = 0.0
    kb = await start_kb(user_id)
@@ -653,7 +653,7 @@ async def on_exam25_answer(call: CallbackQuery):
     correct_now = state.get("correct_count", 0)
     total_q = len(exam_questions)
     if EXAM_TOTAL_DIFFICULTY:
-        k_now = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY
+        k_now = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY * 100
     else:
         k_now = 0.0
     stats_ru = (
@@ -1178,7 +1178,7 @@ async def cmd_exam25stats(message: types.Message):
     correct = state.get("correct_count", 0)
     total_q = len(exam_questions)
     if EXAM_TOTAL_DIFFICULTY:
-        k = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY
+        k = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY * 100
     else:
         k = 0.0
     # Дублируем результат сразу на русском и английском
