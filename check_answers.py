@@ -7,7 +7,7 @@ import json
 import os
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-FILES = ["data2.txt", "data_jan2.txt", "data_physics.txt"]
+FILES = ["data.txt"]
 
 ANSWER_LETTERS = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4}
 
