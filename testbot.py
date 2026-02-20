@@ -17,7 +17,7 @@ from aiogram.utils.chat_action import ChatActionSender
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
 
-API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
+#API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -432,8 +432,12 @@ async def _send_exam_summary(call: CallbackQuery, user_id: int):
        k = 0.0
    kb = await start_kb(user_id)
    msg = (
+       f"Ваш результат экзамена 25 января:\n\n"
        f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов.\n"
-       "Спасибо! Вы можете продолжить тренироваться по обычным темам."
+       "Спасибо! Вы можете продолжить тренироваться по обычным темам.\n\n"
+       "Your January 25 exam result:\n\n"
+       f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points.\n"
+       "Thank you! You can continue training on regular topics."
    )
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(msg, reply_markup=kb)
@@ -571,7 +575,9 @@ async def on_exam25_start(call: CallbackQuery):
         async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
             await call.message.answer(
                 "Режим «Сдать экзамен 25 января».\n"
-                "Всего 48 задач. Второй раз решить одну и ту же задачу нельзя."
+                "Всего 48 задач. Второй раз решить одну и ту же задачу нельзя.\n\n"
+                "Mode \"Take the January 25 exam\".\n"
+                "There are 48 tasks. You cannot solve the same task twice."
             )
     await _send_exam_question(call, user_id, next_idx)
 
@@ -1138,6 +1144,39 @@ async def cmd_clear_stats(message: types.Message):
         logging.error(f"Ошибка очистки статистики: {e}")
         await message.answer("Не удалось очистить статистику. Попробуйте позже.")
 
+
+@router.message(Command("exam25stats"))
+async def cmd_exam25stats(message: types.Message):
+    """Показать результаты экзамена 25 января для текущего пользователя."""
+    if not exam_questions:
+        await message.answer("Экзамен 25 января ещё не настроен.")
+        return
+    user_id = message.from_user.id
+    state = exam_state.get(user_id)
+    if not state or not state.get("answered"):
+        await message.answer("Вы ещё не проходили экзамен 25 января.")
+        return
+    correct = state.get("correct_count", 0)
+    total_q = len(exam_questions)
+    if EXAM_TOTAL_DIFFICULTY:
+        k = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY
+    else:
+        k = 0.0
+    # Дублируем результат сразу на русском и английском
+    ru_block = (
+        "📊 Ваш результат экзамена 25 января:\n\n"
+        f"Вы решили правильно {correct} из {total_q} задач "
+        f"и набрали {k:.2f} баллов."
+    )
+    en_block = (
+        "📊 Your January 25 exam result:\n\n"
+        f"You solved {correct} out of {total_q} tasks correctly "
+        f"and scored {k:.2f} points."
+    )
+    text = ru_block + "\n\n" + en_block
+    kb = await start_kb(message.from_user.id)
+    await message.answer(text, reply_markup=kb)
+
 @router.message()
 async def cmd_start(message: Message):
     # Исправление бага: kapibara - это словарь, нужно брать первую тему
@@ -1182,6 +1221,7 @@ async def main():
                     types.BotCommand(command="start", description="Начать тренировку"),
                     types.BotCommand(command="stats", description="Показать мою статистику"),
                     types.BotCommand(command="clearstats", description="Очистить мою статистику"),
+                    types.BotCommand(command="exam25stats", description="Результат экзамена 25 января"),
                 ]
             )
         except Exception as e:
