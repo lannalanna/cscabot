@@ -408,7 +408,10 @@ async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
        photo_path = os.path.join(DATA_DIR, "images", q["img"])
        await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
    total = len(exam_questions)
-   header = f"Экзамен 25 января — вопрос {idx + 1} из {total}\n\n"
+   header = (
+       f"Экзамен 25 января — вопрос {idx + 1} из {total}\n"
+       f"January 25 exam — question {idx + 1} of {total}\n\n"
+   )
    difficulty = q.get("difficulty")
    if isinstance(difficulty, int) and 1 <= difficulty <= 5:
        stars = "★" * difficulty + "☆" * (5 - difficulty)
@@ -645,14 +648,30 @@ async def on_exam25_answer(call: CallbackQuery):
     # Пишем лог в файл res.txt
     log(call.from_user, [EXAM_25JAN_ID, idx, ans_id, ansok])
 
-    # Сообщаем результат и сразу переходим к следующей задаче (или подводим итог)
-    result_msg = "Правильно!" if ansok else "Неправильно."
+    # Сообщаем результат и краткую статистику, затем сразу переходим к следующей задаче (или подводим итог)
+    result_msg = "Правильно! / Correct!" if ansok else "Неправильно. / Incorrect."
+    correct_now = state.get("correct_count", 0)
+    total_q = len(exam_questions)
+    if EXAM_TOTAL_DIFFICULTY:
+        k_now = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY
+    else:
+        k_now = 0.0
+    stats_ru = (
+        f"Сейчас по экзамену: {correct_now} из {total_q} верно, "
+        f"набранный балл {k_now:.2f}."
+    )
+    stats_en = (
+        f"Current exam stats: {correct_now} out of {total_q} correct, "
+        f"score {k_now:.2f}."
+    )
+    full_msg = result_msg + "\n" + stats_ru + "\n" + stats_en
+
     next_idx = _find_next_exam_index(state)
     if next_idx is None:
-        await call.message.answer(result_msg)
+        await call.message.answer(full_msg)
         await _send_exam_summary(call, user_id)
     else:
-        await call.message.answer(result_msg)
+        await call.message.answer(full_msg)
         await _send_exam_question(call, user_id, next_idx)
 
 
