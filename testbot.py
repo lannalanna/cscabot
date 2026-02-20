@@ -270,7 +270,7 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
     if exam_questions:
         builder.add(
             InlineKeyboardButton(
-                text="Сдать экзамен 25 января",
+                text="Экзамен 25 янв / Exam Jan 25",
                 callback_data="exam25_start",
             )
         )
@@ -606,7 +606,7 @@ async def on_exam25_start(call: CallbackQuery):
     if not state.get("answered"):
         async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
             await call.message.answer(
-                "Режим «Сдать экзамен 25 января».\n"
+                "Режим «Экзамен 25 янв» / Mode \"Exam Jan 25\".\n"
                 "Всего 48 задач. Второй раз решить одну и ту же задачу нельзя.\n\n"
                 "Mode \"Take the January 25 exam\".\n"
                 "There are 48 tasks. You cannot solve the same task twice."
