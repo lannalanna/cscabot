@@ -13,7 +13,7 @@
         "type": "jan",
         "n": 13,
         "subtopic": "arithmetic mean",
-        "difficulty": 3
+        "difficulty": 2
     },
     {
         "chinese": "已知 a = √2 + 1, b = √2 - 1，则 a 和 b 的等比中项为",
@@ -514,6 +514,96 @@
         "difficulty": 5
     },
     {
+        "chinese": "椭圆 x²/25 + y²/16 = 1 的焦距是",
+        "english": "The focal distance of the ellipse x²/25 + y²/16 = 1 is",
+        "options": [
+            "A. 4",
+            "B. 5",
+            "C. 6",
+            "D. 8"
+        ],
+        "answer": "C",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 4
+    },
+    {
+        "chinese": "椭圆 x²/9 + y²/5 = 1 的焦距是",
+        "english": "The focal distance of the ellipse x²/9 + y²/5 = 1 is",
+        "options": [
+            "A. 2",
+            "B. 4",
+            "C. 6",
+            "D. 8"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 4
+    },
+    {
+        "chinese": "椭圆 x²/20 + y²/4 = 1 的焦距是",
+        "english": "The focal distance of the ellipse x²/20 + y²/4 = 1 is",
+        "options": [
+            "A. 4",
+            "B. 6",
+            "C. 8",
+            "D. 10"
+        ],
+        "answer": "C",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 4
+    },
+    {
+        "chinese": "椭圆 x²/25 + y²/9 = 1 的离心率是",
+        "english": "The eccentricity of the ellipse x²/25 + y²/9 = 1 is",
+        "options": [
+            "A. 3/5",
+            "B. 4/5",
+            "C. 5/4",
+            "D. √5/5"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 4
+    },
+    {
+        "chinese": "椭圆 x²/16 + y²/7 = 1 的离心率是",
+        "english": "The eccentricity of the ellipse x²/16 + y²/7 = 1 is",
+        "options": [
+            "A. 7/16",
+            "B. 3/4",
+            "C. 4/5",
+            "D. √7/4"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 4
+    },
+    {
+        "chinese": "椭圆 x²/9 + y² = 1 的离心率是",
+        "english": "The eccentricity of the ellipse x²/9 + y² = 1 is",
+        "options": [
+            "A. √2/3",
+            "B. 2/3",
+            "C. 2√2/3",
+            "D. √5/3"
+        ],
+        "answer": "C",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "ellipse",
+        "difficulty": 4
+    },
+    {
         "chinese": "已知双曲线的方程是 x²/64 - y²/16 = 1，下列哪个陈述是正确的？（ ）",
         "english": "Given that the equation of a hyperbola is x²/64 - y²/16 = 1, which of the following statements is correct? ( )",
         "options": [
@@ -545,6 +635,51 @@
         "link": "https://t.me/c/3305923058/219",
         "n": 29,
         "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/9 - y²/4 = 1 的渐近线方程是",
+        "english": "The equations of the asymptotes of the hyperbola x²/9 - y²/4 = 1 are",
+        "options": [
+            "A. y = ±(2/3)x",
+            "B. y = ±(3/2)x",
+            "C. y = ±(4/3)x",
+            "D. y = ±(3/4)x"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "subtopic": "hyperbola",
+        "type": "choice",
+        "difficulty": 4
+    },
+    {
+        "chinese": "双曲线 y²/16 - x²/4 = 1 的渐近线方程是",
+        "english": "The equations of the asymptotes of the hyperbola y²/16 - x²/4 = 1 are",
+        "options": [
+            "A. y = ±(1/2)x",
+            "B. y = ±2x",
+            "C. y = ±4x",
+            "D. y = ±x"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "subtopic": "hyperbola",
+        "type": "choice",
+        "difficulty": 4
+    },
+    {
+        "chinese": "双曲线 x²/16 - y²/9 = 1 的渐近线方程是",
+        "english": "The equations of the asymptotes of the hyperbola x²/16 - y²/9 = 1 are",
+        "options": [
+            "A. y = ±(3/4)x",
+            "B. y = ±(4/3)x",
+            "C. y = ±(1/3)x",
+            "D. y = ±3x"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "subtopic": "hyperbola",
+        "type": "choice",
+        "difficulty": 4
     },
     {
         "chinese": "顶点在原点，焦点为 F(3/2, 0) 的抛物线的标准方程为",
@@ -733,7 +868,7 @@
         "topic": "conic curves",
         "type": "choice",
         "subtopic": "parabola",
-        "difficulty": 4
+        "difficulty": 3
     },
     {
         "chinese": "设抛物线 y² = 4x 的焦点为 F。若抛物线上的点 P 的横坐标是 8，则 |PF| =",
@@ -990,7 +1125,7 @@
         "type": "dec",
         "n": 10,
         "subtopic": "functions properties",
-        "difficulty": 2
+        "difficulty": 3
     },
     {
         "chinese": "已知 y = |x|，下列哪个结论是正确的？（）。",
@@ -1022,7 +1157,7 @@
         "type": "jan",
         "n": 23,
         "subtopic": "functions properties",
-        "difficulty": 2
+        "difficulty": 3
     },
     {
         "chinese": "下列关于函数 y = (1/2)^x 的描述正确的是",
@@ -1055,7 +1190,7 @@
         "type": "jan",
         "n": 35,
         "subtopic": "functions properties",
-        "difficulty": 2
+        "difficulty": 3
     },
     {
         "chinese": "下列函数和函数 y = |x| 相同的是",
@@ -1189,7 +1324,7 @@
         "type": "jan",
         "n": 41,
         "subtopic": "graphs",
-        "difficulty": 3
+        "difficulty": 4
     },
     {
         "chinese": "下列不等式正确的是",
@@ -1269,6 +1404,51 @@
         "link": "https://t.me/c/3305923058/66",
         "type": "dec",
         "n": 9,
+        "subtopic": "inverse functions",
+        "difficulty": 3
+    },
+    {
+        "chinese": "函数 y = (x - 1)^3, x ∈ ℝ 的反函数是（ ）。",
+        "english": "The inverse function of y = (x − 1)³, x ∈ ℝ is ( ).",
+        "options": [
+            "A. y = ∛x + 1, x ∈ ℝ",
+            "B. y = ∛(x + 1), x ∈ ℝ",
+            "C. y = ∛(x - 1), x ∈ ℝ",
+            "D. y = x³ + 1, x ∈ ℝ"
+        ],
+        "answer": "A",
+        "topic": "functions",
+        "type": "choice",
+        "subtopic": "inverse functions",
+        "difficulty": 3
+    },
+    {
+        "chinese": "函数 y = (x + 2)^2, x ≥ -2 的反函数是（ ）。",
+        "english": "The inverse function of y = (x + 2)², x ≥ −2 is ( ).",
+        "options": [
+            "A. y = -2 - √x, x ≥ 0",
+            "B. y = -2 + √x, x ≥ 0",
+            "C. y = 2 + √x, x ≥ 0",
+            "D. y = 2 - √x, x ≥ 0"
+        ],
+        "answer": "B",
+        "topic": "functions",
+        "type": "choice",
+        "subtopic": "inverse functions",
+        "difficulty": 3
+    },
+    {
+        "chinese": "函数 y = 1/(x - 3), x ≠ 3 的反函数是（ ）。",
+        "english": "The inverse function of y = 1/(x − 3), x ≠ 3 is ( ).",
+        "options": [
+            "A. y = 1/(x + 3), x ≠ -3",
+            "B. y = 3 - 1/x, x ≠ 0",
+            "C. y = 3 + 1/x, x ≠ 0",
+            "D. y = 1/(3 - x), x ≠ 3"
+        ],
+        "answer": "C",
+        "topic": "functions",
+        "type": "choice",
         "subtopic": "inverse functions",
         "difficulty": 3
     },
@@ -1447,7 +1627,7 @@
         "type": "jan",
         "n": 6,
         "subtopic": "coordinate geometry",
-        "difficulty": 3
+        "difficulty": 2
     },
     {
         "chinese": "下列点位于第三象限的是",
@@ -1479,7 +1659,7 @@
         "type": "jan",
         "n": 10,
         "subtopic": "coordinate geometry",
-        "difficulty": 3
+        "difficulty": 1
     },
     {
         "chinese": "下列点位于第三象限的是",
@@ -1496,7 +1676,7 @@
         "type": "dec",
         "n": 11,
         "subtopic": "coordinate geometry",
-        "difficulty": 3
+        "difficulty": 1
     },
     {
         "chinese": "已知点 A(-1,2), B(3,-1)，则这两个点之间的距离 |AB| =",
@@ -1554,7 +1734,7 @@
             "A. √5",
             "B. √13",
             "C. √17",
-            "D. 5"
+            "D. 2"
         ],
         "answer": "C",
         "topic": "geometry",
@@ -1794,6 +1974,51 @@
         "difficulty": 5
     },
     {
+        "chinese": "双曲线 x² - y² = 1 的离心率是",
+        "english": "The eccentricity of the hyperbola x² - y² = 1 is",
+        "options": [
+            "A. 1",
+            "B. √2",
+            "C. 2",
+            "D. √3"
+        ],
+        "answer": "B",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 x²/9 - y²/16 = 1 的离心率是",
+        "english": "The eccentricity of the hyperbola x²/9 - y²/16 = 1 is",
+        "options": [
+            "A. 3/5",
+            "B. 4/3",
+            "C. 5/3",
+            "D. √5/2"
+        ],
+        "answer": "C",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
+        "chinese": "双曲线 y²/16 - x²/4 = 1 的离心率是",
+        "english": "The eccentricity of the hyperbola y²/16 - x²/4 = 1 is",
+        "options": [
+            "A. √5/2",
+            "B. 2/√5",
+            "C. 5/2",
+            "D. 2/5"
+        ],
+        "answer": "A",
+        "topic": "conic curves",
+        "type": "choice",
+        "subtopic": "hyperbola",
+        "difficulty": 5
+    },
+    {
         "chinese": "如果直线 l 经过点 A(-2,3) 和 B(3,1)，那么 l 的斜率是（）。",
         "english": "If the straight line l passes through the points A(-2,3) and B(3,1), then the slope of l is ().",
         "options": [
@@ -1889,7 +2114,7 @@
         "type": "jan",
         "n": 32,
         "subtopic": "lines",
-        "difficulty": 3
+        "difficulty": 4
     },
     {
         "chinese": "下列直线和直线l: x + y + 3 = 0 垂直的是",
@@ -1939,7 +2164,7 @@
         "type": "jan",
         "n": 45,
         "subtopic": "lines",
-        "difficulty": 3
+        "difficulty": 4
     },
     {
         "chinese": "已知向量 AB = a + 5b, BC = -2a + 8b, CD = 3a - 3b。因此，（ ）。",
@@ -1955,7 +2180,7 @@
         "type": "jan",
         "n": 44,
         "subtopic": "vectors",
-        "difficulty": 3
+        "difficulty": 5
     },
     {
         "chinese": "设向量 a = (-1, 2), b = (3, -1)，则 3a - b =",
@@ -2247,7 +2472,7 @@
         "link": "https://t.me/c/3305923058/157",
         "n": 3,
         "subtopic": "quadratic inequalities",
-        "difficulty": 4
+        "difficulty": 3
     },
     {
         "chinese": "不等式 x² - x - 2 > 0 的解集是（ ）。",
@@ -2264,7 +2489,7 @@
         "type": "jan",
         "n": 3,
         "subtopic": "quadratic inequalities",
-        "difficulty": 4
+        "difficulty": 3
     },
     {
         "chinese": "解不等式 x² - 5x + 6 > 0",
@@ -2293,7 +2518,7 @@
         "answer": "A",
         "topic": "inequalities",
         "subtopic": "quadratic inequalities",
-        "difficulty": 4
+        "difficulty": 3
     },
     {
         "chinese": "不等式 x² + 2 x + 5  >  0  的解集是（ ）。",
@@ -2414,7 +2639,7 @@
         "type": "jan",
         "n": 12,
         "subtopic": "rational inequalities",
-        "difficulty": 4
+        "difficulty": 3
     },
     {
         "chinese": "解不等式 (x - 1)/(x + 2) ≥ 0",
@@ -2435,10 +2660,10 @@
         "chinese": "分式不等式 (2x-3)/(x+2) ≥ 1 的解集为",
         "english": "The solution set of the rational inequality (2x-3)/(x+2) ≥ 1 is",
         "options": [
-            "A. (-∞, -2) ∪ [1/3, +∞)",
-            "B. (-∞, -2) ∪ (1/3, +∞)",
+            "A. (-∞, -2) ∪ [5, +∞)",
+            "B. (-∞, -2) ∪ (3/2, +∞)",
             "C. (-2, +∞)",
-            "D. (-∞, 1/3]"
+            "D. (-∞, 3/2]"
         ],
         "answer": "A",
         "topic": "inequalities",
@@ -2459,7 +2684,7 @@
         "topic": "inequalities",
         "subtopic": "rational inequalities",
         "type": "extra",
-        "difficulty": 4
+        "difficulty": 3
     },
     {
         "chinese": "分式不等式 (x+1)/(x-3) > 0 的解集为",
@@ -2474,7 +2699,7 @@
         "topic": "inequalities",
         "subtopic": "rational inequalities",
         "type": "extra",
-        "difficulty": 4
+        "difficulty": 3
     },
     {
         "chinese": "分式不等式 (x+4)/(2x-1) ≥ 0 的解集为",
@@ -2489,7 +2714,7 @@
         "topic": "inequalities",
         "subtopic": "rational inequalities",
         "type": "extra",
-        "difficulty": 4
+        "difficulty": 3
     },
     {
         "chinese": "分式不等式 (x-2)/(x+1) ≤ 0 的解集为",
@@ -2504,7 +2729,7 @@
         "topic": "inequalities",
         "subtopic": "rational inequalities",
         "type": "extra",
-        "difficulty": 4
+        "difficulty": 3
     },
     {
         "chinese": "log₄27 / log₂3 =",
@@ -3317,7 +3542,7 @@
         "img": "48_jan.png",
         "n": 48,
         "subtopic": "Simple Probability",
-        "difficulty": 3
+        "difficulty": 5
     },
     {
         "chinese": "十二生肖又叫属相，是中国用来代表年份的十二种动物，依次为鼠、牛、虎、兔、龙、蛇、马、羊、猴、鸡、狗、猪。比如1984、1996和2008年出生的人属相是鼠，而1985、1997和2009年出生的人属相是牛，以此类推。随机选出的三人中至少有两人属相相同的概率是",
@@ -3358,7 +3583,7 @@
             "C. a = b",
             "D. a ≤ b"
         ],
-        "answer": "C",
+        "answer": "A",
         "topic": "inequalities",
         "type": "extra",
         "subtopic": "real numbers",
@@ -3373,7 +3598,7 @@
             "C. a = b",
             "D. a ≥ b"
         ],
-        "answer": "B",
+        "answer": "A",
         "topic": "inequalities",
         "type": "extra",
         "subtopic": "real numbers",
@@ -3686,7 +3911,7 @@
         "type": "jan",
         "n": 47,
         "subtopic": "other sequences",
-        "difficulty": 4
+        "difficulty": 5
     },
     {
         "chinese": "设 A = {6,7,8,9,10} 是一个集合，∅ 表示空集。那么下列哪个陈述是正确的？",
@@ -4063,7 +4288,7 @@
         "type": "jan",
         "n": 36,
         "subtopic": "half-angle formula",
-        "difficulty": 3
+        "difficulty": 4
     },
     {
         "chinese": "假设 cos α = -1/2，α ∈ (π/2, π)，那么 sin(α/2) 的值是（ ）。",
@@ -4284,7 +4509,7 @@
         "type": "jan",
         "n": 15,
         "subtopic": "terminal side through point",
-        "difficulty": 2
+        "difficulty": 3
     },
     {
         "chinese": "若角 α 的终边经过点 (3, 4)，则 sin α =",
@@ -4453,7 +4678,7 @@
         "link": "https://t.me/c/3277437997/325",
         "type": "dec",
         "n": 35,
-        "subtopic": "properties",
+        "subtopic": "sin and cos of sum",
         "difficulty": 2
     },
     {
@@ -4486,7 +4711,7 @@
         "link": "https://t.me/c/3305923058/288",
         "type": "dec",
         "n": 40,
-        "subtopic": "properties",
+        "subtopic": "trigonometric expressions",
         "difficulty": 2
     },
     {
@@ -4596,7 +4821,7 @@
         "topic": "trigonometry",
         "type": "jan",
         "n": 30,
-        "subtopic": "trigonometric identities",
+        "subtopic": "properties",
         "difficulty": 3
     },
     {
@@ -4610,7 +4835,7 @@
         ],
         "answer": "C",
         "topic": "trigonometry",
-        "subtopic": "trigonometric identities",
+        "subtopic": "sin and cos of sum",
         "type": "oct",
         "n": 34,
         "difficulty": 3
@@ -4628,8 +4853,68 @@
         "topic": "trigonometry",
         "type": "jan",
         "n": 34,
-        "subtopic": "trigonometric identities",
-        "difficulty": 3
+        "subtopic": "sin and cos of sum",
+        "difficulty": 4
+    },
+    {
+        "chinese": "已知 cos α = 3/5，且 α ∈ (0, π/2)，则 cos(α + π/3) =",
+        "english": "Given cos α = 3/5, and α ∈ (0, π/2), then cos(α + π/3) =",
+        "options": [
+            "A. (3 + 4√3)/10",
+            "B. (3 - 4√3)/10",
+            "C. (4 - 3√3)/10",
+            "D. (4√3 - 3)/10"
+        ],
+        "answer": "B",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "sin and cos of sum",
+        "difficulty": 4
+    },
+    {
+        "chinese": "已知 sin α = 3/5，且 α ∈ (0, π/2)，则 sin(α + π/6) =",
+        "english": "Given sin α = 3/5, and α ∈ (0, π/2), then sin(α + π/6) =",
+        "options": [
+            "A. (3√3 + 4)/10",
+            "B. (3√3 - 4)/10",
+            "C. (4√3 + 3)/10",
+            "D. (4√3 - 3)/10"
+        ],
+        "answer": "A",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "sin and cos of sum",
+        "difficulty": 4
+    },
+    {
+        "chinese": "已知 cos α = -4/5，且 α ∈ (π/2, π)，则 cos(α + π/4) =",
+        "english": "Given cos α = -4/5, and α ∈ (π/2, π), then cos(α + π/4) =",
+        "options": [
+            "A. -7√2/10",
+            "B. 7√2/10",
+            "C. -√2/10",
+            "D. √2/10"
+        ],
+        "answer": "A",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "sin and cos of sum",
+        "difficulty": 4
+    },
+    {
+        "chinese": "已知 sin α = 5/13，且 α ∈ (0, π/2)，则 sin(α + π/4) =",
+        "english": "Given sin α = 5/13, and α ∈ (0, π/2), then sin(α + π/4) =",
+        "options": [
+            "A. 17√2/26",
+            "B. 7√2/26",
+            "C. 13√2/26",
+            "D. 5√2/26"
+        ],
+        "answer": "A",
+        "topic": "trigonometry",
+        "type": "choice",
+        "subtopic": "sin and cos of sum",
+        "difficulty": 4
     },
     {
         "chinese": "下列各式中正确的是",
@@ -4693,12 +4978,12 @@
         "topic": "trigonometry",
         "type": "jan",
         "n": 39,
-        "subtopic": "trigonometric identities",
+        "subtopic": "properties",
         "difficulty": 3
     },
     {
-        "chinese": "若点 P(x,2) 是角 α 终边上的点，且 tan α = -1，则 y =",
-        "english": "If point P(x,2) is on the terminal side of angle α, and tan α = -1, then y =",
+        "chinese": "若点 P(x,2) 是角 α 终边上的点，且 tan α = -1，则 x =",
+        "english": "If point P(x,2) is on the terminal side of angle α, and tan α = -1, then x =",
         "options": [
             "A. 1",
             "B. 2",
@@ -4807,7 +5092,7 @@
         "type": "jan",
         "n": 20,
         "subtopic": "trigonometric values",
-        "difficulty": 1
+        "difficulty": 3
     },
     {
         "chinese": "若 α 为锐角，且sin α = √3/2，则 tan α =",
@@ -4864,7 +5149,7 @@
         "english": "Given angle α = π/6, which of the following is correct?",
         "options": [
             "A. sin α = √3/2",
-            "B. cos α = √3/2",
+            "B. cos α = √2/2",
             "C. tan α = √3",
             "D. sin α = 1/2"
         ],
@@ -5041,21 +5326,7 @@
             "C. tan α = 1",
             "D. tan α = -1"
         ],
-        "answer": "D",
-        "topic": "trigonometry (simple)",
-        "subtopic": "trigonometric values",
-        "difficulty": 1
-    },
-    {
-        "chinese": "若点 P(x,2) 是角 α 终边上的点，且 tan α = -1，则 x =",
-        "english": "If point P(x,2) is on the terminal side of angle α, and tan α = -1, then x =",
-        "options": [
-            "A. 1",
-            "B. 2",
-            "C. -2",
-            "D. -1"
-        ],
-        "answer": "C",
+        "answer": "С",
         "topic": "trigonometry (simple)",
         "subtopic": "trigonometric values",
         "difficulty": 1

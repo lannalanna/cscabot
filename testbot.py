@@ -17,7 +17,7 @@ from aiogram.utils.chat_action import ChatActionSender
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
 
-#API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
+API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -194,6 +194,30 @@ for _, t_top, t_j in exam_questions:
 # user_id -> {"answered": set(), "correct_count": int, "correct_difficulty": int}
 exam_state = {}
 
+# Экзамен 21 декабря: задачи с type == "dec" (по полю n, отсортированные)
+EXAM_21DEC_ID = "exam_21dec"
+exam_questions_dec = []  # список кортежей (n, topic, j)
+EXAM_DEC_TOTAL_DIFFICULTY = 0
+
+for top in topics:
+    for j, item in enumerate(kapibara.get(top, [])):
+        if (item.get("type") or "").strip().lower() == "dec":
+            n_val = item.get("n") or 0
+            exam_questions_dec.append((n_val, top, j))
+
+exam_questions_dec.sort(key=lambda x: x[0])
+for _, t_top, t_j in exam_questions_dec:
+    q = kapibara[t_top][t_j]
+    try:
+        diff = int(q.get("difficulty") or 1)
+    except (TypeError, ValueError):
+        diff = 1
+    if diff < 1:
+        diff = 1
+    EXAM_DEC_TOTAL_DIFFICULTY += diff
+
+exam_state_dec = {}
+
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 router = Router()
@@ -266,12 +290,19 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
                 callback_data=f't_{idx}'
             )
         )
-    # В конце списка тем добавляем пункт для экзамена 25 января
+    # В конце списка тем добавляем пункты для экзаменов
     if exam_questions:
         builder.add(
             InlineKeyboardButton(
-                text="Экзамен 25 янв / Exam Jan 25",
+                text="📝 Экзамен 25 янв / Exam Jan 25",
                 callback_data="exam25_start",
+            )
+        )
+    if exam_questions_dec:
+        builder.add(
+            InlineKeyboardButton(
+                text="📝 Экзамен 21 дек / Exam Dec 21",
+                callback_data="exam21dec_start",
             )
         )
     builder.adjust(1)
@@ -454,7 +485,7 @@ async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
 
 
 async def _send_exam_summary(call: CallbackQuery, user_id: int):
-   """Показывает пользователю итоговую статистику экзамена 25 января."""
+   """Показывает пользователю итоговую статистику экзамена 25 января и кнопки Очистить / Список тем."""
    state = await _get_exam_state(user_id)
    correct = state.get("correct_count", 0)
    total_q = len(exam_questions)
@@ -462,7 +493,7 @@ async def _send_exam_summary(call: CallbackQuery, user_id: int):
        k = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY * 100
    else:
        k = 0.0
-   kb = await start_kb(user_id)
+   kb = _inline_kb_exam_finished()
    msg = (
        f"Ваш результат экзамена 25 января:\n\n"
        f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов.\n"
@@ -473,6 +504,137 @@ async def _send_exam_summary(call: CallbackQuery, user_id: int):
    )
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(msg, reply_markup=kb)
+
+
+# --- Экзамен 21 декабря (type=dec) ---
+async def _get_exam_dec_state(user_id: int):
+   """Состояние экзамена 21 декабря для пользователя. Загружает из БД при первом обращении."""
+   state = exam_state_dec.get(user_id)
+   if state is None:
+       state = {"answered": set(), "correct_count": 0, "correct_difficulty": 0}
+       if db_conn:
+           try:
+               exam_answers = await db.get_exam_answers(db_conn, user_id, EXAM_21DEC_ID)
+               answered_set = set()
+               correct_count = 0
+               correct_difficulty = 0
+               for idx, answer_data in exam_answers.items():
+                   answered_set.add(idx)
+                   if answer_data["correct"] and 0 <= idx < len(exam_questions_dec):
+                       correct_count += 1
+                       _, top, j = exam_questions_dec[idx]
+                       q = kapibara[top][j]
+                       try:
+                           diff = int(q.get("difficulty") or 1)
+                       except (TypeError, ValueError):
+                           diff = 1
+                       if diff < 1:
+                           diff = 1
+                       correct_difficulty += diff
+               state["answered"] = answered_set
+               state["correct_count"] = correct_count
+               state["correct_difficulty"] = correct_difficulty
+           except Exception as e:
+               logging.error(f"Ошибка загрузки состояния экзамена 21 дек из БД: {e}")
+       exam_state_dec[user_id] = state
+   return state
+
+
+def _find_next_exam_dec_index(state):
+   answered = state.get("answered", set())
+   for idx in range(len(exam_questions_dec)):
+       if idx not in answered:
+           return idx
+   return None
+
+
+def inline_kb_exam_dec(idx: int) -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   if idx < 0 or idx >= len(exam_questions_dec):
+       builder.adjust(1)
+       return builder.as_markup()
+   _, top, j = exam_questions_dec[idx]
+   q = kapibara[top][j]
+   for i, opt in enumerate(q["options"]):
+       builder.add(
+           InlineKeyboardButton(
+               text=opt.replace('. ', '.     '),
+               callback_data=f'exam21dec_q_{idx}_{i}',
+           )
+       )
+   builder.adjust(1)
+   return builder.as_markup()
+
+
+async def _send_exam_dec_question(call: CallbackQuery, user_id: int, idx: int):
+   if idx < 0 or idx >= len(exam_questions_dec):
+       kb = await start_kb(user_id)
+       await call.message.answer("Экзаменационные задачи закончились.", reply_markup=kb)
+       return
+   _, top, j = exam_questions_dec[idx]
+   q = kapibara[top][j]
+   if q.get("img"):
+       photo_path = os.path.join(DATA_DIR, "images", q["img"])
+       await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
+   total = len(exam_questions_dec)
+   header = (
+       f"Экзамен 21 декабря — вопрос {idx + 1} из {total}\n"
+       f"December 21 exam — question {idx + 1} of {total}\n\n"
+   )
+   difficulty = q.get("difficulty")
+   if isinstance(difficulty, int) and 1 <= difficulty <= 5:
+       diff_line = f"Сложность / Difficulty: {'★' * difficulty}{'☆' * (5 - difficulty)}\n"
+   else:
+       diff_line = ""
+   question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
+   async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+       await call.message.answer(question_text, reply_markup=inline_kb_exam_dec(idx))
+
+
+async def _send_exam_dec_summary(call: CallbackQuery, user_id: int):
+   state = await _get_exam_dec_state(user_id)
+   correct = state.get("correct_count", 0)
+   total_q = len(exam_questions_dec)
+   k = (state.get("correct_difficulty", 0) / EXAM_DEC_TOTAL_DIFFICULTY * 100) if EXAM_DEC_TOTAL_DIFFICULTY else 0.0
+   kb = _inline_kb_exam_dec_finished()
+   msg = (
+       f"Ваш результат экзамена 21 декабря:\n\n"
+       f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов.\n"
+       "Спасибо! Вы можете продолжить тренироваться по обычным темам.\n\n"
+       "Your December 21 exam result:\n\n"
+       f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points.\n"
+       "Thank you! You can continue training on regular topics."
+   )
+   async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+       await call.message.answer(msg, reply_markup=kb)
+
+
+def _format_exam_dec_stats_line(state) -> str:
+   correct = state.get("correct_count", 0)
+   total_q = len(exam_questions_dec)
+   k = (state.get("correct_difficulty", 0) / EXAM_DEC_TOTAL_DIFFICULTY * 100) if EXAM_DEC_TOTAL_DIFFICULTY else 0.0
+   return (
+       f"Правильно {correct} из {total_q}, балл {k:.2f}.\n"
+       f"Correct {correct} of {total_q}, score {k:.2f}."
+   )
+
+
+def _inline_kb_exam_dec_entry_choice() -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   builder.row(
+       InlineKeyboardButton(text="Очистить статистику / Clear stats", callback_data="exam21dec_clear"),
+       InlineKeyboardButton(text="Продолжить / Continue", callback_data="exam21dec_continue"),
+   )
+   return builder.as_markup()
+
+
+def _inline_kb_exam_dec_finished() -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   builder.row(
+       InlineKeyboardButton(text="Очистить статистику / Clear stats", callback_data="exam21dec_clear"),
+       InlineKeyboardButton(text="Список тем / Topic list", callback_data="back_start"),
+   )
+   return builder.as_markup()
 
 
 def _get_subtopic_j(topic_idx: int, sub_idx: int, k: int):
@@ -587,6 +749,40 @@ async def back_to_start(call: CallbackQuery):
         await call.message.answer("Выберите тему / Choose topic:", reply_markup=kb)
 
 
+def _format_exam_stats_line(state) -> str:
+    """Форматирует одну строку статистики экзамена (верно из N, балл)."""
+    correct = state.get("correct_count", 0)
+    total_q = len(exam_questions)
+    if EXAM_TOTAL_DIFFICULTY:
+        k = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY * 100
+    else:
+        k = 0.0
+    return (
+        f"Правильно {correct} из {total_q}, балл {k:.2f}.\n"
+        f"Correct {correct} of {total_q}, score {k:.2f}."
+    )
+
+
+def _inline_kb_exam_entry_choice() -> InlineKeyboardMarkup:
+    """Клавиатура при входе в экзамен, если есть статистика: Очистить / Продолжить."""
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="Очистить статистику / Clear stats", callback_data="exam25_clear"),
+        InlineKeyboardButton(text="Продолжить / Continue", callback_data="exam25_continue"),
+    )
+    return builder.as_markup()
+
+
+def _inline_kb_exam_finished() -> InlineKeyboardMarkup:
+    """Клавиатура когда все задачи экзамена решены: Очистить статистику / Список тем."""
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="Очистить статистику / Clear stats", callback_data="exam25_clear"),
+        InlineKeyboardButton(text="Список тем / Topic list", callback_data="back_start"),
+    )
+    return builder.as_markup()
+
+
 @router.callback_query(F.data == "exam25_start")
 async def on_exam25_start(call: CallbackQuery):
     """Начало экзамена 25 января."""
@@ -602,16 +798,134 @@ async def on_exam25_start(call: CallbackQuery):
         # Все задачи уже пройдены — показываем только итоговую статистику
         await _send_exam_summary(call, user_id)
         return
-    # Короткое вступление перед первым вопросом
-    if not state.get("answered"):
+    # Есть сохранённая статистика — показываем её и кнопки Очистить / Продолжить
+    if state.get("answered"):
+        msg = (
+            "Режим «Экзамен 25 янв» / Mode \"Exam Jan 25\".\n\n"
+            + _format_exam_stats_line(state)
+            + "\n\nВыберите действие / Choose action:"
+        )
         async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
-            await call.message.answer(
-                "Режим «Экзамен 25 янв» / Mode \"Exam Jan 25\".\n"
-                "Всего 48 задач. Второй раз решить одну и ту же задачу нельзя.\n\n"
-                "Mode \"Take the January 25 exam\".\n"
-                "There are 48 tasks. You cannot solve the same task twice."
-            )
+            await call.message.answer(msg, reply_markup=_inline_kb_exam_entry_choice())
+        return
+    # Нет статистики — короткое вступление и первый вопрос
+    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+        await call.message.answer(
+            "Режим «Экзамен 25 янв» / Mode \"Exam Jan 25\".\n"
+            "Всего 48 задач. Второй раз решить одну и ту же задачу нельзя.\n\n"
+            "Mode \"Take the January 25 exam\".\n"
+            "There are 48 tasks. You cannot solve the same task twice."
+        )
     await _send_exam_question(call, user_id, next_idx)
+
+
+@router.callback_query(F.data == "exam25_clear")
+async def on_exam25_clear(call: CallbackQuery):
+    """Очистка статистики экзамена и старт с нуля."""
+    await call.answer()
+    user_id = call.from_user.id
+    if db_conn:
+        try:
+            await db.clear_exam_answers(db_conn, user_id, EXAM_25JAN_ID)
+        except Exception as e:
+            logging.error(f"Ошибка очистки экзамена: {e}")
+    if user_id in exam_state:
+        del exam_state[user_id]
+    state = await _get_exam_state(user_id)
+    next_idx = _find_next_exam_index(state)
+    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+        await call.message.answer(
+            "Статистика экзамена очищена. Можете начать заново.\n"
+            "Exam stats cleared. You can start again."
+        )
+    if next_idx is not None:
+        await _send_exam_question(call, user_id, next_idx)
+    else:
+        await _send_exam_summary(call, user_id)
+
+
+@router.callback_query(F.data == "exam25_continue")
+async def on_exam25_continue(call: CallbackQuery):
+    """Продолжить экзамен с текущей статистикой."""
+    await call.answer()
+    user_id = call.from_user.id
+    state = await _get_exam_state(user_id)
+    next_idx = _find_next_exam_index(state)
+    if next_idx is None:
+        await _send_exam_summary(call, user_id)
+        return
+    await _send_exam_question(call, user_id, next_idx)
+
+
+# --- Экзамен 21 декабря: вход, очистка, продолжение ---
+@router.callback_query(F.data == "exam21dec_start")
+async def on_exam21dec_start(call: CallbackQuery):
+    """Начало экзамена 21 декабря."""
+    await call.answer()
+    user_id = call.from_user.id
+    if not exam_questions_dec:
+        kb = await start_kb(user_id)
+        await call.message.answer("Пока нет задач для экзамена 21 декабря.", reply_markup=kb)
+        return
+    state = await _get_exam_dec_state(user_id)
+    next_idx = _find_next_exam_dec_index(state)
+    if next_idx is None:
+        await _send_exam_dec_summary(call, user_id)
+        return
+    if state.get("answered"):
+        msg = (
+            "Режим «Экзамен 21 дек» / Mode \"Exam Dec 21\".\n\n"
+            + _format_exam_dec_stats_line(state)
+            + "\n\nВыберите действие / Choose action:"
+        )
+        async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+            await call.message.answer(msg, reply_markup=_inline_kb_exam_dec_entry_choice())
+        return
+    total_dec = len(exam_questions_dec)
+    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+        await call.message.answer(
+            f"Режим «Экзамен 21 дек» / Mode \"Exam Dec 21\".\n"
+            f"Всего {total_dec} задач. Второй раз решить одну и ту же задачу нельзя.\n\n"
+            f"Mode \"Take the December 21 exam\".\n"
+            f"There are {total_dec} tasks. You cannot solve the same task twice."
+        )
+    await _send_exam_dec_question(call, user_id, next_idx)
+
+
+@router.callback_query(F.data == "exam21dec_clear")
+async def on_exam21dec_clear(call: CallbackQuery):
+    await call.answer()
+    user_id = call.from_user.id
+    if db_conn:
+        try:
+            await db.clear_exam_answers(db_conn, user_id, EXAM_21DEC_ID)
+        except Exception as e:
+            logging.error(f"Ошибка очистки экзамена 21 дек: {e}")
+    if user_id in exam_state_dec:
+        del exam_state_dec[user_id]
+    state = await _get_exam_dec_state(user_id)
+    next_idx = _find_next_exam_dec_index(state)
+    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+        await call.message.answer(
+            "Статистика экзамена очищена. Можете начать заново.\n"
+            "Exam stats cleared. You can start again."
+        )
+    if next_idx is not None:
+        await _send_exam_dec_question(call, user_id, next_idx)
+    else:
+        await _send_exam_dec_summary(call, user_id)
+
+
+@router.callback_query(F.data == "exam21dec_continue")
+async def on_exam21dec_continue(call: CallbackQuery):
+    await call.answer()
+    user_id = call.from_user.id
+    state = await _get_exam_dec_state(user_id)
+    next_idx = _find_next_exam_dec_index(state)
+    if next_idx is None:
+        await _send_exam_dec_summary(call, user_id)
+        return
+    await _send_exam_dec_question(call, user_id, next_idx)
 
 
 @router.callback_query(F.data.startswith("exam25_q_"))
@@ -702,6 +1016,80 @@ async def on_exam25_answer(call: CallbackQuery):
     else:
         await call.message.answer(full_msg)
         await _send_exam_question(call, user_id, next_idx)
+
+
+@router.callback_query(F.data.startswith("exam21dec_q_"))
+async def on_exam21dec_answer(call: CallbackQuery):
+    """Обработка ответа в режиме экзамена 21 декабря."""
+    correct_h = {'A': '0', 'B': '1', 'C': '2', 'D': '3', 'E': '4'}
+    await call.answer()
+    data = call.data.split("_")
+    if len(data) < 4:
+        await call.message.answer("Ошибка формата ответа экзамена.")
+        return
+    try:
+        idx = int(data[2])
+        ans_id = data[3]
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата ответа экзамена.")
+        return
+    user_id = call.from_user.id
+    if idx < 0 or idx >= len(exam_questions_dec):
+        await call.message.answer("Экзаменационный вопрос не найден.")
+        return
+    state = await _get_exam_dec_state(user_id)
+    if idx in state["answered"]:
+        await call.message.answer("Вы уже решили эту задачу.")
+        return
+    _, top, j = exam_questions_dec[idx]
+    q = kapibara[top][j]
+    correct = correct_h.get(q["answer"], "")
+    try:
+        ans_id_int = int(ans_id)
+    except ValueError:
+        await call.message.answer("Ошибка формата ответа экзамена.")
+        return
+    ansok = 1 if correct == ans_id else 0
+
+    state["answered"].add(idx)
+    if ansok:
+        state["correct_count"] = state.get("correct_count", 0) + 1
+        try:
+            diff = int(q.get("difficulty") or 1)
+        except (TypeError, ValueError):
+            diff = 1
+        if diff < 1:
+            diff = 1
+        state["correct_difficulty"] = state.get("correct_difficulty", 0) + diff
+
+    if db_conn:
+        try:
+            await db.save_answer(
+                db_conn,
+                user_id,
+                EXAM_21DEC_ID,
+                idx,
+                ans_id_int,
+                ansok == 1,
+            )
+        except Exception as e:
+            logging.error(f"Ошибка сохранения ответа экзамена 21 дек: {e}")
+
+    result_msg = "Правильно! / Correct!" if ansok else "Неправильно. / Incorrect."
+    correct_now = state.get("correct_count", 0)
+    total_q = len(exam_questions_dec)
+    k_now = (state.get("correct_difficulty", 0) / EXAM_DEC_TOTAL_DIFFICULTY * 100) if EXAM_DEC_TOTAL_DIFFICULTY else 0.0
+    stats_ru = f"Сейчас по экзамену: {correct_now} из {total_q} верно, набранный балл {k_now:.2f}."
+    stats_en = f"Current exam stats: {correct_now} out of {total_q} correct, score {k_now:.2f}."
+    full_msg = result_msg + "\n" + stats_ru + "\n" + stats_en
+
+    next_idx = _find_next_exam_dec_index(state)
+    if next_idx is None:
+        await call.message.answer(full_msg)
+        await _send_exam_dec_summary(call, user_id)
+    else:
+        await call.message.answer(full_msg)
+        await _send_exam_dec_question(call, user_id, next_idx)
 
 
 @router.callback_query(F.data == "random_any")
@@ -1225,6 +1613,36 @@ async def cmd_exam25stats(message: types.Message):
     kb = await start_kb(message.from_user.id)
     await message.answer(text, reply_markup=kb)
 
+
+@router.message(Command("exam21decstats"))
+async def cmd_exam21decstats(message: types.Message):
+    """Показать результаты экзамена 21 декабря для текущего пользователя."""
+    if not exam_questions_dec:
+        await message.answer("Экзамен 21 декабря ещё не настроен.")
+        return
+    user_id = message.from_user.id
+    state = await _get_exam_dec_state(user_id)
+    if not state or not state.get("answered"):
+        await message.answer("Вы ещё не проходили экзамен 21 декабря.")
+        return
+    correct = state.get("correct_count", 0)
+    total_q = len(exam_questions_dec)
+    k = (state.get("correct_difficulty", 0) / EXAM_DEC_TOTAL_DIFFICULTY * 100) if EXAM_DEC_TOTAL_DIFFICULTY else 0.0
+    ru_block = (
+        "📊 Ваш результат экзамена 21 декабря:\n\n"
+        f"Вы решили правильно {correct} из {total_q} задач "
+        f"и набрали {k:.2f} баллов."
+    )
+    en_block = (
+        "📊 Your December 21 exam result:\n\n"
+        f"You solved {correct} out of {total_q} tasks correctly "
+        f"and scored {k:.2f} points."
+    )
+    text = ru_block + "\n\n" + en_block
+    kb = await start_kb(message.from_user.id)
+    await message.answer(text, reply_markup=kb)
+
+
 @router.message()
 async def cmd_start(message: Message):
     # Исправление бага: kapibara - это словарь, нужно брать первую тему
@@ -1270,6 +1688,7 @@ async def main():
                     types.BotCommand(command="stats", description="Показать мою статистику"),
                     types.BotCommand(command="clearstats", description="Очистить мою статистику"),
                     types.BotCommand(command="exam25stats", description="Результат экзамена 25 января"),
+                    types.BotCommand(command="exam21decstats", description="Результат экзамена 21 декабря"),
                 ]
             )
         except Exception as e:

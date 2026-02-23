@@ -421,6 +421,17 @@ async def clear_user_stats(conn: aiosqlite.Connection, user_id: int) -> None:
     await conn.commit()
 
 
+async def clear_exam_answers(conn: aiosqlite.Connection, user_id: int, exam_topic: str) -> None:
+    """
+    Удаляет все ответы пользователя по указанному экзамену (теме).
+    """
+    await conn.execute(
+        "DELETE FROM answers WHERE user_id = ? AND topic = ?",
+        (user_id, exam_topic),
+    )
+    await conn.commit()
+
+
 async def get_exam_answers(conn: aiosqlite.Connection, user_id: int, exam_topic: str) -> Dict[int, Dict]:
     """
     Возвращает все ответы пользователя по экзамену.
