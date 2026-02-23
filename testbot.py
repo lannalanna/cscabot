@@ -870,9 +870,11 @@ async def on_exam21dec_start(call: CallbackQuery):
     state = await _get_exam_dec_state(user_id)
     next_idx = _find_next_exam_dec_index(state)
     if next_idx is None:
+        log(call.from_user, [EXAM_21DEC_ID, "start", "summary"])
         await _send_exam_dec_summary(call, user_id)
         return
     if state.get("answered"):
+        log(call.from_user, [EXAM_21DEC_ID, "start", "entry"])
         msg = (
             "Режим «Экзамен 21 дек» / Mode \"Exam Dec 21\".\n\n"
             + _format_exam_dec_stats_line(state)
@@ -881,6 +883,7 @@ async def on_exam21dec_start(call: CallbackQuery):
         async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
             await call.message.answer(msg, reply_markup=_inline_kb_exam_dec_entry_choice())
         return
+    log(call.from_user, [EXAM_21DEC_ID, "start", "question"])
     total_dec = len(exam_questions_dec)
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
         await call.message.answer(
@@ -895,6 +898,7 @@ async def on_exam21dec_start(call: CallbackQuery):
 @router.callback_query(F.data == "exam21dec_clear")
 async def on_exam21dec_clear(call: CallbackQuery):
     await call.answer()
+    log(call.from_user, [EXAM_21DEC_ID, "clear"])
     user_id = call.from_user.id
     if db_conn:
         try:
@@ -919,6 +923,7 @@ async def on_exam21dec_clear(call: CallbackQuery):
 @router.callback_query(F.data == "exam21dec_continue")
 async def on_exam21dec_continue(call: CallbackQuery):
     await call.answer()
+    log(call.from_user, [EXAM_21DEC_ID, "continue"])
     user_id = call.from_user.id
     state = await _get_exam_dec_state(user_id)
     next_idx = _find_next_exam_dec_index(state)
@@ -1074,6 +1079,8 @@ async def on_exam21dec_answer(call: CallbackQuery):
             )
         except Exception as e:
             logging.error(f"Ошибка сохранения ответа экзамена 21 дек: {e}")
+
+    log(call.from_user, [EXAM_21DEC_ID, idx, ans_id, ansok])
 
     result_msg = "Правильно! / Correct!" if ansok else "Неправильно. / Incorrect."
     correct_now = state.get("correct_count", 0)
