@@ -72,6 +72,9 @@ os.makedirs(DATA_DIR, exist_ok=True)
 # чтобы он взял корректный путь к базе данных.
 import db
 
+# Ссылка для оплаты доступа к экзамену (можно переопределить через переменную окружения PAY_URL)
+PAY_URL = os.environ.get("PAY_URL", "https://example.com/csca-pay")
+
 
 topic_links = { 'Algebraic and geometric mean' : 'https://t.me/csca_math_exam/22',
                 'parabola' : 'https://t.me/csca_math_exam/22',
@@ -1647,6 +1650,40 @@ async def cmd_exam21decstats(message: types.Message):
     )
     text = ru_block + "\n\n" + en_block
     kb = await start_kb(message.from_user.id)
+    await message.answer(text, reply_markup=kb)
+
+
+@router.message(Command("pay"))
+async def cmd_pay(message: types.Message):
+    """Показать информацию об оплате доступа к режиму экзамена и кнопку оплаты."""
+    lang = (message.from_user.language_code or "en").lower()
+    if lang.startswith("ru"):
+        text = (
+            "Режим экзамена недоступен.\n\n"
+            "Если вы приобретали курс на stepik.ru, перейдите в бот по ссылке из первого урока.\n"
+            "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
+            "Также вы можете разместить вашу персональную ссылку в любом чате о CSCA — "
+            "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
+            "Если ни один из этих способов вам не подходит, вы можете оплатить доступ по ссылке ниже."
+        )
+        btn_text = "Оплатить 500 руб."
+    else:
+        text = (
+            "The exam mode is currently unavailable.\n\n"
+            "If you purchased the course on stepik.ru, please open the bot using the link "
+            "from the first lesson.\n"
+            "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
+            "You can also share your personal invitation link in any CSCA-related chat — "
+            "access will be unlocked after three new users follow your link.\n\n"
+            "If none of these options works for you, you can pay for access using the link below."
+        )
+        btn_text = "Pay 500 RUB"
+
+    kb = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=btn_text, url=PAY_URL)]
+        ]
+    )
     await message.answer(text, reply_markup=kb)
 
 
