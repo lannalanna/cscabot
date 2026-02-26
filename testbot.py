@@ -1657,27 +1657,35 @@ async def cmd_exam21decstats(message: types.Message):
 async def cmd_pay(message: types.Message):
     """Показать информацию об оплате доступа к режиму экзамена и кнопку оплаты."""
     lang = (message.from_user.language_code or "en").lower()
+    # Строим персональную ссылку так же, как в makeinvite()
+    try:
+        uid = message.from_user.id
+        username = str(message.from_user.username or "")
+        inv = username[:3] + str(uid)[:3]
+        invite_link = f"https://t.me/csca_mathbot?start=invite{inv}"
+    except Exception:
+        invite_link = "https://t.me/csca_mathbot"
     if lang.startswith("ru"):
         text = (
             "Режим экзамена недоступен.\n\n"
             "Если вы приобретали курс на stepik.ru, перейдите в бот по ссылке из первого урока.\n"
             "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
-            "Также вы можете разместить вашу персональную ссылку в любом чате о CSCA — "
+            f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
             "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
             "Если ни один из этих способов вам не подходит, вы можете оплатить доступ по ссылке ниже."
         )
-        btn_text = "Оплатить 500 руб."
+        btn_text = "💳 Оплатить 500 руб."
     else:
         text = (
             "The exam mode is currently unavailable.\n\n"
             "If you purchased the course on stepik.ru, please open the bot using the link "
             "from the first lesson.\n"
             "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
-            "You can also share your personal invitation link in any CSCA-related chat — "
+            f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
             "access will be unlocked after three new users follow your link.\n\n"
             "If none of these options works for you, you can pay for access using the link below."
         )
-        btn_text = "Pay 500 RUB"
+        btn_text = "💳 Pay 500 RUB"
 
     kb = InlineKeyboardMarkup(
         inline_keyboard=[
