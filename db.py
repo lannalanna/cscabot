@@ -70,6 +70,21 @@ async def init_db() -> aiosqlite.Connection:
         )
     """)
     
+    # Таблица оплат в Telegram Stars (XTR)
+    await conn.execute("""
+        CREATE TABLE IF NOT EXISTS star_payments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            currency TEXT NOT NULL,
+            total_amount INTEGER NOT NULL,
+            star_count INTEGER NOT NULL,
+            purpose TEXT,
+            telegram_payment_charge_id TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+    
     # Индексы для ускорения запросов
     await conn.execute("""
         CREATE INDEX IF NOT EXISTS idx_answers_user_topic 
@@ -79,6 +94,11 @@ async def init_db() -> aiosqlite.Connection:
     await conn.execute("""
         CREATE INDEX IF NOT EXISTS idx_answers_user 
         ON answers(user_id, created_at)
+    """)
+    
+    await conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_star_payments_user_purpose
+        ON star_payments(user_id, purpose)
     """)
     
     await conn.commit()
@@ -480,3 +500,49 @@ async def get_exam_answers(conn: aiosqlite.Connection, user_id: int, exam_topic:
             "correct": bool(correct)
         }
     return result
+
+
+async def save_star_payment(
+    conn: aiosqlite.Connection,
+    user_id: int,
+    currency: str,
+    total_amount: int,
+    purpose: str,
+    telegram_payment_charge_id: str,
+) -> None:
+    """
+    Сохраняет информацию об оплате в Telegram Stars.
+    
+    Для валюты XTR total_amount передаётся в минимальных единицах (1 Star = 100 единиц),
+    поэтому количество звёзд star_count = total_amount // 100.
+    """
+    now = datetime.now().isoformat()
+    if currency == "XTR":
+        star_count = total_amount // 100
+    else:
+        star_count = 0
+    await conn.execute(
+        """
+        INSERT INTO star_payments (user_id, currency, total_amount, star_count, purpose, telegram_payment_charge_id, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (user_id, currency, total_amount, star_count, purpose, telegram_payment_charge_id, now),
+    )
+    await conn.commit()
+
+
+async def user_has_exam_access_by_payment(conn: aiosqlite.Connection, user_id: int) -> bool:
+    """
+    Проверяет, есть ли у пользователя хотя бы одна оплата, дающая доступ к режиму экзамена/Mock Exam.
+    """
+    cursor = await conn.execute(
+        """
+        SELECT 1
+        FROM star_payments
+        WHERE user_id = ? AND purpose = ?
+        LIMIT 1
+        """,
+        (user_id, "exam_access"),
+    )
+    row = await cursor.fetchone()
+    return row is not None

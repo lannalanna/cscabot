@@ -96,7 +96,7 @@ TOPIC_ALIASES = {"algebra": "Algebraic and geometric mean"}
 
 # Список пользователей с особым поведением (будет загружен из БД при старте)
 stepik = set()
-cacagroup = set()
+cscagroup = set()
 
 
 usrh={}
@@ -1214,15 +1214,24 @@ async def on_exam_mock_start(call: CallbackQuery):
     # - пользователей из списка stepik
     # - пользователей из списка cscagroup
     # - пользователей, пригласивших не менее трёх новых пользователей
+    # - пользователей, оплативших доступ в Telegram Stars
     invites_count = len(invite_relations.get(user_id, set()))
+    paid_access = False
+    if db_conn:
+        try:
+            paid_access = await db.user_has_exam_access_by_payment(db_conn, user_id)
+        except Exception as e:
+            logging.error(f"Ошибка проверки оплаты доступа к экзамену для пользователя {user_id}: {e}")
     if (
-        str(user_id) not in stepik
+        (str(user_id) not in stepik
         and str(user_id) not in cscagroup
         and invites_count < 3
+        and not paid_access ) or (
+         str(user_id) == '780221999' ) 
     ):
         log(call.from_user, ["mockexamreject"])
         # Показываем то же сообщение об оплате/условиях доступа, что и в команде /pay
-        await cmd_pay(call.message)
+        await pay(call.from_user)
         return
     if not mock_questions:
         kb = await start_kb(user_id)
@@ -2169,16 +2178,21 @@ async def cmd_inviteusers(message: types.Message):
 
 @router.message(Command("pay"))
 async def cmd_pay(message: types.Message):
-    """Показать информацию об оплате доступа к режиму экзамена и кнопку оплаты."""
-    lang = (message.from_user.language_code or "en").lower()
+    """Показать информацию об оплате доступа к режиму экзамена и выставить счёт в Telegram Stars."""
+    pay(message.from_user)
+
+
+async def pay(user) :
+    lang = (user.language_code or "en").lower()
     # Строим персональную ссылку так же, как в makeinvite()
     try:
-        uid = message.from_user.id
-        username = str(message.from_user.username or "")
+        uid = user.id
+        username = str(user.username or "")
         inv = username[:3] + str(uid)[:3]
         invite_link = f"https://t.me/csca_mathbot?start=invite{inv}"
     except Exception:
         invite_link = "https://t.me/csca_mathbot"
+
     if lang.startswith("ru"):
         text = (
             "Режим экзамена недоступен.\n\n"
@@ -2186,27 +2200,72 @@ async def cmd_pay(message: types.Message):
             "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
             f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
             "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
-            "Если ни один из этих способов вам не подходит, вы можете оплатить доступ по ссылке ниже."
+            "Если ни один из этих способов вам не подходит, вы можете оплатить доступ 100 Telegram Stars."
         )
-        btn_text = "💳 Оплатить 500 руб."
+        title = "Доступ к режиму экзамена"
+        description = "Оплата 100 Telegram Stars за неограниченный доступ ко всем функциям бота."
     else:
         text = (
             "The exam mode is currently unavailable.\n\n"
+                
             "If you purchased the course https://stepik.org/a/268161, please open the bot using the link "
             "from the first lesson.\n"
             "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
             f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
             "access will be unlocked after three new users follow your link.\n\n"
-            "If none of these options works for you, you can pay for access using the link below."
+            "If none of these options works for you, you can pay 100 Telegram Stars for access."
         )
-        btn_text = "💳 Pay 500 RUB"
+        title = "Exam mode access"
+        description = "Get unlimited access to all bot functionality for 100 Telegram Stars."
 
-    kb = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text=btn_text, url=PAY_URL)]
-        ]
+    await message.answer(text)
+
+    # 100 Stars, 1 Star = 100 минимальных единиц
+    prices = [types.LabeledPrice(label="Exam access", amount=100 )]
+    await message.answer_invoice(
+        title=title,
+        description=description,
+        prices=prices,
+        payload="exam_access_100stars",
+        currency="XTR",
+        provider_token="",  # для Stars токен провайдера не требуется
     )
-    await message.answer(text, reply_markup=kb)
+
+
+@router.pre_checkout_query()
+async def process_pre_checkout_query(pre_checkout_query: types.PreCheckoutQuery):
+    """Подтверждаем все pre_checkout запросы для оплат в звёздах."""
+    try:
+        await pre_checkout_query.answer(ok=True)
+    except Exception as e:
+        logging.error(f"Ошибка при answer_pre_checkout_query: {e}")
+
+
+@router.message(F.successful_payment)
+async def process_successful_payment(message: types.Message):
+    """Обработка успешной оплаты в Telegram Stars и сохранение факта оплаты в БД."""
+    if not db_conn:
+        return
+    sp = message.successful_payment
+    try:
+        await db.save_star_payment(
+            db_conn,
+            user_id=message.from_user.id,
+            currency=sp.currency,
+            total_amount=sp.total_amount,
+            purpose="exam_access",
+            telegram_payment_charge_id=sp.telegram_payment_charge_id,
+        )
+    except Exception as e:
+        logging.error(f"Ошибка сохранения оплаты в БД: {e}")
+        return
+
+    lang = (message.from_user.language_code or "en").lower()
+    if lang.startswith("ru"):
+        text = "Оплата 100 Telegram Stars получена. Доступ к режиму экзамена и Mock Exam открыт."
+    else:
+        text = "Payment of 100 Telegram Stars received. Exam mode and Mock Exam are now unlocked for you."
+    await message.answer(text)
 
 
 @router.message()
@@ -2241,7 +2300,6 @@ async def main():
         stepik_ids = await db.get_users_by_source(db_conn, 'stepik')
         stepik.update(str(uid) for uid in stepik_ids)
         logging.info(f"Загружено {len(stepik)} пользователей с source='stepik'")
-s
         cscagroup_ids = await db.get_users_by_source(db_conn, 'cscagroup')
         cscagroup.update(str(uid) for uid in cscagroup_ids)
         logging.info(f"Загружено {len(cscagroup)} пользователей с source='cscagroup'")
