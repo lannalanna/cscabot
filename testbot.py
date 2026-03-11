@@ -96,6 +96,7 @@ TOPIC_ALIASES = {"algebra": "Algebraic and geometric mean"}
 
 # Список пользователей с особым поведением (будет загружен из БД при старте)
 stepik = set()
+cacagroup = set()
 
 
 usrh={}
@@ -221,6 +222,70 @@ for _, t_top, t_j in exam_questions_dec:
 
 exam_state_dec = {}
 
+# Mock Exam: для каждой задачи type=jan подбираем случайную задачу с той же подтемой и сложностью
+# Предпочитаем задачи не type=jan и не type=dec
+EXAM_MOCK_ID = "exam_mock"
+mock_questions = []  # список (topic, j) той же длины что exam_questions
+MOCK_TOTAL_DIFFICULTY = 0
+
+# Пулы по (subtopic, difficulty): preferred — без jan/dec, fallback — все
+_preferred_pool = {}  # (subtopic, difficulty) -> [(topic, j), ...]
+_fallback_pool = {}   # (subtopic, difficulty) -> [(topic, j), ...]
+for top in topics:
+    for j, item in enumerate(kapibara.get(top, [])):
+        sub = (item.get("subtopic") or "").strip() or "general"
+        try:
+            diff = int(item.get("difficulty") or 1)
+        except (TypeError, ValueError):
+            diff = 1
+        if diff < 1:
+            diff = 1
+        t = (item.get("type") or "").strip().lower()
+        key = (sub, diff)
+        if key not in _fallback_pool:
+            _fallback_pool[key] = []
+        _fallback_pool[key].append((top, j))
+        if t not in ("jan", "dec"):
+            if key not in _preferred_pool:
+                _preferred_pool[key] = []
+            _preferred_pool[key].append((top, j))
+
+_used_for_mock = set()  # (topic, j) — каждая задача в mock_questions только один раз
+for _, t_top, t_j in exam_questions:
+    q = kapibara[t_top][t_j]
+    sub = (q.get("subtopic") or "").strip() or "general"
+    try:
+        diff = int(q.get("difficulty") or 1)
+    except (TypeError, ValueError):
+        diff = 1
+    if diff < 1:
+        diff = 1
+    key = (sub, diff)
+    pool = _preferred_pool.get(key) or _fallback_pool.get(key)
+    if pool:
+        available = [p for p in pool if p not in _used_for_mock]
+        if available:
+            chosen = random.choice(available)
+            _used_for_mock.add(chosen)
+            mock_questions.append(chosen)
+        else:
+            mock_questions.append((t_top, t_j))
+    else:
+        mock_questions.append((t_top, t_j))
+    c_top, c_j = mock_questions[-1]
+    try:
+        d = int(kapibara[c_top][c_j].get("difficulty") or 1)
+    except (TypeError, ValueError):
+        d = 1
+    if d < 1:
+        d = 1
+    MOCK_TOTAL_DIFFICULTY += d
+
+exam_state_mock = {}
+
+# Связи приглашений: пригласивший -> множество приглашённых
+invite_relations = {}  # type: dict[int, set[int]]
+
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 router = Router()
@@ -232,9 +297,20 @@ db_conn = None
 
 def log(usr, lg = []) :
    dt = datetime.datetime.now()
-   id = usr.id  
+   id = usr.id
    username = usr.username
-   l = [dt, id, username] +  lg
+   # Признак источника: сейчас различаем stepik / не stepik
+   try:
+        if str(id) in stepik : 
+           src = "stepik" 
+        else  :
+            if str(id) in cscagroup:
+                 src = "cscagroup"
+            else :
+                 src = "" 
+   except Exception:
+       src = ""
+   l = [dt, id, username, src] + lg
    # Сохраняем в файл для обратной совместимости
    res_file = os.path.join(DATA_DIR, "res.txt")
    try:
@@ -243,6 +319,62 @@ def log(usr, lg = []) :
    except:
        pass  # Если файл недоступен, продолжаем работу
 
+
+def _make_invite_code(username: str, user_id: int) -> str:
+   """Строит инвайт-код так же, как в makeinvite()."""
+   uname = str(username or "")
+   return uname[:3] + str(user_id)[:3]
+
+
+async def _build_invite_relations_from_db():
+   """Строит карту приглашений invite_relations на основе таблицы users."""
+   global invite_relations
+   invite_relations = {}
+   if not db_conn:
+       return
+   try:
+       users = await db.get_all_users(db_conn)
+       # id -> (username, source, invited_by)
+       users_map = {uid: (uname, source, invited_by) for uid, uname, source, invited_by in users}
+       # код -> inviter_id
+       code_to_inviter = {}
+       for uid, (uname, source, invited_by) in users_map.items():
+           code = _make_invite_code(uname, uid)
+           code_to_inviter[code] = uid
+       # разбираем приглашённых
+       for invited_id, (inv_uname, source, invited_by) in users_map.items():
+           if not invited_by:
+               continue
+           raw = str(invited_by).strip()
+           if not raw.lower().startswith("invite"):
+               continue
+           code = raw[6:]  # после 'invite'
+           inviter_id = code_to_inviter.get(code)
+           if not inviter_id or inviter_id == invited_id:
+               continue
+           invite_relations.setdefault(inviter_id, set()).add(invited_id)
+   except Exception as e:
+       logging.error(f"Ошибка построения invite_relations: {e}")
+
+
+def _register_invite_for_new_user(user_id: int, username, start_text):
+   """Обновляет invite_relations при приходе нового пользователя по invite-ссылке."""
+   global invite_relations
+   if not start_text:
+       return
+   raw = start_text.strip()
+   if not raw.lower().startswith("invite"):
+       return
+   code = raw[6:]
+   try:
+       # Кандидаты — известные пригласившие
+       for inviter_id in invite_relations.keys():
+           inviter_code = _make_invite_code(None, inviter_id)
+           if inviter_code == code and inviter_id != user_id:
+               invite_relations.setdefault(inviter_id, set()).add(user_id)
+               return
+   except Exception as e:
+       logging.error(f"Ошибка регистрации инвайта для нового пользователя {user_id}: {e}")
 def makeinvite(usr) : 
        id = usr.id
        username = str(usr.username)
@@ -250,13 +382,13 @@ def makeinvite(usr) :
        lang = usr.language_code 
        link = "https://t.me/csca_mathbot?start=invite"+inv
        if lang == "ru" :
-                message = "CSCA math bot бесплатный. Чтобы продолжать пользоваться им неограниченно, отправьте ссылку-приглашения друзьям или опубликуйте ее в любом CSCA чате"
+                message = "CSCA math bot бесплатный (пока). Чтобы продолжать пользоваться им неограниченно, отправьте ссылку-приглашения друзьям или опубликуйте ее в любом CSCA чате"
                 message = message+"\n Персональная ссылка-приглашение "+link
-                message = message +"\n Сейчас вы можете продолжать пользоваться ботом"
+                
        else :    
                 message = "CSCA math bot is free. To continue using it without limits, send an invitation link to friends or post it in any CSCA chat."
                 message = message+"\n Your personal invitation link "+link
-                message = message +"\n You can continue using the bot."
+                
        return message
 
 async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
@@ -306,6 +438,13 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
             InlineKeyboardButton(
                 text="📝 Экзамен 21 дек / Exam Dec 21",
                 callback_data="exam21dec_start",
+            )
+        )
+    if mock_questions:
+        builder.add(
+            InlineKeyboardButton(
+                text="📝 Mock Exam / Пробный экзамен",
+                callback_data="exam_mock_start",
             )
         )
     builder.adjust(1)
@@ -640,6 +779,136 @@ def _inline_kb_exam_dec_finished() -> InlineKeyboardMarkup:
    return builder.as_markup()
 
 
+# --- Mock Exam (задачи по подтеме/сложности как у jan, без jan/dec по возможности) ---
+async def _get_exam_mock_state(user_id: int):
+   state = exam_state_mock.get(user_id)
+   if state is None:
+       state = {"answered": set(), "correct_count": 0, "correct_difficulty": 0}
+       if db_conn:
+           try:
+               exam_answers = await db.get_exam_answers(db_conn, user_id, EXAM_MOCK_ID)
+               answered_set = set()
+               correct_count = 0
+               correct_difficulty = 0
+               for idx, answer_data in exam_answers.items():
+                   answered_set.add(idx)
+                   if answer_data["correct"] and 0 <= idx < len(mock_questions):
+                       correct_count += 1
+                       top, j = mock_questions[idx]
+                       q = kapibara[top][j]
+                       try:
+                           diff = int(q.get("difficulty") or 1)
+                       except (TypeError, ValueError):
+                           diff = 1
+                       if diff < 1:
+                           diff = 1
+                       correct_difficulty += diff
+               state["answered"] = answered_set
+               state["correct_count"] = correct_count
+               state["correct_difficulty"] = correct_difficulty
+           except Exception as e:
+               logging.error(f"Ошибка загрузки состояния Mock Exam из БД: {e}")
+       exam_state_mock[user_id] = state
+   return state
+
+
+def _find_next_exam_mock_index(state):
+   answered = state.get("answered", set())
+   for idx in range(len(mock_questions)):
+       if idx not in answered:
+           return idx
+   return None
+
+
+def inline_kb_exam_mock(idx: int) -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   if idx < 0 or idx >= len(mock_questions):
+       builder.adjust(1)
+       return builder.as_markup()
+   top, j = mock_questions[idx]
+   q = kapibara[top][j]
+   for i, opt in enumerate(q["options"]):
+       builder.add(
+           InlineKeyboardButton(
+               text=opt.replace('. ', '.     '),
+               callback_data=f'exam_mock_q_{idx}_{i}',
+           )
+       )
+   builder.adjust(1)
+   return builder.as_markup()
+
+
+async def _send_exam_mock_question(call: CallbackQuery, user_id: int, idx: int):
+   if idx < 0 or idx >= len(mock_questions):
+       kb = await start_kb(user_id)
+       await call.message.answer("Экзаменационные задачи закончились.", reply_markup=kb)
+       return
+   top, j = mock_questions[idx]
+   q = kapibara[top][j]
+   if q.get("img"):
+       photo_path = os.path.join(DATA_DIR, "images", q["img"])
+       await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
+   total = len(mock_questions)
+   header = (
+       f"Mock Exam — вопрос {idx + 1} из {total}\n"
+       f"Пробный экзамен — question {idx + 1} of {total}\n\n"
+   )
+   difficulty = q.get("difficulty")
+   if isinstance(difficulty, int) and 1 <= difficulty <= 5:
+       diff_line = f"Сложность / Difficulty: {'★' * difficulty}{'☆' * (5 - difficulty)}\n"
+   else:
+       diff_line = ""
+   question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
+   async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+       await call.message.answer(question_text, reply_markup=inline_kb_exam_mock(idx))
+
+
+async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
+   state = await _get_exam_mock_state(user_id)
+   correct = state.get("correct_count", 0)
+   total_q = len(mock_questions)
+   k = (state.get("correct_difficulty", 0) / MOCK_TOTAL_DIFFICULTY * 100) if MOCK_TOTAL_DIFFICULTY else 0.0
+   kb = _inline_kb_exam_mock_finished()
+   msg = (
+       f"Ваш результат Mock Exam (пробный экзамен):\n\n"
+       f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов.\n"
+       "Спасибо! Вы можете продолжить тренироваться по обычным темам.\n\n"
+       "Your Mock Exam result:\n\n"
+       f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points.\n"
+       "Thank you! You can continue training on regular topics."
+   )
+   async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+       await call.message.answer(msg, reply_markup=kb)
+
+
+def _format_exam_mock_stats_line(state) -> str:
+   correct = state.get("correct_count", 0)
+   total_q = len(mock_questions)
+   k = (state.get("correct_difficulty", 0) / MOCK_TOTAL_DIFFICULTY * 100) if MOCK_TOTAL_DIFFICULTY else 0.0
+   return (
+       f"Правильно {correct} из {total_q}, балл {k:.2f}.\n"
+       f"Correct {correct} of {total_q}, score {k:.2f}."
+   )
+
+
+def _inline_kb_exam_mock_entry_choice() -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   builder.row(
+       InlineKeyboardButton(text="Очистить статистику / Clear stats", callback_data="exam_mock_clear"),
+       InlineKeyboardButton(text="Продолжить / Continue", callback_data="exam_mock_continue"),
+   )
+   return builder.as_markup()
+
+
+def _inline_kb_exam_mock_finished() -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   builder.row(
+       InlineKeyboardButton(text="Очистить статистику / Clear stats", callback_data="exam_mock_clear"),
+       InlineKeyboardButton(text="Список тем / Topic list", callback_data="back_start"),
+   )
+   return builder.as_markup()
+
+
 def _get_subtopic_j(topic_idx: int, sub_idx: int, k: int):
     """Возвращает (topic, j) для k-го вопроса в подтеме."""
     if topic_idx < 0 or topic_idx >= len(topics):
@@ -815,7 +1084,7 @@ async def on_exam25_start(call: CallbackQuery):
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
         await call.message.answer(
             "Режим «Экзамен 25 янв» / Mode \"Exam Jan 25\".\n"
-            "Всего 48 задач. Второй раз решить одну и ту же задачу нельзя.\n\n"
+            "Всего 48 задач. Второй раз решить одну и ту же задачу нельзя.\n\n Разборы всех задач в https://stepik.org/a/268161\n Используйте промокод BOT для скидки \n\n "
             "Mode \"Take the January 25 exam\".\n"
             "There are 48 tasks. You cannot solve the same task twice."
         )
@@ -934,6 +1203,95 @@ async def on_exam21dec_continue(call: CallbackQuery):
         await _send_exam_dec_summary(call, user_id)
         return
     await _send_exam_dec_question(call, user_id, next_idx)
+
+
+# --- Mock Exam: вход, очистка, продолжение ---
+@router.callback_query(F.data == "exam_mock_start")
+async def on_exam_mock_start(call: CallbackQuery):
+    await call.answer()
+    user_id = call.from_user.id
+    # Доступ к Mock Exam только для:
+    # - пользователей из списка stepik
+    # - пользователей из списка cscagroup
+    # - пользователей, пригласивших не менее трёх новых пользователей
+    invites_count = len(invite_relations.get(user_id, set()))
+    if (
+        str(user_id) not in stepik
+        and str(user_id) not in cscagroup
+        and invites_count < 3
+    ):
+        log(call.from_user, ["mockexamreject"])
+        # Показываем то же сообщение об оплате/условиях доступа, что и в команде /pay
+        await cmd_pay(call.message)
+        return
+    if not mock_questions:
+        kb = await start_kb(user_id)
+        await call.message.answer("Mock Exam пока не настроен.", reply_markup=kb)
+        return
+    state = await _get_exam_mock_state(user_id)
+    next_idx = _find_next_exam_mock_index(state)
+    if next_idx is None:
+        log(call.from_user, [EXAM_MOCK_ID, "start", "summary"])
+        await _send_exam_mock_summary(call, user_id)
+        return
+    if state.get("answered"):
+        log(call.from_user, [EXAM_MOCK_ID, "start", "entry"])
+        msg = (
+            "Режим «Mock Exam» / Пробный экзамен.\n\n"
+            + _format_exam_mock_stats_line(state)
+            + "\n\nВыберите действие / Choose action:"
+        )
+        async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+            await call.message.answer(msg, reply_markup=_inline_kb_exam_mock_entry_choice())
+        return
+    log(call.from_user, [EXAM_MOCK_ID, "start", "question"])
+    total_m = len(mock_questions)
+    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+        await call.message.answer(
+            f"Mock Exam / Пробный экзамен.\n"
+            f"Неограниченный доступ для студентов курса 'Подготовка к CSCA' https://stepik.org/a/268161  и  участников групп подготовки по метематике https://t.me/+c1ksuGkuO1BiNDk6 и физике https://t.me/+dUnPAdJO1w4zZWUy \n\n"
+            f"Всего {total_m} задач. Второй раз решить одну и ту же задачу нельзя.\n\n"
+            f"There are {total_m} tasks. You cannot solve the same task twice."
+        )
+    await _send_exam_mock_question(call, user_id, next_idx)
+
+
+@router.callback_query(F.data == "exam_mock_clear")
+async def on_exam_mock_clear(call: CallbackQuery):
+    await call.answer()
+    log(call.from_user, [EXAM_MOCK_ID, "clear"])
+    user_id = call.from_user.id
+    if db_conn:
+        try:
+            await db.clear_exam_answers(db_conn, user_id, EXAM_MOCK_ID)
+        except Exception as e:
+            logging.error(f"Ошибка очистки Mock Exam: {e}")
+    if user_id in exam_state_mock:
+        del exam_state_mock[user_id]
+    state = await _get_exam_mock_state(user_id)
+    next_idx = _find_next_exam_mock_index(state)
+    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+        await call.message.answer(
+            "Статистика Mock Exam очищена. Можете начать заново.\n"
+            "Mock exam stats cleared. You can start again."
+        )
+    if next_idx is not None:
+        await _send_exam_mock_question(call, user_id, next_idx)
+    else:
+        await _send_exam_mock_summary(call, user_id)
+
+
+@router.callback_query(F.data == "exam_mock_continue")
+async def on_exam_mock_continue(call: CallbackQuery):
+    await call.answer()
+    log(call.from_user, [EXAM_MOCK_ID, "continue"])
+    user_id = call.from_user.id
+    state = await _get_exam_mock_state(user_id)
+    next_idx = _find_next_exam_mock_index(state)
+    if next_idx is None:
+        await _send_exam_mock_summary(call, user_id)
+        return
+    await _send_exam_mock_question(call, user_id, next_idx)
 
 
 @router.callback_query(F.data.startswith("exam25_q_"))
@@ -1100,6 +1458,82 @@ async def on_exam21dec_answer(call: CallbackQuery):
     else:
         await call.message.answer(full_msg)
         await _send_exam_dec_question(call, user_id, next_idx)
+
+
+@router.callback_query(F.data.startswith("exam_mock_q_"))
+async def on_exam_mock_answer(call: CallbackQuery):
+    """Обработка ответа в режиме Mock Exam. callback_data = exam_mock_q_{idx}_{i} (при split 5 частей)."""
+    correct_h = {'A': '0', 'B': '1', 'C': '2', 'D': '3', 'E': '4'}
+    await call.answer()
+    data = call.data.split("_")
+    # exam_mock_q_0_1 -> ["exam", "mock", "q", "0", "1"] -> idx=data[3], ans_id=data[4]
+    if len(data) < 5:
+        await call.message.answer("Ошибка формата ответа экзамена.")
+        return
+    try:
+        idx = int(data[3])
+        ans_id = data[4]
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата ответа экзамена.")
+        return
+    user_id = call.from_user.id
+    if idx < 0 or idx >= len(mock_questions):
+        await call.message.answer("Экзаменационный вопрос не найден.")
+        return
+    state = await _get_exam_mock_state(user_id)
+    if idx in state["answered"]:
+        await call.message.answer("Вы уже решили эту задачу.")
+        return
+    top, j = mock_questions[idx]
+    q = kapibara[top][j]
+    correct = correct_h.get(q["answer"], "")
+    try:
+        ans_id_int = int(ans_id)
+    except ValueError:
+        await call.message.answer("Ошибка формата ответа экзамена.")
+        return
+    ansok = 1 if correct == ans_id else 0
+
+    state["answered"].add(idx)
+    if ansok:
+        state["correct_count"] = state.get("correct_count", 0) + 1
+        try:
+            diff = int(q.get("difficulty") or 1)
+        except (TypeError, ValueError):
+            diff = 1
+        if diff < 1:
+            diff = 1
+        state["correct_difficulty"] = state.get("correct_difficulty", 0) + diff
+
+    if db_conn:
+        try:
+            await db.save_answer(
+                db_conn,
+                user_id,
+                EXAM_MOCK_ID,
+                idx,
+                ans_id_int,
+                ansok == 1,
+            )
+        except Exception as e:
+            logging.error(f"Ошибка сохранения ответа Mock Exam: {e}")
+    log(call.from_user, [EXAM_MOCK_ID, idx, ans_id, ansok])
+
+    result_msg = "Правильно! / Correct!" if ansok else "Неправильно. / Incorrect."
+    correct_now = state.get("correct_count", 0)
+    total_q = len(mock_questions)
+    k_now = (state.get("correct_difficulty", 0) / MOCK_TOTAL_DIFFICULTY * 100) if MOCK_TOTAL_DIFFICULTY else 0.0
+    stats_ru = f"Сейчас по экзамену: {correct_now} из {total_q} верно, набранный балл {k_now:.2f}."
+    stats_en = f"Current exam stats: {correct_now} out of {total_q} correct, score {k_now:.2f}."
+    full_msg = result_msg + "\n" + stats_ru + "\n" + stats_en
+
+    next_idx = _find_next_exam_mock_index(state)
+    if next_idx is None:
+        await call.message.answer(full_msg)
+        await _send_exam_mock_summary(call, user_id)
+    else:
+        await call.message.answer(full_msg)
+        await _send_exam_mock_question(call, user_id, next_idx)
 
 
 @router.callback_query(F.data == "random_any")
@@ -1407,6 +1841,8 @@ async def cmd_start(message: types.Message):
     if db_conn:
         try:
             await db.ensure_user(db_conn, message.from_user, start_text)
+            # Если пользователь пришёл по invite-ссылке, обновляем карту приглашений
+            _register_invite_for_new_user(message.from_user.id, message.from_user.username, start_text)
         except Exception as e:
             logging.error(f"Ошибка сохранения пользователя в БД: {e}")
     
@@ -1430,9 +1866,27 @@ async def cmd_start(message: types.Message):
             stepik.update(str(uid) for uid in stepik_ids)
         except:
             pass
+
+    # Обновляем список stepik из БД
+    if db_conn and 'cscagroup' in (start_text or '').lower():
+        try:
+            cscagroup_ids = await db.get_users_by_source(db_conn, 'cscagroup')
+            cscagroup.update(str(uid) for uid in cscagroup_ids)
+        except:
+            pass
     
     kb = await start_kb(message.from_user.id)
-    await message.answer("Hi!! I am a CSCA Math Bot", reply_markup=kb)
+    lang = (message.from_user.language_code or "").lower()
+    if lang.startswith("ru"):
+        greet = """Привет! Я CSCA бот.  
+Неограниченный доступ для студентов курса "Подготовка к CSCA" https://stepik.org/a/268161  и  
+участников групп подготовки по метематике https://t.me/+c1ksuGkuO1BiNDk6
+и физике https://t.me/+dUnPAdJO1w4zZWUy
+
+"""
+    else:
+        greet = "Hi!! I am a CSCA math exam prep bot. I've got  a lot of practice problems and can verify your answers. "
+    await message.answer(greet, reply_markup=kb)
    
    # await message.answer("Это тестовая версия бота. Нашел ошибку? Есть идея? Пиши @csca_math_exam или прямо здесь.", reply_markup=start_kb()) 
    # await message.answer("Видео-разборы задач в группе https://t.me/milgecru/385") 
@@ -1653,6 +2107,66 @@ async def cmd_exam21decstats(message: types.Message):
     await message.answer(text, reply_markup=kb)
 
 
+@router.message(Command("exam_mock_stats"))
+async def cmd_exam_mock_stats(message: types.Message):
+    """Показать результаты Mock Exam для текущего пользователя."""
+    if not mock_questions:
+        await message.answer("Mock Exam ещё не настроен.")
+        return
+    user_id = message.from_user.id
+    state = await _get_exam_mock_state(user_id)
+    if not state or not state.get("answered"):
+        await message.answer("Вы ещё не проходили Mock Exam.")
+        return
+    correct = state.get("correct_count", 0)
+    total_q = len(mock_questions)
+    k = (state.get("correct_difficulty", 0) / MOCK_TOTAL_DIFFICULTY * 100) if MOCK_TOTAL_DIFFICULTY else 0.0
+    ru_block = (
+        "📊 Ваш результат Mock Exam (пробный экзамен):\n\n"
+        f"Вы решили правильно {correct} из {total_q} задач "
+        f"и набрали {k:.2f} баллов."
+    )
+    en_block = (
+        "📊 Your Mock Exam result:\n\n"
+        f"You solved {correct} out of {total_q} tasks correctly "
+        f"and scored {k:.2f} points."
+    )
+    text = ru_block + "\n\n" + en_block
+    kb = await start_kb(message.from_user.id)
+    await message.answer(text, reply_markup=kb)
+
+
+@router.message(Command("inviteusers"))
+async def cmd_inviteusers(message: types.Message):
+    """Показать список пользователей, по приглашениям которых пришли новые пользователи."""
+    # Строим список (inviter_id, username, count) из invite_relations
+    if not invite_relations:
+        lang = (message.from_user.language_code or "en").lower()
+        if lang.startswith("ru"):
+            text = "Пока нет данных о приглашениях."
+        else:
+            text = "There is no invitation data yet."
+        await message.answer(text)
+        return
+
+    # Сортируем по количеству приглашённых (по убыванию)
+    items = sorted(
+        ((inviter_id, len(invited)) for inviter_id, invited in invite_relations.items()),
+        key=lambda x: x[1],
+        reverse=True,
+    )
+    lang = (message.from_user.language_code or "en").lower()
+    if lang.startswith("ru"):
+        lines = ["📨 Пользователи, по приглашениям которых пришли новые пользователи:\n"]
+        for inviter_id, count in items:
+            lines.append(f"- id {inviter_id}: пригласил(а) {count} пользовател(ей)")
+    else:
+        lines = ["📨 Users whose invitations brought new users:\n"]
+        for inviter_id, count in items:
+            lines.append(f"- id {inviter_id}: invited {count} user(s)")
+    await message.answer("\n".join(lines))
+
+
 @router.message(Command("pay"))
 async def cmd_pay(message: types.Message):
     """Показать информацию об оплате доступа к режиму экзамена и кнопку оплаты."""
@@ -1668,7 +2182,7 @@ async def cmd_pay(message: types.Message):
     if lang.startswith("ru"):
         text = (
             "Режим экзамена недоступен.\n\n"
-            "Если вы приобретали курс на stepik.ru, перейдите в бот по ссылке из первого урока.\n"
+            "Если вы приобретали курс  https://stepik.org/a/268161, перейдите в бот по ссылке из первого урока.\n"
             "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
             f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
             "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
@@ -1678,7 +2192,7 @@ async def cmd_pay(message: types.Message):
     else:
         text = (
             "The exam mode is currently unavailable.\n\n"
-            "If you purchased the course on stepik.ru, please open the bot using the link "
+            "If you purchased the course https://stepik.org/a/268161, please open the bot using the link "
             "from the first lesson.\n"
             "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
             f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
@@ -1716,7 +2230,7 @@ async def cmd_start(message: Message):
 
 # Запуск процесса поллинга новых апдейтов
 async def main():
-    global db_conn, stepik
+    global db_conn, stepik, cscagroup
     
     # Инициализируем БД
     try:
@@ -1727,6 +2241,14 @@ async def main():
         stepik_ids = await db.get_users_by_source(db_conn, 'stepik')
         stepik.update(str(uid) for uid in stepik_ids)
         logging.info(f"Загружено {len(stepik)} пользователей с source='stepik'")
+s
+        cscagroup_ids = await db.get_users_by_source(db_conn, 'cscagroup')
+        cscagroup.update(str(uid) for uid in cscagroup_ids)
+        logging.info(f"Загружено {len(cscagroup)} пользователей с source='cscagroup'")
+
+        # Строим карту приглашений invite_relations
+        await _build_invite_relations_from_db()
+        logging.info(f"Построено {len(invite_relations)} записей invite_relations")
     except Exception as e:
         logging.error(f"Ошибка инициализации БД: {e}")
         db_conn = None
@@ -1741,6 +2263,8 @@ async def main():
                     types.BotCommand(command="clearstats", description="Очистить мою статистику"),
                     types.BotCommand(command="exam25stats", description="Результат экзамена 25 января"),
                     types.BotCommand(command="exam21decstats", description="Результат экзамена 21 декабря"),
+                    types.BotCommand(command="exam_mock_stats", description="Результат Mock Exam"),
+
                 ]
             )
         except Exception as e:

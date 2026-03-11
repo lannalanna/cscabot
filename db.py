@@ -113,16 +113,20 @@ async def ensure_user(conn: aiosqlite.Connection, user, start_text: Optional[str
         start_text: текст команды после /start (например, "stepik" или "inviteabc123")
     """
     now = datetime.now().isoformat()
-    source = parse_source(start_text)
+    new_source = parse_source(start_text)
     
     # Проверяем, существует ли пользователь
     cursor = await conn.execute(
-        "SELECT id FROM users WHERE id = ?",
+        "SELECT id, source FROM users WHERE id = ?",
         (user.id,)
     )
-    exists = await cursor.fetchone()
+    row = await cursor.fetchone()
     
-    if exists:
+    if row:
+        _, old_source = row
+        # Если у пользователя уже был непустой source, а новое значение пустое,
+        # оставляем старое значение.
+        effective_source = old_source if (old_source and not new_source) else new_source
         # Обновляем существующего пользователя
         await conn.execute("""
             UPDATE users 
@@ -131,7 +135,7 @@ async def ensure_user(conn: aiosqlite.Connection, user, start_text: Optional[str
         """, (
             user.username,
             user.language_code,
-            source,
+            effective_source,
             start_text if start_text else None,
             now,
             user.id
@@ -145,7 +149,7 @@ async def ensure_user(conn: aiosqlite.Connection, user, start_text: Optional[str
             user.id,
             user.username,
             user.language_code,
-            source,
+            new_source,
             start_text if start_text else None,
             now,
             now
@@ -402,6 +406,21 @@ async def get_users_by_source(conn: aiosqlite.Connection, source: str) -> List[i
     
     rows = await cursor.fetchall()
     return [row[0] for row in rows]
+
+
+async def get_all_users(conn: aiosqlite.Connection) -> List[Tuple[int, Optional[str], Optional[str], Optional[str]]]:
+    """
+    Возвращает список всех пользователей с основными полями.
+    
+    Returns:
+        Список кортежей (id, username, source, invited_by)
+    """
+    cursor = await conn.execute("""
+        SELECT id, username, source, invited_by
+        FROM users
+    """)
+    rows = await cursor.fetchall()
+    return [(row[0], row[1], row[2], row[3]) for row in rows]
 
 
 async def clear_user_stats(conn: aiosqlite.Connection, user_id: int) -> None:
