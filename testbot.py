@@ -2218,16 +2218,18 @@ async def pay(user) :
         title = "Exam mode access"
         description = "Get unlimited access to all bot functionality for 100 Telegram Stars."
 
-    await message.answer(text)
+   
+    await bot.send_message(chat_id=user.id, text=text)
 
     # 100 Stars, 1 Star = 100 минимальных единиц
     prices = [types.LabeledPrice(label="Exam access", amount=100 )]
-    await message.answer_invoice(
+    await bot.send_invoice(
+        chat_id=user.id,
         title=title,
         description=description,
-        prices=prices,
         payload="exam_access_100stars",
         currency="XTR",
+        prices=prices,
         provider_token="",  # для Stars токен провайдера не требуется
     )
 

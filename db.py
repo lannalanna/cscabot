@@ -116,6 +116,8 @@ def parse_source(start_text: Optional[str]) -> Optional[str]:
     
     if 'stepik' in start_text:
         return 'stepik'
+    elif 'cscagroup' in start_text:
+        return 'cscagroup'
     elif start_text.startswith('invite'):
         return 'invite'
     # Можно добавить другие варианты здесь
