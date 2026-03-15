@@ -17,7 +17,7 @@ from aiogram.utils.chat_action import ChatActionSender
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
 
-API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
+#API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -626,6 +626,41 @@ async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
        await call.message.answer(question_text, reply_markup=reply)
 
 
+async def _exam_wrong_by_topic(user_id: int, exam_type: str) -> dict:
+   """
+   Собирает по ответам в БД: тема -> число задач с ошибкой.
+   exam_type:
+     - 'jan' — экзамен 25 января
+     - 'dec' — экзамен 21 декабря
+   """
+   wrong_by_topic: dict[str, int] = {}
+   if not db_conn:
+       return wrong_by_topic
+   try:
+       if exam_type == "jan":
+           exam_id = EXAM_25JAN_ID
+           questions = exam_questions
+       elif exam_type == "dec":
+           exam_id = EXAM_21DEC_ID
+           questions = exam_questions_dec
+       else:
+           return wrong_by_topic
+       if not questions:
+           return wrong_by_topic
+       exam_answers = await db.get_exam_answers(db_conn, user_id, exam_id)
+   except Exception as e:
+       logging.error(f"Ошибка загрузки ответов экзамена ({exam_type}) для статистики ошибок: {e}")
+       return wrong_by_topic
+   for idx, answer_data in exam_answers.items():
+       if answer_data.get("correct"):
+           continue
+       if idx < 0 or idx >= len(questions):
+           continue
+       _, top, _j = questions[idx]
+       wrong_by_topic[top] = wrong_by_topic.get(top, 0) + 1
+   return wrong_by_topic
+
+
 async def _send_exam_summary(call: CallbackQuery, user_id: int):
    """Показывает пользователю итоговую статистику экзамена 25 января и кнопки Очистить / Список тем."""
    state = await _get_exam_state(user_id)
@@ -636,14 +671,38 @@ async def _send_exam_summary(call: CallbackQuery, user_id: int):
    else:
        k = 0.0
    kb = _inline_kb_exam_finished()
-   msg = (
-       f"Ваш результат экзамена 25 января:\n\n"
-       f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов.\n"
-       "Спасибо! Вы можете продолжить тренироваться по обычным темам.\n\n"
-       "Your January 25 exam result:\n\n"
-       f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points.\n"
-       "Thank you! You can continue training on regular topics."
-   )
+   wrong_by_topic = await _exam_wrong_by_topic(user_id, "jan")
+   lang = (call.from_user.language_code or "").lower()
+   if lang.startswith("ru"):
+       if wrong_by_topic:
+           lines = ["\nОшибки по темам (неверный ответ):"]
+           for topic_name in sorted(wrong_by_topic.keys()):
+               n = wrong_by_topic[topic_name]
+               lines.append(f"• {topic_name} — {n} задач(и)")
+           stats = "\n".join(lines)
+       else:
+           stats = "\n\nНеверных ответов не было."
+       msg = (
+           f"Ваш результат экзамена 25 января:\n\n"
+           f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов."
+           f"{stats}\n\n"
+           "Спасибо! Вы можете продолжить тренироваться по обычным темам."
+       )
+   else:
+       if wrong_by_topic:
+           lines = ["\nMistakes by topic (wrong answer):"]
+           for topic_name in sorted(wrong_by_topic.keys()):
+               n = wrong_by_topic[topic_name]
+               lines.append(f"• {topic_name} — {n} task(s)")
+           stats = "\n".join(lines)
+       else:
+           stats = "\n\nNo incorrect answers."
+       msg = (
+           f"Your January 25 exam result:\n\n"
+           f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points."
+           f"{stats}\n\n"
+           "Thank you! You can continue training on regular topics."
+       )
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(msg, reply_markup=kb)
 
@@ -739,14 +798,38 @@ async def _send_exam_dec_summary(call: CallbackQuery, user_id: int):
    total_q = len(exam_questions_dec)
    k = (state.get("correct_difficulty", 0) / EXAM_DEC_TOTAL_DIFFICULTY * 100) if EXAM_DEC_TOTAL_DIFFICULTY else 0.0
    kb = _inline_kb_exam_dec_finished()
-   msg = (
-       f"Ваш результат экзамена 21 декабря:\n\n"
-       f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов.\n"
-       "Спасибо! Вы можете продолжить тренироваться по обычным темам.\n\n"
-       "Your December 21 exam result:\n\n"
-       f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points.\n"
-       "Thank you! You can continue training on regular topics."
-   )
+   wrong_by_topic = await _exam_wrong_by_topic(user_id, "dec")
+   lang = (call.from_user.language_code or "").lower()
+   if lang.startswith("ru"):
+       if wrong_by_topic:
+           lines = ["\nОшибки по темам (неверный ответ):"]
+           for topic_name in sorted(wrong_by_topic.keys()):
+               n = wrong_by_topic[topic_name]
+               lines.append(f"• {topic_name} — {n} задач(и)")
+           stats = "\n".join(lines)
+       else:
+           stats = "\n\nНеверных ответов не было."
+       msg = (
+           f"Ваш результат экзамена 21 декабря:\n\n"
+           f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов."
+           f"{stats}\n\n"
+           "Спасибо! Вы можете продолжить тренироваться по обычным темам."
+       )
+   else:
+       if wrong_by_topic:
+           lines = ["\nMistakes by topic (wrong answer):"]
+           for topic_name in sorted(wrong_by_topic.keys()):
+               n = wrong_by_topic[topic_name]
+               lines.append(f"• {topic_name} — {n} task(s)")
+           stats = "\n".join(lines)
+       else:
+           stats = "\n\nNo incorrect answers."
+       msg = (
+           f"Your December 21 exam result:\n\n"
+           f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points."
+           f"{stats}\n\n"
+           "Thank you! You can continue training on regular topics."
+       )
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(msg, reply_markup=kb)
 
@@ -1227,7 +1310,7 @@ async def on_exam_mock_start(call: CallbackQuery):
         and str(user_id) not in cscagroup
         and invites_count < 3
         and not paid_access ) or (
-         str(user_id) == '780221999' ) 
+         str(user_id) == '780221999' and not paid_access ) 
     ):
         log(call.from_user, ["mockexamreject"])
         # Показываем то же сообщение об оплате/условиях доступа, что и в команде /pay
@@ -1852,6 +1935,25 @@ async def cmd_start(message: types.Message):
             await db.ensure_user(db_conn, message.from_user, start_text)
             # Если пользователь пришёл по invite-ссылке, обновляем карту приглашений
             _register_invite_for_new_user(message.from_user.id, message.from_user.username, start_text)
+
+            # Если пользователь вернулся по ссылке после успешной оплаты через ЮKassa,
+            # помечаем его как оплатившего доступ (аналогично оплате Stars).
+            st_low = (start_text or "").lower()
+            if st_low.startswith("yookassa_paid"):
+                # ожидаем формат типа: yookassa_paid_<payment_id>
+                parts = st_low.split("_", 2)
+                payment_id = parts[2] if len(parts) >= 3 else st_low
+                try:
+                    await db.save_star_payment(
+                        db_conn,
+                        user_id=message.from_user.id,
+                        currency="RUB",
+                        total_amount=10000,  # 100 рублей в копейках
+                        purpose="exam_access",
+                        telegram_payment_charge_id=payment_id,
+                    )
+                except Exception as e:
+                    logging.error(f"Ошибка сохранения оплаты через ЮKassa для пользователя {message.from_user.id}: {e}")
         except Exception as e:
             logging.error(f"Ошибка сохранения пользователя в БД: {e}")
     
@@ -2200,29 +2302,56 @@ async def pay(user) :
             "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
             f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
             "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
-            "Если ни один из этих способов вам не подходит, вы можете оплатить доступ 100 Telegram Stars."
+            "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
+            "100 Telegram Stars или 100 рублей через ЮKassa по кнопкам ниже."
         )
-        title = "Доступ к режиму экзамена"
-        description = "Оплата 100 Telegram Stars за неограниченный доступ ко всем функциям бота."
+        kb = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="💳 Оплатить 100 руб. через ЮKassa", callback_data="pay_yookassa"),
+                    InlineKeyboardButton(text="⭐ Оплатить 100 Telegram Stars", callback_data="pay_stars"),
+                ]
+            ]
+        )
     else:
         text = (
             "The exam mode is currently unavailable.\n\n"
-                
             "If you purchased the course https://stepik.org/a/268161, please open the bot using the link "
             "from the first lesson.\n"
             "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
             f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
             "access will be unlocked after three new users follow your link.\n\n"
-            "If none of these options works for you, you can pay 100 Telegram Stars for access."
+            "If none of these options works for you, you can pay 100 Telegram Stars or 100 RUB via YooKassa "
+            "using the buttons below."
         )
+        kb = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="💳 Pay 100 RUB via YooKassa", callback_data="pay_yookassa"),
+                    InlineKeyboardButton(text="⭐ Pay 100 Telegram Stars", callback_data="pay_stars"),
+                ]
+            ]
+        )
+
+    await bot.send_message(chat_id=user.id, text=text, reply_markup=kb)
+
+
+@router.callback_query(F.data == "pay_stars")
+async def on_pay_stars(call: CallbackQuery):
+    """Кнопка 'Оплатить 100 Telegram Stars' — отправляем инвойс в звёздах."""
+    await call.answer()
+    user = call.from_user
+    lang = (user.language_code or "en").lower()
+
+    if lang.startswith("ru"):
+        title = "Доступ к режиму экзамена"
+        description = "Оплата 100 Telegram Stars за неограниченный доступ ко всем функциям бота."
+    else:
         title = "Exam mode access"
         description = "Get unlimited access to all bot functionality for 100 Telegram Stars."
 
-   
-    await bot.send_message(chat_id=user.id, text=text)
-
-    # 100 Stars, 1 Star = 100 минимальных единиц
-    prices = [types.LabeledPrice(label="Exam access", amount=100 )]
+    # 100 Stars (используем то же значение, что и раньше в боте)
+    prices = [types.LabeledPrice(label="Exam access", amount=100)]
     await bot.send_invoice(
         chat_id=user.id,
         title=title,
@@ -2230,7 +2359,35 @@ async def pay(user) :
         payload="exam_access_100stars",
         currency="XTR",
         prices=prices,
-        provider_token="",  # для Stars токен провайдера не требуется
+        provider_token="",
+    )
+
+
+@router.callback_query(F.data == "pay_yookassa")
+async def on_pay_yookassa(call: CallbackQuery):
+    """Кнопка 'Оплатить 100 руб. через ЮKassa' — отправляем инвойс в рублях через платёжного провайдера."""
+    await call.answer()
+    user = call.from_user
+    lang = (user.language_code or "en").lower()
+
+    if lang.startswith("ru"):
+        title = "Доступ к режиму экзамена"
+        description = "Оплата 100 рублей (через ЮKassa) за неограниченный доступ ко всем функциям бота."
+    else:
+        title = "Exam mode access"
+        description = "Pay 100 RUB via YooKassa to get unlimited access to all bot functionality."
+
+    # 100 рублей в копейках
+    prices = [types.LabeledPrice(label="Exam access", amount=10000)]
+    await bot.send_invoice(
+        chat_id=user.id,
+        title=title,
+        description=description,
+        payload="exam_access_100rub_yookassa",
+        currency="RUB",
+        prices=prices,
+        #provider_token="390540012:LIVE:91710",
+        provider_token="381764678:TEST:170949" 
     )
 
 
