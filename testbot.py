@@ -18,7 +18,7 @@ from aiogram.utils.chat_action import ChatActionSender
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
 
-#API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
+API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -1419,6 +1419,8 @@ async def on_exam_start(call: CallbackQuery):
         await call.message.answer(
             f"Режим «{cfg['short_ru']}» / Mode \"{cfg['short_en']}\".\n"
             f"Всего {total} задач. Второй раз решить одну и ту же задачу нельзя.\n\n"
+            "Разборы всех задач в https://stepik.org/a/268161\n"
+            "Используйте промокод CSCABOT для скидки.\n\n"
             f"There are {total} tasks. You cannot solve the same task twice."
         )
     await _send_exam_question_by_type(call, user_id, next_idx, exam_type)
@@ -1647,14 +1649,33 @@ async def on_exam_answer(call: CallbackQuery):
     k_now = (state.get("correct_difficulty", 0) / total_d * 100) if total_d else 0.0
     stats_ru = f"Сейчас по экзамену: {correct_now} из {total_q} верно, набранный балл {k_now:.2f}."
     stats_en = f"Current exam stats: {correct_now} out of {total_q} correct, score {k_now:.2f}."
-    full_msg = result_msg + "\n" + stats_ru + "\n" + stats_en
+    stats_msg = stats_ru + "\n" + stats_en
+
+    # Если ответ неправильный и есть подсказка — отправляем тремя сообщениями:
+    # 1) Неправильно  2) hint по языку  3) статистика
+    if not ansok and (q.get("hint_en") or q.get("hint_ru")):
+        lang = (call.from_user.language_code or "").lower()
+        hint = ""
+        if lang.startswith("ru"):
+            hint = (q.get("hint_ru") or "").strip() or (q.get("hint_en") or "").strip()
+        else:
+            hint = (q.get("hint_en") or "").strip() or (q.get("hint_ru") or "").strip()
+
+        await call.message.answer("Неправильно. / Incorrect.")
+        if hint:
+            await call.message.answer(hint)
+        await call.message.answer(stats_msg)
+    else:
+        full_msg = result_msg + "\n" + stats_msg
 
     next_idx = _find_next_exam_index_by_type(state, exam_type)
     if next_idx is None:
-        await call.message.answer(full_msg)
+        if ansok or not (q.get("hint_en") or q.get("hint_ru")):
+            await call.message.answer(full_msg)
         await _send_exam_summary_by_type(call, user_id, exam_type)
     else:
-        await call.message.answer(full_msg)
+        if ansok or not (q.get("hint_en") or q.get("hint_ru")):
+            await call.message.answer(full_msg)
         await _send_exam_question_by_type(call, user_id, next_idx, exam_type)
 
 
@@ -2409,12 +2430,12 @@ async def pay(user) :
             f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
             "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
             "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
-            "100 Telegram Stars или 100 рублей через ЮKassa по кнопкам ниже."
+            "100 Telegram Stars  по кнопк ниже."
         )
         kb = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
-                    InlineKeyboardButton(text="💳 Оплатить 100 руб. через ЮKassa", callback_data="pay_yookassa"),
+             #       InlineKeyboardButton(text="💳 Оплатить 100 руб. через ЮKassa", callback_data="pay_yookassa"),
                     InlineKeyboardButton(text="⭐ Оплатить 100 Telegram Stars", callback_data="pay_stars"),
                 ]
             ]
@@ -2427,13 +2448,13 @@ async def pay(user) :
             "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
             f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
             "access will be unlocked after three new users follow your link.\n\n"
-            "If none of these options works for you, you can pay 100 Telegram Stars or 100 RUB via YooKassa "
-            "using the buttons below."
+            "If none of these options works for you, you can pay 100 Telegram Stars  "
+            "using the button below."
         )
         kb = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
-                    InlineKeyboardButton(text="💳 Pay 100 RUB via YooKassa", callback_data="pay_yookassa"),
+                #    InlineKeyboardButton(text="💳 Pay 100 RUB via YooKassa", callback_data="pay_yookassa"),
                     InlineKeyboardButton(text="⭐ Pay 100 Telegram Stars", callback_data="pay_stars"),
                 ]
             ]
