@@ -1486,18 +1486,44 @@ async def on_exam_mock_start(call: CallbackQuery):
     # - пользователей, оплативших доступ в Telegram Stars
     invites_count = len(invite_relations.get(user_id, set()))
     paid_access = False
+    user_created_at = None
+    total_answered = 0
     if db_conn:
         try:
             paid_access = await db.user_has_exam_access_by_payment(db_conn, user_id)
+            # дата регистрации
+            user_created_at = await db.get_user_created_at(db_conn, user_id)
+            # всего решённых задач
+            stats = await db.get_user_stats(db_conn, user_id)
+            total_answered = stats.get("total_answered", 0)
         except Exception as e:
-            logging.error(f"Ошибка проверки оплаты доступа к экзамену для пользователя {user_id}: {e}")
-    if (
-        (str(user_id) not in stepik
+            logging.error(f"Ошибка проверки доступа к Mock Exam для пользователя {user_id}: {e}")
+
+    should_redirect_to_pay = False
+
+    # Базовые условия отсутствия привилегий
+    no_privileges = (
+        str(user_id) not in stepik
         and str(user_id) not in cscagroup
         and invites_count < 3
-        and not paid_access ) or (
-         str(user_id) == '780221999' and not paid_access ) 
-    ):
+        and not paid_access
+    )
+
+    # Дополнительные условия: зарегистрирован > 3 дней назад и решил > 10 задач
+    meets_activity_limits = False
+    if user_created_at:
+        try:
+            from datetime import datetime, timedelta
+            created_dt = datetime.fromisoformat(user_created_at)
+            if datetime.now() - created_dt > timedelta(days=3) and total_answered > 10:
+                meets_activity_limits = True
+        except Exception as e:
+            logging.error(f"Ошибка разбора created_at для пользователя {user_id}: {e}")
+
+    if (no_privileges and meets_activity_limits) or (str(user_id) == "780221999" and not paid_access):
+        should_redirect_to_pay = True
+
+    if should_redirect_to_pay:
         log(call.from_user, ["mockexamreject"])
         # Показываем то же сообщение об оплате/условиях доступа, что и в команде /pay
         await pay(call.from_user)
@@ -1649,12 +1675,12 @@ async def on_exam_answer(call: CallbackQuery):
     k_now = (state.get("correct_difficulty", 0) / total_d * 100) if total_d else 0.0
     stats_ru = f"Сейчас по экзамену: {correct_now} из {total_q} верно, набранный балл {k_now:.2f}."
     stats_en = f"Current exam stats: {correct_now} out of {total_q} correct, score {k_now:.2f}."
-    stats_msg = stats_ru + "\n" + stats_en
+    lang = (call.from_user.language_code or "").lower()
+    stats_msg = stats_ru if lang.startswith("ru") else stats_en
 
     # Если ответ неправильный и есть подсказка — отправляем тремя сообщениями:
     # 1) Неправильно  2) hint по языку  3) статистика
     if not ansok and (q.get("hint_en") or q.get("hint_ru")):
-        lang = (call.from_user.language_code or "").lower()
         hint = ""
         if lang.startswith("ru"):
             hint = (q.get("hint_ru") or "").strip() or (q.get("hint_en") or "").strip()

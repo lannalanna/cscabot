@@ -548,3 +548,15 @@ async def user_has_exam_access_by_payment(conn: aiosqlite.Connection, user_id: i
     )
     row = await cursor.fetchone()
     return row is not None
+
+
+async def get_user_created_at(conn: aiosqlite.Connection, user_id: int) -> Optional[str]:
+    """
+    Возвращает created_at пользователя из таблицы users (в формате ISO-строки) или None.
+    """
+    cursor = await conn.execute(
+        "SELECT created_at FROM users WHERE id = ? LIMIT 1",
+        (user_id,),
+    )
+    row = await cursor.fetchone()
+    return row[0] if row else None
