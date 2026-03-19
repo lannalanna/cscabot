@@ -1,4 +1,38 @@
 [
+
+   {
+    "chinese": "已知角 α = π/6，则下列结论正确的是",
+    "english": "Given angle α = π/6, which conclusion is correct?",
+    "options": [
+      "A. sin α = √3/2",
+      "B. sin α = 1/2",
+      "C. sin α = √2/2",
+      "D. cos α = 1/2"
+    ],
+    "answer": "B",
+    "topic": "trigonometry",
+    "subtopic": "trigonometric values",
+    "difficulty": 1,
+    "id": 282
+  }, 
+
+ {
+    "chinese": "已知角 α = 5π/4，则下列结论正确的是",
+    "english": "Given angle α = 5π/4, which conclusion is correct?",
+    "options": [
+      "A. sin α = -1/2",
+      "B. sin α = 1/2",
+      "C. tan α = 1",
+      "D. tan α = -1"
+    ],
+    "answer": "C",
+    "topic": "trigonometry",
+    "subtopic": "trigonometric values",
+    "difficulty": 1,
+    "id": 282
+  }, 
+
+
   {
     "chinese": "已知 a = 2 - √3 和 b = 2 + √3，a 和 b 的算术平均数是（）。",
     "english": "Given that a = 2 - √3 and b = 2 + √3, the arithmetic mean of a and b is ().",
@@ -13,7 +47,8 @@
     "type": "jan",
     "n": 13,
     "subtopic": "arithmetic mean",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 1
   },
   {
     "chinese": "已知 a = √2 + 1, b = √2 - 1，则 a 和 b 的等比中项为",
@@ -29,7 +64,8 @@
     "subtopic": "geometric mean",
     "type": "oct",
     "n": 12,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 2
   },
   {
     "chinese": "3 和 12 的等比中项是",
@@ -43,7 +79,8 @@
     "answer": "A",
     "topic": "Algebraic and geometric mean",
     "subtopic": "geometric mean",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 3
   },
   {
     "chinese": "√6/3  和  √6/2 的等比中项是",
@@ -57,7 +94,8 @@
     "answer": "B",
     "topic": "Algebraic and geometric mean",
     "subtopic": "geometric mean",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 3
   },
   {
     "chinese": "11 和 15 的等差中项是",
@@ -72,7 +110,8 @@
     "topic": "Algebraic and geometric mean",
     "subtopic": "arithmetic mean",
     "type": "",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 4
   },
   {
     "chinese": "(1+i)² =",
@@ -87,7 +126,8 @@
     "topic": "complex numbers",
     "type": "moc",
     "subtopic": "complex numbers",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 5
   },
   {
     "chinese": "已知复数 z = -1 + i，则 |z| =",
@@ -102,7 +142,8 @@
     "topic": "complex numbers",
     "type": "moc",
     "subtopic": "complex numbers",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 6
   },
   {
     "chinese": "已知复数 z = 1 + i√3，则 |z| =",
@@ -117,7 +158,8 @@
     "topic": "complex numbers",
     "type": "moc",
     "subtopic": "complex numbers",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 6
   },
   {
     "chinese": "复数 z = 1 + i√3 的三角形式为",
@@ -132,7 +174,8 @@
     "topic": "complex numbers",
     "type": "moc",
     "subtopic": "complex numbers",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 7
   },
   {
     "chinese": "已知复数 |z| = 1，则 |2z + 1| 的最大值为",
@@ -148,7 +191,8 @@
     "subtopic": "complex numbers",
     "type": "oct",
     "n": 46,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 8
   },
   {
     "chinese": "复数 ((1-i)/(1+i))¹³ 的值等于。",
@@ -162,7 +206,8 @@
     "answer": "D",
     "topic": "complex numbers",
     "subtopic": "complex numbers",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 9
   },
   {
     "chinese": "在复平面上，表示复数 z 的点在直线 x - y = 0 上。如果 z 是二次方程 x² + mx + 4 = 0 的一个根，那么 m = ( )。",
@@ -178,7 +223,8 @@
     "type": "jan",
     "n": 46,
     "subtopic": "complex numbers",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 10
   },
   {
     "chinese": "若复数z满足 z³ = 1 且 z ≠ 1，则 1 + z + z² + ... + z⁹⁹⁹ =",
@@ -194,7 +240,8 @@
     "type": "dec",
     "n": 46,
     "subtopic": "complex numbers",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 11
   },
   {
     "chinese": "若圆的圆心坐标是 (-3,2)，半径是 4，则圆的方程是",
@@ -211,7 +258,8 @@
     "type": "dec",
     "n": 18,
     "subtopic": "circle",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 12
   },
   {
     "chinese": "若圆过点 A(2, 2)，圆心为 (2, 0)，则该圆的方程为",
@@ -227,7 +275,8 @@
     "subtopic": "circle",
     "type": "oct",
     "n": 19,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 13
   },
   {
     "chinese": "如果一个圆的方程是 x² + y² - 4x - 3 = 0，那么圆心和半径由（ ）给出。",
@@ -243,7 +292,8 @@
     "type": "jan",
     "n": 19,
     "subtopic": "circle",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 14
   },
   {
     "chinese": "设圆的方程为 x² + y² + 2x - 2y = 0，则该圆的半径为",
@@ -260,7 +310,8 @@
     "type": "dec",
     "link": "https://t.me/c/3305923058/208",
     "n": 21,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 15
   },
   {
     "chinese": "若圆的圆心坐标是 (-3, 2)，半径是4，则圆的方程是",
@@ -276,7 +327,8 @@
     "subtopic": "circle",
     "type": "oct",
     "n": 33,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 16
   },
   {
     "chinese": "圆 x² + y² = 25 的半径是",
@@ -292,7 +344,8 @@
     "subtopic": "circle",
     "type": "extra",
     "n": 51,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 17
   },
   {
     "chinese": "圆心在 (1, -2)，半径为 3 的圆的方程是",
@@ -308,7 +361,8 @@
     "subtopic": "circle",
     "type": "extra",
     "n": 52,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 18
   },
   {
     "chinese": "若点 A(1, 2) 和 B(5, 4) 是某圆的直径的两个端点，则该圆的圆心是",
@@ -324,7 +378,8 @@
     "subtopic": "circle",
     "type": "extra",
     "n": 53,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 19
   },
   {
     "chinese": "圆心在 (4, -1)，半径为 5 的圆的方程是",
@@ -339,22 +394,24 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "circle",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 18
   },
   {
     "chinese": "设圆的方程为 x² + y² - 6x + 4y - 3 = 0，则该圆的圆心和半径分别为",
     "english": "Given the equation of the circle x² + y² - 6x + 4y - 3 = 0, the center and radius are",
     "options": [
-      "A. (3, -2) 和 4",
-      "B. (-3, 2) 和 4",
-      "C. (3, -2) 和 2",
-      "D. (-3, 2) 和 2"
+      "A. (3, -2) 和 and 4",
+      "B. (-3, 2) 和 and 4",
+      "C. (3, -2) 和 and 2",
+      "D. (-3, 2) 和 and 2"
     ],
     "answer": "A",
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "circle",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 20
   },
   {
     "chinese": "若点 A(0, 0) 和 B(4, 6) 是某圆的直径的两个端点，则该圆的圆心是",
@@ -369,7 +426,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "circle",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 19
   },
   {
     "chinese": "假设椭圆 x²/4 + y²/2 = 1 的焦点是 F₁, F₂，并且点 P 在椭圆上。那么 |PF₁| + |PF₂| = ( )。",
@@ -385,7 +443,8 @@
     "type": "jan",
     "n": 43,
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 21
   },
   {
     "chinese": "已知椭圆的中心在原点，其长轴是短轴的 2 倍，且过点 P(-2, 0)，则该椭圆方程为",
@@ -401,7 +460,8 @@
     "subtopic": "ellipse",
     "type": "oct",
     "n": 43,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 22
   },
   {
     "chinese": "关于椭圆 x²/4 + y²/20 = 1，下面说法正确的是",
@@ -418,7 +478,8 @@
     "type": "dec",
     "link": "https://t.me/c/3305923058/245",
     "n": 43,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 23
   },
   {
     "chinese": "椭圆 x²/9 + y²/4 = 1 的焦点坐标是",
@@ -433,7 +494,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 24
   },
   {
     "chinese": "椭圆 x²/16 + y²/9 = 1 的焦点坐标是",
@@ -448,7 +510,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 24
   },
   {
     "chinese": "椭圆 x²/5 + y²/9 = 1 的焦点坐标是",
@@ -463,7 +526,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 24
   },
   {
     "chinese": "假设椭圆 x²/9 + y²/4 = 1 的焦点是 F₁, F₂，并且点 P 在椭圆上。那么 |PF₁| + |PF₂| =",
@@ -478,7 +542,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 21
   },
   {
     "chinese": "椭圆 x²/25 + y²/16 = 1 的焦点坐标是",
@@ -493,7 +558,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 24
   },
   {
     "chinese": "椭圆 x²/6 + y²/10 = 1 的焦点坐标是",
@@ -508,7 +574,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 24
   },
   {
     "chinese": "椭圆 x²/12 + y²/8 = 1 的焦点坐标是",
@@ -523,7 +590,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 24
   },
   {
     "chinese": "假设椭圆 x²/16 + y²/9 = 1 的焦点是 F₁, F₂，并且点 P 在椭圆上。那么 |PF₁| + |PF₂| =",
@@ -538,7 +606,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 21
   },
   {
     "chinese": "椭圆 x²/7 + y²/11 = 1 的焦点坐标是",
@@ -553,7 +622,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 24
   },
   {
     "chinese": "椭圆 x²/20 + y²/15 = 1 的焦点坐标是",
@@ -568,7 +638,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 24
   },
   {
     "chinese": "椭圆 x²/25 + y²/16 = 1 的焦距是",
@@ -583,7 +654,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 25
   },
   {
     "chinese": "椭圆 x²/9 + y²/5 = 1 的焦距是",
@@ -598,7 +670,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 25
   },
   {
     "chinese": "椭圆 x²/20 + y²/4 = 1 的焦距是",
@@ -613,7 +686,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 25
   },
   {
     "chinese": "椭圆 x²/25 + y²/9 = 1 的离心率是",
@@ -628,7 +702,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 26
   },
   {
     "chinese": "椭圆 x²/16 + y²/7 = 1 的离心率是",
@@ -643,7 +718,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 26
   },
   {
     "chinese": "椭圆 x²/9 + y² = 1 的离心率是",
@@ -658,7 +734,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "ellipse",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 26
   },
   {
     "chinese": "已知双曲线的方程是 x²/64 - y²/16 = 1，下列哪个陈述是正确的？（ ）",
@@ -674,7 +751,8 @@
     "type": "jan",
     "n": 26,
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 27
   },
   {
     "chinese": "双曲线 x² - y² = 1 的焦点坐标是",
@@ -691,7 +769,8 @@
     "type": "dec",
     "link": "https://t.me/c/3305923058/219",
     "n": 29,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/9 - y²/4 = 1 的渐近线方程是",
@@ -706,7 +785,8 @@
     "topic": "conic curves",
     "subtopic": "hyperbola",
     "type": "choice",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 29
   },
   {
     "chinese": "双曲线 y²/16 - x²/4 = 1 的渐近线方程是",
@@ -721,7 +801,8 @@
     "topic": "conic curves",
     "subtopic": "hyperbola",
     "type": "choice",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 30
   },
   {
     "chinese": "双曲线 x²/16 - y²/9 = 1 的渐近线方程是",
@@ -736,7 +817,8 @@
     "topic": "conic curves",
     "subtopic": "hyperbola",
     "type": "choice",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 29
   },
   {
     "chinese": "顶点在原点，焦点为 F(3/2, 0) 的抛物线的标准方程为",
@@ -753,7 +835,8 @@
     "type": "oct",
     "link": "https://t.me/c/3305923058/235",
     "n": 30,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 31
   },
   {
     "chinese": "设抛物线 y² = 4x 的焦点为 F。假设抛物线上的一个点 P 的横坐标是 4。那么 |PF| = ( )。",
@@ -769,7 +852,8 @@
     "type": "jan",
     "n": 31,
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 32
   },
   {
     "chinese": "关于抛物线 y² = 4x，下列说法正确的是",
@@ -786,7 +870,8 @@
     "link": "https://t.me/c/3305923058/231",
     "type": "dec",
     "n": 32,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 33
   },
   {
     "chinese": "抛物线 y² = -x 的准线方程为",
@@ -803,7 +888,8 @@
     "link": "https://t.me/c/3305923058/233",
     "type": "dec",
     "n": 39,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 34
   },
   {
     "chinese": "抛物线 y² = -x 的准线方程为",
@@ -819,7 +905,8 @@
     "subtopic": "parabola",
     "type": "oct",
     "n": 41,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 35
   },
   {
     "chinese": "抛物线 y² = -x 的准线方程是（ ）。",
@@ -835,7 +922,8 @@
     "type": "jan",
     "n": 42,
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 36
   },
   {
     "chinese": "抛物线 y² = 8x 的焦点坐标是",
@@ -850,7 +938,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 37
   },
   {
     "chinese": "抛物线 y² = 8x 的准线方程是",
@@ -865,7 +954,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 36
   },
   {
     "chinese": "抛物线 y² = 12x 的焦点坐标是",
@@ -880,7 +970,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 37
   },
   {
     "chinese": "顶点在原点，焦点为 F(2, 0) 的抛物线的标准方程为",
@@ -895,7 +986,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 31
   },
   {
     "chinese": "抛物线 y² = -4x 的焦点坐标是",
@@ -910,7 +1002,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 37
   },
   {
     "chinese": "抛物线 y² = -4x 的准线方程是",
@@ -925,7 +1018,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 36
   },
   {
     "chinese": "设抛物线 y² = 4x 的焦点为 F。若抛物线上的点 P 的横坐标是 8，则 |PF| =",
@@ -940,7 +1034,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 38
   },
   {
     "chinese": "抛物线 y² = 6x 的焦点坐标是",
@@ -955,7 +1050,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 37
   },
   {
     "chinese": "顶点在原点，焦点为 F(0, 1) 的抛物线的标准方程为",
@@ -970,7 +1066,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 39
   },
   {
     "chinese": "抛物线 x² = 4y 的焦点坐标是",
@@ -985,7 +1082,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "parabola",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 40
   },
   {
     "chinese": "函数 f(x) = ln x + √(1 - x) 的定义域为",
@@ -1001,7 +1099,8 @@
     "subtopic": "Function domain",
     "type": "oct",
     "n": 4,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 41
   },
   {
     "chinese": "函数 y = 1/√(x+1) 的定义域为",
@@ -1018,7 +1117,8 @@
     "subtopic": "Function domain",
     "type": "dec",
     "n": 4,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 42
   },
   {
     "chinese": "函数 f(x) = 1/x + √(1 - x) 的定义域是（ ）。",
@@ -1035,7 +1135,8 @@
     "type": "jan",
     "n": 5,
     "subtopic": "Function domain",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 43
   },
   {
     "chinese": "函数 y = √(x - 1) 的定义域是",
@@ -1052,7 +1153,8 @@
     "link": "https://t.me/c/3305923058/106",
     "n": 20,
     "subtopic": "Function domain",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 44
   },
   {
     "chinese": "函数 y = √(x-3) 的定义域为",
@@ -1067,7 +1169,8 @@
     "link": "https://t.me/c/3305923058/109",
     "topic": "functions",
     "subtopic": "Function domain",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 42
   },
   {
     "chinese": "下列不等式正确的是",
@@ -1084,7 +1187,8 @@
     "type": "dec",
     "n": 15,
     "subtopic": "function equality",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 45
   },
   {
     "chinese": "下列各对函数中，两函数相同的是",
@@ -1100,7 +1204,8 @@
     "subtopic": "function equality",
     "type": "oct",
     "n": 35,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 46
   },
   {
     "chinese": "下列函数是偶函数的是",
@@ -1116,7 +1221,8 @@
     "subtopic": "functions properties",
     "type": "oct",
     "n": 7,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 47
   },
   {
     "chinese": "关于函数 f(x) = x⁴ + 3，下列哪个陈述是正确的？（ ）。",
@@ -1132,7 +1238,8 @@
     "type": "jan",
     "n": 8,
     "subtopic": "functions properties",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 48
   },
   {
     "chinese": "下列函数是奇函数的是",
@@ -1149,7 +1256,8 @@
     "type": "dec",
     "n": 8,
     "subtopic": "functions properties",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 49
   },
   {
     "chinese": "下列函数在 (0, +∞) 上是减函数的是",
@@ -1165,7 +1273,8 @@
     "subtopic": "functions properties",
     "type": "oct",
     "n": 10,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 50
   },
   {
     "chinese": "下列函数中单调递增的是",
@@ -1182,7 +1291,8 @@
     "type": "dec",
     "n": 10,
     "subtopic": "functions properties",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 51
   },
   {
     "chinese": "已知 y = |x|，下列哪个结论是正确的？（）。",
@@ -1198,7 +1308,8 @@
     "type": "jan",
     "n": 11,
     "subtopic": "functions properties",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 52
   },
   {
     "chinese": "关于指数函数 y = aˣ (a > 0, 且 a ≠ 1)，下列哪个陈述是不正确的？（ ）",
@@ -1214,7 +1325,8 @@
     "type": "jan",
     "n": 23,
     "subtopic": "functions properties",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 53
   },
   {
     "chinese": "函数 y = 2√x - 1 的值域是",
@@ -1228,7 +1340,8 @@
     "answer": "A",
     "topic": "functions",
     "subtopic": "functions properties",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 54
   },
   {
     "chinese": "函数 y =  -(x-1)² + 3 的值域是",
@@ -1242,7 +1355,8 @@
     "answer": "C",
     "topic": "functions",
     "subtopic": "functions properties",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 55
   },
   {
     "chinese": "下列关于函数 y = (1/2)^x 的描述正确的是",
@@ -1259,7 +1373,8 @@
     "link": "https://t.me/c/3305923058/149",
     "n": 26,
     "subtopic": "functions properties",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 56
   },
   {
     "chinese": "下列哪个陈述是正确的？（ ）",
@@ -1275,7 +1390,8 @@
     "type": "jan",
     "n": 35,
     "subtopic": "functions properties",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 57
   },
   {
     "chinese": "下列哪个陈述是正确的？（ ）",
@@ -1290,7 +1406,8 @@
     "topic": "functions",
     "type": "-",
     "subtopic": "functions properties",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 58
   },
   {
     "chinese": "下列函数和函数 y = |x| 相同的是",
@@ -1307,7 +1424,8 @@
     "type": "dec",
     "n": 36,
     "subtopic": "functions properties",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 59
   },
   {
     "chinese": "log₂32 =",
@@ -1323,7 +1441,8 @@
     "subtopic": "logarithms",
     "link": "https://t.me/c/3305923058/169",
     "n": 28,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 60
   },
   {
     "chinese": "log₂(1/4) =",
@@ -1339,7 +1458,8 @@
     "subtopic": "logarithms",
     "link": "https://t.me/c/3305923058/169",
     "n": 28,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 60
   },
   {
     "chinese": "关于对数函数 y = logₐx，下面说法正确的是",
@@ -1356,7 +1476,8 @@
     "link": "https://t.me/c/3305923058/151",
     "type": "dec",
     "n": 42,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 61
   },
   {
     "chinese": "下列函数是偶函数的是",
@@ -1371,7 +1492,8 @@
     "link": "https://t.me/c/3305923058/112",
     "topic": "functions",
     "subtopic": "functions properties",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 62
   },
   {
     "chinese": "下列函数是奇函数的是",
@@ -1386,7 +1508,8 @@
     "link": "https://t.me/c/3305923058/112",
     "topic": "functions",
     "subtopic": "functions properties",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 63
   },
   {
     "chinese": "关于幂函数 y = x³ 和 y = x¹/³，下列结论中正确的是",
@@ -1402,7 +1525,8 @@
     "subtopic": "graphs",
     "type": "oct",
     "n": 23,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 64
   },
   {
     "chinese": "如果函数 f(x) = 2 + logₐ(x - 3) (a > 0, 且 a ≠ 1) 的图像经过一个定点 P，那么 P 的坐标是（ ）。",
@@ -1418,7 +1542,8 @@
     "type": "jan",
     "n": 41,
     "subtopic": "graphs",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 65
   },
   {
     "chinese": "下列哪个函数的图像关于原点对称？",
@@ -1432,7 +1557,8 @@
     "answer": "C",
     "topic": "functions",
     "subtopic": "graphs",
-    "difficulty": "2"
+    "difficulty": "2",
+    "id": 66
   },
   {
     "chinese": "如果函数 f(x) = aˣ（其中 a > 0 且 a ≠ 1）经过点 (2, 9)，那么 f(-1) 的值是多少？",
@@ -1446,7 +1572,8 @@
     "answer": "C",
     "topic": "functions",
     "subtopic": "graphs",
-    "difficulty": "3"
+    "difficulty": "3",
+    "id": 67
   },
   {
     "chinese": "函数 y = eˣ + 2 的值域是什么？",
@@ -1460,7 +1587,8 @@
     "answer": "D",
     "topic": "functions",
     "subtopic": "functions properties",
-    "difficulty": "2"
+    "difficulty": "2",
+    "id": 68
   },
   {
     "chinese": "函数 f(x) = sin(2x + π/3) 的最小正周期是：",
@@ -1474,7 +1602,8 @@
     "answer": "C",
     "topic": "trigonometry",
     "subtopic": "properties",
-    "difficulty": "3"
+    "difficulty": "3",
+    "id": 69
   },
   {
     "chinese": "下列不等式正确的是",
@@ -1490,7 +1619,8 @@
     "subtopic": "inequalities",
     "type": "oct",
     "n": 27,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 70
   },
   {
     "chinese": "下列哪个不等式是正确的？（ ）",
@@ -1506,7 +1636,8 @@
     "type": "jan",
     "n": 27,
     "subtopic": "inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 71
   },
   {
     "chinese": "设函数 y = 1 - x³，则其反函数为",
@@ -1522,7 +1653,8 @@
     "subtopic": "inverse functions",
     "type": "oct",
     "n": 9,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 72
   },
   {
     "chinese": "函数 y = x³ + 3, x ∈ ℝ 的反函数是（ ）。",
@@ -1538,7 +1670,8 @@
     "type": "jan",
     "n": 9,
     "subtopic": "inverse functions",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 73
   },
   {
     "chinese": "函数 y =  x³ 的反函数是",
@@ -1555,7 +1688,8 @@
     "type": "dec",
     "n": 9,
     "subtopic": "inverse functions",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 74
   },
   {
     "chinese": "已知 a > b, 则",
@@ -1572,7 +1706,8 @@
     "link": "https://t.me/c/3305923058/255",
     "n": 24,
     "subtopic": "inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 75
   },
   {
     "chinese": "点(-1, 3 - π)位于平面直角坐标系的",
@@ -1589,7 +1724,8 @@
     "link": "https://t.me/c/3305923058/139",
     "n": 6,
     "subtopic": "analytic geometry",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 76
   },
   {
     "chinese": "经过点 A(-1, 1), B(2, 3) 的直线的斜率为",
@@ -1605,7 +1741,8 @@
     "subtopic": "analytic geometry",
     "type": "oct",
     "n": 14,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 77
   },
   {
     "chinese": "过点 M(-2,3)，斜率 k = 2 的直线方程是",
@@ -1621,7 +1758,8 @@
     "subtopic": "analytic geometry",
     "type": "oct",
     "n": 18,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 78
   },
   {
     "chinese": "直线 3x + 2y + 4 = 0 与直线 x - y + 3 = 0 的交点坐标为",
@@ -1637,7 +1775,8 @@
     "subtopic": "analytic geometry",
     "type": "oct",
     "n": 25,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 79
   },
   {
     "chinese": "已知直线 l₁: ax + 2y - 1 = 0 与 l₂: x + (a + 1)y + 4 = 0 平行，则 a =",
@@ -1653,7 +1792,8 @@
     "subtopic": "analytic geometry",
     "type": "oct",
     "n": 32,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 80
   },
   {
     "chinese": "若直线 l 垂直于直线 l₁: x + 2y + 4 = 0，并且经过直线 l₂: x + y + 1 = 0 和 l₃: 2x + y - 1 = 0 的交点，则 l 的方程是",
@@ -1669,7 +1809,8 @@
     "subtopic": "analytic geometry",
     "type": "oct",
     "n": 45,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 81
   },
   {
     "chinese": "一个圆的圆心在 (-3,2)，半径为 4。那么该圆的方程是（ ）。",
@@ -1685,7 +1826,8 @@
     "type": "jan",
     "n": 28,
     "subtopic": "circle",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 82
   },
   {
     "chinese": "若点 M(-3, 1) 与点 N 关于 y 轴对称，则 N 点坐标是",
@@ -1700,7 +1842,8 @@
     "topic": "geometry",
     "type": "choice",
     "subtopic": "coordinate geometry",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 83
   },
   {
     "chinese": "若点 M(a + 3, a + 1) 在 x 轴上，则点 M 的坐标为",
@@ -1716,7 +1859,8 @@
     "subtopic": "coordinate geometry",
     "type": "oct",
     "n": 5,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 84
   },
   {
     "chinese": "设 P(1,2) 是直角坐标系中的一个点。如果一个点 Q 与 P 关于 x 轴对称，那么 Q 的坐标是（ ）。",
@@ -1732,7 +1876,8 @@
     "type": "jan",
     "n": 6,
     "subtopic": "coordinate geometry",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 85
   },
   {
     "chinese": "点 (-3,5) 和点 (5,-3) 关于",
@@ -1746,7 +1891,8 @@
     "answer": "D",
     "topic": "geometry",
     "subtopic": "coordinate geometry",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 86
   },
   {
     "chinese": "点 (-3,5) 和点 (3,-5) 关于",
@@ -1760,7 +1906,8 @@
     "answer": "C",
     "topic": "geometry",
     "subtopic": "coordinate geometry",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 86
   },
   {
     "chinese": "下列点位于第三象限的是",
@@ -1776,7 +1923,8 @@
     "subtopic": "coordinate geometry",
     "type": "oct",
     "n": 8,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 87
   },
   {
     "chinese": "下列哪个点在第三象限？（ ）。",
@@ -1792,7 +1940,8 @@
     "type": "jan",
     "n": 10,
     "subtopic": "coordinate geometry",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 88
   },
   {
     "chinese": "下列点位于第三象限的是",
@@ -1809,7 +1958,8 @@
     "type": "dec",
     "n": 11,
     "subtopic": "coordinate geometry",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 89
   },
   {
     "chinese": "已知点 A(-1,2), B(3,-1)，则这两个点之间的距离 |AB| =",
@@ -1825,7 +1975,8 @@
     "subtopic": "distance formula",
     "type": "oct",
     "n": 17,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 90
   },
   {
     "chinese": "平面上从点 A(3, -2) 到 B(-5, -1) 的距离是 |AB| = ( )。",
@@ -1841,7 +1992,8 @@
     "type": "jan",
     "n": 17,
     "subtopic": "distance formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 91
   },
   {
     "chinese": "点 P(-1, 2) 到点 Q(3, 1) 的距离是",
@@ -1858,7 +2010,8 @@
     "type": "dec",
     "n": 25,
     "subtopic": "distance formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 92
   },
   {
     "chinese": "点 P(-1, 2) 到点 Q(3, 1) 的距离是",
@@ -1874,7 +2027,8 @@
     "subtopic": "distance formula",
     "type": "oct",
     "n": 31,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 92
   },
   {
     "chinese": "点 P(-1,2) 和 Q(3,1) 之间的距离是（ ）。",
@@ -1890,7 +2044,8 @@
     "type": "jan",
     "n": 33,
     "subtopic": "distance formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 93
   },
   {
     "chinese": "双曲线 x²/7 - y²/9 = 1 的焦点坐标是",
@@ -1906,7 +2061,8 @@
     "subtopic": "hyperbola",
     "type": "oct",
     "n": 26,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/9 - y²/4 = 1 的焦点坐标是",
@@ -1922,7 +2078,8 @@
     "subtopic": "hyperbola",
     "type": "extra",
     "n": 27,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/a² - y²/b² = 1 的两个焦点之间的距离是",
@@ -1938,7 +2095,8 @@
     "subtopic": "hyperbola",
     "type": "extra",
     "n": 28,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 94
   },
   {
     "chinese": "双曲线 x²/16 - y²/9 = 1 的离心率是",
@@ -1954,7 +2112,8 @@
     "subtopic": "hyperbola",
     "type": "extra",
     "n": 29,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 95
   },
   {
     "chinese": "双曲线 x²/25 - y²/9 = 1 的焦点坐标是",
@@ -1969,7 +2128,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/4 - y²/12 = 1 的焦点坐标是",
@@ -1984,7 +2144,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/9 - y²/16 = 1 的焦点坐标是",
@@ -1999,7 +2160,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/4 - y²/5 = 1 的离心率是",
@@ -2014,7 +2176,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 95
   },
   {
     "chinese": "双曲线 x²/25 - y²/24 = 1 的焦点坐标是",
@@ -2029,7 +2192,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/6 - y²/3 = 1 的焦点坐标是",
@@ -2044,7 +2208,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/11 - y²/5 = 1 的焦点坐标是",
@@ -2059,7 +2224,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/20 - y²/5 = 1 的离心率是",
@@ -2074,7 +2240,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 95
   },
   {
     "chinese": "双曲线 x²/5 - y²/4 = 1 的焦点坐标是",
@@ -2089,7 +2256,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 28
   },
   {
     "chinese": "双曲线 x²/3 - y²/6 = 1 的离心率是",
@@ -2104,7 +2272,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 95
   },
   {
     "chinese": "双曲线 x² - y² = 1 的离心率是",
@@ -2119,7 +2288,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 95
   },
   {
     "chinese": "双曲线 x²/9 - y²/16 = 1 的离心率是",
@@ -2134,7 +2304,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 95
   },
   {
     "chinese": "双曲线 y²/16 - x²/4 = 1 的离心率是",
@@ -2149,7 +2320,8 @@
     "topic": "conic curves",
     "type": "choice",
     "subtopic": "hyperbola",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 96
   },
   {
     "chinese": "如果直线 l 经过点 A(-2,3) 和 B(3,1)，那么 l 的斜率是（）。",
@@ -2165,7 +2337,8 @@
     "type": "jan",
     "n": 14,
     "subtopic": "lines",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 97
   },
   {
     "chinese": "直线 y = √3x + 10 的倾斜角为",
@@ -2182,7 +2355,8 @@
     "n": 14,
     "link": "https://t.me/c/3305923058/202",
     "subtopic": "lines",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 98
   },
   {
     "chinese": "如果一条直线 l 的倾斜角为 45°，并且它经过点 (0,2)，那么 l 的方程是（ ）。",
@@ -2198,7 +2372,8 @@
     "type": "jan",
     "n": 18,
     "subtopic": "lines",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 99
   },
   {
     "chinese": "直线 l₁: 3x - y + 8 = 0 和 l₂: x + 2y - 9 = 0 的交点坐标是（ ）。",
@@ -2214,7 +2389,8 @@
     "type": "jan",
     "n": 25,
     "subtopic": "lines",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 100
   },
   {
     "chinese": "直线 l₁: y = 2x + 1 和直线 l₂: x + y + 1 = 0 的交点为",
@@ -2231,7 +2407,8 @@
     "n": 28,
     "link": "https://t.me/c/3305923058/209",
     "subtopic": "lines",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 101
   },
   {
     "chinese": "给定两条直线 l₁: ax + (a - 1)y + 3 = 0 和 l₂: 2x + ay - 1 = 0。如果 l₁ ⊥ l₂，那么 a 的值是（ ）。",
@@ -2247,7 +2424,8 @@
     "type": "jan",
     "n": 32,
     "subtopic": "lines",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 102
   },
   {
     "chinese": "下列直线和直线l: x + y + 3 = 0 垂直的是",
@@ -2264,7 +2442,8 @@
     "link": "https://t.me/c/3305923058/247",
     "n": 33,
     "subtopic": "lines",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 103
   },
   {
     "chinese": "若直线 l 垂直于直线 l₁:x + 2y + 4 = 0， 并且经过直线 l₂:x + y + 1 = 0 和 l₃:2x + y - 1 = 0 的交点，则 l 的方程是",
@@ -2281,7 +2460,8 @@
     "link": "https://t.me/c/3305923058/249",
     "n": 44,
     "subtopic": "lines",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 104
   },
   {
     "chinese": "假设一条直线 l 垂直于另一条直线 l₁: x + 2y + 4 = 0，并且经过 l₂: x + y + 1 = 0 和 l₃: 2x + y - 1 = 0 的交点。l 的方程是（ ）。",
@@ -2297,7 +2477,8 @@
     "type": "jan",
     "n": 45,
     "subtopic": "lines",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 105
   },
   {
     "chinese": "已知向量 AB = a + 5b, BC = -2a + 8b, CD = 3a - 3b。因此，（ ）。",
@@ -2313,7 +2494,8 @@
     "type": "jan",
     "n": 44,
     "subtopic": "vectors",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 106
   },
   {
     "chinese": "设向量 a = (-1, 2), b = (3, -1)，则 3a - b =",
@@ -2329,7 +2511,8 @@
     "subtopic": "vectors",
     "type": "oct",
     "n": 44,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 107
   },
   {
     "chinese": "已知 O 为坐标原点， A 和 B 是平面上的两个点， P 为 AB 中点，则向量 OP=",
@@ -2346,7 +2529,8 @@
     "link": "https://t.me/c/3305923058/259",
     "n": 45,
     "subtopic": "vectors",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 108
   },
   {
     "chinese": "不等式 |2x-1|≤3 的解集为",
@@ -2361,7 +2545,8 @@
     "topic": "inequalities",
     "subtopic": "absolute value",
     "type": "extra",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 109
   },
   {
     "chinese": "不等式 |x+1|>5 的解集是什么？",
@@ -2376,7 +2561,8 @@
     "link": "https://t.me/c/3305923058/309",
     "topic": "inequalities",
     "subtopic": "absolute value",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 110
   },
   {
     "chinese": "不等式 |x+2|≤3 的解集是什么？",
@@ -2391,7 +2577,8 @@
     "link": "https://t.me/c/3305923058/309",
     "topic": "inequalities",
     "subtopic": "absolute value",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 111
   },
   {
     "chinese": "不等式 |x+3|<1 的解集为",
@@ -2406,7 +2593,8 @@
     "topic": "inequalities",
     "subtopic": "absolute value",
     "type": "extra",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 109
   },
   {
     "chinese": "不等式 |x-4|≥2 的解集为",
@@ -2421,7 +2609,8 @@
     "topic": "inequalities",
     "subtopic": "absolute value",
     "type": "extra",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 112
   },
   {
     "chinese": "不等式 |x/2-1|>3 的解集为",
@@ -2436,7 +2625,8 @@
     "topic": "inequalities",
     "subtopic": "absolute value",
     "type": "extra",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 112
   },
   {
     "chinese": "不等式 |x−2|<3 的解集是什么？",
@@ -2451,7 +2641,8 @@
     "link": "https://t.me/c/3305923058/309",
     "topic": "inequalities",
     "subtopic": "absolute value",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 113
   },
   {
     "chinese": "若 a, b, c 为有理数，且 a > b > c，则下列式子中正确的是",
@@ -2467,7 +2658,8 @@
     "subtopic": "properties of inequalities",
     "type": "oct",
     "n": 22,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 114
   },
   {
     "chinese": "设 a, b, c 是三个实数。下列哪个陈述是正确的？（ ）",
@@ -2483,7 +2675,8 @@
     "type": "jan",
     "n": 22,
     "subtopic": "properties of inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 115
   },
   {
     "chinese": "如果 a < b，c 是任意实数，那么（ ）",
@@ -2498,7 +2691,8 @@
     "topic": "inequalities",
     "type": "cq",
     "subtopic": "properties of inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 116
   },
   {
     "chinese": "如果 a < b，c 是任意实数，那么下列选项正确的是（ ）",
@@ -2513,7 +2707,8 @@
     "topic": "inequalities",
     "type": "cq",
     "subtopic": "properties of inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 117
   },
   {
     "chinese": "如果 a < b，那么下列正确的是（ ）",
@@ -2528,7 +2723,8 @@
     "topic": "inequalities",
     "type": "cq",
     "subtopic": "properties of inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 118
   },
   {
     "chinese": "如果 a > b > 0，c 是任意实数，那么下列选项正确的是（ ）",
@@ -2543,7 +2739,8 @@
     "topic": "inequalities",
     "type": "cq",
     "subtopic": "properties of inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 119
   },
   {
     "chinese": "如果 a > b > 0，c ≠ 0，那么（ ）",
@@ -2558,7 +2755,8 @@
     "topic": "inequalities",
     "type": "cq",
     "subtopic": "properties of inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 120
   },
   {
     "chinese": "如果 a > b，c 是任意实数，那么（ ）",
@@ -2573,7 +2771,8 @@
     "topic": "inequalities",
     "type": "cq",
     "subtopic": "properties of inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 121
   },
   {
     "chinese": "不等式 x² - 7x - 18 > 0 的解集是",
@@ -2588,7 +2787,8 @@
     "type": "choice",
     "answer": "A",
     "subtopic": "quadratic inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 122
   },
   {
     "chinese": "一元二次不等式 x² - 5x + 4 < 0 的解集为",
@@ -2605,7 +2805,8 @@
     "link": "https://t.me/c/3305923058/157",
     "n": 3,
     "subtopic": "quadratic inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 123
   },
   {
     "chinese": "不等式 x² - x - 2 > 0 的解集是（ ）。",
@@ -2622,7 +2823,8 @@
     "type": "jan",
     "n": 3,
     "subtopic": "quadratic inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 124
   },
   {
     "chinese": "解不等式 x² - 5x + 6 > 0",
@@ -2637,7 +2839,8 @@
     "link": "https://t.me/c/3305923058/157",
     "topic": "inequalities",
     "subtopic": "quadratic inequalities",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 125
   },
   {
     "chinese": "不等式 x² + 2 x + 1  >0  的解集是（ ）。",
@@ -2651,7 +2854,8 @@
     "answer": "A",
     "topic": "inequalities",
     "subtopic": "quadratic inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 126
   },
   {
     "chinese": "不等式 x² + 2 x + 5  >  0  的解集是（ ）。",
@@ -2665,7 +2869,8 @@
     "answer": "A",
     "topic": "inequalities",
     "subtopic": "quadratic inequalities",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 127
   },
   {
     "chinese": "不等式 x² + 2 x + 5  < 0  的解集是（ ）。",
@@ -2679,7 +2884,8 @@
     "answer": "B",
     "topic": "inequalities",
     "subtopic": "quadratic inequalities",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 127
   },
   {
     "chinese": "一元二次不等式 x² + 5x + 6 > 0 的解集为",
@@ -2694,7 +2900,8 @@
     "topic": "inequalities",
     "link": "https://t.me/c/3305923058/157",
     "subtopic": "quadratic inequalities",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 123
   },
   {
     "chinese": "一元二次不等式 x² + x - 6 > 0 的解集为",
@@ -2709,7 +2916,8 @@
     "topic": "inequalities",
     "link": "https://t.me/c/3305923058/157",
     "subtopic": "quadratic inequalities",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 128
   },
   {
     "chinese": "不等式 x² - 6 x + 9 ≤ 0  的解集是（ ）。",
@@ -2723,7 +2931,8 @@
     "answer": "C",
     "topic": "inequalities",
     "subtopic": "quadratic inequalities",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 126
   },
   {
     "chinese": "分式不等式 (2x - 4)/(x - 1) ≤ 0 的解集为",
@@ -2739,7 +2948,8 @@
     "subtopic": "rational inequalities",
     "type": "oct",
     "n": 11,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 129
   },
   {
     "chinese": "不等式 (x-1)/(x - 2) ≤ 1 的解集为",
@@ -2756,7 +2966,8 @@
     "type": "dec",
     "n": 12,
     "subtopic": "rational inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 130
   },
   {
     "chinese": "有理不等式 (2x + 1)/(x - 2) ≤ 0 的解集是（）。",
@@ -2772,7 +2983,8 @@
     "type": "jan",
     "n": 12,
     "subtopic": "rational inequalities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 131
   },
   {
     "chinese": "解不等式 (x - 1)/(x + 2) ≥ 0",
@@ -2787,7 +2999,8 @@
     "link": "https://t.me/c/3305923058/26",
     "topic": "inequalities",
     "subtopic": "rational inequalities",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 132
   },
   {
     "chinese": "分式不等式 (2x-3)/(x+2) ≥ 1 的解集为",
@@ -2802,7 +3015,8 @@
     "topic": "inequalities",
     "subtopic": "rational inequalities",
     "type": "extra",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 133
   },
   {
     "chinese": "分式不等式 (3x+2)/(x-1) < 0 的解集为",
@@ -2817,7 +3031,8 @@
     "topic": "inequalities",
     "subtopic": "rational inequalities",
     "type": "extra",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 133
   },
   {
     "chinese": "分式不等式 (x+1)/(x-3) > 0 的解集为",
@@ -2832,7 +3047,8 @@
     "topic": "inequalities",
     "subtopic": "rational inequalities",
     "type": "extra",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 133
   },
   {
     "chinese": "分式不等式 (x+4)/(2x-1) ≥ 0 的解集为",
@@ -2847,7 +3063,8 @@
     "topic": "inequalities",
     "subtopic": "rational inequalities",
     "type": "extra",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 133
   },
   {
     "chinese": "分式不等式 (x-2)/(x+1) ≤ 0 的解集为",
@@ -2862,7 +3079,8 @@
     "topic": "inequalities",
     "subtopic": "rational inequalities",
     "type": "extra",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 133
   },
   {
     "chinese": "log₄27 / log₂3 =",
@@ -2879,7 +3097,8 @@
     "type": "oct",
     "link": "https://t.me/c/3305923058/169",
     "n": 28,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 134
   },
   {
     "chinese": "设 a > 0, b > 0 为实数。那么下列哪个陈述是不正确的？（ ）",
@@ -2895,7 +3114,8 @@
     "type": "jan",
     "n": 29,
     "subtopic": "logarithms",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 135
   },
   {
     "chinese": "log₂32 + log_{1/2} 32 =",
@@ -2912,7 +3132,8 @@
     "type": "dec",
     "n": 30,
     "subtopic": "logarithms",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 134
   },
   {
     "chinese": "已知 a = ln 3, b = log_{0.3} 2, c = log_3 2，则 a, b, c 的大小关系是",
@@ -2928,7 +3149,8 @@
     "subtopic": "logarithms",
     "type": "oct",
     "n": 42,
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 136
   },
   {
     "english": "Which of the following physical quantities is not a vector?",
@@ -2942,7 +3164,8 @@
     "topic": "physics",
     "subtopic": "vectors and scalars",
     "n": 1,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 137
   },
   {
     "english": "The gravitational force that an object experiences on Mars is 1/3 of that it experiences on Earth. An object with mass m = 4.8 kg weighs ( ) on Mars. (g = 10 m/s²)",
@@ -2956,7 +3179,8 @@
     "topic": "physics",
     "subtopic": "gravity",
     "n": 2,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 138
   },
   {
     "english": "A spring with spring constant k = 100 N/m stretches from 10 cm to 15 cm under force F. The magnitude of F is ( ).",
@@ -2970,7 +3194,8 @@
     "topic": "physics",
     "subtopic": "Hooke's law",
     "n": 3,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 139
   },
   {
     "english": "An m = 4 kg object rests on a horizontal surface with friction coefficient μ = 0.1. If pulled by a 2 N horizontal force, the frictional force is ( ). (g = 10 m/s²)",
@@ -2984,7 +3209,8 @@
     "topic": "physics",
     "subtopic": "friction",
     "n": 4,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 140
   },
   {
     "english": "An object is acted upon by three forces: F₁ = 2 N, F₂ = 4 N, F₃ = 6 N. The maximum possible resultant force is ( ).",
@@ -2998,7 +3224,8 @@
     "topic": "physics",
     "subtopic": "force resultant",
     "n": 5,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 141
   },
   {
     "english": "An m = 2 kg object on a smooth horizontal surface moves in a straight line with constant acceleration from rest under a horizontal force F. If it displaces 8 m in 2 s, then F is ( ).",
@@ -3012,7 +3239,8 @@
     "topic": "physics",
     "subtopic": "Newton's second law",
     "n": 6,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 142
   },
   {
     "english": "An object accelerates uniformly in a straight line from rest at a = 2 m/s² on a smooth horizontal surface. Its velocity at t = 4 s is ( ).",
@@ -3026,7 +3254,8 @@
     "topic": "physics",
     "subtopic": "kinematics",
     "n": 7,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 143
   },
   {
     "english": "An object falls freely from rest at a height of 100 m. Its height at t = 4 s is ( ). (g = 10 m/s²)",
@@ -3040,7 +3269,8 @@
     "topic": "physics",
     "subtopic": "free fall",
     "n": 8,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 144
   },
   {
     "english": "An m = 5 kg object slides down a smooth incline plane with an angle of 30° to the horizontal. It starts from rest, and its displacement in 2 s is ( ). (g = 10 m/s²)",
@@ -3054,7 +3284,8 @@
     "topic": "physics",
     "subtopic": "incline motion",
     "n": 9,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 145
   },
   {
     "english": "An object of mass 2 kg is acted upon by two forces of magnitudes 6 N and 8 N. Its maximum acceleration is ( ).",
@@ -3068,7 +3299,8 @@
     "topic": "physics",
     "subtopic": "resultant force and acceleration",
     "n": 10,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 146
   },
   {
     "english": "In a uniform magnetic field, a straight wire with length 0.5 m is placed perpendicular to the direction of the magnetic field. When passing through a current of 10 A it experiences an Ampere force of 1.5 N. The magnitude of the magnetic induction intensity of the magnetic field is ( ).",
@@ -3082,7 +3314,8 @@
     "topic": "physics",
     "subtopic": "magnetic force on current",
     "n": 11,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 147
   },
   {
     "english": "A particle moves in uniform circular motion with a speed of v = 6 m/s and a radius of R = 3 m. Its angular velocity is ( ).",
@@ -3096,7 +3329,8 @@
     "topic": "physics",
     "subtopic": "circular motion",
     "n": 12,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 148
   },
   {
     "english": "As shown in the figure, an object moves along two semicircles of radius R = 6 m from point A through B to C in t = 4 s. The magnitude of its average velocity is ( ).",
@@ -3111,7 +3345,8 @@
     "subtopic": "average velocity",
     "img": "p13dec.png",
     "n": 13,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 149
   },
   {
     "english": "Which of the following statements about distance and displacement is correct?",
@@ -3125,7 +3360,8 @@
     "topic": "physics",
     "subtopic": "distance vs displacement",
     "n": 14,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 150
   },
   {
     "english": "An object with mass m = 0.2 kg moves in a straight line at a constant speed v = 20 m/s on a smooth horizontal surface. Its momentum is ( ).",
@@ -3139,7 +3375,8 @@
     "topic": "physics",
     "subtopic": "momentum",
     "n": 15,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 151
   },
   {
     "english": "An m = 5 kg object slides down a smooth incline plane with an angle of 30° to the horizontal. It starts at rest from a height of 20 m. The magnitude of its gravitational impulse over 2 s is ( ). (g = 10 m/s²)",
@@ -3153,7 +3390,8 @@
     "topic": "physics",
     "subtopic": "impulse",
     "n": 16,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 152
   },
   {
     "english": "The graph of the displacement (x) of a toy car moving in a straight line changing with time (t) is shown in the figure. Which of the following statements is correct?",
@@ -3168,7 +3406,8 @@
     "subtopic": "motion graphs",
     "img": "p17dec.png",
     "n": 17,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 153
   },
   {
     "english": "A horizontal force F = 20 N is applied to a 10 kg object, causing it to move 5 m along a rough horizontal surface with the friction force f = 5 N. The work done by F is ( ).",
@@ -3182,7 +3421,8 @@
     "topic": "physics",
     "subtopic": "work",
     "n": 18,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 154
   },
   {
     "english": "A 3 kg object on a smooth horizontal surface changes its speed from 2 m/s to 6 m/s due to an external force. The work done by this force is ( ).",
@@ -3196,7 +3436,8 @@
     "topic": "physics",
     "subtopic": "work-energy theorem",
     "n": 19,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 155
   },
   {
     "english": "When light enters a medium from air, with an angle of incidence i = 60°, the angle of refraction is r = 30°. If the refractive index of air is n = 1, the refractive index of the medium is ( ).",
@@ -3210,7 +3451,8 @@
     "topic": "physics",
     "subtopic": "refraction",
     "n": 20,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 156
   },
   {
     "english": "A spring oscillator undergoes a simple harmonic motion. It completes one full oscillation in 2 s. Its frequency is ( ).",
@@ -3224,7 +3466,8 @@
     "topic": "physics",
     "subtopic": "simple harmonic motion",
     "n": 21,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 157
   },
   {
     "english": "A sound wave with frequency f = 200 Hz travels at v = 340 m/s in air. Its wavelength is ( ).",
@@ -3238,7 +3481,8 @@
     "topic": "physics",
     "subtopic": "waves",
     "n": 22,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 158
   },
   {
     "english": "In a vacuum, two point charges separated by d exert a force F to each other. If one charge's magnitude is doubled, keeping the distance unchanged, the Coulomb force is ( ).",
@@ -3252,7 +3496,8 @@
     "topic": "physics",
     "subtopic": "Coulomb's law",
     "n": 23,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 159
   },
   {
     "english": "If a water droplet with zero initial velocity falls from a 5 meter high eaves (excluding air resistance), the speed at which the water droplet falls to the ground is ( ). (g = 10 m/s²)",
@@ -3266,7 +3511,8 @@
     "topic": "physics",
     "subtopic": "free fall",
     "n": 24,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 160
   },
   {
     "english": "The field lines of a certain electric field is shown in the figure. If equal point charges are placed at points a and b in this field, the relationship between the forces Fa and Fb acting on these charges is ( ).",
@@ -3281,7 +3527,8 @@
     "subtopic": "electric field",
     "img": "p25dec.png",
     "n": 25,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 161
   },
   {
     "english": "Two resistors of 200 Ω and 300 Ω are connected in parallel. The total resistance is ( ).",
@@ -3295,7 +3542,8 @@
     "topic": "physics",
     "subtopic": "resistors in parallel",
     "n": 26,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 162
   },
   {
     "english": "Two resistors R₁ = 10 Ω and R₂ = 30 Ω are connected in parallel to a circuit with voltage U = 12 V. The ratio of the current passing through the resistors I₁ : I₂ = ( ).",
@@ -3309,7 +3557,8 @@
     "topic": "physics",
     "subtopic": "current division",
     "n": 27,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 163
   },
   {
     "english": "A certain mass of ideal gas, with its temperature kept constant and pressure reduced, its volume would ( ).",
@@ -3323,7 +3572,8 @@
     "topic": "physics",
     "subtopic": "ideal gas law",
     "n": 28,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 164
   },
   {
     "english": "A point charge of 3.0 × 10⁻⁹ C is placed in an electric field of 6.0 × 10⁴ N/C. It experiences an electric force of ( ).",
@@ -3337,7 +3587,8 @@
     "topic": "physics",
     "subtopic": "electric force",
     "n": 29,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 165
   },
   {
     "english": "The SI units for magnetic flux density B and magnetic flux φ are, respectively, ( ).",
@@ -3351,7 +3602,8 @@
     "topic": "physics",
     "subtopic": "units",
     "n": 30,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 166
   },
   {
     "english": "When a light ray hits a glass-air interface at an angle of incidence 30°, the angle between the reflected and incident rays is ( ).",
@@ -3365,7 +3617,8 @@
     "topic": "physics",
     "subtopic": "reflection",
     "n": 31,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 167
   },
   {
     "english": "A 0.2 m wire carrying a constant current I is placed in a uniform magnetic field with B = 0.8 T. If the maximum Ampere force is F = 0.08 N, the current is ( ).",
@@ -3379,7 +3632,8 @@
     "topic": "physics",
     "subtopic": "magnetic force on wire",
     "n": 32,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 168
   },
   {
     "english": "An ideal gas of a certain mass undergoes an isobaric process (pressure is kept constant) from state A to state B. Suppose that at state A, the volume is V₁ = 1.5 m³ and the temperature T₁ = 300 K. At state B, the temperature is T₂ = 400 K. The volume at state B is ( ).",
@@ -3393,7 +3647,8 @@
     "topic": "physics",
     "subtopic": "isobaric process",
     "n": 33,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 169
   },
   {
     "english": "As shown in the figure, there is an electric field in space with two points a and b. Which of the following statements is correct? ( )",
@@ -3408,7 +3663,8 @@
     "subtopic": "electric field strength",
     "img": "p34dec.png",
     "n": 34,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 170
   },
   {
     "english": "An m = 20 kg child, with a speed of v = 6 m/s, jumps onto a stationary cart on a smooth horizontal surface. Given that the mass of the cart is M = 40 kg, their final common velocity is ( ).",
@@ -3422,7 +3678,8 @@
     "topic": "physics",
     "subtopic": "conservation of momentum",
     "n": 35,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 171
   },
   {
     "english": "A basketball of mass 0.5 kg bounces from the ground to a height of 1 m and returns to the ground. The total change in gravitational potential energy is ( ). (g = 10 m/s²)",
@@ -3436,7 +3693,8 @@
     "topic": "physics",
     "subtopic": "gravitational potential energy",
     "n": 36,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 172
   },
   {
     "english": "Two resistors R₁ = 10 Ω and R₂ = 30 Ω are connected in parallel to a circuit with voltage U = 12 V. The ratio of the current passing through the resistors I₁ : I₂ = ( ).",
@@ -3450,7 +3708,8 @@
     "topic": "physics",
     "subtopic": "current division",
     "n": 37,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 163
   },
   {
     "english": "Two equal but opposite charges A and B, each with a charge Q = ±3.0 × 10⁻⁹ C, are fixed r = 6 cm apart in vacuum. Given that the electrostatic constant is K = 9 × 10⁹ N·m²/C², the electric field strength at the midpoint of A and B is ( ).",
@@ -3464,7 +3723,8 @@
     "topic": "physics",
     "subtopic": "electric field superposition",
     "n": 38,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 173
   },
   {
     "english": "A ball is thrown horizontally from a height h = 20 m with v₀ = 20 m/s. Ignoring air resistance, its velocity when it lands is ( ). (g = 10 m/s²)",
@@ -3478,7 +3738,8 @@
     "topic": "physics",
     "subtopic": "projectile motion",
     "n": 39,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 174
   },
   {
     "english": "As shown in the figure, if two objects A and B with equal mass are placed on a horizontal disk rotating uniformly around the vertical axis, and the two objects remain stationary relative to the disk, then ( ).",
@@ -3493,7 +3754,8 @@
     "subtopic": "rotational motion",
     "img": "p40dec.png",
     "n": 40,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 175
   },
   {
     "english": "When a point charge of +4 × 10⁻⁶ C is moved from a point A to B in an electric field, the electric field force does a negative work of 8 × 10⁻⁴ J. Thus, the potential difference between A and B is ( ).",
@@ -3507,7 +3769,8 @@
     "topic": "physics",
     "subtopic": "electric potential difference",
     "n": 41,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 176
   },
   {
     "english": "A conducting sphere A that can be regarded as a point charge carries a positive charge of 8q. A similar sphere B carrying a negative charge of -4q has a distance r from A. If the two spheres are put in contact and returned to the original positions, their new Coulomb force becomes ( ).",
@@ -3521,7 +3784,8 @@
     "topic": "physics",
     "subtopic": "charge sharing and Coulomb's law",
     "n": 42,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 177
   },
   {
     "english": "A bullet traveling horizontally penetrates two identical wooden blocks, slowing from 700 m/s to 500 m/s after the first block. Its speed after the second block is ( ).",
@@ -3535,7 +3799,8 @@
     "topic": "physics",
     "subtopic": "work-energy in penetration",
     "n": 43,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 178
   },
   {
     "english": "An m = 2 kg object is stationary on a smooth horizontal surface. It is then subjected to a horizontal force F. The change of F with time is shown in the figure. The kinetic energy of the object at t = 2 s is ( ).",
@@ -3550,7 +3815,8 @@
     "subtopic": "kinetic energy from force-time graph",
     "img": "p44dec.png",
     "n": 44,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 179
   },
   {
     "english": "As shown in the figure, a horizontal platform AB has a height of h = 0.80 m above the ground. A block slides from point A with uniform acceleration and an initial velocity of v₀ = 6.0 m/s. The coefficient of friction between the block and the platform is μ = 0.25. The block flies off the edge of the platform horizontally at point B. If the length of AB is 2.2 m, the horizontal landing distance from the bottom of the platform is ( ). (g = 10 m/s²)",
@@ -3565,7 +3831,8 @@
     "subtopic": "projectile motion with friction",
     "img": "p45dec.png",
     "n": 45,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 180
   },
   {
     "english": "As shown in the figure, the two ends of parallel metal rails placed horizontally are connected with a resistor R. The wire ab can slide on the frame without friction, and a uniform magnetic field passes vertically through the frame plane. When ab moves uniformly to the right, which of the following statements is correct? ( )",
@@ -3580,7 +3847,8 @@
     "subtopic": "electromagnetic induction",
     "img": "p46dec.png",
     "n": 46,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 181
   },
   {
     "english": "As shown in the figure, a uniform electric field is present in the horizontal direction on a horizontal desktop. A block of mass m = 0.1 kg carrying a charge Q = -2.0 × 10⁻⁴ C is placed at point O on the desktop and released from rest. The sliding friction between the block and the desktop is f = 0.2 N, and the block experiences an electric field force of F = 0.4 N and is directed to the right. The net work done by the resultant external force in 2 s is ( ).",
@@ -3595,7 +3863,8 @@
     "subtopic": "work-energy with friction and electric force",
     "img": "p47dec.png",
     "n": 47,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 182
   },
   {
     "english": "As shown in the figure, in a scientific laboratory, researchers are studying a special charge distribution. They placed an insulating equilateral triangular frame on a smooth insulated horizontal surface, fixing three identical point charges at vertices a, b, and c respectively. To investigate the distributions of electric field, an electric field detector is placed at the center D of the triangle's circumscribed circle. To further study symmetry, another detector is placed at point F, which is the symmetric position of point E relative to charge c. Which of the following statements is correct? ( )",
@@ -3610,7 +3879,8 @@
     "subtopic": "electric field symmetry",
     "img": "p48dec.png",
     "n": 48,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 183
   },
   {
     "chinese": "抛两枚公平的硬币。恰好一个正面的概率是",
@@ -3626,7 +3896,8 @@
     "subtopic": "Simple Probability",
     "type": "moc",
     "n": 40,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 184
   },
   {
     "n": 14,
@@ -3642,7 +3913,8 @@
     "topic": "probability",
     "type": "choice",
     "subtopic": "Simple Probability",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 185
   },
   {
     "chinese": "掷一个公平的骰子。点数 > 4 的概率是",
@@ -3658,7 +3930,8 @@
     "subtopic": "Simple Probability",
     "type": "moc",
     "n": 39,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 186
   },
   {
     "chinese": "在日常生活中，人们喜欢使用跑步应用来跟踪和分享他们的运动路线。为了了解某个地区高中和大学生使用跑步应用的情况，随机选择了 200 名高中生和 80 名大学生，他们最喜欢的跑步应用记录如下。假设大学生和高中生对跑步应用的偏好是相互独立的，如果从每组中随机选择一个人，他们最喜欢的跑步应用不同的概率是（ ）。",
@@ -3675,7 +3948,8 @@
     "img": "48_jan.png",
     "n": 48,
     "subtopic": "Simple Probability",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 187
   },
   {
     "chinese": "十二生肖又叫属相，是中国用来代表年份的十二种动物，依次为鼠、牛、虎、兔、龙、蛇、马、羊、猴、鸡、狗、猪。比如1984、1996和2008年出生的人属相是鼠，而1985、1997和2009年出生的人属相是牛，以此类推。随机选出的三人中至少有两人属相相同的概率是",
@@ -3691,7 +3965,8 @@
     "type": "dec",
     "subtopic": "Simple Probability",
     "difficulty": 5,
-    "n": 48
+    "n": 48,
+    "id": 188
   },
   {
     "chinese": "已知 a = 1 - √2，b = -1，那么（ ）",
@@ -3706,7 +3981,8 @@
     "topic": "inequalities",
     "type": "extra",
     "subtopic": "real numbers",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 189
   },
   {
     "chinese": "已知 a = 3/√5，b = √5/2，那么（ ）",
@@ -3721,7 +3997,8 @@
     "topic": "inequalities",
     "type": "extra",
     "subtopic": "real numbers",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 189
   },
   {
     "chinese": "已知 a = √14 - 2√3，b = 2√3 - √14，那么（ ）",
@@ -3736,7 +4013,8 @@
     "topic": "inequalities",
     "type": "extra",
     "subtopic": "real numbers",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 190
   },
   {
     "chinese": "已知 a = √3，b = √2，那么（ ）",
@@ -3751,7 +4029,8 @@
     "topic": "inequalities",
     "type": "extra",
     "subtopic": "real numbers",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 189
   },
   {
     "chinese": "已知 a = √5，b = 2，那么（ ）",
@@ -3766,7 +4045,8 @@
     "topic": "inequalities",
     "type": "extra",
     "subtopic": "real numbers",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 189
   },
   {
     "chinese": "已知 a = √7 - 2，b = √3，那么（ ）",
@@ -3781,7 +4061,8 @@
     "topic": "inequalities",
     "type": "extra",
     "subtopic": "real numbers",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 189
   },
   {
     "chinese": "设 {aₙ} 是一个等差数列，首项 a₁ = 2，公差 d = 3。那么 a₁₀₀ = ( )。",
@@ -3798,7 +4079,8 @@
     "type": "jan",
     "n": 4,
     "subtopic": "arithmetic sequence",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 191
   },
   {
     "chinese": "若 {aₙ} 为等差数列，首项 a₁ = 5，公差 d = 2，则 a₁₀₀ =",
@@ -3815,7 +4097,8 @@
     "link": "https://t.me/c/3277437997/206",
     "n": 5,
     "subtopic": "arithmetic sequence",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 192
   },
   {
     "chinese": "已知 a, b 和 c 构成等差数列并且满足 a + c = 20, b =",
@@ -3832,7 +4115,8 @@
     "link": "https://t.me/c/3277437997/210",
     "n": 13,
     "subtopic": "arithmetic sequence",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 193
   },
   {
     "chinese": "在以下四个数列中，等差数列的个数是（ ）。",
@@ -3848,7 +4132,8 @@
     "type": "jan",
     "n": 16,
     "subtopic": "arithmetic sequence",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 194
   },
   {
     "chinese": "若数列 {aₙ} 是等差数列，且 a₁ = 1, a₂ = 3，则 a₅ =",
@@ -3864,7 +4149,8 @@
     "subtopic": "arithmetic sequence",
     "type": "oct",
     "n": 16,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 195
   },
   {
     "chinese": "已知 {aₙ} 是等差数列，且 a₁ = 1, a₂ = 2, 则 a₂₀₂₅ =",
@@ -3881,7 +4167,8 @@
     "link": "https://t.me/c/3305923058/189",
     "n": 17,
     "subtopic": "arithmetic sequence",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 196
   },
   {
     "chinese": "在等差数列 {aₙ} 中，如果 a₂ = 1 且 a₄ = 5，那么首项 a₁ 和公差 d 分别是（ ）。",
@@ -3897,7 +4184,8 @@
     "type": "jan",
     "n": 21,
     "subtopic": "arithmetic sequence",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 197
   },
   {
     "chinese": "下列数列是等差数列的是",
@@ -3911,7 +4199,8 @@
     "answer": "C",
     "topic": "sequences",
     "subtopic": "arithmetic sequence",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 198
   },
   {
     "chinese": "已知等差数列 {aₙ} 满足 3(a₂ + a₆) + 2(a₆ + a₁₀ + a₁₄) = 24，则 S₁₃ =",
@@ -3928,7 +4217,8 @@
     "type": "dec",
     "n": 47,
     "subtopic": "arithmetic sequence",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 199
   },
   {
     "chinese": "已知等比数列 {aₙ} 的前三项为 1, 2, 4, 则数列的通项公式为",
@@ -3945,7 +4235,8 @@
     "link": "https://t.me/c/3305923058/195",
     "n": 23,
     "subtopic": "geometric sequence",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 200
   },
   {
     "chinese": "设等比数列 {aₙ} 的前 n 项和为 Sₙ，若 S₂ = 4, S₄ = 20，则 S₈ =",
@@ -3962,7 +4253,8 @@
     "type": "oct",
     "n": 47,
     "link": "https://t.me/c/3305923058/198",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 201
   },
   {
     "chinese": "若等差数列 {aₙ} 的公差为 2，且 a₁, a₂, a₄ 成等比数列，则 a₁ =",
@@ -3977,7 +4269,8 @@
     "topic": "sequences",
     "subtopic": "geometric sequence",
     "type": "-",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 202
   },
   {
     "chinese": "若等比数列 {aₙ} 的公比为正数，且 a₃ a₉ = 2 (a₅)²，a₂ = 1，则 a₁ =",
@@ -3992,7 +4285,8 @@
     "topic": "sequences",
     "subtopic": "geometric sequence",
     "type": "-",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 203
   },
   {
     "chinese": "若数列 {aₙ} 中，a₁ = 1, a₂ = 3，且 aₙ₊₂ = aₙ₊₁ + aₙ (n = 1, 2, …)，则 a₅ =",
@@ -4008,7 +4302,8 @@
     "subtopic": "other sequences",
     "type": "oct",
     "n": 40,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 204
   },
   {
     "chinese": "若数列 {aₙ} 是 1/2, -1/4, 1/8, …，则通项 aₙ =",
@@ -4024,7 +4319,8 @@
     "subtopic": "other sequences",
     "type": "oct",
     "n": 21,
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 205
   },
   {
     "chinese": "数列 -1/5, 1/7, -1/9, 1/11 的通项公式是 aₙ = ( )。",
@@ -4040,7 +4336,8 @@
     "type": "jan",
     "n": 40,
     "subtopic": "other sequences",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 206
   },
   {
     "chinese": "若数列 {aₙ} 满足 a₁ = 1, aₙ = 1/(1 + 1/aₙ₋₁) (n ≥ 2), 则 a₁₀₀ =",
@@ -4057,7 +4354,8 @@
     "link": "https://t.me/c/3305923058/185",
     "n": 41,
     "subtopic": "other sequences",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 207
   },
   {
     "chinese": "假设在一个数列 {aₙ} 中，我们有 a₁ = 1，并且 1/aₙ + 2/aₙ₊₁ = 0 (n = 1,2,…)。假设另一个数列 {bₙ} 满足 bₙ = |aₙ| (n = 1,2,…)。那么，数列 {bₙ} 的前 n 项和 Sₙ = ( )。",
@@ -4073,7 +4371,8 @@
     "type": "jan",
     "n": 47,
     "subtopic": "other sequences",
-    "difficulty": 5
+    "difficulty": 5,
+    "id": 208
   },
   {
     "chinese": "设 A = {6,7,8,9,10} 是一个集合，∅ 表示空集。那么下列哪个陈述是正确的？",
@@ -4090,7 +4389,8 @@
     "link": "https://t.me/c/3305923058/380",
     "n": 1,
     "subtopic": "set operations",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 209
   },
   {
     "chinese": "下列说法正确的是",
@@ -4105,8 +4405,9 @@
     "topic": "sets",
     "type": "oct",
     "n": 1,
-    "subtopic": "set operations",
-    "difficulty": 1
+    "subtopic": "numerical sets",
+    "difficulty": 1,
+    "id": 210
   },
   {
     "chinese": "若集合 A = {1, 2, 3, 4}, B = {3, 4, 5, 6}，则下列运算正确的是",
@@ -4122,7 +4423,8 @@
     "subtopic": "set operations",
     "type": "oct",
     "n": 2,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 211
   },
   {
     "chinese": "若集合 A={1,2}，B ={1,2,3}，则以下哪个是正确的？",
@@ -4138,7 +4440,8 @@
     "subtopic": "set operations",
     "type": "dec",
     "n": 1,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 212
   },
   {
     "chinese": "若集合 A = (-1, 3)，B = [2, 4]，则 A ∩ B = 什么？",
@@ -4155,7 +4458,8 @@
     "type": "dec",
     "n": 2,
     "subtopic": "set operations",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 213
   },
   {
     "chinese": "设 A = {x | -2 ≤ x ≤ 2} 和 B = {x | x > 0} 是两个集合。那么 A ∪ B =",
@@ -4172,7 +4476,8 @@
     "link": "https://t.me/c/3305923058/375",
     "n": 2,
     "subtopic": "set operations",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 214
   },
   {
     "chinese": "如果 A⊂B，那么哪个语句总是正确的？",
@@ -4187,7 +4492,8 @@
     "link": "https://t.me/c/3305923058/20",
     "topic": "sets",
     "subtopic": "set operations",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 215
   },
   {
     "chinese": "若集合 A = (1, 10)，B = [-7, 4]，则 A U B = 什么？",
@@ -4202,7 +4508,8 @@
     "topic": "sets",
     "link": "https://t.me/c/3305923058/32",
     "subtopic": "set operations",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 216
   },
   {
     "chinese": "若集合 A = {1, 2}，B = {1, 2, 3}，则以下哪个是正确的？",
@@ -4216,7 +4523,8 @@
     "answer": "B",
     "topic": "sets",
     "subtopic": "set operations",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 217
   },
   {
     "chinese": "设 A={a∈Z ∣ −2<a<3}，B={偶数}。那么 A∩B 中的元素是什么？",
@@ -4231,7 +4539,8 @@
     "link": "https://t.me/c/3305923058/19",
     "topic": "sets",
     "subtopic": "set operations",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 218
   },
   {
     "chinese": "下列结论正确的是",
@@ -4245,8 +4554,9 @@
     "answer": "B",
     "topic": "sets",
     "type": "choice",
-    "subtopic": "set operations",
-    "difficulty": 1
+    "subtopic": "numerical sets",
+    "difficulty": 1,
+    "id": 219
   },
   {
     "chinese": "若 cos α = 1/3，则 cos 2α =",
@@ -4262,7 +4572,8 @@
     "subtopic": "double angle formula",
     "type": "oct",
     "n": 24,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 220
   },
   {
     "chinese": "如果 sin α = 3/5，并且 α 属于第一象限，那么 sin 2α = ( )。",
@@ -4278,7 +4589,8 @@
     "type": "jan",
     "n": 24,
     "subtopic": "double angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 221
   },
   {
     "chinese": "若 sin α = 1/4, 则 cos 2α =",
@@ -4295,7 +4607,8 @@
     "type": "dec",
     "n": 27,
     "subtopic": "double angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 222
   },
   {
     "chinese": "已知 sin α = 3/5，且 α 为锐角，则 cos 2α =",
@@ -4311,7 +4624,8 @@
     "subtopic": "double angle formula",
     "type": "extra",
     "n": 201,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 223
   },
   {
     "chinese": "已知 cos α = 1/2，且 α 为锐角，则 cos 2α =",
@@ -4327,7 +4641,8 @@
     "subtopic": "double angle formula",
     "type": "extra",
     "n": 202,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 224
   },
   {
     "chinese": "已知 cos α = √3/2，且 α 为锐角，则 cos 2α =",
@@ -4343,7 +4658,8 @@
     "subtopic": "double angle formula",
     "type": "extra",
     "n": 203,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 224
   },
   {
     "chinese": "已知 sin α = √2/2，且 α ∈ (0, π/2)，则 cos 2α =",
@@ -4359,7 +4675,8 @@
     "subtopic": "double angle formula",
     "type": "extra",
     "n": 204,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 225
   },
   {
     "chinese": "已知 cos α = 0，且 α ∈ (0, π)，则 cos 2α =",
@@ -4375,7 +4692,8 @@
     "subtopic": "double angle formula",
     "type": "extra",
     "n": 205,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 226
   },
   {
     "chinese": "若 cos α = 2/3，则 cos 2α =",
@@ -4390,7 +4708,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "double angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 220
   },
   {
     "chinese": "如果 sin α = 4/5，并且 α 属于第一象限，那么 cos 2α =",
@@ -4405,7 +4724,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "double angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 227
   },
   {
     "chinese": "若 sin α = 1/3，则 cos 2α =",
@@ -4420,7 +4740,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "double angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 222
   },
   {
     "chinese": "已知 cos α = 4/5，且 α 为锐角，则 sin 2α =",
@@ -4435,7 +4756,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "double angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 228
   },
   {
     "chinese": "若 cos α = -1/2，则 cos 2α =",
@@ -4450,7 +4772,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "double angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 220
   },
   {
     "chinese": "设 sin α = -12/13，并且 α ∈ (π, 3π/2)。那么 cos(α/2) = ( )。",
@@ -4466,7 +4789,8 @@
     "type": "jan",
     "n": 36,
     "subtopic": "half-angle formula",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 229
   },
   {
     "chinese": "假设 cos α = -1/2，α ∈ (π/2, π)，那么 sin(α/2) 的值是（ ）。",
@@ -4482,7 +4806,8 @@
     "type": "jan",
     "n": 37,
     "subtopic": "half-angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 230
   },
   {
     "chinese": "已知 cos α = -1/2, α ∈ (π/2, π)，则 sin(α/2) 的值是",
@@ -4498,7 +4823,8 @@
     "subtopic": "half-angle formula",
     "type": "oct",
     "n": 39,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 231
   },
   {
     "chinese": "已知 cos α = 1/2，且 α ∈ (0, π/2)，则 cos(α/2) =",
@@ -4514,7 +4840,8 @@
     "subtopic": "half-angle formula",
     "type": "extra",
     "n": 301,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 232
   },
   {
     "chinese": "已知 sin α = 1/2，且 α ∈ (0, π/2)，则 sin(α/2) =",
@@ -4530,7 +4857,8 @@
     "subtopic": "half-angle formula",
     "type": "extra",
     "n": 302,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 233
   },
   {
     "chinese": "已知 cos α = √2/2，且 α ∈ (0, π/2)，则 sin(α/2) =",
@@ -4546,7 +4874,8 @@
     "subtopic": "half-angle formula",
     "type": "extra",
     "n": 303,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 234
   },
   {
     "chinese": "已知 sin α = √3/2，且 α ∈ (0, π/2)，则 cos(α/2) =",
@@ -4562,7 +4891,8 @@
     "subtopic": "half-angle formula",
     "type": "extra",
     "n": 304,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 235
   },
   {
     "chinese": "已知 tan α = 1，且 α ∈ (0, π/2)，则 sin(α/2) =",
@@ -4578,7 +4908,8 @@
     "subtopic": "half-angle formula",
     "type": "extra",
     "n": 305,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 236
   },
   {
     "chinese": "已知 cos α = 3/5，且 α ∈ (0, π/2)，则 cos(α/2) =",
@@ -4593,7 +4924,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "half-angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 232
   },
   {
     "chinese": "已知 cos α = 0，且 α ∈ (0, π)，则 sin(α/2) =",
@@ -4608,7 +4940,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "half-angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 234
   },
   {
     "chinese": "已知 cos α = -1/3，α ∈ (π/2, π)，则 cos(α/2) =",
@@ -4623,7 +4956,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "half-angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 237
   },
   {
     "chinese": "已知 sin α = 3/5，且 α ∈ (0, π/2)，则 cos(α/2) =",
@@ -4638,7 +4972,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "half-angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 235
   },
   {
     "n": 9,
@@ -4654,7 +4989,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "terminal side through point",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 238
   },
   {
     "chinese": "已知角 α 的终边经过点 M(2, 4)，则 tan α =",
@@ -4671,7 +5007,8 @@
     "link": "https://t.me/c/3305923058/146",
     "type": "oct",
     "n": 15,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 239
   },
   {
     "chinese": "如果 α 是 x 轴与一条过点 P(1,3) 的直线之间的夹角，那么 sin α = ( )。",
@@ -4687,7 +5024,8 @@
     "type": "jan",
     "n": 15,
     "subtopic": "terminal side through point",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 240
   },
   {
     "chinese": "若角 α 的终边经过点 (3, 4)，则 sin α =",
@@ -4702,7 +5040,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "terminal side through point",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 241
   },
   {
     "chinese": "已知角 α 的终边经过点 (-3, 4)，则 cos α =",
@@ -4717,7 +5056,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "terminal side through point",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 242
   },
   {
     "chinese": "若角 α 的终边经过点 (1, 1)，则 cos α =",
@@ -4732,7 +5072,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "terminal side through point",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 243
   },
   {
     "chinese": "已知角 α 的终边经过点 (-1, √3)，则 sin α =",
@@ -4747,7 +5088,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "terminal side through point",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 244
   },
   {
     "chinese": "若角 α 的终边经过点 (4, -3)，则 cos α =",
@@ -4762,7 +5104,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "terminal side through point",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 243
   },
   {
     "chinese": "已知角 α 的终边经过点 (-4, -3)，则 tan α =",
@@ -4777,7 +5120,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "terminal side through point",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 245
   },
   {
     "chinese": "若角 α 的终边经过点 (√3, 1)，则 tan α =",
@@ -4792,7 +5136,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "terminal side through point",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 238
   },
   {
     "chinese": "已知角 α 的终边经过点 (6, 8)，则 sin α =",
@@ -4807,7 +5152,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "terminal side through point",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 244
   },
   {
     "chinese": "关于余弦函数 y = cos x，以下结论中正确的是",
@@ -4823,7 +5169,8 @@
     "subtopic": "properties",
     "type": "oct",
     "n": 29,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 246
   },
   {
     "chinese": "关于函数 y = cos x，下列说法正确的是",
@@ -4840,7 +5187,8 @@
     "type": "dec",
     "n": 31,
     "subtopic": "properties",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 247
   },
   {
     "chinese": "已知 sin π/4 = √2/2, sin π/6 = 1/2, 可以得到 cos π/12 =",
@@ -4857,7 +5205,8 @@
     "type": "dec",
     "n": 35,
     "subtopic": "sin and cos of sum",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 248
   },
   {
     "chinese": "关于正切函数 y = tan x，下列说法不正确的是",
@@ -4873,7 +5222,8 @@
     "subtopic": "properties",
     "type": "oct",
     "n": 38,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 249
   },
   {
     "chinese": "已知 (cos a - sin a)/(cos a + sin a) = 1/3, 则 tan a =",
@@ -4890,7 +5240,8 @@
     "type": "dec",
     "n": 40,
     "subtopic": "trigonometric expressions",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 250
   },
   {
     "chinese": "若 tan α = 2，则 (3 sin α + 2 cos α)/(4 sin α - 3 cos α) =",
@@ -4906,7 +5257,8 @@
     "subtopic": "trigonometric expressions",
     "type": "oct",
     "n": 20,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 251
   },
   {
     "chinese": "已知 sin α = 3/5，且 α ∈ (0, π/2)，则 (2 sin 2α)/(1 + cos 2α) - tan α =",
@@ -4922,7 +5274,8 @@
     "subtopic": "trigonometric expressions",
     "type": "oct",
     "n": 36,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 252
   },
   {
     "chinese": "若 tan α = 3，则 (2 sin α + cos α)/(sin α - 2 cos α) =",
@@ -4937,7 +5290,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "trigonometric expressions",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 251
   },
   {
     "chinese": "已知 sin α = 4/5，且 α ∈ (0, π/2)，则 (sin α + 2 cos α)/(3 sin α - cos α) =",
@@ -4952,7 +5306,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "trigonometric expressions",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 253
   },
   {
     "chinese": "已知 cos α = 3/5，且 α ∈ (0, π/2)，则 (4 sin α - 3 cos α)/(2 sin α + cos α) =",
@@ -4967,7 +5322,8 @@
     "topic": "trigonometry",
     "type": "choice",
     "subtopic": "trigonometric expressions",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 254
   },
   {
     "chinese": "若 α 为锐角，且 cos α = 1/2，则 sin α/2 =",
@@ -4984,7 +5340,8 @@
     "type": "dec",
     "n": 37,
     "subtopic": "half-angle formula",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 255
   },
   {
     "chinese": "给定正弦函数 y = sin x，下列哪个陈述是不正确的？（ ）",
@@ -5000,7 +5357,8 @@
     "type": "jan",
     "n": 30,
     "subtopic": "properties",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 256
   },
   {
     "chinese": "已知 cos α = -4/5，且 α ∈ (π/2, π)，则 sin(α + π/4) =",
@@ -5016,7 +5374,8 @@
     "subtopic": "sin and cos of sum",
     "type": "oct",
     "n": 34,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 257
   },
   {
     "chinese": "设 cos α = -√5/5，并且 α ∈ (π/2, π)。那么 sin(π/6 + α) = ( )。",
@@ -5032,7 +5391,8 @@
     "type": "jan",
     "n": 34,
     "subtopic": "sin and cos of sum",
-    "difficulty": 4
+    "difficulty": 4,
+    "id": 258
   },
   {
     "chinese": "下列各式中正确的是",
@@ -5048,7 +5408,8 @@
     "subtopic": "trigonometric identities",
     "type": "oct",
     "n": 37,
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 259
   },
   {
     "chinese": "关于导数公式，下列式子错误的是",
@@ -5065,7 +5426,8 @@
     "n": 38,
     "link": "https://t.me/c/3305923058/277",
     "subtopic": "trigonometric identities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 260
   },
   {
     "chinese": "下列哪个陈述是正确的？（ ）",
@@ -5081,7 +5443,8 @@
     "type": "jan",
     "n": 38,
     "subtopic": "trigonometric identities",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 261
   },
   {
     "chinese": "关于正切函数 y = tan x，下列哪个陈述是正确的？（ ）",
@@ -5097,7 +5460,8 @@
     "type": "jan",
     "n": 39,
     "subtopic": "properties",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 262
   },
   {
     "chinese": "若点 P(x,2) 是角 α 终边上的点，且 tan α = -1，则 x =",
@@ -5111,7 +5475,8 @@
     "answer": "C",
     "topic": "trigonometry",
     "subtopic": "terminal side through point",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 263
   },
   {
     "chinese": "已知角 α = 5π/6，则下列结论正确的是",
@@ -5123,11 +5488,12 @@
       "D. sin α = √3/2"
     ],
     "answer": "A",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "oct",
     "n": 6,
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 264
   },
   {
     "chinese": "(sin(π/4) + cos(π/4)) * tan(π/4) =",
@@ -5139,12 +5505,13 @@
       "D. 1"
     ],
     "answer": "C",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "type": "dec",
     "n": 7,
     "link": "https://t.me/c/3305923058/266",
     "subtopic": "trigonometric values",
-    "difficulty": 2
+    "difficulty": 2,
+    "id": 265
   },
   {
     "chinese": "假设一个角 α = 30°。那么下列哪个陈述是正确的？（ ）。",
@@ -5156,11 +5523,12 @@
       "D. tan α = √3"
     ],
     "answer": "B",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "type": "jan",
     "n": 7,
     "subtopic": "trigonometric values",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 266
   },
   {
     "chinese": "若点 P(1,y) 是角 α 终边上的点，且 tan α = 2，则 y =",
@@ -5173,11 +5541,12 @@
     ],
     "answer": "D",
     "link": "https://t.me/c/3305923058/146",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "type": "dec",
     "n": 16,
     "subtopic": "trigonometric values",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 267
   },
   {
     "chinese": "已知 sin α = 3/5，且 α 是第二象限角，则 cos α =",
@@ -5189,12 +5558,13 @@
       "D. -3/4"
     ],
     "answer": "B",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "type": "dec",
     "link": "https://t.me/c/3305923058/270",
     "n": 19,
     "subtopic": "trigonometric values",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 268
   },
   {
     "chinese": "已知 sin α = 4/5，并且角 α 属于第二象限，那么下列哪个陈述是正确的？（ ）",
@@ -5206,11 +5576,12 @@
       "D. tan α = 4/3"
     ],
     "answer": "B",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "type": "jan",
     "n": 20,
     "subtopic": "trigonometric values",
-    "difficulty": 3
+    "difficulty": 3,
+    "id": 269
   },
   {
     "chinese": "若 α 为锐角，且sin α = √3/2，则 tan α =",
@@ -5222,12 +5593,13 @@
       "D. √3/3"
     ],
     "answer": "B",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "type": "dec",
     "link": "https://t.me/c/3305923058/274",
     "n": 22,
     "subtopic": "trigonometric values",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 270
   },
   {
     "chinese": "已知 cos a = -1/2, α∈(π/2, π), 则 sin α 的值是",
@@ -5240,11 +5612,12 @@
     ],
     "answer": "B",
     "link": "https://t.me/c/3305923058/282",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "type": "dec",
     "n": 34,
     "subtopic": "trigonometric values",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 271
   },
   {
     "chinese": "已知角 α = π/3，则下列结论正确的是",
@@ -5256,11 +5629,12 @@
       "D. sin α = 1/2"
     ],
     "answer": "A",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 101,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 272
   },
   {
     "chinese": "已知角 α = π/6，则下列结论正确的是",
@@ -5272,11 +5646,12 @@
       "D. sin α = 1/2"
     ],
     "answer": "D",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 102,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 272
   },
   {
     "chinese": "已知角 α = π/4，则下列结论正确的是",
@@ -5288,11 +5663,12 @@
       "D. tan α = 2"
     ],
     "answer": "C",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 103,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 273
   },
   {
     "chinese": "已知角 α = 3π/4，则下列结论正确的是",
@@ -5304,11 +5680,12 @@
       "D. tan α = 1"
     ],
     "answer": "A",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 104,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 274
   },
   {
     "chinese": "已知角 α = 7π/6，则下列结论正确的是",
@@ -5320,11 +5697,12 @@
       "D. sin α = √3/2"
     ],
     "answer": "B",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 105,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 275
   },
   {
     "chinese": "已知角 α = 11π/6，则下列结论正确的是",
@@ -5336,11 +5714,12 @@
       "D. tan α = √3"
     ],
     "answer": "B",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 106,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 274
   },
   {
     "chinese": "已知 sin α = 1/2，且 α 是锐角，则 cos α =",
@@ -5352,11 +5731,12 @@
       "D. -1/2"
     ],
     "answer": "A",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 107,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 276
   },
   {
     "chinese": "已知 cos α = √2/2，且 α 是锐角，则 tan α =",
@@ -5368,11 +5748,12 @@
       "D. 2"
     ],
     "answer": "A",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 108,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 277
   },
   {
     "chinese": "已知 cos α = 0，则下列结论正确的是",
@@ -5384,11 +5765,12 @@
       "D. α = π/4 + kπ, k ∈ Z"
     ],
     "answer": "B",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 109,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 278
   },
   {
     "chinese": "已知 sin α = 0，则下列结论正确的是",
@@ -5400,11 +5782,12 @@
       "D. α = 2π/3 + kπ, k ∈ Z"
     ],
     "answer": "C",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "extra",
     "n": 110,
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 279
   },
   {
     "chinese": "tan(π/4) =",
@@ -5416,10 +5799,11 @@
       "D. 1"
     ],
     "answer": "D",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "link": "https://t.me/c/3305923058/266",
     "subtopic": "trigonometric values",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 280
   },
   {
     "chinese": "已知角 α = 5π/3，则下列结论正确的是",
@@ -5431,24 +5815,12 @@
       "D. cos α = -1/2"
     ],
     "answer": "C",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
-    "difficulty": 1
+    "difficulty": 1,
+    "id": 281
   },
-  {
-    "chinese": "已知角 α = 5π/4，则下列结论正确的是",
-    "english": "Given angle α = 5π/4, which conclusion is correct?",
-    "options": [
-      "A. sin α = -1/2",
-      "B. sin α = 1/2",
-      "C. tan α = 1",
-      "D. tan α = -1"
-    ],
-    "answer": "C",
-    "topic": "trigonometry (simple)",
-    "subtopic": "trigonometric values",
-    "difficulty": 1
-  },
+ 
   {
     "chinese": "如果向量 a = (1, 2) 和 b = (m, -1) 互相垂直，那么 m 的值是：",
     "english": "If the vectors a = (1, 2) and b = (m, -1) are perpendicular, then the value of m is:",
@@ -5461,7 +5833,8 @@
     "answer": "A",
     "topic": "geometry",
     "subtopic": "vectors",
-    "difficulty": "4"
+    "difficulty": "4",
+    "id": 283
   },
   {
     "chinese": "在复平面内，复数 z = 2/(1+i) 对应的点位于哪个象限？",
@@ -5474,8 +5847,9 @@
     ],
     "answer": "A",
     "topic": "complex numbers",
-    "subtopic": "complex numberss",
-    "difficulty": "4"
+    "subtopic": "complex numbers",
+    "difficulty": "4",
+    "id": 284
   },
   {
     "chinese": "一条直线过点 (1, 1) 且与直线 2x - y + 3 = 0 平行，它的方程是：",
@@ -5489,7 +5863,8 @@
     "answer": "A",
     "topic": "geometry",
     "subtopic": "lines",
-    "difficulty": "3"
+    "difficulty": "3",
+    "id": 285
   },
   {
     "chinese": "从20名男同学、10名女同学中任选3名参加体能测试，选到的3名同学中既有男同学又有女同学的概率为（ ）",
@@ -5503,7 +5878,8 @@
     "answer": "A",
     "topic": "probability",
     "subtopic": "Simple Probability",
-    "difficulty": "5"
+    "difficulty": "5",
+    "id": 286
   },
   {
     "chinese": "三位同学参加跳高、跳远、铅球项目比赛，每人选择其中两个项目，则有且仅有两人选择的项目完全相同的概率是（ ）",
@@ -5517,7 +5893,8 @@
     "answer": "B",
     "topic": "probability",
     "subtopic": "Simple Probability",
-    "difficulty": "5s"
+    "difficulty": "5s",
+    "id": 287
   },
   {
     "n": 1,
@@ -5534,9 +5911,10 @@
     "subtopic": "set operations",
     "type": "mar",
     "difficulty": 1,
-    "hint_en": "The set A represents real numbers greater than -2 and less than or equal to 3. 3 satisfies -2 < 3 ≤ 3, so 3 ∈ A; -3 < -2, -2 does not satisfy greater than -2, and 2 satisfies the condition.",
-    "hint_ch": "集合A表示大于-2且小于等于3的实数, 3满足 -2 < 3 ≤ 3, 故 3 ∈ A; -3 < -2, -2 不满足大于-2、2满足条件",
-    "hint_ru": "Множество A представляет действительные числа больше -2 и меньше или равные 3. 3 удовлетворяет условию -2 < 3 ≤ 3, поэтому 3 ∈ A; -3 < -2, -2 не удовлетворяет условию 'больше -2', а 2 удовлетворяет условию"
+    "solution_en": "The set A represents real numbers greater than -2 and less than or equal to 3. 3 satisfies -2 < 3 ≤ 3, so 3 ∈ A; -3 < -2, -2 does not satisfy greater than -2, and 2 satisfies the condition.",
+    "solution_ch": "集合A表示大于-2且小于等于3的实数, 3满足 -2 < 3 ≤ 3, 故 3 ∈ A; -3 < -2, -2 不满足大于-2、2满足条件",
+    "solution_ru": "Множество A представляет действительные числа больше -2 и меньше или равные 3. 3 удовлетворяет условию -2 < 3 ≤ 3, поэтому 3 ∈ A; -3 < -2, -2 не удовлетворяет условию 'больше -2', а 2 удовлетворяет условию",
+    "id": 288
   },
   {
     "n": 2,
@@ -5553,9 +5931,10 @@
     "subtopic": "set operations",
     "type": "mar",
     "difficulty": 1,
-    "hint_en": "The intersection takes the common part of the two sets. The range of M is -5 ≤ x < 2, the range of N is -4 ≤ x ≤ 2, the common part is -4 ≤ x < 2, that is [-4, 2).",
-    "hint_ch": "交集取两个集合的公共部分, M范围 -5 ≤ x < 2, N范围 -4 ≤ x ≤ 2, 公共部分为 -4 ≤ x < 2, 即 [-4, 2)。",
-    "hint_ru": "Пересечение берет общую часть двух множеств. Диапазон M: -5 ≤ x < 2, диапазон N: -4 ≤ x ≤ 2, общая часть: -4 ≤ x < 2, то есть [-4, 2)."
+    "solution_en": "The intersection takes the common part of the two sets. The range of M is -5 ≤ x < 2, the range of N is -4 ≤ x ≤ 2, the common part is -4 ≤ x < 2, that is [-4, 2).",
+    "solution_ch": "交集取两个集合的公共部分, M范围 -5 ≤ x < 2, N范围 -4 ≤ x ≤ 2, 公共部分为 -4 ≤ x < 2, 即 [-4, 2)。",
+    "solution_ru": "Значок ∩ обозначает  пересечение, т.е.  общую часть  множеств. Общая часть: -4 ≤ x < 2, или [-4, 2).",
+    "id": 289
   },
   {
     "n": 3,
@@ -5572,9 +5951,10 @@
     "subtopic": "quadratic inequalities",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "Factorize to get (x - 3)(x + 2) > 0, solve to get x < -2 or x > 3.",
-    "hint_ch": "因式分解得 (x - 3)(x + 2) > 0, 解得 x < -2 或 x > 3。",
-    "hint_ru": "Разложите на множители: (x - 3)(x + 2) > 0, решите: x < -2 или x > 3."
+    "solution_en": "Factorize to get (x - 3)(x + 2) > 0, solve to get x < -2 or x > 3.",
+    "solution_ch": "因式分解得 (x - 3)(x + 2) > 0, 解得 x < -2 或 x > 3。",
+    "solution_ru": "Разложите на множители: (x - 3)(x + 2) > 0, Нули x=3 и x=-2. Знак больше, т.е. нужна 'внешняя' часть -   x < -2 или x > 3.",
+    "id": 290
   },
   {
     "n": 4,
@@ -5591,9 +5971,10 @@
     "subtopic": "Function domain",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The denominator of the fraction is not equal to 0, that is 1 - x ≠ 0, so x ≠ 1, the domain is (-∞, 1) ∪ (1, +∞).",
-    "hint_ch": "分式分母不为 0, 即 1 - x ≠ 0, 得 x ≠ 1, 定义域为 (-∞, 1) ∪ (1, +∞)。",
-    "hint_ru": "Знаменатель дроби не равен 0, то есть 1 - x ≠ 0, значит x ≠ 1, область определения: (-∞, 1) ∪ (1, +∞)."
+    "solution_en": "The denominator of the fraction is not equal to 0, that is 1 - x ≠ 0, so x ≠ 1, the domain is (-∞, 1) ∪ (1, +∞).",
+    "solution_ch": "分式分母不为 0, 即 1 - x ≠ 0, 得 x ≠ 1, 定义域为 (-∞, 1) ∪ (1, +∞)。",
+    "solution_ru": "Знаменатель дроби не равен 0, то есть 1 - x ≠ 0, значит x ≠ 1, область определения: (-∞, 1) ∪ (1, +∞).",
+    "id": 43
   },
   {
     "n": 5,
@@ -5610,9 +5991,10 @@
     "subtopic": "coordinate geometry",
     "type": "mar",
     "difficulty": 1,
-    "hint_en": "a = -2 < 0, ab < 0 means b > 0. The abscissa is negative and the ordinate is positive, the point is in the second quadrant.",
-    "hint_ch": "a = -2 < 0, ab < 0 则 b > 0, 横坐标负、纵坐标正, 点在第二象限。",
-    "hint_ru": "a = -2 < 0, ab < 0 означает b > 0. Абсцисса отрицательна, ордината положительна, точка находится во второй четверти."
+    "solution_en": "a = -2 < 0, ab < 0 means b > 0. The abscissa is negative and the ordinate is positive, the point is in the second quadrant.",
+    "solution_ch": "a = -2 < 0, ab < 0 则 b > 0, 横坐标负、纵坐标正, 点在第二象限。",
+    "solution_ru": "a = -2 < 0, ab < 0 означает b > 0. Абсцисса отрицательна, ордината положительна, точка находится во второй четверти.",
+    "id": 291
   },
   {
     "n": 6,
@@ -5625,13 +6007,14 @@
       "D. 1/2"
     ],
     "answer": "A",
-    "topic": "trigonometry (simple)",
+    "topic": "trigonometry",
     "subtopic": "trigonometric values",
     "type": "mar",
     "difficulty": 1,
-    "hint_en": "cos(5π/6) = cos(π - π/6) = -cos(π/6) = -√3/2.",
-    "hint_ch": "cos(5π/6) = cos(π - π/6) = -cos(π/6) = -√3/2。",
-    "hint_ru": "cos(5π/6) = cos(π - π/6) = -cos(π/6) = -√3/2."
+    "solution_en": "cos(5π/6) = cos(π - π/6) = -cos(π/6) = -√3/2.",
+    "solution_ch": "cos(5π/6) = cos(π - π/6) = -cos(π/6) = -√3/2。",
+    "solution_ru": "cos(5π/6) = cos(π - π/6) = -cos(π/6) = -√3/2.",
+    "id": 292
   },
   {
     "n": 7,
@@ -5648,9 +6031,10 @@
     "subtopic": "functions properties",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The domain x ≠ 0 is symmetric about the origin, f(-x) = ln((-x)^2) = ln(x^2) = f(x), so it is an even function.",
-    "hint_ch": "定义域 x ≠ 0 关于原点对称, f(-x) = ln((-x)^2) = ln(x^2) = f(x), 故为偶函数。",
-    "hint_ru": "Область определения x ≠ 0 симметрична относительно начала координат, f(-x) = ln((-x)^2) = ln(x^2) = f(x), следовательно, это четная функция."
+    "solution_en": "The domain x ≠ 0 is symmetric about the origin, f(-x) = ln((-x)^2) = ln(x^2) = f(x), so it is an even function.",
+    "solution_ch": "定义域 x ≠ 0 关于原点对称, f(-x) = ln((-x)^2) = ln(x^2) = f(x), 故为偶函数。",
+    "solution_ru": "Область определения x ≠ 0 симметрична относительно начала координат, f(-x) = ln((-x)^2) = ln(x^2) = f(x), следовательно, это четная функция.",
+    "id": 293
   },
   {
     "n": 8,
@@ -5667,9 +6051,10 @@
     "subtopic": "inverse functions",
     "type": "mar",
     "difficulty": 3,
-    "hint_en": "Solve for x from y = (3x - 2)/(2x + 1), get x = (y + 2)/(2y - 3), exchange x and y to get the inverse function y = (x + 2)/(2x - 3).",
-    "hint_ch": "由 y = (3x - 2)/(2x + 1) 反解 x, 得 x = (y + 2)/(2y - 3), 互换 x, y 得反函数 y = (x + 2)/(2x - 3)。",
-    "hint_ru": "Выразите x из y = (3x - 2)/(2x + 1), получите x = (y + 2)/(2y - 3), поменяйте x и y местами, чтобы получить обратную функцию: y = (x + 2)/(2x - 3)."
+    "solution_en": "Solve for x from y = (3x - 2)/(2x + 1), get x = (y + 2)/(2y - 3), exchange x and y to get the inverse function y = (x + 2)/(2x - 3).",
+    "solution_ch": "由 y = (3x - 2)/(2x + 1) 反解 x, 得 x = (y + 2)/(2y - 3), 互换 x, y 得反函数 y = (x + 2)/(2x - 3)。",
+    "solution_ru": "Выразите x из y = (3x - 2)/(2x + 1), получите x = (y + 2)/(2y - 3), поменяйте x и y местами, чтобы получить обратную функцию: y = (x + 2)/(2x - 3).",
+    "id": 294
   },
   {
     "n": 9,
@@ -5686,9 +6071,10 @@
     "subtopic": "functions properties",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "From the graph of the sine function, it is monotonically increasing on the interval [-π/2, π/2].",
-    "hint_ch": "由正弦函数图像可知, 其在区间 [-π/2, π/2] 上单调递增。",
-    "hint_ru": "Из графика функции синуса видно, что она монотонно возрастает на интервале [-π/2, π/2]."
+    "solution_en": "From the graph of the sine function, it is monotonically increasing on the interval [-π/2, π/2].",
+    "solution_ch": "由正弦函数图像可知, 其在区间 [-π/2, π/2] 上单调递增。",
+    "solution_ru": "Из графика функции синуса видно, что она монотонно возрастает на интервале [-π/2, π/2].",
+    "id": 295
   },
   {
     "n": 10,
@@ -5705,9 +6091,9 @@
     "subtopic": "arithmetic sequence",
     "type": "mar",
     "difficulty": 1,
-    "hint_en": "Parallel lines have equal slopes. The slope of 3x - y - 1 = 0 is 3, and the slope of 3x - y + 2 = 0 is also 3, so they are parallel.",
-    "hint_ch": "两条直线平行, 斜率相等。3x - y - 1 = 0 的斜率为3, 3x - y + 2 = 0 的斜率也为3, 故平行。",
-    "hint_ru": "Параллельные прямые имеют равные угловые коэффициенты. Угловой коэффициент прямой 3x - y - 1 = 0 равен 3, и угловой коэффициент прямой 3x - y + 2 = 0 также равен 3, следовательно, они параллельны."
+    "solution_en": "The general term of arithmetic sequence aₙ = a₁ + (n-1)d, substitute to get a₁₀₀ = 2 + 99 × 3 = 299",
+    "solution_ch": "等差数列通项 aₙ = a₁ + (n-1)d，代入得 a₁₀₀ = 2 + 99 × 3 = 299",
+    "solution_ru": "Общий член арифметической прогрессии aₙ = a₁ + (n-1)d, подставляем значения: a₁₀₀ = 2 + 99 × 3 = 299",    "id": 296
   },
   {
     "n": 11,
@@ -5724,9 +6110,10 @@
     "subtopic": "rational inequalities",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The fractional inequality is equivalent to {(2x - 3)(3x - 4) ≤ 0, 3x - 4 ≠ 0} solve to get 4/3 < x ≤ 3/2.",
-    "hint_ch": "分式不等式等价于 {(2x - 3)(3x - 4) ≤ 0, 3x - 4 ≠ 0} 解得 4/3 < x ≤ 3/2。",
-    "hint_ru": "Дробное неравенство эквивалентно {(2x - 3)(3x - 4) ≤ 0, 3x - 4 ≠ 0}, решите, чтобы получить 4/3 < x ≤ 3/2."
+    "solution_en": "The fractional inequality is equivalent to {(2x - 3)(3x - 4) ≤ 0, 3x - 4 ≠ 0} solve to get 4/3 < x ≤ 3/2.",
+    "solution_ch": "分式不等式等价于 {(2x - 3)(3x - 4) ≤ 0, 3x - 4 ≠ 0} 解得 4/3 < x ≤ 3/2。",
+    "solution_ru": "Дробное неравенство эквивалентно {(2x - 3)(3x - 4) ≤ 0, 3x - 4 ≠ 0}, следовательно 4/3 < x ≤ 3/2.",
+    "id": 297
   },
   {
     "n": 12,
@@ -5743,9 +6130,10 @@
     "subtopic": "geometric mean",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "Let the geometric mean be G, then G^2 = 3 × 12 = 36, G = ±6.",
-    "hint_ch": "设等比中项为 G, 则 G^2 = 3 × 12 = 36, G = ±6。",
-    "hint_ru": "Пусть среднее геометрическое равно G, тогда G^2 = 3 × 12 = 36, G = ±6."
+    "solution_en": "Let the geometric mean be G, then G^2 = 3 × 12 = 36, G = ±6.",
+    "solution_ch": "设等比中项为 G, 则 G^2 = 3 × 12 = 36, G = ±6。",
+    "solution_ru": "Пусть среднее геометрическое равно G, тогда G^2 = 3 × 12 = 36, G = ±6.",
+    "id": 3
   },
   {
     "n": 13,
@@ -5762,9 +6150,10 @@
     "subtopic": "lines",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The slope of the line k = -1/√3 = -√3/3, tan θ = -√3/3, the angle of inclination θ = 150°.",
-    "hint_ch": "直线斜率 k = -1/√3 = -√3/3, tan θ = -√3/3, 倾斜角 θ = 150°。",
-    "hint_ru": "Угловой коэффициент прямой k = -1/√3 = -√3/3, tan θ = -√3/3, угол наклона θ = 150°."
+    "solution_en": "The slope of the line k = -1/√3 = -√3/3, tan θ = -√3/3, the angle of inclination θ = 150°.",
+    "solution_ch": "直线斜率 k = -1/√3 = -√3/3, tan θ = -√3/3, 倾斜角 θ = 150°。",
+    "solution_ru": "Угловой коэффициент прямой k = -1/√3 = -√3/3, tan θ = -√3/3, угол наклона θ = 150°.",
+    "id": 298
   },
   {
     "n": 14,
@@ -5781,9 +6170,10 @@
     "subtopic": "trigonometric expressions",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "5^2 + 12^2 = 13^2, △ABC is a right triangle, ∠C = 90°, sin A = BC/AB = 5/13.",
-    "hint_ch": "5^2 + 12^2 = 13^2, △ABC为直角三角形, ∠C = 90°, sin A = BC/AB = 5/13。",
-    "hint_ru": "5^2 + 12^2 = 13^2, △ABC - прямоугольный треугольник, ∠C = 90°, sin A = BC/AB = 5/13."
+    "solution_en": "5^2 + 12^2 = 13^2, △ABC is a right triangle, ∠C = 90°, sin A = BC/AB = 5/13.",
+    "solution_ch": "5^2 + 12^2 = 13^2, △ABC为直角三角形, ∠C = 90°, sin A = BC/AB = 5/13。",
+    "solution_ru": "5^2 + 12^2 = 13^2, △ABC - прямоугольный треугольник, ∠C = 90°, sin A = BC/AB = 5/13.",
+    "id": 299
   },
   {
     "n": 15,
@@ -5800,9 +6190,10 @@
     "subtopic": "geometric sequence",
     "type": "mar",
     "difficulty": 1,
-    "hint_en": "The general term of geometric sequence a_n = a_1 q^(n-1), a_4 = 4q^3 = 32 gives q = 2, a_3 = 4 × 2^2 = 16.",
-    "hint_ch": "等比数列通项 a_n = a_1 q^(n-1), a_4 = 4q^3 = 32 得 q = 2, a_3 = 4 × 2^2 = 16。",
-    "hint_ru": "Общий член геометрической прогрессии a_n = a_1 q^(n-1), a_4 = 4q^3 = 32, отсюда q = 2, a_3 = 4 × 2^2 = 16."
+    "solution_en": "The general term of geometric sequence a_n = a_1 q^(n-1), a_4 = 4q^3 = 32 gives q = 2, a_3 = 4 × 2^2 = 16.",
+    "solution_ch": "等比数列通项 a_n = a_1 q^(n-1), a_4 = 4q^3 = 32 得 q = 2, a_3 = 4 × 2^2 = 16。",
+    "solution_ru": "Общий член геометрической прогрессии a_n = a_1 q^(n-1), a_4 = 4q^3 = 32, отсюда q = 2, a_3 = 4 × 2^2 = 16.",
+    "id": 300
   },
   {
     "n": 16,
@@ -5819,9 +6210,10 @@
     "subtopic": "coordinate geometry",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The abscissa and ordinate of the point in the third quadrant are both negative, (-1, -2) meets the condition.",
-    "hint_ch": "第三象限点的横、纵坐标均为负, (-1, -2) 符合条件。",
-    "hint_ru": "Абсцисса и ордината точки в третьей четверти обе отрицательны, (-1, -2) соответствует условию."
+    "solution_en": "The abscissa and ordinate of the point in the third quadrant are both negative, (-1, -2) meets the condition.",
+    "solution_ch": "第三象限点的横、纵坐标均为负, (-1, -2) 符合条件。",
+    "solution_ru": "Абсцисса и ордината точки в третьей четверти обе отрицательны, (-1, -2) соответствует условию.",
+    "id": 301
   },
   {
     "n": 17,
@@ -5838,9 +6230,10 @@
     "subtopic": "distance formula",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The distance formula between two points √[(a + 2)^2 + (3 + 1)^2] = 5, square to get (a + 2)^2 = 9, solve to get a = -1 or a = 5.",
-    "hint_ch": "两点间距离公式 √[(a + 2)^2 + (3 + 1)^2] = 5, 平方得 (a + 2)^2 = 9, 解得 a = -1 或 a = 5。",
-    "hint_ru": "Формула расстояния между двумя точками: √[(a + 2)^2 + (3 + 1)^2] = 5, возведите в квадрат, чтобы получить (a + 2)^2 = 9, решите: a = -1 или a = 5."
+    "solution_en": "The distance formula between two points √[(a + 2)^2 + (3 + 1)^2] = 5, square to get (a + 2)^2 = 9, solve to get a = -1 or a = 5.",
+    "solution_ch": "两点间距离公式 √[(a + 2)^2 + (3 + 1)^2] = 5, 平方得 (a + 2)^2 = 9, 解得 a = -1 或 a = 5。",
+    "solution_ru": "Формула расстояния между двумя точками: √[(a + 2)^2 + (3 + 1)^2] = 5, возведите в квадрат, чтобы получить (a + 2)^2 = 9, решите: a = -1 или a = 5.",
+    "id": 302
   },
   {
     "n": 18,
@@ -5857,9 +6250,10 @@
     "subtopic": "lines",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "Intercept form x/(-2) + y/(-1) = 1, arrange to get x + 2y + 2 = 0.",
-    "hint_ch": "截距式 x/(-2) + y/(-1) = 1, 整理得 x + 2y + 2 = 0。",
-    "hint_ru": "Уравнение в отрезках: x/(-2) + y/(-1) = 1, преобразуйте, чтобы получить x + 2y + 2 = 0."
+    "solution_en": "Intercept form x/(-2) + y/(-1) = 1, arrange to get x + 2y + 2 = 0.",
+    "solution_ch": "截距式 x/(-2) + y/(-1) = 1, 整理得 x + 2y + 2 = 0。",
+    "solution_ru": "Подставляем знаяения x=0, y=-1   и x=-2, y=0  в уравнения прямых.  x + 2y + 2 = 0 выполнятеся для обеих точек.",
+    "id": 303
   },
   {
     "n": 19,
@@ -5876,9 +6270,10 @@
     "subtopic": "properties of inequalities",
     "type": "mar",
     "difficulty": 3,
-    "hint_en": "The power function y = x^(2/3) is monotonically increasing in (0, +∞), 2.1 > 1.2 so 2.1^(2/3) > 1.2^(2/3); B, C, D do not conform to the monotonicity of the function.",
-    "hint_ch": "幂函数 y = x^(2/3) 在 (0, +∞) 单调递增, 2.1 > 1.2 故 2.1^(2/3) > 1.2^(2/3); B、C、D均不符合函数单调性。",
-    "hint_ru": "Степенная функция y = x^(2/3) монотонно возрастает на (0, +∞), 2.1 > 1.2, поэтому 2.1^(2/3) > 1.2^(2/3); B, C, D не соответствуют монотонности функции."
+    "solution_en": "The power function y = x^(2/3) is monotonically increasing in (0, +∞), 2.1 > 1.2 so 2.1^(2/3) > 1.2^(2/3)",
+    "solution_ch": "幂函数 y = x^(2/3) 在 (0, +∞) 单调递增, 2.1 > 1.2 故 2.1^(2/3) > 1.2^(2/3)",
+    "solution_ru": "Степенная функция y = x^(2/3) монотонно возрастает на (0, +∞), 2.1 > 1.2, поэтому 2.1^(2/3) > 1.2^(2/3).",
+    "id": 304
   },
   {
     "n": 20,
@@ -5895,9 +6290,10 @@
     "subtopic": "circle",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The standard equation of a circle (x - x0)^2 + (y - y0)^2 = r^2, substitute to get (x + 3)^2 + (y - 2)^2 = 9.",
-    "hint_ch": "圆的标准方程 (x - x0)^2 + (y - y0)^2 = r^2, 代入得 (x + 3)^2 + (y - 2)^2 = 9。",
-    "hint_ru": "Стандартное уравнение окружности: (x - x0)^2 + (y - y0)^2 = r^2, подставьте значения, чтобы получить (x + 3)^2 + (y - 2)^2 = 9."
+    "solution_en": "The standard equation of a circle (x - x0)² + (y - y0)² = r², substitute to get (x + 3)² + (y - 2)² = 9.",
+    "solution_ch": "圆的标准方程 (x - x0)² + (y - y0)² = r^2, 代入得 (x + 3)² + (y - 2)² = 9。",
+    "solution_ru": "Стандартное уравнение окружности: (x - x0)² + (y - y0)² = r², подставьте значения, чтобы получить (x + 3)² + (y - 2)² = 9.",
+    "id": 305
   },
   {
     "n": 21,
@@ -5914,9 +6310,10 @@
     "subtopic": "trigonometric identities",
     "type": "mar",
     "difficulty": 1,
-    "hint_en": "The definition of tangent function tan x = sin x / cos x, and cos x ≠ 0.",
-    "hint_ch": "正切函数定义 tan x = sin x / cos x, 且 cos x ≠ 0。",
-    "hint_ru": "Определение функции тангенса: tan x = sin x / cos x, и cos x ≠ 0."
+    "solution_en": "The definition of tangent function tan x = sin x / cos x, and cos x ≠ 0.",
+    "solution_ch": "正切函数定义 tan x = sin x / cos x, 且 cos x ≠ 0。",
+    "solution_ru": "Определение функции тангенса: tan x = sin x / cos x, и cos x ≠ 0.",
+    "id": 306
   },
   {
     "n": 22,
@@ -5933,9 +6330,10 @@
     "subtopic": "arithmetic sequence",
     "type": "mar",
     "difficulty": 1,
-    "hint_en": "a_10 = a_1 + 9d = 1 + 9 × 2 = 19.",
-    "hint_ch": "a_10 = a_1 + 9d = 1 + 9 × 2 = 19。",
-    "hint_ru": "a_10 = a_1 + 9d = 1 + 9 × 2 = 19."
+    "solution_en": "a₁₀ = a₁ + 9d = 1 + 9 × 2 = 19.",
+    "solution_ch": "a₁₀ = a₁ + 9d = 1 + 9 × 2 = 19。",
+    "solution_ru": "a₁₀ = a₁ + 9d = 1 + 9 × 2 = 19.",
+    "id": 307
   },
   {
     "n": 23,
@@ -5952,9 +6350,10 @@
     "subtopic": "properties of inequalities",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The function y = x^3 is monotonically increasing on R, a > b means a^3 > b^3; B, C, D can be overturned by counterexamples.",
-    "hint_ch": "函数 y = x^3 在 R 上单调递增, a > b 则 a^3 > b^3; B、C、D 可举反例推翻。",
-    "hint_ru": "Функция y = x^3 монотонно возрастает на R, a > b означает a^3 > b^3; B, C, D можно опровергнуть контрпримерами."
+    "solution_en": "The function y = x³ is monotonically increasing on R, a > b means a³ > b³; B, C, D can be overturned by counterexamples.",
+    "solution_ch": "函数 y = x³ 在 R 上单调递增, a > b 则 a³ > b³; B、C、D 可举反例推翻。",
+    "solution_ru": "Функция y = x³ монотонно возрастает на R, a > b означает a³ > b³; B, C, D можно опровергнуть контрпримерами.",
+    "id": 308
   },
   {
     "n": 24,
@@ -5971,9 +6370,10 @@
     "subtopic": "circle",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "Substitute the center and radius into the standard equation of the circle to get (x + 3)^2 + (y - 2)^2 = 4.",
-    "hint_ch": "圆标准方程代入圆心与半径, 得 (x + 3)^2 + (y - 2)^2 = 4。",
-    "hint_ru": "Подставьте центр и радиус в стандартное уравнение окружности, чтобы получить (x + 3)^2 + (y - 2)^2 = 4."
+    "solution_en": "Substitute the center and radius into the standard equation of the circle to get (x + 3)² + (y - 2)² = 4.",
+    "solution_ch": "圆标准方程代入圆心与半径, 得 (x + 3)² + (y - 2)² = 4。",
+    "solution_ru": "Подставьте центр и радиус в стандартное уравнение окружности, чтобы получить (x + 3)² + (y - 2)² = 4.",
+    "id": 309
   },
   {
     "n": 25,
@@ -5990,9 +6390,10 @@
     "subtopic": "functions properties",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The necessary and sufficient condition for the exponential function y = a^x to be monotonically increasing is a > 1.",
-    "hint_ch": "指数函数 y = a^x 单调递增的充要条件是 a > 1。",
-    "hint_ru": "Необходимое и достаточное условие для того, чтобы показательная функция y = a^x была монотонно возрастающей: a > 1."
+    "solution_en": "The necessary and sufficient condition for the exponential function y = aˣ to be monotonically increasing is a > 1.",
+    "solution_ch": "指数函数 y = aˣ 单调递增的充要条件是 a > 1。",
+    "solution_ru": "Необходимое и достаточное условие для того, чтобы показательная функция y = aˣ была монотонно возрастающей: a > 1.",
+    "id": 310
   },
   {
     "n": 26,
@@ -6009,9 +6410,10 @@
     "subtopic": "double angle formula",
     "type": "mar",
     "difficulty": 3,
-    "hint_en": "Double angle formula cos 2α = 1 - 2 sin^2 α = 1 - 2 × (1/3) = 1/3.",
-    "hint_ch": "二倍角公式 cos 2α = 1 - 2 sin^2 α = 1 - 2 × (1/3) = 1/3。",
-    "hint_ru": "Формула двойного угла: cos 2α = 1 - 2 sin^2 α = 1 - 2 × (1/3) = 1/3."
+    "solution_en": "Double angle formula cos 2α = 1 - 2 sin² α = 1 - 2 × (1/3) = 1/3.",
+    "solution_ch": "二倍角公式 cos 2α = 1 - 2 sin² α = 1 - 2 × (1/3) = 1/3。",
+    "solution_ru": "Формула двойного угла: cos 2α = 1 - 2 sin² α = 1 - 2 × (1/3) = 1/3.",
+    "id": 311
   },
   {
     "n": 27,
@@ -6028,9 +6430,10 @@
     "subtopic": "lines",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "Solve 4x + 3y = 10 and 2x - y = 10 to get the intersection point (4, -2), substitute into ax + 2y + 8 = 0 to get 4a - 4 + 8 = 0, a = -1.",
-    "hint_ch": "联立 4x + 3y = 10 与 2x - y = 10 得交点 (4, -2), 代入 ax + 2y + 8 = 0 得 4a - 4 + 8 = 0, a = -1。",
-    "hint_ru": "Решите систему 4x + 3y = 10 и 2x - y = 10, чтобы получить точку пересечения (4, -2), подставьте в ax + 2y + 8 = 0, получите 4a - 4 + 8 = 0, a = -1."
+    "solution_en": "Solve 4x + 3y = 10 and 2x - y = 10 to get the intersection point (4, -2), substitute into ax + 2y + 8 = 0 to get 4a - 4 + 8 = 0, a = -1.",
+    "solution_ch": "联立 4x + 3y = 10 与 2x - y = 10 得交点 (4, -2), 代入 ax + 2y + 8 = 0 得 4a - 4 + 8 = 0, a = -1。",
+    "solution_ru": "Решите систему 4x + 3y = 10 и 2x - y = 10, чтобы получить точку пересечения (4, -2), подставьте в ax + 2y + 8 = 0, получите 4a - 4 + 8 = 0, a = -1.",
+    "id": 312
   },
   {
     "n": 28,
@@ -6047,9 +6450,10 @@
     "subtopic": "hyperbola",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The condition for a binary quadratic equation to represent a hyperbola is that the coefficients of x^2 and y^2 have opposite signs, that is mn < 0.",
-    "hint_ch": "二元二次方程表示双曲线的条件是 x^2 与 y^2 系数异号，即 mn < 0。",
-    "hint_ru": "Условие, при котором бинарное квадратное уравнение представляет гиперболу, заключается в том, что коэффициенты при x^2 и y^2 имеют противоположные знаки, то есть mn < 0."
+    "solution_en": "The condition for a binary quadratic equation to represent a hyperbola is that the coefficients of x² and y² have opposite signs, that is mn < 0.",
+    "solution_ch": "二元二次方程表示双曲线的条件是 x² 与 y² 系数异号，即 mn < 0。",
+    "solution_ru": "Условие, при котором бинарное  квадратное уравнение представляет гиперболу, заключается в том, что коэффициенты при x² и y² имеют противоположные знаки, то есть mn < 0.",
+    "id": 313
   },
   {
     "n": 29,
@@ -6066,9 +6470,10 @@
     "subtopic": "logarithms",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "a + 2b = lg 4 + 2 lg 5 = lg 4 + lg 25 = lg 100 = 2.",
-    "hint_ch": "a + 2b = lg 4 + 2 lg 5 = lg 4 + lg 25 = lg 100 = 2。",
-    "hint_ru": "a + 2b = lg 4 + 2 lg 5 = lg 4 + lg 25 = lg 100 = 2."
+    "solution_en": "a + 2b = lg 4 + 2 lg 5 = lg 4 + lg 25 = lg 100 = 2.",
+    "solution_ch": "a + 2b = lg 4 + 2 lg 5 = lg 4 + lg 25 = lg 100 = 2。",
+    "solution_ru": "a + 2b = lg 4 + 2 lg 5 = lg 4 + lg 25 = lg 100 = 2.",
+    "id": 314
   },
   {
     "n": 30,
@@ -6085,9 +6490,10 @@
     "subtopic": "distance formula",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "Distance formula √[(3 + 1)^2 + (1 - 2)^2] = √(16 + 1) = √17.",
-    "hint_ch": "距离公式 √[(3 + 1)^2 + (1 - 2)^2] = √(16 + 1) = √17。",
-    "hint_ru": "Формула расстояния: √[(3 + 1)^2 + (1 - 2)^2] = √(16 + 1) = √17."
+    "solution_en": "Distance formula √[(3 + 1)² + (1 - 2)²] = √(16 + 1) = √17.",
+    "solution_ch": "距离公式 √[(3 + 1)² + (1 - 2)²] = √(16 + 1) = √17。",
+    "solution_ru": "Формула расстояния: √[(3 + 1)² + (1 - 2)²] = √(16 + 1) = √17.",
+    "id": 93
   },
   {
     "n": 31,
@@ -6104,9 +6510,10 @@
     "subtopic": "functions properties",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The period of cosine function T = 2π/|ω|, ω = 4, so T = 2π/4 = π/2.",
-    "hint_ch": "余弦函数周期 T = 2π/|ω|, ω = 4, 故 T = 2π/4 = π/2。",
-    "hint_ru": "Период функции косинуса T = 2π/|ω|, ω = 4, следовательно, T = 2π/4 = π/2."
+    "solution_en": "The period of cosine function T = 2π/|ω|, ω = 4, so T = 2π/4 = π/2.",
+    "solution_ch": "余弦函数周期 T = 2π/|ω|, ω = 4, 故 T = 2π/4 = π/2。",
+    "solution_ru": "Период функции косинуса T = 2π/|ω|, ω = 4, следовательно, T = 2π/4 = π/2.",
+    "id": 315
   },
   {
     "n": 32,
@@ -6118,14 +6525,15 @@
       "C. y = 1",
       "D. x = 1"
     ],
-    "answer": "A",
+    "answer": "С",
     "topic": "conic curves",
     "subtopic": "parabola",
     "type": "mar",
     "difficulty": 3,
-    "hint_en": "Convert to standard form x^2 = -4y, 2p = 4, p = 2, directrix y = p/2 = 1.",
-    "hint_ch": "化为标准式 x^2 = -4y, 2p = 4, p = 2, 准线 y = p/2 = 1。",
-    "hint_ru": "Преобразуйте в стандартный вид x^2 = -4y, 2p = 4, p = 2, директриса y = p/2 = 1."
+    "solution_en": "Convert to standard form x² = -4y, 2p = 4, p = 2, directrix y = p/2 = 1.",
+    "solution_ch": "化为标准式 x² = -4y, 2p = 4, p = 2, 准线 y = p/2 = 1。",
+    "solution_ru": "Преобразуйте в стандартный вид x² = -4y, 2p = 4, p = 2, директриса y = p/2 = 1.",
+    "id": 316
   },
   {
     "n": 33,
@@ -6142,9 +6550,10 @@
     "subtopic": "lines",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "Two parallel lines have equal slopes. The slope of 4x - 2y - 1 = 0 is 2, and the slope of 2x - y - 1 = 0 is also 2.",
-    "hint_ch": "两直线平行斜率相等, 4x - 2y - 1 = 0 斜率为2, 2x - y - 1 = 0 斜率也为2。",
-    "hint_ru": "Две параллельные прямые имеют равные угловые коэффициенты. Угловой коэффициент прямой 4x - 2y - 1 = 0 равен 2, и угловой коэффициент прямой 2x - y - 1 = 0 также равен 2."
+    "solution_en": "Two parallel lines have equal slopes. The slope of 4x - 2y - 1 = 0 is 2, and the slope of 2x - y - 1 = 0 is also 2.",
+    "solution_ch": "两直线平行斜率相等, 4x - 2y - 1 = 0 斜率为2, 2x - y - 1 = 0 斜率也为2。",
+    "solution_ru": "Две параллельные прямые имеют равные угловые коэффициенты. Угловой коэффициент прямой 4x - 2y - 1 = 0 равен 2, и угловой коэффициент прямой 2x - y - 1 = 0 также равен 2.",
+    "id": 317
   },
   {
     "n": 34,
@@ -6161,9 +6570,10 @@
     "subtopic": "half-angle formula",
     "type": "mar",
     "difficulty": 3,
-    "hint_en": "α/2 ∈ (π/4, π/2), sin(α/2) = √[(1 - cos α)/2] = √(3/4) = √3/2.",
-    "hint_ch": "α/2 ∈ (π/4, π/2), sin(α/2) = √[(1 - cos α)/2] = √(3/4) = √3/2。",
-    "hint_ru": "α/2 ∈ (π/4, π/2), sin(α/2) = √[(1 - cos α)/2] = √(3/4) = √3/2."
+    "solution_en": "α/2 ∈ (π/4, π/2), sin(α/2) = √[(1 - cos α)/2] = √(3/4) = √3/2.",
+    "solution_ch": "α/2 ∈ (π/4, π/2), sin(α/2) = √[(1 - cos α)/2] = √(3/4) = √3/2。",
+    "solution_ru": "α/2 ∈ (π/4, π/2), sin(α/2) = √[(1 - cos α)/2] = √(3/4) = √3/2.",
+    "id": 318
   },
   {
     "n": 35,
@@ -6180,9 +6590,10 @@
     "subtopic": "sin and cos of sum",
     "type": "mar",
     "difficulty": 3,
-    "hint_en": "sin(α+β) - sin(α-β) = 2 cos α sin β > 0, so sin(α-β) < sin(α+β).",
-    "hint_ch": "sin(α+β) - sin(α-β) = 2 cos α sin β > 0, 故 sin(α-β) < sin(α+β)。",
-    "hint_ru": "sin(α+β) - sin(α-β) = 2 cos α sin β > 0, следовательно, sin(α-β) < sin(α+β)."
+    "solution_en": "sin(α+β) - sin(α-β) = 2 cos α sin β > 0, so sin(α-β) < sin(α+β).",
+    "solution_ch": "sin(α+β) - sin(α-β) = 2 cos α sin β > 0, 故 sin(α-β) < sin(α+β)。",
+    "solution_ru": "sin(α+β) - sin(α-β) = 2 cos α sin β > 0, следовательно, sin(α-β) < sin(α+β).",
+    "id": 319
   },
   {
     "n": 36,
@@ -6199,9 +6610,10 @@
     "subtopic": "functions properties",
     "type": "mar",
     "difficulty": 3,
-    "hint_en": "|x| ≥ 0, 1 + |x| ≥ 1, 0 < 1/(1 + |x|) ≤ 1, the range is (0, 1].",
-    "hint_ch": "|x| ≥ 0, 1 + |x| ≥ 1, 0 < 1/(1 + |x|) ≤ 1, 值域 (0, 1]。",
-    "hint_ru": "|x| ≥ 0, 1 + |x| ≥ 1, 0 < 1/(1 + |x|) ≤ 1, область значений: (0, 1]."
+    "solution_en": "|x| ≥ 0, 1 + |x| ≥ 1, 0 < 1/(1 + |x|) ≤ 1, the range is (0, 1].",
+    "solution_ch": "|x| ≥ 0, 1 + |x| ≥ 1, 0 < 1/(1 + |x|) ≤ 1, 值域 (0, 1]。",
+    "solution_ru": "|x| ≥ 0, 1 + |x| ≥ 1, 0 < 1/(1 + |x|) ≤ 1, область значений: (0, 1].",
+    "id": 320
   },
   {
     "n": 37,
@@ -6218,9 +6630,10 @@
     "subtopic": "parabola",
     "type": "mar",
     "difficulty": 3,
-    "hint_en": "Standard form y^2 = -2px, 2p = 1, p = 1/2, directrix x = p/2 = 1/4.",
-    "hint_ch": "标准式 y^2 = -2px, 2p = 1, p = 1/2, 准线 x = p/2 = 1/4。",
-    "hint_ru": "Стандартный вид y^2 = -2px, 2p = 1, p = 1/2, директриса x = p/2 = 1/4."
+    "solution_en": "Standard form y² = -2px, 2p = 1, p = 1/2, directrix x = p/2 = 1/4.",
+    "solution_ch": "标准式 y² = -2px, 2p = 1, p = 1/2, 准线 x = p/2 = 1/4。",
+    "solution_ru": "Стандартный вид y² = -2px, 2p = 1, p = 1/2, директриса x = p/2 = 1/4.",
+    "id": 36
   },
   {
     "n": 38,
@@ -6237,9 +6650,10 @@
     "subtopic": "half-angle formula",
     "type": "mar",
     "difficulty": 4,
-    "hint_en": "Two lines are perpendicular, the product of their slopes is -1. The slope of x - y + 2 = 0 is 1, so the slope of the required line is -1. Passing through (3, 1), the equation is x + y - 4 = 0.",
-    "hint_ch": "两条直线垂直，斜率乘积为 -1。x - y + 2 = 0 的斜率为 1，所以所求直线斜率为 -1。过点 (3, 1)，得方程 x + y - 4 = 0。",
-    "hint_ru": "Две прямые перпендикулярны, произведение их угловых коэффициентов равно -1. Угловой коэффициент прямой x - y + 2 = 0 равен 1, значит, угловой коэффициент искомой прямой равен -1. Проходя через точку (3, 1), уравнение имеет вид x + y - 4 = 0."
+    "solution_en": "α/2 ∈ (-π/4, 0), tan(α/2) = -√((1 - cos α)/(1 + cos α)) = -√2/2.",
+    "solution_ch": "α/2 ∈ (-π/4, 0), tan(α/2) = -√((1 - cos α)/(1 + cos α)) = -√2/2.",
+    "solution_ru": "α/2 ∈ (-π/4, 0), tan(α/2) = -√((1 - cos α)/(1 + cos α)) = -√2/2.",
+    "id": 321
   },
   {
     "n": 39,
@@ -6256,9 +6670,10 @@
     "subtopic": "trigonometric identities",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "The derivative f'(x) = 3x^2 - 6x = 3x(x - 2). When x > 2, f'(x) > 0; when 0 < x < 2, f'(x) < 0; so the decreasing interval is (0, 2).",
-    "hint_ch": "导数 f'(x) = 3x^2 - 6x = 3x(x - 2)。当 x > 2 时，f'(x) > 0；当 0 < x < 2 时，f'(x) < 0；所以递减区间为 (0, 2)。",
-    "hint_ru": "Производная f'(x) = 3x^2 - 6x = 3x(x - 2). Когда x > 2, f'(x) > 0; когда 0 < x < 2, f'(x) < 0; следовательно, интервал убывания: (0, 2)."
+    "solution_en": "Induction formula cos(π/2 + α) = -sin α = -1/3",
+    "solution_ch": "诱导公式 cos(π/2 + α) = -sin α = -1/3",
+    "solution_ru": "Формула приведения cos(π/2 + α) = -sin α = -1/3",
+    "id": 322
   },
   {
     "n": 40,
@@ -6275,9 +6690,10 @@
     "subtopic": "functions properties",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "tan x is an odd function, not an even function, B is wrong; A, C, D are all correct.",
-    "hint_ch": "tan x 是奇函数，不是偶函数，B 错误；A、C、D 均正确。",
-    "hint_ru": "tan x - нечетная функция, а не четная, B неверно; A, C, D - все верны."
+    "solution_en": "tan x is an odd function, not an even function",
+    "solution_ch": "tan x 是奇函数，不是偶函数",
+    "solution_ru": "tan x - нечетная функция, а не четная",
+    "id": 323
   },
   {
     "n": 41,
@@ -6294,9 +6710,10 @@
     "subtopic": "other sequences",
     "type": "mar",
     "difficulty": 4,
-    "hint_en": "{1/a_n} is an arithmetic sequence with the first term 2 and common difference 1, 1/a_6 = 2 + 5 = 7, a_6 = 1/7.",
-    "hint_ch": "{1/a_n} 是首项为2、公差为1的等差数列，1/a_6 = 2 + 5 = 7, a_6 = 1/7。",
-    "hint_ru": "{1/a_n} - арифметическая прогрессия с первым членом 2 и разностью 1, 1/a_6 = 2 + 5 = 7, a_6 = 1/7."
+    "solution_en": "{1/aₙ} is an arithmetic sequence with the first term 2 and common difference 1, 1/a₆ = 2 + 5 = 7, a₆ = 1/7.",
+    "solution_ch": "{1/aₙ} 是首项为2、公差为1的等差数列，1/a₆ = 2 + 5 = 7, a₆ = 1/7。",
+    "solution_ru": "{1/aₙ} - арифметическая прогрессия с первым членом 2 и разностью 1, 1/a₆ = 2 + 5 = 7, a₆ = 1/7.",
+    "id": 324
   },
   {
     "n": 42,
@@ -6313,9 +6730,10 @@
     "subtopic": "logarithms",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "log_5(2x + 1) ≥ 0 = log_5 1, get 2x + 1 ≥ 1 and 2x + 1 > 0, solve to get x ≥ 0.",
-    "hint_ch": "log_5(2x + 1) ≥ 0 = log_5 1, 得 2x + 1 ≥ 1 且 2x + 1 > 0, 解得 x ≥ 0。",
-    "hint_ru": "log_5(2x + 1) ≥ 0 = log_5 1, получаем 2x + 1 ≥ 1 и 2x + 1 > 0, решаем: x ≥ 0."
+    "solution_en": "log_5(2x + 1) ≥ 0 = log_5 1, get 2x + 1 ≥ 1 and 2x + 1 > 0, solve to get x ≥ 0.",
+    "solution_ch": "log_5(2x + 1) ≥ 0 = log_5 1, 得 2x + 1 ≥ 1 且 2x + 1 > 0, 解得 x ≥ 0。",
+    "solution_ru": "log_5(2x + 1) ≥ 0 = log_5 1, получаем 2x + 1 ≥ 1 и 2x + 1 > 0, решаем: x ≥ 0.",
+    "id": 325
   },
   {
     "n": 43,
@@ -6332,9 +6750,10 @@
     "subtopic": "ellipse",
     "type": "mar",
     "difficulty": 4,
-    "hint_en": "2a = 10 gives a = 5, c = 3, b^2 = a^2 - c^2 = 16, the ellipse equation is x^2/25 + y^2/16 = 1.",
-    "hint_ch": "2a = 10 得 a = 5, c = 3, b^2 = a^2 - c^2 = 16, 椭圆方程 x^2/25 + y^2/16 = 1。",
-    "hint_ru": "2a = 10, отсюда a = 5, c = 3, b^2 = a^2 - c^2 = 16, уравнение эллипса: x^2/25 + y^2/16 = 1."
+    "solution_en": "2a = 10 gives a = 5, c = 3, b² = a² - c² = 16, the ellipse equation is x²/25 + y²/16 = 1.",
+    "solution_ch": "2a = 10 得 a = 5, c = 3, b² = a² - c² = 16, 椭圆方程 x²/25 + y²/16 = 1。",
+    "solution_ru": "2a = 10, отсюда a = 5, c = 3, b² = a² - c² = 16, уравнение эллипса: x²/25 + y²/16 = 1.",
+    "id": 326
   },
   {
     "n": 44,
@@ -6351,9 +6770,10 @@
     "subtopic": "vectors",
     "type": "mar",
     "difficulty": 2,
-    "hint_en": "2b = (4, 2), a - 2b = (-2 - 4, 3 - 2) = (-6, 1).",
-    "hint_ch": "2b = (4, 2), a - 2b = (-2 - 4, 3 - 2) = (-6, 1)。",
-    "hint_ru": "2b = (4, 2), a - 2b = (-2 - 4, 3 - 2) = (-6, 1)."
+    "solution_en": "2b = (4, 2), a - 2b = (-2 - 4, 3 - 2) = (-6, 1).",
+    "solution_ch": "2b = (4, 2), a - 2b = (-2 - 4, 3 - 2) = (-6, 1)。",
+    "solution_ru": "2b = (4, 2), a - 2b = (-2 - 4, 3 - 2) = (-6, 1).",
+    "id": 327
   },
   {
     "n": 45,
@@ -6370,9 +6790,10 @@
     "subtopic": "lines",
     "type": "mar",
     "difficulty": 4,
-    "hint_en": "The slope of l1 is -1/2, the slope of l is 2; solve l2, l3 to get the intersection point (2, -3), point-slope form gives 2x - y - 7 = 0.",
-    "hint_ch": "l1 斜率 -1/2，l 斜率2；联立 l2, l3 得交点 (2, -3)，点斜式得 2x - y - 7 = 0。",
-    "hint_ru": "Угловой коэффициент l1 равен -1/2, угловой коэффициент l равен 2; решите систему l2, l3, чтобы получить точку пересечения (2, -3), используя форму уравнения прямой по точке и угловому коэффициенту, получим 2x - y - 7 = 0."
+    "solution_en": "The slope of l₁ is -1/2, the slope of l is 2; solve l₂, l₃ to get the intersection point (2, -3), point-slope form gives 2x - y - 7 = 0.",
+    "solution_ch": "l₁ 斜率 -1/2，l 斜率2；联立 l₂, l₃ 得交点 (2, -3)，点斜式得 2x - y - 7 = 0。",
+    "solution_ru": "Угловой коэффициент l₁ равен -1/2, угловой коэффициент l равен 2; решите систему l₂, l₃, чтобы получить точку пересечения (2, -3), используя форму уравнения прямой по точке и угловому коэффициенту, получим 2x - y - 7 = 0.",
+    "id": 328
   },
   {
     "n": 46,
@@ -6389,9 +6810,10 @@
     "subtopic": "complex numbers",
     "type": "mar",
     "difficulty": 5,
-    "hint_en": "The roots of the equation z = 1 ± i, z1^4 = (1 + i)^4 = -4, z2^4 = (1 - i)^4 = -4, a_4 = (-4 + 4)^2 = 0.",
-    "hint_ch": "方程根 z = 1 ± i, z1^4 = (1 + i)^4 = -4, z2^4 = (1 - i)^4 = -4, a_4 = (-4 + 4)^2 = 0。",
-    "hint_ru": "Корни уравнения: z = 1 ± i, z1^4 = (1 + i)^4 = -4, z2^4 = (1 - i)^4 = -4, a_4 = (-4 + 4)^2 = 0."
+    "solution_en": "The roots of the equation z = 1 ± i, z₁^4 = (1 + i)⁴ = -4, z₂⁴ = (1 - i)⁴ = -4, a₄ = (-4 + 4)² = 0.",
+    "solution_ch": "方程根 z = 1 ± i, z₁^4 = (1 + i)⁴ = -4, z₂⁴ = (1 - i)⁴ = -4, a₄ = (-4 + 4)² = 0。",
+    "solution_ru": "Корни уравнения: z = 1 ± i, z₁⁴ = (1 + i)⁴ = -4, z₂⁴ = (1 - i)⁴ = -4, a₄ = (-4 + 4)² = 0.",
+    "id": 329
   },
   {
     "n": 47,
@@ -6408,9 +6830,11 @@
     "subtopic": "other sequences",
     "type": "mar",
     "difficulty": 4,
-    "hint_en": "Group summation, the sum of geometric sequence is 2^(n+2) - 4, the sum of arithmetic sequence is 3n(n+1)/2, S_n = 2^(n+2) - 3n(n+1)/2 - 4.",
-    "hint_ch": "分组求和, 等比数列和 2^(n+2) - 4, 等差数列和 3n(n+1)/2, S_n = 2^(n+2) - 3n(n+1)/2 - 4。",
-    "hint_ru": "Группировка сумм: сумма геометрической прогрессии равна 2^(n+2) - 4, сумма арифметической прогрессии равна 3n(n+1)/2, S_n = 2^(n+2) - 3n(n+1)/2 - 4."
+    "solution_en": "Group summation, the sum of geometric sequence is 2ⁿ⁺² - 4, the sum of arithmetic sequence is 3n(n+1)/2, Sₙ = 2ⁿ⁺² - 3n(n+1)/2 - 4.",
+    "solution_ch": "分组求和, 等比数列和 2ⁿ⁺² - 4, 等差数列和 3n(n+1)/2, Sₙ = 2ⁿ⁺² - 3n(n+1)/2 - 4。",
+    "solution_ru": "Группировка сумм: сумма геометрической прогрессии равна 2ⁿ⁺² - 4, сумма арифметической прогрессии равна 3n(n+1)/2, Sₙ = 2ⁿ⁺² - 3n(n+1)/2 - 4.",
+   
+   "id": 330
   },
   {
     "n": 48,
@@ -6427,8 +6851,9 @@
     "subtopic": "Simple Probability",
     "type": "mar",
     "difficulty": 4,
-    "hint_en": "Total cases C(5,2) = 10; different colors: 2×2 + 2×1 + 2×1 = 6, probability 6/10 = 3/5; at least one label 1: 10 - C(2,2) = 9, probability 9/10.",
-    "hint_ch": "总情况 C(5,2) = 10; 颜色不同: 2×2 + 2×1 + 2×1 = 6, 概率 6/10 = 3/5; 至少一个标号 1: 10 - C(2,2) = 9, 概率 9/10。",
-    "hint_ru": "Общее количество исходов C(5,2) = 10; разные цвета: 2×2 + 2×1 + 2×1 = 6, вероятность 6/10 = 3/5; хотя бы один шар с номером 1: 10 - C(2,2) = 9, вероятность 9/10."
+    "solution_en": "Total cases C(5,2) = 10; different colors: 2×2 + 2×1 + 2×1 = 6, probability 6/10 = 3/5; at least one label 1: 10 - C(2,2) = 9, probability 9/10.",
+    "solution_ch": "总情况 C(5,2) = 10; 颜色不同: 2×2 + 2×1 + 2×1 = 6, 概率 6/10 = 3/5; 至少一个标号 1: 10 - C(2,2) = 9, 概率 9/10。",
+    "solution_ru": "Общее количество исходов C(5,2) = 10; разные цвета: 2×2 + 2×1 + 2×1 = 6, вероятность 6/10 = 3/5; хотя бы один шар с номером 1: 10 - C(2,2) = 9, вероятность 9/10.",
+    "id": 331
   }
 ]

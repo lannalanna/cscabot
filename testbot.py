@@ -140,6 +140,50 @@ try:
     order_index = {name: i for i, name in enumerate(DESIRED_TOPIC_ORDER)}
     topics.sort(key=lambda t: (order_index.get(t, len(DESIRED_TOPIC_ORDER)), t))
 
+    # Фиксированный порядок подтем (по возрастанию средней сложности),
+    # кроме темы "physics" (её оставляем как есть: сортировка по имени).
+    FIXED_SUBTOPIC_ORDER_BY_TOPIC = {
+        "Algebraic and geometric mean": ["arithmetic mean", "geometric mean"],
+        "complex numbers": ["complex numbers"],
+        "conic curves": ["circle", "parabola", "ellipse", "hyperbola"],
+        "functions": [
+            "Function domain",
+            "functions properties",
+            "graphs",
+            "inverse functions",
+            "inequalities",
+            "function equality",
+        ],
+        "geometry": [
+            "coordinate geometry",
+            "distance formula",
+            "analytic geometry",
+            "lines",
+            "vectors",
+        ],
+        "inequalities": [
+            "properties of inequalities",
+            "absolute value",
+            "real numbers",
+            "rational inequalities",
+            "quadratic inequalities",
+        ],
+        "logarithmic functions": ["logarithms"],
+        "probability": ["Simple Probability"],
+        "sequences": ["arithmetic sequence", "geometric sequence", "other sequences"],
+        "sets": ["set operations"],
+        "trigonometry": [
+            "trigonometric values",
+            "terminal side through point",
+            "trigonometric identities",
+            "properties",
+            "double angle formula",
+            "trigonometric expressions",
+            "half-angle formula",
+            "sin and cos of sum",
+        ],
+    }
+
     # Группируем вопросы по темам (только элементы-словари)
     for top in topics:
         kapibara[top] = [x for x in kpb if x.get('topic', '') == top]
@@ -171,7 +215,16 @@ for top in topics:
             continue
         sub = (item.get("subtopic") or "").strip() or "general"
         subs.add(sub)
-    subtopics_by_topic[top] = sorted(subs)
+    if top != "physics" and top in FIXED_SUBTOPIC_ORDER_BY_TOPIC:
+        order = FIXED_SUBTOPIC_ORDER_BY_TOPIC[top]
+        sub_order_index = {name: i for i, name in enumerate(order)}
+        # Сначала подтемы из фиксированного порядка, затем любые "лишние" (если вдруг появятся).
+        subtopics_by_topic[top] = sorted(
+            subs,
+            key=lambda s: (sub_order_index.get(s, 10**6), s),
+        )
+    else:
+        subtopics_by_topic[top] = sorted(subs)
     for j, item in enumerate(kapibara.get(top, [])):
         if not isinstance(item, dict):
             continue
@@ -186,6 +239,17 @@ EXAM_25JAN_ID = "exam_25jan"
 exam_questions = []  # список кортежей (n, topic, j)
 EXAM_TOTAL_DIFFICULTY = 0
 
+def _exam_points_for_n(n_val: int) -> float:
+    # n: 1..20 -> 1.5, 21..40 -> 2, 41..48 -> 3.75
+    if 1 <= n_val <= 20:
+        return 1.5
+    if 21 <= n_val <= 40:
+        return 2.0
+    if 41 <= n_val <= 48:
+        return 3.75
+    # fallback (если n отсутствует/вне диапазона)
+    return 0.0
+
 for top in topics:
     for j, item in enumerate(kapibara.get(top, [])):
         if not isinstance(item, dict):
@@ -194,17 +258,10 @@ for top in topics:
             n_val = item.get("n") or 0
             exam_questions.append((n_val, top, j))
 
-# Сортируем по n и считаем суммарную сложность экзамена
+# Сортируем по n и считаем суммарный максимум баллов экзамена
 exam_questions.sort(key=lambda x: x[0])
-for _, t_top, t_j in exam_questions:
-    q = kapibara[t_top][t_j]
-    try:
-        diff = int(q.get("difficulty") or 1)
-    except (TypeError, ValueError):
-        diff = 1
-    if diff < 1:
-        diff = 1
-    EXAM_TOTAL_DIFFICULTY += diff
+for n_val, _, _ in exam_questions:
+    EXAM_TOTAL_DIFFICULTY += _exam_points_for_n(int(n_val or 0))
 
 # Состояние экзамена по пользователям:
 # user_id -> {"answered": set(), "correct_count": int, "correct_difficulty": int}
@@ -222,15 +279,8 @@ for top in topics:
             exam_questions_dec.append((n_val, top, j))
 
 exam_questions_dec.sort(key=lambda x: x[0])
-for _, t_top, t_j in exam_questions_dec:
-    q = kapibara[t_top][t_j]
-    try:
-        diff = int(q.get("difficulty") or 1)
-    except (TypeError, ValueError):
-        diff = 1
-    if diff < 1:
-        diff = 1
-    EXAM_DEC_TOTAL_DIFFICULTY += diff
+for n_val, _, _ in exam_questions_dec:
+    EXAM_DEC_TOTAL_DIFFICULTY += _exam_points_for_n(int(n_val or 0))
 
 exam_state_dec = {}
 
@@ -248,17 +298,8 @@ for top in topics:
             exam_questions_mar.append((n_val, top, j))
 
 exam_questions_mar.sort(key=lambda x: x[0])
-for _, t_top, t_j in exam_questions_mar:
-    arr = kapibara.get(t_top, [])
-    if t_j < len(arr) and isinstance(arr[t_j], dict):
-        q = arr[t_j]
-        try:
-            diff = int(q.get("difficulty") or 1)
-        except (TypeError, ValueError):
-            diff = 1
-        if diff < 1:
-            diff = 1
-        EXAM_MAR_TOTAL_DIFFICULTY += diff
+for n_val, _, _ in exam_questions_mar:
+    EXAM_MAR_TOTAL_DIFFICULTY += _exam_points_for_n(int(n_val or 0))
 
 exam_state_mar = {}
 
@@ -334,7 +375,7 @@ for top in topics:
             _preferred_pool[key].append((top, j))
 
 _used_for_mock = set()  # (topic, j) — каждая задача в mock_questions только один раз
-for _, t_top, t_j in exam_questions:
+for n_val, t_top, t_j in exam_questions:
     q = kapibara[t_top][t_j]
     sub = (q.get("subtopic") or "").strip() or "general"
     try:
@@ -355,14 +396,8 @@ for _, t_top, t_j in exam_questions:
             mock_questions.append((t_top, t_j))
     else:
         mock_questions.append((t_top, t_j))
-    c_top, c_j = mock_questions[-1]
-    try:
-        d = int(kapibara[c_top][c_j].get("difficulty") or 1)
-    except (TypeError, ValueError):
-        d = 1
-    if d < 1:
-        d = 1
-    MOCK_TOTAL_DIFFICULTY += d
+    # Баллы в Mock Exam — по номеру n (как в экзамене), а не по difficulty
+    MOCK_TOTAL_DIFFICULTY += _exam_points_for_n(int(n_val or 0))
 
 exam_state_mock = {}
 
@@ -390,7 +425,7 @@ def log(usr, lg = []) :
             if str(id) in cscagroup:
                  src = "cscagroup"
             else :
-                 src = "" 
+                 src = ''
    except Exception:
        src = ""
    l = [dt, id, username, src] + lg
@@ -639,17 +674,10 @@ async def _get_exam_state(user_id: int):
                    answered_set.add(idx)
                    if answer_data["correct"]:
                        correct_count += 1
-                       # Находим задачу и её сложность
+                       # Находим задачу и начисляем баллы по n
                        if 0 <= idx < len(exam_questions):
-                           _, top, j = exam_questions[idx]
-                           q = kapibara[top][j]
-                           try:
-                               diff = int(q.get("difficulty") or 1)
-                           except (TypeError, ValueError):
-                               diff = 1
-                           if diff < 1:
-                               diff = 1
-                           correct_difficulty += diff
+                           n_val, top, j = exam_questions[idx]
+                           correct_difficulty += _exam_points_for_n(int(n_val or 0))
                state["answered"] = answered_set
                state["correct_count"] = correct_count
                state["correct_difficulty"] = correct_difficulty
@@ -760,17 +788,8 @@ async def _get_exam_state_by_type(user_id: int, exam_type: str):
                     state["answered"].add(idx)
                     if answer_data.get("correct") and 0 <= idx < len(questions):
                         state["correct_count"] += 1
-                        _, top, j = questions[idx]
-                        arr = kapibara.get(top, [])
-                        if j < len(arr) and isinstance(arr[j], dict):
-                            q = arr[j]
-                            try:
-                                diff = int(q.get("difficulty") or 1)
-                            except (TypeError, ValueError):
-                                diff = 1
-                            if diff < 1:
-                                diff = 1
-                            state["correct_difficulty"] += diff
+                        n_val, _, _ = questions[idx]
+                        state["correct_difficulty"] += _exam_points_for_n(int(n_val or 0))
             except Exception as e:
                 logging.error(f"Ошибка загрузки состояния экзамена ({exam_type}) из БД: {e}")
         cfg["state"][user_id] = state
@@ -813,6 +832,11 @@ def inline_kb_exam_by_type(idx: int, exam_type: str) -> InlineKeyboardMarkup:
 
 
 async def _send_exam_question_by_type(call: CallbackQuery, user_id: int, idx: int, exam_type: str):
+    # Блокируем показ следующего экзаменационного вопроса для пользователя 7567696330
+    if user_id == 7567696330:
+        log(call.from_user, [exam_type, "next_blocked"])
+        return
+
     cfg = _exam_cfg(exam_type)
     if not cfg:
         kb = await start_kb(user_id)
@@ -987,15 +1011,8 @@ async def _get_exam_dec_state(user_id: int):
                    answered_set.add(idx)
                    if answer_data["correct"] and 0 <= idx < len(exam_questions_dec):
                        correct_count += 1
-                       _, top, j = exam_questions_dec[idx]
-                       q = kapibara[top][j]
-                       try:
-                           diff = int(q.get("difficulty") or 1)
-                       except (TypeError, ValueError):
-                           diff = 1
-                       if diff < 1:
-                           diff = 1
-                       correct_difficulty += diff
+                       n_val, _, _ = exam_questions_dec[idx]
+                       correct_difficulty += _exam_points_for_n(int(n_val or 0))
                state["answered"] = answered_set
                state["correct_count"] = correct_count
                state["correct_difficulty"] = correct_difficulty
@@ -1118,15 +1135,10 @@ async def _get_exam_mock_state(user_id: int):
                    answered_set.add(idx)
                    if answer_data["correct"] and 0 <= idx < len(mock_questions):
                        correct_count += 1
-                       top, j = mock_questions[idx]
-                       q = kapibara[top][j]
-                       try:
-                           diff = int(q.get("difficulty") or 1)
-                       except (TypeError, ValueError):
-                           diff = 1
-                       if diff < 1:
-                           diff = 1
-                       correct_difficulty += diff
+                       # В Mock Exam баллы считаем по n позиции (как в exam_questions)
+                       if 0 <= idx < len(exam_questions):
+                           n_val, _, _ = exam_questions[idx]
+                           correct_difficulty += _exam_points_for_n(int(n_val or 0))
                state["answered"] = answered_set
                state["correct_count"] = correct_count
                state["correct_difficulty"] = correct_difficulty
@@ -1163,6 +1175,11 @@ def inline_kb_exam_mock(idx: int) -> InlineKeyboardMarkup:
 
 
 async def _send_exam_mock_question(call: CallbackQuery, user_id: int, idx: int):
+   # Блокируем показ следующего вопроса Mock Exam для пользователя 7567696330
+   if user_id == 7567696330:
+       log(call.from_user, [EXAM_MOCK_ID, "next_blocked"])
+       return
+
    if idx < 0 or idx >= len(mock_questions):
        kb = await start_kb(user_id)
        await call.message.answer("Экзаменационные задачи закончились.", reply_markup=kb)
@@ -1628,7 +1645,7 @@ async def on_exam_answer(call: CallbackQuery):
     if idx in state["answered"]:
         await call.message.answer("Вы уже решили эту задачу.")
         return
-    _, top, j = questions[idx]
+    n_val, top, j = questions[idx]
     arr = kapibara.get(top, [])
     if j >= len(arr) or not isinstance(arr[j], dict):
         await call.message.answer("Вопрос не найден.")
@@ -1645,13 +1662,7 @@ async def on_exam_answer(call: CallbackQuery):
     state["answered"].add(idx)
     if ansok:
         state["correct_count"] = state.get("correct_count", 0) + 1
-        try:
-            diff = int(q.get("difficulty") or 1)
-        except (TypeError, ValueError):
-            diff = 1
-        if diff < 1:
-            diff = 1
-        state["correct_difficulty"] = state.get("correct_difficulty", 0) + diff
+        state["correct_difficulty"] = state.get("correct_difficulty", 0) + _exam_points_for_n(int(n_val or 0))
 
     if db_conn:
         try:
@@ -1680,27 +1691,27 @@ async def on_exam_answer(call: CallbackQuery):
 
     # Если ответ неправильный и есть подсказка — отправляем тремя сообщениями:
     # 1) Неправильно  2) hint по языку  3) статистика
-    if not ansok and (q.get("hint_en") or q.get("hint_ru")):
-        hint = ""
+    if not ansok and (q.get("solution_en") or q.get("solution_ru")):
+        solution = ""
         if lang.startswith("ru"):
-            hint = (q.get("hint_ru") or "").strip() or (q.get("hint_en") or "").strip()
+            solution = (q.get("solution_ru") or "").strip() or (q.get("solution_en") or "").strip()
         else:
-            hint = (q.get("hint_en") or "").strip() or (q.get("hint_ru") or "").strip()
+            solution = (q.get("solution_en") or "").strip() or (q.get("solution_ru") or "").strip()
 
         await call.message.answer("Неправильно. / Incorrect.")
-        if hint:
-            await call.message.answer(hint)
+        if solution:
+            await call.message.answer(solution)
         await call.message.answer(stats_msg)
     else:
         full_msg = result_msg + "\n" + stats_msg
 
     next_idx = _find_next_exam_index_by_type(state, exam_type)
     if next_idx is None:
-        if ansok or not (q.get("hint_en") or q.get("hint_ru")):
+        if ansok or not (q.get("solution_en") or q.get("solution_ru")):
             await call.message.answer(full_msg)
         await _send_exam_summary_by_type(call, user_id, exam_type)
     else:
-        if ansok or not (q.get("hint_en") or q.get("hint_ru")):
+        if ansok or not (q.get("solution_en") or q.get("solution_ru")):
             await call.message.answer(full_msg)
         await _send_exam_question_by_type(call, user_id, next_idx, exam_type)
 
@@ -1742,13 +1753,10 @@ async def on_exam_mock_answer(call: CallbackQuery):
     state["answered"].add(idx)
     if ansok:
         state["correct_count"] = state.get("correct_count", 0) + 1
-        try:
-            diff = int(q.get("difficulty") or 1)
-        except (TypeError, ValueError):
-            diff = 1
-        if diff < 1:
-            diff = 1
-        state["correct_difficulty"] = state.get("correct_difficulty", 0) + diff
+        # В Mock Exam баллы считаем по n позиции (как в exam_questions)
+        if 0 <= idx < len(exam_questions):
+            n_val, _, _ = exam_questions[idx]
+            state["correct_difficulty"] = state.get("correct_difficulty", 0) + _exam_points_for_n(int(n_val or 0))
 
     if db_conn:
         try:
@@ -1940,6 +1948,10 @@ async def on_next_sub(call: CallbackQuery):
     showvideo = 1
     if call.from_user.username == 'evangecalista':
         showvideo = 0
+    if str(call.from_user.id) ==  "7567696330" :
+       log(call.from_user, ["blocked"])
+       return
+
     elif db_conn:
         try:
             cursor = await db_conn.execute("SELECT source FROM users WHERE id = ?", (call.from_user.id,))
@@ -2075,12 +2087,16 @@ async def cmd_start(call: CallbackQuery):
 
 @router.message(Command("start"))
 async def cmd_start(message: types.Message):
-    log(message.from_user,['start', message.text])
+    # Не логируем сообщения из конкретной группы
+    if message.chat.id != -1003634233318:
+        log(message.from_user, ['start', message.text])
     
     # Извлекаем аргумент команды (текст после /start)
     start_text = None
     if message.text and len(message.text.split()) > 1:
         start_text = ' '.join(message.text.split()[1:])
+    user_status = await bot.get_chat_member(chat_id="@csca_math_exam", user_id=message.chat.id)
+    log(message.from_user,['status', str(user_status) ])
     
     # Сохраняем/обновляем пользователя в БД
     if db_conn:
@@ -2088,6 +2104,37 @@ async def cmd_start(message: types.Message):
             await db.ensure_user(db_conn, message.from_user, start_text)
             # Если пользователь пришёл по invite-ссылке, обновляем карту приглашений
             _register_invite_for_new_user(message.from_user.id, message.from_user.username, start_text)
+
+            # Если пользователь перешёл по собственной ссылке-приглашению, показываем статистику приглашённых
+            if start_text and start_text.strip().lower().startswith("invite"):
+                from_code = start_text.strip()[6:]  # после 'invite'
+                own_code = _make_invite_code(message.from_user.username, message.from_user.id)
+                if from_code == own_code:
+                    invited_ids = invite_relations.get(message.from_user.id, set()) or set()
+                    invited_count = len(invited_ids)
+                    total_answers_by_invited = 0
+                    if invited_ids:
+                        try:
+                            for invited_id in invited_ids:
+                                stats = await db.get_user_stats(db_conn, invited_id)
+                                total_answers_by_invited += stats.get("total_answered", 0)
+                        except Exception as e:
+                            logging.error(f"Ошибка получения статистики приглашённых для пользователя {message.from_user.id}: {e}")
+                    # Сообщение пользователю о его вкладе
+                    lang = (message.from_user.language_code or "en").lower()
+                    if lang.startswith("ru"):
+                        text = (
+                            "📊 Ваша пригласительная статистика:\n\n"
+                            f"По вашей ссылке пришло новых пользователей: {invited_count}.\n"
+                            f"Суммарно они решили задач: {total_answers_by_invited}."
+                        )
+                    else:
+                        text = (
+                            "📊 Your invitation statistics:\n\n"
+                            f"New users who joined via your link: {invited_count}.\n"
+                            f"Total tasks they have solved: {total_answers_by_invited}."
+                        )
+                    await message.answer(text)
 
             # Если пользователь вернулся по ссылке после успешной оплаты через ЮKassa,
             # помечаем его как оплатившего доступ (аналогично оплате Stars).
@@ -2147,6 +2194,8 @@ async def cmd_start(message: types.Message):
 участников групп подготовки по метематике https://t.me/+c1ksuGkuO1BiNDk6
 и физике https://t.me/+dUnPAdJO1w4zZWUy
 
+Бот создан с помощью нейросети. Нашел ошибку? Пиши https://t.me/csca_math_exam/107
+
 """
     else:
         greet = "Hi!! I am a CSCA math exam prep bot. I've got  a lot of practice problems and can verify your answers. "
@@ -2186,6 +2235,13 @@ async def cmd_start(call: CallbackQuery):
 @router.callback_query(F.data.startswith('next'))
 async def cmd_start(call: CallbackQuery):
     
+    # Для пользователя 7567696330 блокируем показ следующей задачи
+    if call.from_user.id == 7567696330:
+        await call.answer()
+        # Логируем событие и не показываем задачу, сообщение пользователю пустое
+        log(call.from_user, ["next_blocked"])
+        return
+
     showvideo = 1
     user = call.from_user.username
     
@@ -2214,9 +2270,8 @@ async def cmd_start(call: CallbackQuery):
     log(call.from_user,['next', top, j])
     
     #log(message.from_user,['log', str(ans) , top, str(j), str(kapibara[top])s ])
-    if j == 0 :
-          user_status = await bot.get_chat_member(chat_id="@csca_math_exam", user_id=call.message.chat.id)
-          log(call.from_user,['status', str(user_status) ])
+    
+          
           
     if j == 7 :
           message=makeinvite(call.from_user)  
@@ -2588,8 +2643,10 @@ async def cmd_start(message: Message):
         question_text = k["english"]+"\n" + k.get("chinese","")
     else:
         question_text = "Выберите тему для начала."
-    
-    log(message.from_user,['message', message.text.replace("\n"," ") if message.text else "" ])
+    chat_id = message.chat.id
+    # Не логируем сообщения из группы -1003634233318
+    if chat_id != -1003634233318:
+        log(message.from_user, ['message', str(chat_id), message.text.replace("\n"," ") if message.text else "" ])
    # async with ChatActionSender(bot=bot, chat_id=message.chat.id, action="typing"):
    #  await message.answer( "Спасибо! Передам сообщение разработчикам")
    #   await message.answer( "Чтобы продолжить, ответь на любой предыдущий вопрос")
