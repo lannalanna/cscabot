@@ -3035,7 +3035,7 @@ async def on_math_solution_down(call: CallbackQuery):
     topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
     msg = _txt(
         lang,
-        "Решение сгенерировано нейросетью, действительно ничего не понятно, действительно ничего непонятно 😢  Напиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
+        "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
         "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
     )
     kb = InlineKeyboardBuilder()
@@ -3143,7 +3143,7 @@ async def on_topic_solution_down(call: CallbackQuery):
     topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
     msg = _txt(
         lang,
-        "Решение сгенированно нейросетью, действительно ничего непонятно 😢 Напиши в чат, там тебе помогут по-человечески. А я пока подумаю как сделать решение понятнее",
+        "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
         "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
     )
     kb = InlineKeyboardBuilder()
@@ -3245,7 +3245,7 @@ async def on_sub_solution_down(call: CallbackQuery):
     topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
     msg = _txt(
         lang,
-        "Решение сгенированно нейросетью, действительно ничего непонятно 😢 Напиши в чат, там тебе помогут по-человечески. А я пока подумаю как сделать решение понятнее",
+        "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
         "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
     )
     kb = InlineKeyboardBuilder()
