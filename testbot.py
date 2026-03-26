@@ -2491,14 +2491,14 @@ def inline_kb_math_all_explain(top: str, j: int, q: dict, lang_code: str = "en")
 
 
 def _solution_text_for_lang(q: dict, lang_code: str) -> str:
-   if _normalize_lang(lang_code) == "ru":
-       txt = (q.get("solution_ru") or "").strip()
-       if txt:
-           return txt
-   txt = (q.get("solution_en") or "").strip()
-   if txt:
-       return txt
-   return _txt(lang_code, "Решение пока отсутствует.", "Solution is not available yet.")
+    if _normalize_lang(lang_code) == "ru":
+        txt = (q.get("solution_ru2") or q.get("solution_ru") or "").strip()
+        if txt:
+            return txt
+    txt = (q.get("solution_en2") or q.get("solution_en") or "").strip()
+    if txt:
+        return txt
+    return _txt(lang_code, "Решение пока отсутствует.", "Solution is not available yet.")
 
 
 def _kb_solution_feedback_topic(top_idx: int, j: int, lang_code: str = "en") -> InlineKeyboardMarkup:
