@@ -99,15 +99,14 @@ def infer_subtopic(item):
         return "trigonometric functions"
 
     if topic == "sequences":
-        if "arithmetic" in eng or "等差数列" in chn:
-            return "arithmetic sequence"
-        if "geometric" in eng or "等比" in chn:
-            return "geometric sequence"
-        if "general term" in eng or "通项" in chn:
-            return "sequence general term"
-        if "recursive" in eng or "递推" in chn:
-            return "recursive sequence"
-        return "sequences"
+        d = item.get("difficulty")
+        try:
+            di = int(d) if d is not None else 0
+        except (TypeError, ValueError):
+            di = 0
+        if di == 5:
+            return "hard tasks"
+        return "simple tasks"
 
     if topic == "probability":
         if "combined" in eng or "event" in eng:
@@ -115,7 +114,14 @@ def infer_subtopic(item):
         return "Simple Probability"
 
     if topic == "complex numbers":
-        return "complex numbers"
+        d = item.get("difficulty")
+        try:
+            di = int(d) if d is not None else 0
+        except (TypeError, ValueError):
+            di = 0
+        if di == 5:
+            return "hard tasks"
+        return "simple tasks"
 
     if topic == "logarithmic functions" or "logarithmic" in topic:
         return "logarithms"

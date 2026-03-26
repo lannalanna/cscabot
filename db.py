@@ -37,6 +37,7 @@ async def init_db() -> aiosqlite.Connection:
             id INTEGER PRIMARY KEY,
             username TEXT,
             language_code TEXT,
+            language TEXT,
             source TEXT,
             invited_by TEXT,
             created_at TEXT NOT NULL,
@@ -100,6 +101,39 @@ async def init_db() -> aiosqlite.Connection:
         CREATE INDEX IF NOT EXISTS idx_star_payments_user_purpose
         ON star_payments(user_id, purpose)
     """)
+
+    # Сохранённые рекомендации по проблемным темам после экзаменов
+    await conn.execute("""
+        CREATE TABLE IF NOT EXISTS user_exam_recommendations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            exam_type TEXT NOT NULL,
+            topics_json TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+    await conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_user_exam_recommendations_user_exam
+        ON user_exam_recommendations(user_id, exam_type, created_at)
+    """)
+    
+    # Состояние режима "Все задачи по математике" (для восстановления после перезапуска)
+    await conn.execute("""
+        CREATE TABLE IF NOT EXISTS user_math_all_state (
+            user_id INTEGER PRIMARY KEY,
+            state_json TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+
+    # Миграция: добавляем поле language в users, если база старая
+    try:
+        await conn.execute("ALTER TABLE users ADD COLUMN language TEXT")
+    except Exception:
+        # Колонка уже существует или ALTER не применим — это ок
+        pass
     
     await conn.commit()
     return conn
@@ -165,11 +199,12 @@ async def ensure_user(conn: aiosqlite.Connection, user, start_text: Optional[str
     else:
         # Создаём нового пользователя
         await conn.execute("""
-            INSERT INTO users (id, username, language_code, source, invited_by, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO users (id, username, language_code, language, source, invited_by, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             user.id,
             user.username,
+            user.language_code,
             user.language_code,
             new_source,
             start_text if start_text else None,
@@ -251,6 +286,32 @@ async def save_answer(
         ))
     
     await conn.commit()
+
+
+async def get_training_answers_today_counts(
+    conn: aiosqlite.Connection, user_id: int
+) -> Tuple[int, int]:
+    """
+    Статистика ответов в тренировке (таблица answers) с полуночи локального времени сервера.
+    Возвращает (число неверных, всего ответов за сегодня).
+    """
+    start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+    cursor = await conn.execute(
+        """
+        SELECT
+            SUM(CASE WHEN correct = 0 THEN 1 ELSE 0 END),
+            COUNT(*)
+        FROM answers
+        WHERE user_id = ? AND created_at >= ?
+        """,
+        (user_id, start),
+    )
+    row = await cursor.fetchone()
+    if not row or row[1] is None or row[1] == 0:
+        return 0, 0
+    wrong = int(row[0] or 0)
+    total = int(row[1])
+    return wrong, total
 
 
 async def get_progress(conn: aiosqlite.Connection, user_id: int) -> List[Dict]:
@@ -459,6 +520,10 @@ async def clear_user_stats(conn: aiosqlite.Connection, user_id: int) -> None:
         "DELETE FROM progress WHERE user_id = ?",
         (user_id,),
     )
+    await conn.execute(
+        "DELETE FROM user_math_all_state WHERE user_id = ?",
+        (user_id,),
+    )
     await conn.commit()
 
 
@@ -556,6 +621,124 @@ async def get_user_created_at(conn: aiosqlite.Connection, user_id: int) -> Optio
     """
     cursor = await conn.execute(
         "SELECT created_at FROM users WHERE id = ? LIMIT 1",
+        (user_id,),
+    )
+    row = await cursor.fetchone()
+    return row[0] if row else None
+
+
+async def get_user_language(conn: aiosqlite.Connection, user_id: int) -> Optional[str]:
+    """
+    Возвращает сохранённый язык интерфейса пользователя из users.language или None.
+    """
+    cursor = await conn.execute(
+        "SELECT language FROM users WHERE id = ? LIMIT 1",
+        (user_id,),
+    )
+    row = await cursor.fetchone()
+    return row[0] if row and row[0] else None
+
+
+async def set_user_language(conn: aiosqlite.Connection, user_id: int, language: str) -> None:
+    """
+    Сохраняет язык интерфейса пользователя в users.language.
+    """
+    now = datetime.now().isoformat()
+    await conn.execute(
+        "UPDATE users SET language = ?, updated_at = ? WHERE id = ?",
+        (language, now, user_id),
+    )
+    await conn.commit()
+
+
+async def save_user_exam_recommendations(
+    conn: aiosqlite.Connection,
+    user_id: int,
+    exam_type: str,
+    topics_json: str,
+) -> None:
+    """
+    Сохраняет рекомендации по темам после завершения экзамена.
+    topics_json: JSON-строка со списком тем в порядке важности.
+    """
+    now = datetime.now().isoformat()
+    await conn.execute(
+        """
+        INSERT INTO user_exam_recommendations (user_id, exam_type, topics_json, created_at)
+        VALUES (?, ?, ?, ?)
+        """,
+        (user_id, exam_type, topics_json, now),
+    )
+    await conn.commit()
+
+
+async def get_user_exam_recommendations_rows(
+    conn: aiosqlite.Connection, user_id: int
+) -> List[Tuple[str, str]]:
+    """
+    Возвращает все сохранённые рекомендации пользователя:
+    [(exam_type, topics_json), ...] от старых к новым.
+    """
+    cursor = await conn.execute(
+        """
+        SELECT exam_type, topics_json
+        FROM user_exam_recommendations
+        WHERE user_id = ?
+        ORDER BY created_at ASC, id ASC
+        """,
+        (user_id,),
+    )
+    rows = await cursor.fetchall()
+    return [(row[0], row[1]) for row in rows]
+
+
+async def get_user_answers_for_topics(
+    conn: aiosqlite.Connection,
+    user_id: int,
+    topics: List[str],
+) -> List[Tuple[str, int, int, int, str]]:
+    """
+    Возвращает ответы пользователя по указанным темам:
+    [(topic, question_index, chosen_index, correct, created_at), ...]
+    """
+    if not topics:
+        return []
+    placeholders = ",".join(["?"] * len(topics))
+    cursor = await conn.execute(
+        f"""
+        SELECT topic, question_index, chosen_index, correct, created_at
+        FROM answers
+        WHERE user_id = ? AND topic IN ({placeholders})
+        ORDER BY created_at ASC, id ASC
+        """,
+        [user_id] + list(topics),
+    )
+    rows = await cursor.fetchall()
+    return [(row[0], row[1], row[2], row[3], row[4]) for row in rows]
+
+
+async def save_user_math_all_state(
+    conn: aiosqlite.Connection, user_id: int, state_json: str
+) -> None:
+    now = datetime.now().isoformat()
+    await conn.execute(
+        """
+        INSERT INTO user_math_all_state (user_id, state_json, updated_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET
+            state_json = excluded.state_json,
+            updated_at = excluded.updated_at
+        """,
+        (user_id, state_json, now),
+    )
+    await conn.commit()
+
+
+async def get_user_math_all_state(
+    conn: aiosqlite.Connection, user_id: int
+) -> Optional[str]:
+    cursor = await conn.execute(
+        "SELECT state_json FROM user_math_all_state WHERE user_id = ? LIMIT 1",
         (user_id,),
     )
     row = await cursor.fetchone()

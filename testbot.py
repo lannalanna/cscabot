@@ -19,7 +19,7 @@ from aiogram.utils.chat_action import ChatActionSender
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
 
-#API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
+API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -78,7 +78,9 @@ import db
 
 # --- Подсказки (картинки) ---
 HINTS_IMAGES_DIR = os.path.join(DATA_DIR, "images", "hints")
-_HINT_IMAGE_CACHE: dict[tuple[str, str], str | None] = {}
+# cache_key: (bases_tuple, suf)
+# value: ordered list of hint image paths (n=0..)
+_HINT_IMAGE_CACHE: dict[tuple[tuple[str, ...], str], list[str]] = {}
 
 
 def _lang_suffix(lang_code: str) -> str:
@@ -97,49 +99,79 @@ def _derive_subtopic_id(task_id: str | None) -> str | None:
     return m.group(1) if m else None
 
 
-def _get_hint_image_path(q: dict, lang_code: str) -> str | None:
+def _get_hint_image_path(q: dict, lang_code: str) -> list[str]:
     """
-    Проверяет наличие картинки подсказки по файлу:
-    - имя начинается с id задачи или id подтемы,
-    - далее суффикс языка "ru" или "en",
-    - расширение .png/.jpg/.jpeg/.webp (если существует).
+    Возвращает ВСЕ найденные подсказки в порядке номеров.
+
+    Ищем файлы формата:
+    - base = id подтемы ИЛИ id задачи (приоритет: id задачи, затем id подтемы)
+    - suf = язык ('ru'/'en')
+    - имя: {base}{suf}        -> номер n = 0
+    - имя: {base}{suf}_{n}   -> номер n >= 1
+    - расширение: .png/.jpg/.jpeg/.webp (необязательно)
     """
     if not isinstance(q, dict):
-        return None
+        return []
     if not os.path.isdir(HINTS_IMAGES_DIR):
-        return None
+        return []
 
     task_id = q.get("id")
     if not task_id:
-        return None
+        return []
 
     suf = _lang_suffix(lang_code)
     sub_id = _derive_subtopic_id(task_id)
-    bases = [str(task_id)]
+    bases: list[str] = [str(task_id)]
     if sub_id and sub_id not in bases:
         bases.append(sub_id)
 
-    cache_key = (bases[0], suf)
+    cache_key = (tuple(bases), suf)
     if cache_key in _HINT_IMAGE_CACHE:
-        return _HINT_IMAGE_CACHE[cache_key]
+        return list(_HINT_IMAGE_CACHE[cache_key])
 
-    exts = [".png", ".jpg", ".jpeg", ".webp", ""]
-    hint_path: str | None = None
+    try:
+        files = os.listdir(HINTS_IMAGES_DIR)
+    except Exception:
+        return []
+
+    ext_priority = {"": 0, ".png": 1, ".jpg": 2, ".jpeg": 3, ".webp": 4}
+
+    def ext_of(fname: str) -> str:
+        return os.path.splitext(fname)[1].lower()
+
     for base in bases:
-        for ext in exts:
-            name = f"{base}{suf}{ext}"
-            candidate = os.path.join(HINTS_IMAGES_DIR, name)
-            if ext and os.path.isfile(candidate):
-                hint_path = candidate
-                break
-            if not ext and os.path.isfile(candidate):
-                hint_path = candidate
-                break
-        if hint_path:
-            break
+        # для каждого base собираем n -> path
+        found: dict[int, str] = {}
+        for fname in files:
+            if not fname.startswith(base + suf):
+                continue
+            # base+suf + optional _n + optional .ext
+            # Пример: HFru, HFru_1.png
+            pat = rf"^{re.escape(base)}{re.escape(suf)}(?:_(\d+))?(?:\.(?:png|jpg|jpeg|webp))?$"
+            m = re.match(pat, fname)
+            if not m:
+                continue
+            n_str = m.group(1)
+            n_val = int(n_str) if n_str is not None else 0
+            full = os.path.join(HINTS_IMAGES_DIR, fname)
+            if not os.path.isfile(full):
+                continue
+            cur_ext = ext_of(fname)
+            # если для одного n нашлось несколько расширений, берём приоритетное
+            if n_val not in found or ext_priority.get(cur_ext, 999) < ext_priority.get(ext_of(os.path.basename(found[n_val])), 999):
+                found[n_val] = full
+        if found:
+            ordered = [found[n] for n in sorted(found.keys())]
+            _HINT_IMAGE_CACHE[cache_key] = ordered
+            return list(ordered)
 
-    _HINT_IMAGE_CACHE[cache_key] = hint_path
-    return hint_path
+    _HINT_IMAGE_CACHE[cache_key] = []
+    return []
+
+
+def _has_hint_image(q: dict, lang_code: str) -> bool:
+    """Общая проверка наличия картинки-подсказки для задачи."""
+    return len(_get_hint_image_path(q, lang_code)) > 0
 
 # Ссылка для оплаты доступа к экзамену (можно переопределить через переменную окружения PAY_URL)
 PAY_URL = os.environ.get("PAY_URL", "https://example.com/csca-pay")
@@ -212,7 +244,7 @@ try:
     # кроме темы "physics" (её оставляем как есть: сортировка по имени).
     FIXED_SUBTOPIC_ORDER_BY_TOPIC = {
         "Algebraic and geometric mean": ["arithmetic mean", "geometric mean"],
-        "complex numbers": ["complex numbers"],
+        "complex numbers": ["simple tasks", "hard tasks"],
         "conic curves": ["circle", "parabola", "ellipse", "hyperbola"],
         "functions": [
             "Function domain",
@@ -238,13 +270,13 @@ try:
         ],
         "logarithmic functions": ["logarithms"],
         "probability": ["Simple Probability"],
-        "sequences": ["arithmetic sequence", "geometric sequence", "other sequences"],
+        "sequences": ["simple tasks", "hard tasks"],
         "sets": ["set operations"],
         "trigonometry": [
             "trigonometric values",
             "terminal side through point",
             "trigonometric identities",
-            "properties",
+            "Properties of trigonometric functions",
             "double angle formula",
             "trigonometric expressions",
             "half-angle formula",
@@ -302,17 +334,50 @@ for top in topics:
             questions_by_topic_subtopic[key] = []
         questions_by_topic_subtopic[key].append(j)
 
+
+MATH_ALL_NON_RU_LINK = "https://t.me/+hN3O2vl9211mZmU6"
+
+
+def _q_diff(q: dict) -> int:
+    try:
+        d = int(q.get("difficulty", 1))
+    except (TypeError, ValueError):
+        d = 1
+    return max(1, min(5, d))
+
+
+def _build_math_subtopic_avg() -> dict[tuple[str, str], float]:
+    out: dict[tuple[str, str], float] = {}
+    for top in topics:
+        if top == "physics":
+            continue
+        for sub in subtopics_by_topic.get(top, []):
+            j_list = questions_by_topic_subtopic.get((top, sub), [])
+            if not j_list:
+                continue
+            vals = [_q_diff(kapibara[top][j]) for j in j_list if 0 <= j < len(kapibara[top])]
+            if vals:
+                out[(top, sub)] = sum(vals) / len(vals)
+    return out
+
+
+MATH_SUBTOPIC_AVG_DIFF = _build_math_subtopic_avg()
+MATH_SUBTOPICS_SORTED = sorted(MATH_SUBTOPIC_AVG_DIFF.keys(), key=lambda ts: (MATH_SUBTOPIC_AVG_DIFF[ts], ts[0], ts[1]))
+
 # --- После темы/подтемы: снова показывать задачи, где последний ответ неверный
 #     или первый ответ после показа был неверный (не «с первого раза») ---
 # (user_id, topic) -> { j: {"first": bool|None, "last": bool|None} }
 _topic_answer_marks: dict[tuple[int, str], dict[int, dict]] = {}
 _topic_in_review: dict[tuple[int, str], bool] = {}
 _topic_linear_active: dict[tuple[int, str], bool] = {}
+# Последняя показанная задача в раунде повторов (чтобы не дублировать подряд)
+_topic_last_review_shown: dict[tuple[int, str], int] = {}
 
 # (user_id, topic_idx, sub_idx) -> { k: {"first": bool|None, "last": bool|None} }
 _sub_answer_marks: dict[tuple[int, int, int], dict[int, dict]] = {}
 _sub_in_review: dict[tuple[int, int, int], bool] = {}
 _sub_linear_active: dict[tuple[int, int, int], bool] = {}
+_sub_last_review_shown: dict[tuple[int, int, int], int] = {}
 
 
 def _parse_next_topic_callback(data: str) -> tuple[str, int]:
@@ -374,10 +439,25 @@ def _topic_build_review_set(uid: int, top: str, n: int) -> set[int]:
     return {jj for jj in range(n) if _topic_needs_review_j(uid, top, jj)}
 
 
+def _pick_next_review_index(review: set[int], last_shown: int | None) -> int | None:
+    """
+    Индекс следующей задачи в повторах: не совпадает с last_shown, если в review есть другие.
+    Если осталась только одна задача и она же last_shown — None (завершить тему/подтему без второго показа подряд).
+    """
+    if not review:
+        return None
+    sorted_r = sorted(review)
+    alt = [x for x in sorted_r if x != last_shown]
+    if alt:
+        return alt[0]
+    return None
+
+
 def _topic_clear_session(uid: int, top: str) -> None:
     _topic_answer_marks.pop((uid, top), None)
     _topic_in_review.pop((uid, top), None)
     _topic_linear_active.pop((uid, top), None)
+    _topic_last_review_shown.pop((uid, top), None)
 
 
 def _sub_key(uid: int, topic_idx: int, sub_idx: int) -> tuple[int, int, int]:
@@ -424,6 +504,169 @@ def _sub_clear_session(uid: int, topic_idx: int, sub_idx: int) -> None:
     _sub_answer_marks.pop(k, None)
     _sub_in_review.pop(k, None)
     _sub_linear_active.pop(k, None)
+    _sub_last_review_shown.pop(k, None)
+
+
+# --- Режим "Все задачи по математике" ---
+_math_all_sessions: dict[int, dict] = {}
+
+
+def _math_all_serialize_state(session: dict) -> str:
+    payload = {
+        "allowed_topics": sorted(session.get("allowed_topics", set())),
+        "participated_subtopics": [list(x) for x in sorted(session.get("participated_subtopics", set()))],
+        "current_subtopic": list(session["current_subtopic"]) if session.get("current_subtopic") else None,
+        "previous_subtopic": list(session["previous_subtopic"]) if session.get("previous_subtopic") else None,
+        "shown_history": [list(x) for x in session.get("shown_history", [])],
+        "attempts": [
+            [k[0], k[1], v]
+            for k, v in sorted(session.get("attempts", {}).items(), key=lambda kv: (kv[0][0], kv[0][1]))
+        ],
+        "solved_first_try": [list(x) for x in sorted(session.get("solved_first_try", set()))],
+        "solved_not_first_try": [list(x) for x in sorted(session.get("solved_not_first_try", set()))],
+        "first_ok_prefix_counts": session.get("first_ok_prefix_counts", {}),
+    }
+    return json.dumps(payload, ensure_ascii=False)
+
+
+def _math_all_deserialize_state(raw: str) -> dict | None:
+    try:
+        p = json.loads(raw or "{}")
+    except Exception:
+        return None
+    if not isinstance(p, dict):
+        return None
+    try:
+        session = {
+            "allowed_topics": set(p.get("allowed_topics", [])),
+            "participated_subtopics": set((x[0], x[1]) for x in p.get("participated_subtopics", []) if isinstance(x, list) and len(x) == 2),
+            "current_subtopic": tuple(p["current_subtopic"]) if isinstance(p.get("current_subtopic"), list) and len(p.get("current_subtopic")) == 2 else None,
+            "previous_subtopic": tuple(p["previous_subtopic"]) if isinstance(p.get("previous_subtopic"), list) and len(p.get("previous_subtopic")) == 2 else None,
+            "shown_history": [tuple(x) for x in p.get("shown_history", []) if isinstance(x, list) and len(x) == 2],
+            "attempts": {(x[0], int(x[1])): int(x[2]) for x in p.get("attempts", []) if isinstance(x, list) and len(x) == 3},
+            "solved_first_try": set((x[0], x[1]) for x in p.get("solved_first_try", []) if isinstance(x, list) and len(x) == 2),
+            "solved_not_first_try": set((x[0], x[1]) for x in p.get("solved_not_first_try", []) if isinstance(x, list) and len(x) == 2),
+            "first_ok_prefix_counts": dict(p.get("first_ok_prefix_counts", {})),
+        }
+    except Exception:
+        return None
+    return session
+
+
+async def _math_all_save_state(user_id: int) -> None:
+    if not db_conn:
+        return
+    session = _math_all_sessions.get(user_id)
+    if not session:
+        return
+    try:
+        await db.save_user_math_all_state(db_conn, user_id, _math_all_serialize_state(session))
+    except Exception as e:
+        logging.error(f"Ошибка сохранения состояния math_all для пользователя {user_id}: {e}")
+
+
+async def _math_all_load_state(user_id: int) -> dict | None:
+    if not db_conn:
+        return None
+    try:
+        raw = await db.get_user_math_all_state(db_conn, user_id)
+    except Exception as e:
+        logging.error(f"Ошибка загрузки состояния math_all для пользователя {user_id}: {e}")
+        return None
+    if not raw:
+        return None
+    return _math_all_deserialize_state(raw)
+
+
+def _math_all_all_topics() -> list[str]:
+    return [t for t in topics if t != "physics"]
+
+
+def _math_all_task_id(topic: str, j: int) -> str:
+    q = kapibara.get(topic, [{}])[j] if topic in kapibara and 0 <= j < len(kapibara[topic]) else {}
+    tid = q.get("id") if isinstance(q, dict) else ""
+    return str(tid or "")
+
+
+def _math_all_subtopic(topic: str, j: int) -> str:
+    q = kapibara[topic][j]
+    return (q.get("subtopic") or "").strip() or "general"
+
+
+def _math_all_subtopic_tasks(top: str, sub: str) -> list[int]:
+    return questions_by_topic_subtopic.get((top, sub), [])
+
+
+def _math_all_recent_distance(session: dict, key: tuple[str, int]) -> int | None:
+    hist = session.get("shown_history", [])
+    for i in range(len(hist) - 1, -1, -1):
+        if hist[i] == key:
+            return len(hist) - 1 - i
+    return None
+
+
+def _math_all_solved_prefix_count(session: dict, prefix: str) -> int:
+    return session.get("first_ok_prefix_counts", {}).get(prefix, 0)
+
+
+def _math_all_candidate_allowed(session: dict, key: tuple[str, int]) -> bool:
+    top, j = key
+    q = kapibara[top][j]
+    qid = str(q.get("id") or "")
+    # Жёстко запрещаем повтор одной и той же задачи подряд.
+    hist = session.get("shown_history", [])
+    if hist and hist[-1] == key:
+        return False
+    if key in session.get("solved_first_try", set()):
+        return False
+    pref = _derive_subtopic_id(qid) or qid
+    if pref and _math_all_solved_prefix_count(session, pref) >= 2:
+        return False
+
+    # Если задача уже была решена не с первого раза, и показана менее 5 задач назад,
+    # пропускаем её, когда в подтеме есть альтернатива той же сложности или на 1 выше.
+    if key in session.get("solved_not_first_try", set()):
+        dist = _math_all_recent_distance(session, key)
+        if dist is not None and dist < 5:
+            sub = _math_all_subtopic(top, j)
+            d = _q_diff(q)
+            for jj in _math_all_subtopic_tasks(top, sub):
+                alt = (top, jj)
+                if alt == key:
+                    continue
+                dq = _q_diff(kapibara[top][jj])
+                if dq in (d, d + 1):
+                    if alt not in session.get("solved_first_try", set()):
+                        return False
+                    ap = _derive_subtopic_id(_math_all_task_id(top, jj)) or _math_all_task_id(top, jj)
+                    if ap and _math_all_solved_prefix_count(session, ap) >= 2:
+                        continue
+                    return False
+    return True
+
+
+def _math_all_pick_from_candidates(cands: list[tuple[str, int]]) -> tuple[str, int] | None:
+    if not cands:
+        return None
+    min_d = min(_q_diff(kapibara[t][j]) for t, j in cands)
+    best = [(t, j) for t, j in cands if _q_diff(kapibara[t][j]) == min_d]
+    return random.choice(best) if best else None
+
+
+def _math_all_pick_next_subtopic(session: dict) -> tuple[str, str] | None:
+    all_subs = [ts for ts in MATH_SUBTOPICS_SORTED if ts[0] in session.get("allowed_topics", set())]
+    if not all_subs:
+        return None
+    used = session.get("participated_subtopics", set())
+    unseen = [ts for ts in all_subs if ts not in used]
+    pool = unseen if unseen else all_subs
+    top5 = pool[:5]
+    prev = session.get("previous_subtopic")
+    if prev:
+        same_topic = [ts for ts in top5 if ts[0] == prev[0]]
+        if same_topic:
+            return same_topic[0]
+    return top5[0] if top5 else None
 
 
 # Экзамен 25 января: собираем все задачи с type == "jan" (по полю n, отсортированные)
@@ -441,6 +684,32 @@ def _exam_points_for_n(n_val: int) -> float:
         return 3.75
     # fallback (если n отсутствует/вне диапазона)
     return 0.0
+
+
+def _exam_stars_for_n(n_val: int) -> str:
+    """Звёзды по номеру задачи экзамена n: 1–20 → ★, 21–40 → ★★, 41–48 → ★★★."""
+    try:
+        n = int(n_val or 0)
+    except (TypeError, ValueError):
+        return ""
+    if 1 <= n <= 20:
+        return "★"
+    if 21 <= n <= 40:
+        return "★★"
+    if 41 <= n <= 48:
+        return "★★★"
+    return ""
+
+
+def _exam_log_task_id(q: dict | None) -> str:
+    """Строка id задачи для логов экзамена / Mock Exam."""
+    if not isinstance(q, dict):
+        return ""
+    tid = q.get("id")
+    if tid is None:
+        return ""
+    return str(tid).strip()
+
 
 for top in topics:
     for j, item in enumerate(kapibara.get(top, [])):
@@ -538,17 +807,17 @@ def _exam_config():
 
 EXAM_CONFIG = _exam_config()
 
-# Mock Exam: для каждой задачи type=jan подбираем случайную задачу с той же подтемой и сложностью
-# Предпочитаем задачи не type=jan и не type=dec
+# Mock Exam: для каждой задачи из экзамена jan подбираем случайную задачу с той же подтемой и сложностью.
+# В пул кандидатов не попадают задачи с type=jan и type=mar.
 EXAM_MOCK_ID = "exam_mock"
 mock_questions = []  # список (topic, j) той же длины что exam_questions
 MOCK_TOTAL_DIFFICULTY = 0
 
-# Пулы по (subtopic, difficulty): preferred — без jan/dec, fallback — все
-_preferred_pool = {}  # (subtopic, difficulty) -> [(topic, j), ...]
-_fallback_pool = {}   # (subtopic, difficulty) -> [(topic, j), ...]
+_mock_substitute_pool = {}  # (subtopic, difficulty) -> [(topic, j), ...] без jan/mar
 for top in topics:
     for j, item in enumerate(kapibara.get(top, [])):
+        if not isinstance(item, dict):
+            continue
         sub = (item.get("subtopic") or "").strip() or "general"
         try:
             diff = int(item.get("difficulty") or 1)
@@ -557,14 +826,12 @@ for top in topics:
         if diff < 1:
             diff = 1
         t = (item.get("type") or "").strip().lower()
+        if t in ("jan", "mar"):
+            continue
         key = (sub, diff)
-        if key not in _fallback_pool:
-            _fallback_pool[key] = []
-        _fallback_pool[key].append((top, j))
-        if t not in ("jan", "dec"):
-            if key not in _preferred_pool:
-                _preferred_pool[key] = []
-            _preferred_pool[key].append((top, j))
+        if key not in _mock_substitute_pool:
+            _mock_substitute_pool[key] = []
+        _mock_substitute_pool[key].append((top, j))
 
 _used_for_mock = set()  # (topic, j) — каждая задача в mock_questions только один раз
 for n_val, t_top, t_j in exam_questions:
@@ -577,15 +844,12 @@ for n_val, t_top, t_j in exam_questions:
     if diff < 1:
         diff = 1
     key = (sub, diff)
-    pool = _preferred_pool.get(key) or _fallback_pool.get(key)
-    if pool:
-        available = [p for p in pool if p not in _used_for_mock]
-        if available:
-            chosen = random.choice(available)
-            _used_for_mock.add(chosen)
-            mock_questions.append(chosen)
-        else:
-            mock_questions.append((t_top, t_j))
+    pool = _mock_substitute_pool.get(key) or []
+    available = [p for p in pool if p not in _used_for_mock]
+    if available:
+        chosen = random.choice(available)
+        _used_for_mock.add(chosen)
+        mock_questions.append(chosen)
     else:
         mock_questions.append((t_top, t_j))
     # Баллы в Mock Exam — по номеру n (как в экзамене), а не по difficulty
@@ -639,6 +903,228 @@ def _txt(lang: str, ru_text: str, en_text: str) -> str:
    return ru_text if _normalize_lang(lang) == "ru" else en_text
 
 
+def _wrong_answer_training_extra_message(lang: str, wrong_today: int, total_today: int) -> str:
+    """
+    Текст после «Нет, это не так» в тренировке по теме/подтеме: ошибки за сегодня (с полуночи)
+    и напоминание про теорию, если процент ошибок строго больше 40%.
+    """
+    if total_today <= 0:
+        return ""
+    err_pct = 100.0 * wrong_today / total_today
+    if _normalize_lang(lang) == "ru":
+        block = f"Ошибок сегодня: {wrong_today} из {total_today} решений."
+        if err_pct > 40:
+            block += "\nНеобходимо сначала выучить теорию."
+    else:
+        block = f"Mistakes today: {wrong_today} out of {total_today} answers."
+        if err_pct > 40:
+            block += "\nYou need to learn the theory first."
+    return block + "\n\n"
+
+
+async def _wrong_answer_training_message(user_id: int, lang: str) -> str:
+    """
+    Единый текст неверного ответа для тренировочных режимов:
+    базовая фраза + статистика за сегодня.
+    """
+    extra = ""
+    if db_conn:
+        try:
+            w_t, t_t = await db.get_training_answers_today_counts(db_conn, user_id)
+            extra = _wrong_answer_training_extra_message(lang, w_t, t_t)
+        except Exception as e:
+            logging.error(f"Ошибка статистики ответов за сегодня: {e}")
+    return _txt(lang, "Нет, это не так 😢", "Sorry, you are wrong 😢") + "\n" + extra
+
+
+def _capitalize_display_en(s: str) -> str:
+    """Отображение темы/подтемы на английском (как раньше: первая буква заглавная)."""
+    if not s:
+        return ""
+    return s[0].upper() + s[1:]
+
+
+# Русские названия тем (ключи — как в data.txt / kapibara)
+TOPIC_TITLE_RU: dict[str, str] = {
+    "sets": "Множества",
+    "inequalities": "Неравенства",
+    "functions": "Функции",
+    "trigonometry (simple)": "Тригонометрия (базовый уровень)",
+    "trigonometry": "Тригонометрия",
+    "geometry": "Геометрия",
+    "conic curves": "Конические сечения",
+    "logarithmic functions": "Логарифмические функции",
+    "arithmetic and geometric mean": "Среднее арифметическое и геометрическое",
+    "Algebraic and geometric mean": "Среднее арифметическое и геометрическое",
+    "sequences": "Последовательности",
+    "complex numbers": "Комплексные числа",
+    "probability": "Вероятность",
+    "physics": "Физика",
+}
+
+_AGM_SUBTOPICS_RU = {
+    "arithmetic mean": "Среднее арифметическое",
+    "geometric mean": "Среднее геометрическое",
+    "general": "Общее",
+}
+
+_PHYSICS_SUBTOPICS_RU: dict[str, str] = {
+    "Coulomb's law": "Закон Кулона",
+    "Hooke's law": "Закон Гука",
+    "Newton's second law": "Второй закон Ньютона",
+    "average velocity": "Средняя скорость",
+    "charge sharing and Coulomb's law": "Деление заряда и закон Кулона",
+    "circular motion": "Движение по окружности",
+    "conservation of momentum": "Сохранение импульса",
+    "current division": "Деление тока",
+    "distance vs displacement": "Путь и перемещение",
+    "electric field": "Электрическое поле",
+    "electric field strength": "Напряжённость электрического поля",
+    "electric field superposition": "Суперпозиция электрического поля",
+    "electric field symmetry": "Симметрия электрического поля",
+    "electric force": "Электрическая сила",
+    "electric potential difference": "Разность потенциалов",
+    "electromagnetic induction": "Электромагнитная индукция",
+    "force resultant": "Равнодействующая сила",
+    "free fall": "Свободное падение",
+    "friction": "Трение",
+    "gravitational potential energy": "Потенциальная энергия в поле тяготения",
+    "gravity": "Гравитация",
+    "ideal gas law": "Уравнение состояния идеального газа",
+    "impulse": "Импульс силы",
+    "incline motion": "Движение по наклонной плоскости",
+    "isobaric process": "Изобарный процесс",
+    "kinematics": "Кинематика",
+    "kinetic energy from force-time graph": "Кинетическая энергия по графику силы",
+    "magnetic force on current": "Магнитная сила на ток",
+    "magnetic force on wire": "Магнитная сила на проводник",
+    "momentum": "Импульс",
+    "motion graphs": "Графики движения",
+    "projectile motion": "Движение тела, брошенного под углом",
+    "projectile motion with friction": "Движение с трением",
+    "reflection": "Отражение",
+    "refraction": "Преломление",
+    "resistors in parallel": "Резисторы параллельно",
+    "resultant force and acceleration": "Равнодействующая и ускорение",
+    "rotational motion": "Вращательное движение",
+    "simple harmonic motion": "Гармонические колебания",
+    "units": "Единицы измерения",
+    "vectors and scalars": "Векторы и скаляры",
+    "waves": "Волны",
+    "work": "Работа",
+    "work-energy in penetration": "Работа и энергия при проникновении",
+    "work-energy theorem": "Теорема о кинетической энергии",
+    "work-energy with friction and electric force": "Работа и энергия (трение и электросила)",
+    "general": "Общее",
+}
+
+# Русские названия подтем: topic -> subtopic (как в данных) -> строка
+SUBTOPIC_TITLE_RU: dict[str, dict[str, str]] = {
+    "sets": {
+        "set operations": "Операции над множествами",
+        "numerical sets": "Числовые множества",
+        "general": "Общее",
+    },
+    "inequalities": {
+        "properties of inequalities": "Свойства неравенств",
+        "absolute value": "Модуль",
+        "real numbers": "Вещественные числа",
+        "rational inequalities": "Рациональные неравенства",
+        "quadratic inequalities": "Квадратичные неравенства",
+        "general": "Общее",
+    },
+    "functions": {
+        "Function domain": "Область определения",
+        "functions properties": "Свойства функций",
+        "graphs": "Графики",
+        "inverse functions": "Обратные функции",
+        "inequalities": "Неравенства",
+        "function equality": "Равенство функций",
+        "identical functions": "Тождественные функции",
+        "general": "Общее",
+    },
+    "geometry": {
+        "coordinate geometry": "Координатная геометрия",
+        "distance formula": "Формула расстояния",
+        "analytic geometry": "Аналитическая геометрия",
+        "lines": "Прямые",
+        "vectors": "Векторы",
+        "general": "Общее",
+    },
+    "conic curves": {
+        "circle": "Окружность",
+        "parabola": "Парабола",
+        "ellipse": "Эллипс",
+        "hyperbola": "Гипербола",
+        "general": "Общее",
+    },
+    "logarithmic functions": {"logarithms": "Логарифмы", "general": "Общее"},
+    "probability": {"Simple Probability": "Элементарная вероятность", "general": "Общее"},
+    "sequences": {
+        "simple tasks": "Простые задачи",
+        "hard tasks": "Сложные задачи",
+        "general": "Общее",
+    },
+    "complex numbers": {
+        "simple tasks": "Простые задачи",
+        "hard tasks": "Сложные задачи",
+        "complex numbers": "Комплексные числа",
+        "general": "Общее",
+    },
+    "trigonometry": {
+        "trigonometric values": "Табличные значения",
+        "terminal side through point": "Сторона угла через точку",
+        "trigonometric identities": "Тригонометрические тождества",
+        "properties": "Свойство тригонометрических функций",
+        "Properties of trigonometric functions": "Свойство тригонометрических функций",
+        "double angle formula": "Формулы двойного угла",
+        "trigonometric expressions": "Тригонометрические выражения",
+        "half-angle formula": "Формулы половинного угла",
+        "sin and cos of sum": "Синус и косинус суммы",
+        "general": "Общее",
+    },
+    "arithmetic and geometric mean": _AGM_SUBTOPICS_RU,
+    "Algebraic and geometric mean": _AGM_SUBTOPICS_RU,
+    "physics": _PHYSICS_SUBTOPICS_RU,
+}
+
+
+def _topic_display(topic: str, lang: str) -> str:
+    """Название темы для интерфейса с учётом языка."""
+    if _normalize_lang(lang) == "ru":
+        ru = TOPIC_TITLE_RU.get(topic)
+        if ru:
+            return ru
+    return _capitalize_display_en(topic)
+
+
+def _subtopic_display(topic: str, sub: str, lang: str) -> str:
+    """Название подтемы для интерфейса с учётом языка."""
+    sub_key = (sub or "").strip() or "general"
+    if _normalize_lang(lang) == "ru":
+        if sub_key == "general":
+            return "Общее"
+        inner = SUBTOPIC_TITLE_RU.get(topic, {})
+        ru = inner.get(sub_key)
+        if ru:
+            return ru
+        sub_l = sub_key.lower()
+        for k, v in inner.items():
+            if k.lower() == sub_l:
+                return v
+        if topic == "physics":
+            ru_ph = _PHYSICS_SUBTOPICS_RU.get(sub_key)
+            if ru_ph:
+                return ru_ph
+        return _capitalize_display_en(sub_key)
+    # Английский: точечные переопределения для некоторых подтем.
+    if topic == "trigonometry" and sub_key.lower() in {"properties", "properties of trigonometric functions"}:
+        return "Properties of trigonometric functions"
+    if sub_key == "general":
+        return "General"
+    return _capitalize_display_en(sub_key)
+
+
 CORRECT_PHRASES_RU = [
    "Правильно!",
    "Верно!",
@@ -655,11 +1141,40 @@ CORRECT_PHRASES_EN = [
    "Well done!",
 ]
 
+# Случайная реакция после верного ответа в режиме тренировки (тема / подтема)
+TRAINING_CORRECT_REACTION_EMOJIS = [
+    "❤️",
+    "💥",
+    "💐",
+    "😀",
+    "🌷",
+    "🔥",
+    "🐠",
+    "😍",
+    "🐈",
+    "🥰",
+    "👍",
+    "🫶",
+    "🌺",
+    "⭐️",
+    "🌟",
+    "🎖",
+    "🏅",
+    "🏆",
+    "💘",
+    "🩷",
+]
+
 
 def _correct_phrase(lang: str) -> str:
    if _normalize_lang(lang) == "ru":
        return random.choice(CORRECT_PHRASES_RU)
    return random.choice(CORRECT_PHRASES_EN)
+
+
+def _correct_phrase_training(lang: str) -> str:
+    """Фраза о верном ответе + случайный эмодзи (только тренировка по теме/подтеме)."""
+    return f"{_correct_phrase(lang)} {random.choice(TRAINING_CORRECT_REACTION_EMOJIS)}"
 
 
 async def _get_user_lang(user) -> str:
@@ -787,12 +1302,13 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
                 last_idx = prog['last_question_index']
                 # Проверяем, что есть ещё вопросы
                 if topic in kapibara and last_idx < len(kapibara[topic]):
+                    td = _topic_display(topic, lang)
                     builder.add(
                         InlineKeyboardButton(
                             text=(
-                                f"▶️ Продолжить {topic[0].upper()+topic[1:]} ({last_idx}/{len(kapibara[topic])})"
+                                f"▶️ Продолжить {td} ({last_idx}/{len(kapibara[topic])})"
                                 if lang == "ru"
-                                else f"▶️ Continue {topic[0].upper()+topic[1:]} ({last_idx}/{len(kapibara[topic])})"
+                                else f"▶️ Continue {td} ({last_idx}/{len(kapibara[topic])})"
                             ),
                             callback_data=f'next_{topic}_{last_idx}'
                         )
@@ -803,19 +1319,31 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
 
     builder.add(
         InlineKeyboardButton(
-            text="Выбрать тему" if lang == "ru" else "Choose topic",
+            text="🧮 Математика - задачи по темам" if lang == "ru" else "🧮 Math - tasks by topic",
             callback_data="menu_topics",
         )
     )
     builder.add(
         InlineKeyboardButton(
-            text="Пройти экзамен" if lang == "ru" else "Take exam",
+            text="📚 Математика автоматический выбор задач" if lang == "ru" else "📚 Smart math tasks",
+            callback_data="menu_all_math",
+        )
+    )
+    builder.add(
+        InlineKeyboardButton(
+            text="⚛️ Физика" if lang == "ru" else "⚛️ Physics",
+            callback_data="menu_physics",
+        )
+    )
+    builder.add(
+        InlineKeyboardButton(
+            text="📝 Пройти экзамен" if lang == "ru" else "📝 Take exam",
             callback_data="menu_exams",
         )
     )
     builder.add(
         InlineKeyboardButton(
-            text="Switch to English" if lang == "ru" else "Сменить язык на русский",
+            text="🌐 Switch to English" if lang == "ru" else "🌐 Сменить язык на русский",
             callback_data="set_lang_en" if lang == "ru" else "set_lang_ru",
         )
     )
@@ -826,9 +1354,11 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
 def topics_menu_kb(lang: str = "en") -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for idx, top in enumerate(topics):
+        if top == "physics":
+            continue
         builder.add(
             InlineKeyboardButton(
-                text=top[0].upper() + top[1:],
+                text=_topic_display(top, lang),
                 callback_data=f't_{idx}'
             )
         )
@@ -906,7 +1436,7 @@ def subtopic_kb(topic_idx: int, lang: str = "en") -> InlineKeyboardMarkup:
     if show_subtopics:
         for sub_idx, sub_name in enumerate(subs):
             count = sub_counts[sub_idx]
-            label = sub_name[0].upper() + sub_name[1:] if sub_name else "General"
+            label = _subtopic_display(topic, sub_name or "general", lang)
             builder.add(
                 InlineKeyboardButton(
                     text=f"{label} ({count})",
@@ -923,15 +1453,39 @@ def subtopic_kb(topic_idx: int, lang: str = "en") -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
+def _shuffled_option_indices(n: int) -> list[int]:
+    """Случайный порядок отображения вариантов; в callback остаётся исходный индекс (0=A, 1=B, …)."""
+    order = list(range(n))
+    random.shuffle(order)
+    return order
+
+
+def _option_button_text_shuffled(raw: str, display_letter: str) -> str:
+    """
+    Текст кнопки после перемешивания: убираем ведущую метку A./B./… из данных,
+    показываем display_letter (A, B, C …) по порядку сверху вниз.
+    """
+    s = (raw or "").strip()
+    m = re.match(r"^([A-Za-z])[\.\)]\s*(.*)$", s, re.DOTALL)
+    body = m.group(2).strip() if m else s
+    if body:
+        out = f"{display_letter}. {body}"
+    else:
+        out = f"{display_letter}."
+    return out.replace(". ", ".     ")
+
+
 def inline_kb(top, j: int, showvideo=1, lang_code: str = "en") -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     q = kapibara[top][j]
     k = q["options"]
-    # Добавляем кнопки вопросов
-    for i in range(len(k)):
+    order = _shuffled_option_indices(len(k))
+    # Добавляем кнопки вопросов (порядок на экране случайный; буквы A,B,… заново сверху вниз)
+    for pos, i in enumerate(order):
+        letter = chr(ord("A") + pos)
         builder.add(
             InlineKeyboardButton(
-                text=k[i].replace('. ','.     '),
+                text=_option_button_text_shuffled(k[i], letter),
                 callback_data=f'qst_{top}_{j}_{i}'
             )
         )
@@ -941,9 +1495,8 @@ def inline_kb(top, j: int, showvideo=1, lang_code: str = "en") -> InlineKeyboard
   #          callback_data='explain'
   #      )
   #  )
-    hint_path = _get_hint_image_path(q, lang_code)
-    if hint_path:
-        hint_text = "Рассказать теорию" if _lang_suffix(lang_code) == "ru" else "Show hint"
+    if _has_hint_image(q, lang_code):
+        hint_text = "Показать подсказку" if _lang_suffix(lang_code) == "ru" else "Show hint"
         builder.add(
             InlineKeyboardButton(
                 text=hint_text,
@@ -988,13 +1541,8 @@ async def _deliver_topic_question_message(call: CallbackQuery, top: str, j: int,
     if "img" in k:
         photo_path = os.path.join(DATA_DIR, "images", k["img"])
         await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
-    total_questions = len(kapibara[top])
-    question_num = _txt(
-        lang_code,
-        f"Вопрос {j + 1} из {total_questions}\n\n",
-        f"Question {j + 1} of {total_questions}\n\n",
-    )
-    question_text = question_num + k["english"] + "\n" + k.get("chinese", "") + k.get("long", "")
+    # В режиме тренировки по теме номер задачи (Вопрос N из M) не показываем
+    question_text = k["english"] + "\n" + k.get("chinese", "") + k.get("long", "")
     await call.message.answer(question_text, reply_markup=inline_kb(top, j, showvideo, lang_code=lang_code))
 
 
@@ -1020,21 +1568,9 @@ async def _deliver_subtopic_question_message(
     if q.get("img"):
         photo_path = os.path.join(DATA_DIR, "images", q["img"])
         await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
-    total_in_sub = len(j_list)
     lang_code = await _get_user_lang(call.from_user)
-    if sub_name:
-        question_num = _txt(
-            lang_code,
-            f"Вопрос {k + 1} из {total_in_sub} ({sub_name})\n\n",
-            f"Question {k + 1} of {total_in_sub} ({sub_name})\n\n",
-        )
-    else:
-        question_num = _txt(
-            lang_code,
-            f"Вопрос {k + 1} из {total_in_sub}\n\n",
-            f"Question {k + 1} of {total_in_sub}\n\n",
-        )
-    question_text = question_num + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
+    # В режиме тренировки по подтеме номер задачи (Вопрос N из M) не показываем
+    question_text = q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
     await call.message.answer(question_text, reply_markup=inline_kb_sub(topic_idx, sub_idx, k, showvideo, lang_code=lang_code))
 
 
@@ -1093,7 +1629,7 @@ async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
        kb = await start_kb(user_id)
        await call.message.answer("Экзаменационные задачи закончились.", reply_markup=kb)
        return
-   _, top, j = exam_questions[idx]
+   n_val, top, j = exam_questions[idx]
    q = kapibara[top][j]
    lang = await _get_user_lang(call.from_user)
    if q.get("img"):
@@ -1105,14 +1641,13 @@ async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
        f"Экзамен 25 января — вопрос {idx + 1} из {total}\n\n",
        f"January 25 exam — question {idx + 1} of {total}\n\n",
    )
-   difficulty = q.get("difficulty")
-   if isinstance(difficulty, int) and 1 <= difficulty <= 5:
-       stars = "★" * difficulty + "☆" * (5 - difficulty)
-       diff_line = _txt(lang, f"Сложность: {stars}\n", f"Difficulty: {stars}\n")
-   else:
-       diff_line = ""
+   stars = _exam_stars_for_n(n_val)
+   diff_line = (
+       _txt(lang, f"Сложность: {stars}\n", f"Difficulty: {stars}\n") if stars else ""
+   )
    question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
    reply = inline_kb_exam(idx)
+   log(call.from_user, [EXAM_25JAN_ID, "question", idx, _exam_log_task_id(q)])
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(question_text, reply_markup=reply)
 
@@ -1217,10 +1752,13 @@ def inline_kb_exam_by_type(idx: int, exam_type: str) -> InlineKeyboardMarkup:
         builder.adjust(1)
         return builder.as_markup()
     q = arr[j]
-    for i, opt in enumerate(q.get("options", [])):
+    opts = q.get("options", [])
+    order = _shuffled_option_indices(len(opts))
+    for pos, i in enumerate(order):
+        letter = chr(ord("A") + pos)
         builder.add(
             InlineKeyboardButton(
-                text=opt.replace('. ', '.     '),
+                text=_option_button_text_shuffled(opts[i], letter),
                 callback_data=f'exam_q_{exam_type}_{idx}_{i}',
             )
         )
@@ -1244,7 +1782,7 @@ async def _send_exam_question_by_type(call: CallbackQuery, user_id: int, idx: in
         kb = await start_kb(user_id)
         await call.message.answer("Экзаменационные задачи закончились.", reply_markup=kb)
         return
-    _, top, j = questions[idx]
+    n_val, top, j = questions[idx]
     arr = kapibara.get(top, [])
     if j >= len(arr) or not isinstance(arr[j], dict):
         kb = await start_kb(user_id)
@@ -1258,16 +1796,12 @@ async def _send_exam_question_by_type(call: CallbackQuery, user_id: int, idx: in
     total = len(questions)
     h_ru, h_en = cfg["header_ru"], cfg["header_en"]
     header = _txt(lang, f"{h_ru} — вопрос {idx + 1} из {total}\n\n", f"{h_en} — question {idx + 1} of {total}\n\n")
-    difficulty = q.get("difficulty")
-    if isinstance(difficulty, int) and 1 <= difficulty <= 5:
-        diff_line = _txt(
-            lang,
-            f"Сложность: {'★' * difficulty}{'☆' * (5 - difficulty)}\n",
-            f"Difficulty: {'★' * difficulty}{'☆' * (5 - difficulty)}\n",
-        )
-    else:
-        diff_line = ""
+    stars = _exam_stars_for_n(n_val)
+    diff_line = (
+        _txt(lang, f"Сложность: {stars}\n", f"Difficulty: {stars}\n") if stars else ""
+    )
     question_text = header + diff_line + q.get("english", "") + "\n" + q.get("chinese", "") + q.get("long", "")
+    log(call.from_user, [cfg["id"], "question", idx, _exam_log_task_id(q)])
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
         await call.message.answer(question_text, reply_markup=inline_kb_exam_by_type(idx, exam_type))
 
@@ -1302,10 +1836,10 @@ async def _send_exam_summary_by_type(call: CallbackQuery, user_id: int, exam_typ
         if wrong_by_topic:
             lines = ["\nОшибки по темам (неверный ответ):"]
             for topic_name, n in sorted_wrong:
-                lines.append(f"• {topic_name} — {n} задач(и)")
+                lines.append(f"• {_topic_display(topic_name, lang)} — {n} задач(и)")
             lines.append("\nРекомендации (по важности):")
             for i, (topic_name, n) in enumerate(sorted_wrong, start=1):
-                lines.append(f"{i}. {topic_name} — приоритет {n}")
+                lines.append(f"{i}. {_topic_display(topic_name, lang)} — приоритет {n}")
             stats = "\n".join(lines)
         else:
             stats = "\n\nНеверных ответов не было. Рекомендации не требуются."
@@ -1318,10 +1852,10 @@ async def _send_exam_summary_by_type(call: CallbackQuery, user_id: int, exam_typ
         if wrong_by_topic:
             lines = ["\nMistakes by topic (wrong answer):"]
             for topic_name, n in sorted_wrong:
-                lines.append(f"• {topic_name} — {n} task(s)")
+                lines.append(f"• {_topic_display(topic_name, lang)} — {n} task(s)")
             lines.append("\nRecommendations (by priority):")
             for i, (topic_name, n) in enumerate(sorted_wrong, start=1):
-                lines.append(f"{i}. {topic_name} — priority {n}")
+                lines.append(f"{i}. {_topic_display(topic_name, lang)} — priority {n}")
             stats = "\n".join(lines)
         else:
             stats = "\n\nNo incorrect answers. No recommendations needed."
@@ -1384,7 +1918,7 @@ async def _send_exam_summary(call: CallbackQuery, user_id: int):
            lines = ["\nОшибки по темам (неверный ответ):"]
            for topic_name in sorted(wrong_by_topic.keys()):
                n = wrong_by_topic[topic_name]
-               lines.append(f"• {topic_name} — {n} задач(и)")
+               lines.append(f"• {_topic_display(topic_name, lang)} — {n} задач(и)")
            stats = "\n".join(lines)
        else:
            stats = "\n\nНеверных ответов не было."
@@ -1398,7 +1932,7 @@ async def _send_exam_summary(call: CallbackQuery, user_id: int):
            lines = ["\nMistakes by topic (wrong answer):"]
            for topic_name in sorted(wrong_by_topic.keys()):
                n = wrong_by_topic[topic_name]
-               lines.append(f"• {topic_name} — {n} task(s)")
+               lines.append(f"• {_topic_display(topic_name, lang)} — {n} task(s)")
            stats = "\n".join(lines)
        else:
            stats = "\n\nNo incorrect answers."
@@ -1495,7 +2029,7 @@ async def _send_exam_dec_summary(call: CallbackQuery, user_id: int):
            lines = ["\nОшибки по темам (неверный ответ):"]
            for topic_name in sorted(wrong_by_topic.keys()):
                n = wrong_by_topic[topic_name]
-               lines.append(f"• {topic_name} — {n} задач(и)")
+               lines.append(f"• {_topic_display(topic_name, lang)} — {n} задач(и)")
            stats = "\n".join(lines)
        else:
            stats = "\n\nНеверных ответов не было."
@@ -1509,7 +2043,7 @@ async def _send_exam_dec_summary(call: CallbackQuery, user_id: int):
            lines = ["\nMistakes by topic (wrong answer):"]
            for topic_name in sorted(wrong_by_topic.keys()):
                n = wrong_by_topic[topic_name]
-               lines.append(f"• {topic_name} — {n} task(s)")
+               lines.append(f"• {_topic_display(topic_name, lang)} — {n} task(s)")
            stats = "\n".join(lines)
        else:
            stats = "\n\nNo incorrect answers."
@@ -1540,7 +2074,7 @@ def _inline_kb_exam_dec_finished() -> InlineKeyboardMarkup:
    return _inline_kb_exam_finished_by_type("dec")
 
 
-# --- Mock Exam (задачи по подтеме/сложности как у jan, без jan/dec по возможности) ---
+# --- Mock Exam (задачи по подтеме/сложности как у jan; кандидаты без type=jan и type=mar) ---
 async def _get_exam_mock_state(user_id: int):
    state = exam_state_mock.get(user_id)
    if state is None:
@@ -1583,10 +2117,13 @@ def inline_kb_exam_mock(idx: int) -> InlineKeyboardMarkup:
        return builder.as_markup()
    top, j = mock_questions[idx]
    q = kapibara[top][j]
-   for i, opt in enumerate(q["options"]):
+   opts = q["options"]
+   order = _shuffled_option_indices(len(opts))
+   for pos, i in enumerate(order):
+       letter = chr(ord("A") + pos)
        builder.add(
            InlineKeyboardButton(
-               text=opt.replace('. ', '.     '),
+               text=_option_button_text_shuffled(opts[i], letter),
                callback_data=f'exam_mock_q_{idx}_{i}',
            )
        )
@@ -1616,16 +2153,15 @@ async def _send_exam_mock_question(call: CallbackQuery, user_id: int, idx: int):
        f"Пробный экзамен — вопрос {idx + 1} из {total}\n\n",
        f"Mock Exam — question {idx + 1} of {total}\n\n",
    )
-   difficulty = q.get("difficulty")
-   if isinstance(difficulty, int) and 1 <= difficulty <= 5:
-       diff_line = _txt(
-           lang,
-           f"Сложность: {'★' * difficulty}{'☆' * (5 - difficulty)}\n",
-           f"Difficulty: {'★' * difficulty}{'☆' * (5 - difficulty)}\n",
-       )
-   else:
-       diff_line = ""
+   n_val = 0
+   if 0 <= idx < len(exam_questions):
+       n_val, _, _ = exam_questions[idx]
+   stars = _exam_stars_for_n(n_val)
+   diff_line = (
+       _txt(lang, f"Сложность: {stars}\n", f"Difficulty: {stars}\n") if stars else ""
+   )
    question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
+   log(call.from_user, [EXAM_MOCK_ID, "question", idx, _exam_log_task_id(q)])
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(question_text, reply_markup=inline_kb_exam_mock(idx))
 
@@ -1656,7 +2192,7 @@ async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
        if sorted_wrong:
            rec_lines = ["\nРекомендации (по важности):"]
            for i, (topic_name, n) in enumerate(sorted_wrong, start=1):
-               rec_lines.append(f"{i}. {topic_name} — приоритет {n}")
+               rec_lines.append(f"{i}. {_topic_display(topic_name, lang)} — приоритет {n}")
            rec_text = "\n".join(rec_lines)
        else:
            rec_text = "\n\nНеверных ответов не было. Рекомендации не требуются."
@@ -1669,7 +2205,7 @@ async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
        if sorted_wrong:
            rec_lines = ["\nRecommendations (by priority):"]
            for i, (topic_name, n) in enumerate(sorted_wrong, start=1):
-               rec_lines.append(f"{i}. {topic_name} — priority {n}")
+               rec_lines.append(f"{i}. {_topic_display(topic_name, lang)} — priority {n}")
            rec_text = "\n".join(rec_lines)
        else:
            rec_text = "\n\nNo incorrect answers. No recommendations needed."
@@ -1733,17 +2269,18 @@ def inline_kb_sub(topic_idx: int, sub_idx: int, k: int, showvideo: int = 1, lang
     q = kapibara[topic][j]
     builder = InlineKeyboardBuilder()
     opts = q["options"]
-    for i in range(len(opts)):
+    order = _shuffled_option_indices(len(opts))
+    for pos, i in enumerate(order):
+        letter = chr(ord("A") + pos)
         builder.add(
             InlineKeyboardButton(
-                text=opts[i].replace('. ', '.     '),
+                text=_option_button_text_shuffled(opts[i], letter),
                 callback_data=f'qst_sub_{topic_idx}_{sub_idx}_{k}_{i}'
             )
         )
 
-    hint_path = _get_hint_image_path(q, lang_code)
-    if hint_path:
-        hint_text = "Рассказать теорию" if _lang_suffix(lang_code) == "ru" else "Show hint"
+    if _has_hint_image(q, lang_code):
+        hint_text = "Показать подсказку" if _lang_suffix(lang_code) == "ru" else "Show hint"
         builder.add(
             InlineKeyboardButton(
                 text=hint_text,
@@ -1799,6 +2336,8 @@ def inline_kb_explain_sub(topic_idx: int, sub_idx: int, k: int, showvideo: int =
         )
     )
     topiclink = topic_links.get(k_item.get('subtopic', ''), '') or topic_links.get(k_item.get('topic'), '')
+    if _normalize_lang(lang_code) != "ru":
+        topiclink = "https://t.me/+hN3O2vl9211mZmU6"
     if topiclink:
         builder.row(
             InlineKeyboardButton(
@@ -1807,13 +2346,20 @@ def inline_kb_explain_sub(topic_idx: int, sub_idx: int, k: int, showvideo: int =
             )
         )
 
-    hint_path = _get_hint_image_path(k_item, lang_code)
-    if hint_path:
+    hint_paths = _get_hint_image_path(k_item, lang_code)
+    if hint_paths:
         hint_text = "Показать подсказку" if _lang_suffix(lang_code) == "ru" else "Show hint"
         builder.row(
             InlineKeyboardButton(
                 text=hint_text,
                 callback_data=f"hint_sub_{topic_idx}_{sub_idx}_{k}",
+            )
+        )
+    if not k_item.get("img"):
+        builder.row(
+            InlineKeyboardButton(
+                text=_txt(lang_code, "Решение", "Solution"),
+                callback_data=f"sol_sub_{topic_idx}_{sub_idx}_{k}",
             )
         )
 
@@ -1835,6 +2381,8 @@ def inline_kb_explain(top, j, k, lang_code: str = "en") :
         )
     )
    topiclink  = topic_links.get(k.get('subtopic',''),'') or topic_links.get(k.get('topic'),'')
+   if _normalize_lang(lang_code) != "ru":
+      topiclink = "https://t.me/+hN3O2vl9211mZmU6"
    if topiclink :
       
       builder.row(
@@ -1844,8 +2392,8 @@ def inline_kb_explain(top, j, k, lang_code: str = "en") :
         )
       )
 
-   hint_path = _get_hint_image_path(k, lang_code)
-   if hint_path:
+   hint_paths = _get_hint_image_path(k, lang_code)
+   if hint_paths:
        hint_text = "Показать подсказку" if _lang_suffix(lang_code) == "ru" else "Show hint"
        builder.row(
            InlineKeyboardButton(
@@ -1853,6 +2401,17 @@ def inline_kb_explain(top, j, k, lang_code: str = "en") :
                callback_data=f"hint_{top}_{j}",
            )
        )
+   if not k.get("img"):
+       try:
+           top_idx = topics.index(top)
+           builder.row(
+               InlineKeyboardButton(
+                   text=_txt(lang_code, "Решение", "Solution"),
+                   callback_data=f"sol_top_{top_idx}_{j}",
+               )
+           )
+       except Exception:
+           pass
 
    builder.row(
         InlineKeyboardButton(
@@ -1862,7 +2421,849 @@ def inline_kb_explain(top, j, k, lang_code: str = "en") :
     )
    builder.adjust(1)
    return builder.as_markup()
+
+
+def inline_kb_math_all(top: str, j: int, lang_code: str = "en") -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   q = kapibara[top][j]
+   opts = q.get("options", [])
+   order = _shuffled_option_indices(len(opts))
+   top_idx = topics.index(top)
+   for pos, i in enumerate(order):
+       letter = chr(ord("A") + pos)
+       builder.add(
+           InlineKeyboardButton(
+               text=_option_button_text_shuffled(opts[i], letter),
+               callback_data=f"math_q_{top_idx}_{j}_{i}",
+           )
+       )
+   if _has_hint_image(q, lang_code):
+       builder.add(
+           InlineKeyboardButton(
+               text=_txt(lang_code, "Показать подсказку", "Show hint"),
+               callback_data=f"math_hint_{top_idx}_{j}",
+           )
+       )
+   builder.adjust(1)
+   return builder.as_markup()
+
+
+def inline_kb_math_all_explain(top: str, j: int, q: dict, lang_code: str = "en") -> InlineKeyboardMarkup:
+   """Кнопки после неверного ответа в режиме всех задач."""
+   builder = InlineKeyboardBuilder()
+   top_idx = topics.index(top)
+
+   if _has_hint_image(q, lang_code):
+       builder.row(
+           InlineKeyboardButton(
+               text=_txt(lang_code, "Показать подсказку", "Show hint"),
+               callback_data=f"math_hint_{top_idx}_{j}",
+           )
+       )
+
+   if not q.get("img"):
+       builder.row(
+           InlineKeyboardButton(
+               text=_txt(lang_code, "Решение", "Solution"),
+               callback_data=f"sol_math_{top_idx}_{j}",
+           )
+       )
+
+   topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
+   if _normalize_lang(lang_code) != "ru":
+       topiclink = "https://t.me/+hN3O2vl9211mZmU6"
+   if topiclink:
+       builder.row(
+           InlineKeyboardButton(
+               text=_txt(lang_code, "Обсудить задачу", "Ask a question"),
+               url=topiclink,
+           )
+       )
+
+   builder.row(
+       InlineKeyboardButton(
+           text=_txt(lang_code, "Следующий вопрос", "Next task"),
+           callback_data=f"math_next_{top_idx}_{j}",
+       )
+   )
+   builder.adjust(1)
+   return builder.as_markup()
+
+
+def _solution_text_for_lang(q: dict, lang_code: str) -> str:
+   if _normalize_lang(lang_code) == "ru":
+       txt = (q.get("solution_ru") or "").strip()
+       if txt:
+           return txt
+   txt = (q.get("solution_en") or "").strip()
+   if txt:
+       return txt
+   return _txt(lang_code, "Решение пока отсутствует.", "Solution is not available yet.")
+
+
+def _kb_solution_feedback_topic(top_idx: int, j: int, lang_code: str = "en") -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   builder.row(
+       InlineKeyboardButton(
+           text=_txt(lang_code, "Все понятно! 👍", "All clear! 👍"),
+           callback_data=f"solup_top_{top_idx}_{j}",
+       )
+   )
+   builder.row(
+       InlineKeyboardButton(
+           text=_txt(lang_code, "Ничего не понятно 👎", "Nothing is clear 👎"),
+           callback_data=f"soldn_top_{top_idx}_{j}",
+       )
+   )
+   builder.adjust(1)
+   return builder.as_markup()
+
+
+def _kb_solution_feedback_sub(topic_idx: int, sub_idx: int, k: int, lang_code: str = "en") -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   builder.row(
+       InlineKeyboardButton(
+           text=_txt(lang_code, "Все понятно! 👍", "All clear! 👍"),
+           callback_data=f"solup_sub_{topic_idx}_{sub_idx}_{k}",
+       )
+   )
+   builder.row(
+       InlineKeyboardButton(
+           text=_txt(lang_code, "Ничего не понятно 👎", "Nothing is clear 👎"),
+           callback_data=f"soldn_sub_{topic_idx}_{sub_idx}_{k}",
+       )
+   )
+   builder.adjust(1)
+   return builder.as_markup()
+
+
+def _kb_solution_feedback_math(top_idx: int, j: int, lang_code: str = "en") -> InlineKeyboardMarkup:
+   builder = InlineKeyboardBuilder()
+   builder.row(
+       InlineKeyboardButton(
+           text=_txt(lang_code, "Все понятно! 👍", "All clear! 👍"),
+           callback_data=f"solup_math_{top_idx}_{j}",
+       )
+   )
+   builder.row(
+       InlineKeyboardButton(
+           text=_txt(lang_code, "Ничего не понятно 👎", "Nothing is clear 👎"),
+           callback_data=f"soldn_math_{top_idx}_{j}",
+       )
+   )
+   builder.adjust(1)
+   return builder.as_markup()
+
+
+async def _math_all_allowed_topics(user_id: int) -> set[str]:
+    allowed = set(_math_all_all_topics())
+    if not db_conn:
+        return allowed
+    try:
+        st = await db.get_user_stats(db_conn, user_id)
+        for t in st.get("by_topic", []):
+            top = t.get("topic")
+            if top in allowed and float(t.get("accuracy", 0.0) or 0.0) > 85.0:
+                allowed.discard(top)
+    except Exception as e:
+        logging.error(f"Ошибка чтения статистики пользователя {user_id}: {e}")
+    return allowed
+
+
+async def _math_all_recommended_topic(user_id: int, allowed_topics: set[str]) -> str | None:
+    if not db_conn:
+        return None
+    try:
+        rows = await db.get_user_exam_recommendations_rows(db_conn, user_id)
+    except Exception as e:
+        logging.error(f"Ошибка чтения рекомендаций экзаменов пользователя {user_id}: {e}")
+        return None
+    score: dict[str, int] = {}
+    for _, topics_json in rows:
+        try:
+            arr = json.loads(topics_json or "[]")
+        except Exception:
+            arr = []
+        if not isinstance(arr, list):
+            continue
+        for top in arr:
+            if not isinstance(top, str):
+                continue
+            if top in allowed_topics and top != "physics":
+                score[top] = score.get(top, 0) + 1
+    if not score:
+        return None
+    return sorted(score.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
+
+
+async def _math_all_seed_from_db_history(user_id: int, session: dict) -> None:
+    if not db_conn:
+        return
+    topics_for_history = sorted(session.get("allowed_topics", set()))
+    if not topics_for_history:
+        return
+    try:
+        rows = await db.get_user_answers_for_topics(db_conn, user_id, topics_for_history)
+    except Exception as e:
+        logging.error(f"Ошибка чтения истории ответов для math_all: {e}")
+        return
+
+    seen_first: dict[tuple[str, int], bool] = {}
+    at = session.setdefault("attempts", {})
+    for top, q_idx, _chosen, correct, _created in rows:
+        key = (top, int(q_idx))
+        at[key] = at.get(key, 0) + 1
+        if key not in seen_first:
+            seen_first[key] = bool(correct)
+        if bool(correct):
+            if seen_first[key]:
+                session.setdefault("solved_first_try", set()).add(key)
+            else:
+                session.setdefault("solved_not_first_try", set()).add(key)
+        elif at[key] > 1:
+            session.setdefault("solved_not_first_try", set()).add(key)
+
+    # Правило "две задачи с тем же id-префиксом решены с первого раза".
+    pc = session.setdefault("first_ok_prefix_counts", {})
+    for top, j in session.get("solved_first_try", set()):
+        qid = _math_all_task_id(top, j)
+        pref = _derive_subtopic_id(qid) or qid
+        if pref:
+            pc[pref] = pc.get(pref, 0) + 1
+
+
+def _math_all_pick_start_subtopic(allowed_topics: set[str], preferred_topic: str | None) -> tuple[str, str] | None:
+    cands = [ts for ts in MATH_SUBTOPICS_SORTED if ts[0] in allowed_topics]
+    if not cands:
+        return None
+    if preferred_topic:
+        pref = [ts for ts in cands if ts[0] == preferred_topic]
+        if pref:
+            return pref[0]
+    return cands[0]
+
+
+def _math_all_pick_question_in_subtopic(
+    session: dict,
+    top: str,
+    sub: str,
+    first_pick: bool = False,
+) -> tuple[str, int] | None:
+    pool = []
+    for j in _math_all_subtopic_tasks(top, sub):
+        key = (top, j)
+        if not _math_all_candidate_allowed(session, key):
+            continue
+        pool.append(key)
+    if not pool:
+        return None
+    # Первая задача — самая простая в выбранной теме/подтеме.
+    if first_pick:
+        min_d = min(_q_diff(kapibara[t][jj]) for t, jj in pool)
+        best = [(t, jj) for t, jj in pool if _q_diff(kapibara[t][jj]) == min_d]
+        return sorted(best, key=lambda x: x[1])[0]
+    return _math_all_pick_from_candidates(pool)
+
+
+def _math_all_prev_subtopic_retry_candidate(session: dict) -> tuple[str, int] | None:
+    prev = session.get("previous_subtopic")
+    if not prev:
+        return None
+    top, sub = prev
+    cands = []
+    for j in _math_all_subtopic_tasks(top, sub):
+        key = (top, j)
+        if key not in session.get("solved_not_first_try", set()):
+            continue
+        dist = _math_all_recent_distance(session, key)
+        if dist is None or dist < 4:
+            continue
+        if not _math_all_candidate_allowed(session, key):
+            continue
+        cands.append(key)
+    return _math_all_pick_from_candidates(cands)
+
+
+def _math_all_next_question(session: dict) -> tuple[str, int] | None:
+    # Сначала пробуем вернуть задачу из предыдущей подтемы (правило "не с первого раза", >=4 задачи назад).
+    retry_prev = _math_all_prev_subtopic_retry_candidate(session)
+    if retry_prev:
+        return retry_prev
+
+    cur = session.get("current_subtopic")
+    if cur:
+        q = _math_all_pick_question_in_subtopic(session, cur[0], cur[1], first_pick=False)
+        if q:
+            return q
+
+    # Переход к следующей подтеме по правилу top-5 простейших.
+    nxt = _math_all_pick_next_subtopic(session)
+    if not nxt:
+        return None
+    session["previous_subtopic"] = session.get("current_subtopic")
+    session["current_subtopic"] = nxt
+    session.setdefault("participated_subtopics", set()).add(nxt)
+    q = _math_all_pick_question_in_subtopic(session, nxt[0], nxt[1], first_pick=False)
+    if q:
+        return q
+
+    # Если выбранная подтема пуста по фильтрам, пробуем последовательно дальше.
+    tried = {nxt}
+    for ts in MATH_SUBTOPICS_SORTED:
+        if ts in tried or ts[0] not in session.get("allowed_topics", set()):
+            continue
+        session["previous_subtopic"] = session.get("current_subtopic")
+        session["current_subtopic"] = ts
+        session.setdefault("participated_subtopics", set()).add(ts)
+        qq = _math_all_pick_question_in_subtopic(session, ts[0], ts[1], first_pick=False)
+        if qq:
+            return qq
+    return None
+
+
+def _math_all_session_answer_update(session: dict, key: tuple[str, int], ansok: bool) -> None:
+    at = session.setdefault("attempts", {})
+    at[key] = at.get(key, 0) + 1
+    if ansok and at[key] == 1:
+        session.setdefault("solved_first_try", set()).add(key)
+        qid = _math_all_task_id(key[0], key[1])
+        pref = _derive_subtopic_id(qid) or qid
+        if pref:
+            pc = session.setdefault("first_ok_prefix_counts", {})
+            pc[pref] = pc.get(pref, 0) + 1
+    if ansok and at[key] > 1:
+        session.setdefault("solved_not_first_try", set()).add(key)
+    if not ansok and at[key] >= 1:
+        session.setdefault("solved_not_first_try", set()).add(key)
+
+
+async def _math_all_send_question(call: CallbackQuery, user_id: int, key: tuple[str, int]) -> None:
+    top, j = key
+    q = kapibara[top][j]
+    lang = await _get_user_lang(call.from_user)
+    if q.get("img"):
+        photo_path = os.path.join(DATA_DIR, "images", q["img"])
+        await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
+    session = _math_all_sessions.setdefault(user_id, {})
+    session["current_question"] = key
+    session.setdefault("shown_history", []).append(key)
+    qid = str(q.get("id") or "")
+    log(call.from_user, ["math_all_question", top, j, qid])
+    title_ru = f"Тема: {_topic_display(top, lang)} | Подтема: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
+    title_en = f"Topic: {_topic_display(top, lang)} | Subtopic: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
+    text = _txt(lang, title_ru + "\n\n", title_en + "\n\n") + q.get("english", "") + "\n" + q.get("chinese", "") + q.get("long", "")
+    await call.message.answer(text, reply_markup=inline_kb_math_all(top, j, lang_code=lang))
+
+
+@router.callback_query(F.data == "menu_all_math")
+async def on_menu_all_math(call: CallbackQuery):
+    await call.answer()
+    user_id = call.from_user.id
+    lang = await _get_user_lang(call.from_user)
+    loaded = await _math_all_load_state(user_id)
+    if loaded:
+        _math_all_sessions[user_id] = loaded
+        next_q_loaded = _math_all_next_question(loaded)
+        if next_q_loaded:
+            async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+                await _math_all_send_question(call, user_id, next_q_loaded)
+            return
+    allowed_topics = await _math_all_allowed_topics(user_id)
+    if not allowed_topics:
+        kb = await start_kb(user_id)
+        await call.message.answer(_txt(lang, "Нет доступных тем для тренировки.", "No available topics for training."), reply_markup=kb)
+        return
+
+    pref_topic = await _math_all_recommended_topic(user_id, allowed_topics)
+    start_sub = _math_all_pick_start_subtopic(allowed_topics, pref_topic)
+    if not start_sub:
+        kb = await start_kb(user_id)
+        await call.message.answer(_txt(lang, "Нет задач для тренировки.", "No tasks for training."), reply_markup=kb)
+        return
+
+    session = {
+        "allowed_topics": allowed_topics,
+        "participated_subtopics": {start_sub},
+        "current_subtopic": start_sub,
+        "previous_subtopic": None,
+        "shown_history": [],
+        "attempts": {},
+        "solved_first_try": set(),
+        "solved_not_first_try": set(),
+        "first_ok_prefix_counts": {},
+    }
+    await _math_all_seed_from_db_history(user_id, session)
+    _math_all_sessions[user_id] = session
+    await _math_all_save_state(user_id)
+    first_q = _math_all_pick_question_in_subtopic(session, start_sub[0], start_sub[1], first_pick=True)
+    if not first_q:
+        first_q = _math_all_next_question(session)
+    if not first_q:
+        kb = await start_kb(user_id)
+        await call.message.answer(_txt(lang, "Не удалось подобрать задачу по правилам.", "Could not pick a task with current rules."), reply_markup=kb)
+        return
+    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+        await _math_all_send_question(call, user_id, first_q)
+
+
+@router.callback_query(F.data.startswith("math_q_"))
+async def on_math_all_answer(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    user_id = call.from_user.id
+    session = _math_all_sessions.get(user_id)
+    if not session:
+        kb = await start_kb(user_id)
+        await call.message.answer(_txt(lang, "Сессия тренировки не найдена. Нажмите кнопку ещё раз.", "Training session not found. Start again."), reply_markup=kb)
+        return
+    parts = call.data.split("_")
+    if len(parts) < 5:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        top_idx = int(parts[2])
+        j = int(parts[3])
+        ans_id = parts[4]
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    if top_idx < 0 or top_idx >= len(topics):
+        await call.message.answer("Вопрос не найден.")
+        return
+    top = topics[top_idx]
+    if top == "physics" or top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.message.answer("Вопрос не найден.")
+        return
+    key = (top, j)
+    q = kapibara[top][j]
+    correct_h = {"A": "0", "B": "1", "C": "2", "D": "3", "E": "4"}
+    correct = correct_h.get(q.get("answer", ""), "")
+    ansok = 1 if correct == ans_id else 0
+    _math_all_session_answer_update(session, key, bool(ansok))
+    await _math_all_save_state(user_id)
+    if db_conn:
+        try:
+            await db.save_answer(
+                db_conn,
+                user_id,
+                top,
+                j,
+                int(ans_id) if str(ans_id).isdigit() else 0,
+                ansok == 1,
+            )
+        except Exception as e:
+            logging.error(f"Ошибка сохранения ответа math_all в БД: {e}")
+    qid = str(q.get("id") or "")
+    log(call.from_user, ["math_all_answer", top, j, ans_id, ansok, qid])
+
+    if ansok:
+        msg_text = _correct_phrase_training(lang)
+    else:
+        msg_text = await _wrong_answer_training_message(user_id, lang)
+
+    # После неверного ответа показываем кнопки "подсказка / обсудить / следующий".
+    if not ansok:
+        await _math_all_save_state(user_id)
+        async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+            await call.message.answer(
+                msg_text,
+                reply_markup=inline_kb_math_all_explain(top, j, q, lang_code=lang),
+            )
+        return
+
+    next_q = _math_all_next_question(session)
+    await _math_all_save_state(user_id)
+    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+        await call.message.answer(msg_text)
+        if next_q:
+            await _math_all_send_question(call, user_id, next_q)
+        else:
+            kb = await start_kb(user_id)
+            await call.message.answer(_txt(lang, "Подходящих задач больше нет. Выберите другой режим.", "No more matching tasks. Choose another mode."), reply_markup=kb)
+
+
+@router.callback_query(F.data.startswith("math_next_"))
+async def on_math_all_next(call: CallbackQuery):
+    """Следующая задача в режиме всех задач после кнопки из explain-клавиатуры."""
+    await call.answer()
+    user_id = call.from_user.id
+    lang = await _get_user_lang(call.from_user)
+    session = _math_all_sessions.get(user_id)
+    if not session:
+        kb = await start_kb(user_id)
+        await call.message.answer(
+            _txt(lang, "Сессия тренировки не найдена. Нажмите кнопку ещё раз.", "Training session not found. Start again."),
+            reply_markup=kb,
+        )
+        return
+    next_q = _math_all_next_question(session)
+    await _math_all_save_state(user_id)
+    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
+        if next_q:
+            await _math_all_send_question(call, user_id, next_q)
+        else:
+            kb = await start_kb(user_id)
+            await call.message.answer(
+                _txt(lang, "Подходящих задач больше нет. Выберите другой режим.", "No more matching tasks. Choose another mode."),
+                reply_markup=kb,
+            )
+
+
+@router.callback_query(F.data.startswith("math_hint_"))
+async def on_math_all_hint(call: CallbackQuery):
+    """Показывает картинку подсказки и повторяет текущую задачу в режиме всех задач."""
+    await call.answer()
+    parts = call.data.split("_")
+    if len(parts) < 4:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        top_idx = int(parts[2])
+        j = int(parts[3])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    if top_idx < 0 or top_idx >= len(topics):
+        await call.message.answer("Вопрос не найден.")
+        return
+    top = topics[top_idx]
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    lang = await _get_user_lang(call.from_user)
+    hint_paths = _get_hint_image_path(q, lang)
+    log(call.from_user, ["math_hint_show", top, j, "hint_found" if hint_paths else "hint_not_found", str(q.get("id") or "")])
+    async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
+        for hp in hint_paths:
+            await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(hp))
+        if q.get("img"):
+            photo_path = os.path.join(DATA_DIR, "images", q["img"])
+            await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
+        title_ru = f"Тема: {_topic_display(top, lang)} | Подтема: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
+        title_en = f"Topic: {_topic_display(top, lang)} | Subtopic: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
+        text = _txt(lang, title_ru + "\n\n", title_en + "\n\n") + q.get("english", "") + "\n" + q.get("chinese", "") + q.get("long", "")
+        await call.message.answer(text, reply_markup=inline_kb_math_all(top, j, lang_code=lang))
     
+
+@router.callback_query(F.data.startswith("sol_math_"))
+async def on_math_solution_show(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    parts = call.data.split("_")
+    if len(parts) < 4:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        top_idx = int(parts[2])
+        j = int(parts[3])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    if top_idx < 0 or top_idx >= len(topics):
+        await call.message.answer("Вопрос не найден.")
+        return
+    top = topics[top_idx]
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    log(call.from_user, ["solution_show_math", top, j, str(q.get("id") or "")])
+    await call.message.answer(
+        _solution_text_for_lang(q, lang),
+        reply_markup=_kb_solution_feedback_math(top_idx, j, lang),
+    )
+
+
+@router.callback_query(F.data.startswith("solup_math_"))
+async def on_math_solution_up(call: CallbackQuery):
+    await call.answer()
+    user_id = call.from_user.id
+    lang = await _get_user_lang(call.from_user)
+    parts = call.data.split("_")
+    if len(parts) < 4:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        top_idx = int(parts[2])
+        j = int(parts[3])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    if top_idx < 0 or top_idx >= len(topics):
+        await call.message.answer("Вопрос не найден.")
+        return
+    top = topics[top_idx]
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    log(call.from_user, ["solution_vote_up_math", top, j, str(q.get("id") or "")])
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        InlineKeyboardButton(
+            text=_txt(lang, "Следующая задача", "Next task"),
+            callback_data=f"math_next_{top_idx}_{j}",
+        )
+    )
+    await call.message.answer(_txt(lang, "Отлично", "Great"), reply_markup=kb.as_markup())
+
+
+@router.callback_query(F.data.startswith("soldn_math_"))
+async def on_math_solution_down(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    parts = call.data.split("_")
+    if len(parts) < 4:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        top_idx = int(parts[2])
+        j = int(parts[3])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    if top_idx < 0 or top_idx >= len(topics):
+        await call.message.answer("Вопрос не найден.")
+        return
+    top = topics[top_idx]
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    log(call.from_user, ["solution_vote_down_math", top, j, str(q.get("id") or "")])
+    topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
+    msg = _txt(
+        lang,
+        "Решение сгенерировано нейросетью, действительно ничего не понятно, действительно ничего непонятно 😢  Напиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
+        "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
+    )
+    kb = InlineKeyboardBuilder()
+    if topiclink:
+        kb.row(
+            InlineKeyboardButton(
+                text=_txt(lang, "Перейти в чат", "Go to chat"),
+                url=topiclink,
+            )
+        )
+    kb.row(
+        InlineKeyboardButton(
+            text=_txt(lang, "Следующая задача", "Next task"),
+            callback_data=f"math_next_{top_idx}_{j}",
+        )
+    )
+    await call.message.answer(msg, reply_markup=kb.as_markup())
+
+
+@router.callback_query(F.data.startswith("sol_top_"))
+async def on_topic_solution_show(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    parts = call.data.split("_")
+    if len(parts) < 4:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        top_idx = int(parts[2])
+        j = int(parts[3])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    if top_idx < 0 or top_idx >= len(topics):
+        await call.message.answer("Вопрос не найден.")
+        return
+    top = topics[top_idx]
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    log(call.from_user, ["solution_show_topic", top, j, str(q.get("id") or "")])
+    await call.message.answer(
+        _solution_text_for_lang(q, lang),
+        reply_markup=_kb_solution_feedback_topic(top_idx, j, lang),
+    )
+
+
+@router.callback_query(F.data.startswith("solup_top_"))
+async def on_topic_solution_up(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    parts = call.data.split("_")
+    if len(parts) < 4:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        top_idx = int(parts[2])
+        j = int(parts[3])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    if top_idx < 0 or top_idx >= len(topics):
+        await call.message.answer("Вопрос не найден.")
+        return
+    top = topics[top_idx]
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    log(call.from_user, ["solution_vote_up_topic", top, j, str(q.get("id") or "")])
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        InlineKeyboardButton(
+            text=_txt(lang, "Следующая задача", "Next task"),
+            callback_data=f"next_{top}_{j+1}",
+        )
+    )
+    await call.message.answer(_txt(lang, "Отлично", "Great"), reply_markup=kb.as_markup())
+
+
+@router.callback_query(F.data.startswith("soldn_top_"))
+async def on_topic_solution_down(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    parts = call.data.split("_")
+    if len(parts) < 4:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        top_idx = int(parts[2])
+        j = int(parts[3])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    if top_idx < 0 or top_idx >= len(topics):
+        await call.message.answer("Вопрос не найден.")
+        return
+    top = topics[top_idx]
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    log(call.from_user, ["solution_vote_down_topic", top, j, str(q.get("id") or "")])
+    topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
+    msg = _txt(
+        lang,
+        "Решение сгенированно нейросетью, действительно ничего непонятно 😢 Напиши в чат, там тебе помогут по-человечески. А я пока подумаю как сделать решение понятнее",
+        "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
+    )
+    kb = InlineKeyboardBuilder()
+    if topiclink:
+        kb.row(
+            InlineKeyboardButton(
+                text=_txt(lang, "Перейти в чат", "Go to chat"),
+                url=topiclink,
+            )
+        )
+    kb.row(
+        InlineKeyboardButton(
+            text=_txt(lang, "Следующая задача", "Next task"),
+            callback_data=f"next_{top}_{j+1}",
+        )
+    )
+    await call.message.answer(msg, reply_markup=kb.as_markup())
+
+
+@router.callback_query(F.data.startswith("sol_sub_"))
+async def on_sub_solution_show(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    parts = call.data.split("_")
+    if len(parts) < 5:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        topic_idx = int(parts[2])
+        sub_idx = int(parts[3])
+        k = int(parts[4])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    top, j = _get_subtopic_j(topic_idx, sub_idx, k)
+    if top is None:
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    log(call.from_user, ["solution_show_sub", top, j, str(q.get("id") or "")])
+    await call.message.answer(
+        _solution_text_for_lang(q, lang),
+        reply_markup=_kb_solution_feedback_sub(topic_idx, sub_idx, k, lang),
+    )
+
+
+@router.callback_query(F.data.startswith("solup_sub_"))
+async def on_sub_solution_up(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    parts = call.data.split("_")
+    if len(parts) < 5:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        topic_idx = int(parts[2])
+        sub_idx = int(parts[3])
+        k = int(parts[4])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    top, j = _get_subtopic_j(topic_idx, sub_idx, k)
+    if top is None:
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    log(call.from_user, ["solution_vote_up_sub", top, j, str(q.get("id") or "")])
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        InlineKeyboardButton(
+            text=_txt(lang, "Следующая задача", "Next task"),
+            callback_data=f"next_sub_{topic_idx}_{sub_idx}_{k+1}",
+        )
+    )
+    await call.message.answer(_txt(lang, "Отлично", "Great"), reply_markup=kb.as_markup())
+
+
+@router.callback_query(F.data.startswith("soldn_sub_"))
+async def on_sub_solution_down(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    parts = call.data.split("_")
+    if len(parts) < 5:
+        await call.message.answer("Ошибка формата.")
+        return
+    try:
+        topic_idx = int(parts[2])
+        sub_idx = int(parts[3])
+        k = int(parts[4])
+    except (ValueError, IndexError):
+        await call.message.answer("Ошибка формата.")
+        return
+    top, j = _get_subtopic_j(topic_idx, sub_idx, k)
+    if top is None:
+        await call.message.answer("Вопрос не найден.")
+        return
+    q = kapibara[top][j]
+    log(call.from_user, ["solution_vote_down_sub", top, j, str(q.get("id") or "")])
+    topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
+    msg = _txt(
+        lang,
+        "Решение сгенированно нейросетью, действительно ничего непонятно 😢 Напиши в чат, там тебе помогут по-человечески. А я пока подумаю как сделать решение понятнее",
+        "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
+    )
+    kb = InlineKeyboardBuilder()
+    if topiclink:
+        kb.row(
+            InlineKeyboardButton(
+                text=_txt(lang, "Перейти в чат", "Go to chat"),
+                url=topiclink,
+            )
+        )
+    kb.row(
+        InlineKeyboardButton(
+            text=_txt(lang, "Следующая задача", "Next task"),
+            callback_data=f"next_sub_{topic_idx}_{sub_idx}_{k+1}",
+        )
+    )
+    await call.message.answer(msg, reply_markup=kb.as_markup())
+
 
 @router.callback_query(F.data == "back_start")
 async def back_to_start(call: CallbackQuery):
@@ -1878,8 +3279,41 @@ async def back_to_start(call: CallbackQuery):
 async def on_menu_topics(call: CallbackQuery):
     await call.answer()
     lang = await _get_user_lang(call.from_user)
-    title = "Выберите тему:" if lang == "ru" else "Choose topic:"
+    title = "Математика - задачи по темам:" if lang == "ru" else "Math - tasks by topic:"
     await call.message.answer(title, reply_markup=topics_menu_kb(lang))
+
+
+@router.callback_query(F.data == "menu_physics")
+async def on_menu_physics(call: CallbackQuery):
+    """Отдельный вход в физику с прежней логикой показа задач по теме."""
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    top = "physics"
+    if top not in kapibara or not kapibara[top]:
+        kb = await start_kb(call.from_user.id)
+        await call.message.answer(_txt(lang, "Задач по физике пока нет.", "No physics tasks yet."), reply_markup=kb)
+        return
+
+    showvideo = 1
+    if call.from_user.username == "evangecalista":
+        showvideo = 0
+    elif db_conn:
+        try:
+            cursor = await db_conn.execute("SELECT source FROM users WHERE id = ?", (call.from_user.id,))
+            row = await cursor.fetchone()
+            if row and row[0] == "stepik":
+                showvideo = 0
+        except Exception:
+            pass
+    elif str(call.from_user.id) in stepik:
+        showvideo = 0
+
+    uid = call.from_user.id
+    _topic_clear_session(uid, top)
+    _topic_linear_active[(uid, top)] = True
+    log(call.from_user, ["menu_physics", "next", top, 0])
+    async with ChatActionSender(bot=bot, chat_id=uid, action="typing"):
+        await _deliver_topic_question_message(call, top, 0, showvideo)
 
 
 @router.callback_query(F.data == "menu_exams")
@@ -1911,16 +3345,13 @@ async def on_set_language(call: CallbackQuery):
     kb = await start_kb(call.from_user.id)
     lang = await _get_user_lang(call.from_user)
     if lang.startswith("ru"):
-        greet = """Привет! Я CSCA бот.  
-Неограниченный доступ для студентов курса "Подготовка к CSCA" https://stepik.org/a/268161  и  
-участников групп подготовки по метематике https://t.me/+c1ksuGkuO1BiNDk6
-и физике https://t.me/+dUnPAdJO1w4zZWUy
+        greet = """Привет! Я бот для подготовки к CSCA. 
+Помогу сдать экзамен на отлично! Проходи тестовые экзамены, узнавай свои баллы или тренируйся по любой теме. Не знаешь, как решать? Встроенные справочные материалы и чат с обсуждением задач всегда к твоим услугам.
 
 Бот создан с помощью нейросети. Нашел ошибку? Пиши https://t.me/csca_math_exam/107
-
 """
     else:
-        greet = "Hi!! I am a CSCA math exam prep bot. I've got  a lot of practice problems and can verify your answers. "
+        greet = "Hi!! I'm your CSCA math exam preparation bot, ready to help you pass with confidence. You can take full-length practice tests to evaluate your score or focus on specific topics for targeted practice. I'll guide you step by step until you're fully prepared for exam day."
     await call.message.answer(greet, reply_markup=kb)
 
 
@@ -1995,7 +3426,6 @@ async def on_exam_start(call: CallbackQuery):
         async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
             await call.message.answer(msg, reply_markup=_inline_kb_exam_entry_choice_by_type(exam_type, lang))
         return
-    log(call.from_user, [cfg["id"], "start", "question"])
     total = len(questions)
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
         await call.message.answer(_txt(
@@ -2134,7 +3564,6 @@ async def on_exam_mock_start(call: CallbackQuery):
         async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
             await call.message.answer(msg, reply_markup=_inline_kb_exam_mock_entry_choice())
         return
-    log(call.from_user, [EXAM_MOCK_ID, "start", "question"])
     total_m = len(mock_questions)
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
         await call.message.answer(
@@ -2246,7 +3675,7 @@ async def on_exam_answer(call: CallbackQuery):
         except Exception as e:
             logging.error(f"Ошибка сохранения ответа экзамена ({exam_type}): {e}")
 
-    log(call.from_user, [cfg["id"], idx, ans_id, ansok])
+    log(call.from_user, [cfg["id"], idx, ans_id, ansok, _exam_log_task_id(q)])
 
     lang = await _get_user_lang(call.from_user)
     result_msg = _correct_phrase(lang) if ansok else _txt(lang, "Неправильно.", "Incorrect.")
@@ -2339,7 +3768,7 @@ async def on_exam_mock_answer(call: CallbackQuery):
             )
         except Exception as e:
             logging.error(f"Ошибка сохранения ответа Mock Exam: {e}")
-    log(call.from_user, [EXAM_MOCK_ID, idx, ans_id, ansok])
+    log(call.from_user, [EXAM_MOCK_ID, idx, ans_id, ansok, _exam_log_task_id(q)])
 
     lang = await _get_user_lang(call.from_user)
     result_msg = _correct_phrase(lang) if ansok else _txt(lang, "Неправильно.", "Incorrect.")
@@ -2400,13 +3829,8 @@ async def random_any_task(call: CallbackQuery):
         photo_path = os.path.join(DATA_DIR, "images", k['img'])
         await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
 
-    total_questions = len(kapibara[top])
     lang = await _get_user_lang(call.from_user)
-    question_num = _txt(
-        lang,
-        f"Случайная задача (вопрос {j+1} из {total_questions})\n\n",
-        f"Random task {j+1} of {total_questions}\n\n",
-    )
+    question_num = _txt(lang, "Случайная задача\n\n", "Random task\n\n")
     difficulty = k.get("difficulty")
     if isinstance(difficulty, int) and 1 <= difficulty <= 5:
         stars = "★" * difficulty + "☆" * (5 - difficulty)
@@ -2436,7 +3860,7 @@ async def on_topic_selected(call: CallbackQuery):
     topic = topics[topic_idx]
     lang = await _get_user_lang(call.from_user)
     kb = subtopic_kb(topic_idx, lang)
-    title = topic[0].upper() + topic[1:]
+    title = _topic_display(topic, lang)
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
         await call.message.answer(
             f"📂 {title}\n" + _txt(lang, "Выберите подтему:", "Choose subtopic:"),
@@ -2543,7 +3967,22 @@ async def on_next_sub(call: CallbackQuery):
     if review:
         _sub_in_review[sk] = True
         _sub_linear_active[sk] = True
-        k_show = min(review)
+        last = _sub_last_review_shown.get(sk)
+        k_show = _pick_next_review_index(review, last)
+        if k_show is None:
+            _sub_clear_session(uid, topic_idx, sub_idx)
+            async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
+                kb = await start_kb(call.from_user.id)
+                await call.message.answer(
+                    _txt(
+                        lang_code,
+                        "Все задачи по этой подтеме выполнены.\n\nВыберите другую подтему или тему.",
+                        "All tasks in this subtopic are done.\n\nChoose another subtopic or topic.",
+                    ),
+                    reply_markup=kb,
+                )
+            return
+        _sub_last_review_shown[sk] = k_show
         async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
             await _deliver_subtopic_question_message(call, topic_idx, sub_idx, k_show, showvideo)
         return
@@ -2554,13 +3993,12 @@ async def on_next_sub(call: CallbackQuery):
             await call.message.answer(
                 _txt(
                     lang_code,
-                    "Повторы по подтеме закончены. Выберите другую подтему или тему.",
-                    "Review round finished. Choose another subtopic or topic.",
+                    "Все задачи по этой подтеме выполнены.\n\nВыберите другую подтему или тему.",
+                    "All tasks in this subtopic are done.\n\nChoose another subtopic or topic.",
                 ),
                 reply_markup=kb,
             )
-        _sub_answer_marks.pop(sk, None)
-        _sub_linear_active.pop(sk, None)
+        _sub_clear_session(uid, topic_idx, sub_idx)
         return
 
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
@@ -2601,13 +4039,26 @@ async def on_answer_sub(call: CallbackQuery):
     linear = _sub_linear_active.get(sk, False)
     _sub_record_answer(uid, topic_idx, sub_idx, k, linear, bool(ansok))
 
+    if db_conn:
+        try:
+            await db.save_answer(
+                db_conn,
+                call.from_user.id,
+                topic,
+                j,
+                int(ans_id) if ans_id.isdigit() else 0,
+                ansok == 1,
+            )
+        except Exception as e:
+            logging.error(f"Ошибка сохранения ответа в БД: {e}")
+
     j_list = questions_by_topic_subtopic.get((topic, subtopics_by_topic[topic][sub_idx]), [])
     n_sub = len(j_list)
     review = _sub_build_review_set(uid, topic_idx, sub_idx, n_sub)
     in_review = _sub_in_review.get(sk, False)
 
     if ansok:
-        msg_text = _correct_phrase(lang_code)
+        msg_text = _correct_phrase_training(lang_code)
         if in_review and not review:
             reply = None
             send_kb = await start_kb(uid)
@@ -2616,15 +4067,10 @@ async def on_answer_sub(call: CallbackQuery):
             reply = inline_kb_next_sub(topic_idx, sub_idx, k, lang_code, uid)
             send_kb = None
     else:
-        msg_text = _txt(lang_code, "Нет, это не так)", "Sorry, you are wrong") + "\n\n"
+        msg_text = await _wrong_answer_training_message(uid, lang_code)
         reply = inline_kb_explain_sub(topic_idx, sub_idx, k, lang_code=lang_code)
         send_kb = None
-    if db_conn:
-        try:
-            await db.save_answer(db_conn, call.from_user.id, topic, j, int(ans_id) if ans_id.isdigit() else 0, ansok == 1)
-        except Exception as e:
-            logging.error(f"Ошибка сохранения ответа в БД: {e}")
-    log(call.from_user, [topic, j, ans_id, ansok])
+    log(call.from_user, [topic, j, ans_id, ansok, str(q.get("id") or "")])
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
         if reply:
             await call.message.answer(msg_text, reply_markup=reply)
@@ -2661,43 +4107,6 @@ async def on_answer_topic(call: CallbackQuery):
     ansok = 1 if correct == ans_id else 0
     _topic_record_answer(uid, top, j, linear, bool(ansok))
 
-    n = len(kapibara[top])
-    review = _topic_build_review_set(uid, top, n)
-    in_review = _topic_in_review.get(key, False)
-
-    if ansok:
-        msg_text = _correct_phrase(lang_code)
-        if in_review and not review:
-            reply = None
-            _topic_clear_session(uid, top)
-            msg_text += "\n\n" + _txt(
-                lang_code,
-                "Все задачи в этой теме закрыты: последний ответ верный и с первого раза после показа.",
-                "All tasks in this topic are done: last answer correct, and the first try after each show was correct.",
-            )
-            async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
-                kb = await start_kb(uid)
-                await call.message.answer(msg_text, reply_markup=kb)
-            if db_conn:
-                try:
-                    await db.save_answer(
-                        db_conn,
-                        uid,
-                        top,
-                        j,
-                        ans_id_int,
-                        ansok == 1,
-                    )
-                except Exception as e:
-                    logging.error(f"Ошибка сохранения ответа в БД: {e}")
-            log(call.from_user, [top, j, ans_id, ansok])
-            return
-        else:
-            reply = inline_kb_next(top, j, lang_code, uid)
-    else:
-        msg_text = _txt(lang_code, "Нет, это не так)", "Sorry, you are wrong") + "\n\n"
-        reply = inline_kb_explain(top, j, k, lang_code=lang_code)
-
     if db_conn:
         try:
             await db.save_answer(
@@ -2711,7 +4120,32 @@ async def on_answer_topic(call: CallbackQuery):
         except Exception as e:
             logging.error(f"Ошибка сохранения ответа в БД: {e}")
 
-    log(call.from_user, [top, j, ans_id, ansok])
+    n = len(kapibara[top])
+    review = _topic_build_review_set(uid, top, n)
+    in_review = _topic_in_review.get(key, False)
+
+    if ansok:
+        msg_text = _correct_phrase_training(lang_code)
+        if in_review and not review:
+            reply = None
+            _topic_clear_session(uid, top)
+            msg_text += "\n\n" + _txt(
+                lang_code,
+                "Все задачи по этой теме выполнены.",
+                "All tasks in this topic are done.",
+            )
+            async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
+                kb = await start_kb(uid)
+                await call.message.answer(msg_text, reply_markup=kb)
+            log(call.from_user, [top, j, ans_id, ansok, str(k.get("id") or "")])
+            return
+        else:
+            reply = inline_kb_next(top, j, lang_code, uid)
+    else:
+        msg_text = await _wrong_answer_training_message(uid, lang_code)
+        reply = inline_kb_explain(top, j, k, lang_code=lang_code)
+
+    log(call.from_user, [top, j, ans_id, ansok, str(k.get("id") or "")])
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
         await call.message.answer(msg_text, reply_markup=reply)
 
@@ -2747,26 +4181,17 @@ async def on_hint_sub(call: CallbackQuery):
     skh = _sub_key(user_id, topic_idx, sub_idx)
     if _sub_linear_active.get(skh):
         _register_sub_question_displayed(user_id, topic_idx, sub_idx, k, True)
-    hint_path = _get_hint_image_path(q, lang_code)
-    log(call.from_user, ["hint_sub_show", topic, sub_idx, k, "hint_found" if hint_path else "hint_not_found", hint_path or ""])
-
-    subs_for_topic = subtopics_by_topic.get(topic, [])
-    sub_name = subs_for_topic[sub_idx] if sub_idx < len(subs_for_topic) else (q.get("subtopic") or "subtopic")
-    j_list = questions_by_topic_subtopic.get((topic, sub_name), []) if sub_name else []
-    total_in_sub = len(j_list)
+    hint_paths = _get_hint_image_path(q, lang_code)
+    log(call.from_user, ["hint_sub_show", topic, sub_idx, k, "hint_found" if hint_paths else "hint_not_found", str(len(hint_paths)) + " hints"])
 
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
-        if hint_path:
-            await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(hint_path))
+        for hp in hint_paths:
+            await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(hp))
         if q.get("img"):
             photo_path = os.path.join(DATA_DIR, "images", q["img"])
             await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
 
-        question_num = (
-            f"Вопрос {k + 1} из {total_in_sub} ({sub_name}) / "
-            f"Question {k + 1} of {total_in_sub} ({sub_name})\n\n"
-        )
-        question_text = question_num + q["english"] + "\n" + q.get("chinese", '') + q.get("long", '')
+        question_text = q["english"] + "\n" + q.get("chinese", '') + q.get("long", '')
         reply = inline_kb_sub(topic_idx, sub_idx, k, showvideo=1, lang_code=lang_code)
         await call.message.answer(question_text, reply_markup=reply)
 
@@ -2804,23 +4229,17 @@ async def on_hint(call: CallbackQuery):
     lang_code = await _get_user_lang(call.from_user)
     if _topic_linear_active.get((user_id, top)):
         _register_topic_question_displayed(user_id, top, j, True)
-    hint_path = _get_hint_image_path(q, lang_code)
-    log(call.from_user, ["hint_show", top, j, "hint_found" if hint_path else "hint_not_found", hint_path or ""])
+    hint_paths = _get_hint_image_path(q, lang_code)
+    log(call.from_user, ["hint_show", top, j, "hint_found" if hint_paths else "hint_not_found", str(len(hint_paths)) + " hints"])
 
-    total_questions = len(kapibara[top])
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
-        if hint_path:
-            await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(hint_path))
+        for hp in hint_paths:
+            await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(hp))
         if q.get("img"):
             photo_path = os.path.join(DATA_DIR, "images", q["img"])
             await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
 
-        question_num = _txt(
-            lang_code,
-            f"Вопрос {j + 1} из {total_questions}\n\n",
-            f"Question {j + 1} of {total_questions}\n\n",
-        )
-        question_text = question_num + q["english"] + "\n" + q.get("chinese", '') + q.get("long", '')
+        question_text = q["english"] + "\n" + q.get("chinese", '') + q.get("long", '')
         reply = inline_kb(top, j, showvideo=1, lang_code=lang_code)
         await call.message.answer(question_text, reply_markup=reply)
 
@@ -2928,16 +4347,15 @@ async def on_start_command(message: types.Message):
     kb = await start_kb(message.from_user.id)
     lang = await _get_user_lang(message.from_user)
     if lang.startswith("ru"):
-        greet = """Привет! Я CSCA бот.  
-Неограниченный доступ для студентов курса "Подготовка к CSCA" https://stepik.org/a/268161  и  
-участников групп подготовки по метематике https://t.me/+c1ksuGkuO1BiNDk6
-и физике https://t.me/+dUnPAdJO1w4zZWUy
+        greet = """Привет! Я бот для подготовки к CSCA. 
+Помогу сдать экзамен на отлично! Проходи тестовые экзамены, узнавай свои баллы или тренируйся по любой теме. Запутался в решении? Встроенные справочные материалы и чат с обсуждением задач всегда к твоим услугам.
 
 Бот создан с помощью нейросети. Нашел ошибку? Пиши https://t.me/csca_math_exam/107
 
 """
     else:
-        greet = "Hi!! I am a CSCA math exam prep bot. I've got  a lot of practice problems and can verify your answers. "
+        greet = "Hi!! I'm your CSCA math exam preparation bot, ready to help you pass with confidence. You can take full-length practice tests to evaluate your score or focus on specific topics for targeted practice. I'll guide you step by step until you're fully prepared for exam day."
+  
     await message.answer(greet, reply_markup=kb)
    
    # await message.answer("Это тестовая версия бота. Нашел ошибку? Есть идея? Пиши @csca_math_exam или прямо здесь.", reply_markup=start_kb()) 
@@ -3038,7 +4456,22 @@ async def on_next_question(call: CallbackQuery):
     if review:
         _topic_in_review[key] = True
         _topic_linear_active[key] = True
-        j_show = min(review)
+        last = _topic_last_review_shown.get(key)
+        j_show = _pick_next_review_index(review, last)
+        if j_show is None:
+            _topic_clear_session(uid, top)
+            async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
+                kb = await start_kb(call.from_user.id)
+                await call.message.answer(
+                    _txt(
+                        lang_code,
+                        "Все задачи по этой теме выполнены.\n\nВыберите другую тему или подтему.",
+                        "All tasks in this topic are done.\n\nChoose another topic or subtopic.",
+                    ),
+                    reply_markup=kb,
+                )
+            return
+        _topic_last_review_shown[key] = j_show
         async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
             await _deliver_topic_question_message(call, top, j_show, showvideo)
         return
@@ -3049,20 +4482,23 @@ async def on_next_question(call: CallbackQuery):
             await call.message.answer(
                 _txt(
                     lang_code,
-                    "Повторы по теме закончены. Выберите другую тему или подтему.",
-                    "Review round finished. Choose another topic or subtopic.",
+                    "Все задачи по этой теме выполнены.\n\nВыберите другую тему или подтему.",
+                    "All tasks in this topic are done.\n\nChoose another topic or subtopic.",
                 ),
                 reply_markup=kb,
             )
-        _topic_answer_marks.pop(key, None)
-        _topic_linear_active.pop(key, None)
+        _topic_clear_session(uid, top)
         return
 
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
         log(call.from_user, ["end"])
         kb = await start_kb(call.from_user.id)
         await call.message.answer(
-            "Больше нет вопросов по этой теме. Скоро добавлю новые вопросы.",
+            _txt(
+                lang_code,
+                "Все задачи по этой теме выполнены.\n\nВыберите другую тему или подтему.",
+                "All tasks in this topic are done.\n\nChoose another topic or subtopic.",
+            ),
             reply_markup=kb,
         )
 
@@ -3090,7 +4526,7 @@ async def cmd_stats(message: types.Message):
             msg += f"Точность: {acc:.1f}%\n\n"
             msg += "По темам:\n"
             for t in stats["by_topic"]:
-                msg += f"• {t['topic']}: {t['answered']} ответов, {t['correct']} правильных ({t['accuracy']:.1f}%)\n"
+                msg += f"• {_topic_display(t['topic'], lang)}: {t['answered']} ответов, {t['correct']} правильных ({t['accuracy']:.1f}%)\n"
         else:
             msg = "📊 Your statistics:\n\n"
             msg += f"Total answers: {stats['total_answered']}\n"
@@ -3099,7 +4535,7 @@ async def cmd_stats(message: types.Message):
             msg += f"Accuracy: {acc:.1f}%\n\n"
             msg += "By topics:\n"
             for t in stats["by_topic"]:
-                msg += f"• {t['topic']}: {t['answered']} answers, {t['correct']} correct ({t['accuracy']:.1f}%)\n"
+                msg += f"• {_topic_display(t['topic'], lang)}: {t['answered']} answers, {t['correct']} correct ({t['accuracy']:.1f}%)\n"
 
         kb = await start_kb(message.from_user.id)
         await message.answer(msg, reply_markup=kb)
@@ -3117,6 +4553,7 @@ async def cmd_clear_stats(message: types.Message):
 
     try:
         await db.clear_user_stats(db_conn, message.from_user.id)
+        _math_all_sessions.pop(message.from_user.id, None)
         lang = await _get_user_lang(message.from_user)
         if lang == "ru":
             text = "Ваша статистика была очищена."
@@ -3127,6 +4564,237 @@ async def cmd_clear_stats(message: types.Message):
     except Exception as e:
         logging.error(f"Ошибка очистки статистики: {e}")
         await message.answer("Не удалось очистить статистику. Попробуйте позже.")
+
+
+@router.message(Command("adminstat"))
+async def cmd_adminstat(message: types.Message):
+    """Админская сводка статистики за последние 7 дней."""
+    if not db_conn:
+        await message.answer("Статистика временно недоступна.")
+        return
+
+    try:
+        lang_code = await _get_user_lang(message.from_user)
+        is_ru = lang_code == "ru"
+
+        now = datetime.datetime.now()
+        today_start = datetime.datetime(now.year, now.month, now.day)
+        window_start = today_start - datetime.timedelta(days=6)
+        window_end = today_start + datetime.timedelta(days=1)
+
+        def _median(values: list[int | float]) -> float:
+            if not values:
+                return 0.0
+            arr = sorted(values)
+            n = len(arr)
+            mid = n // 2
+            if n % 2 == 1:
+                return float(arr[mid])
+            return (float(arr[mid - 1]) + float(arr[mid])) / 2.0
+
+        async def _day_counts_new_users(day_start: datetime.datetime, day_end: datetime.datetime) -> dict:
+            ds = day_start.isoformat()
+            de = day_end.isoformat()
+            cursor = await db_conn.execute(
+                """
+                WITH nu AS (
+                    SELECT id, language_code, source
+                    FROM users
+                    WHERE created_at >= ? AND created_at < ?
+                )
+                SELECT
+                    COUNT(*) as total_new,
+                    SUM(CASE WHEN language_code LIKE 'ru%' THEN 1 ELSE 0 END) as ru_new,
+                    SUM(CASE WHEN language_code LIKE 'en%' THEN 1 ELSE 0 END) as en_new,
+                    SUM(CASE WHEN source = 'stepik' THEN 1 ELSE 0 END) as stepik_new,
+                    SUM(CASE WHEN source = 'cscagroup' THEN 1 ELSE 0 END) as cscagroup_new,
+                    COUNT(DISTINCT CASE WHEN a.user_id IS NOT NULL THEN nu.id END) as solved_new
+                FROM nu
+                LEFT JOIN answers a
+                    ON a.user_id = nu.id
+                    AND a.created_at >= ? AND a.created_at < ?
+                """,
+                (ds, de, ds, de),
+            )
+            row = await cursor.fetchone()
+            return {
+                "total": int(row[0] or 0),
+                "ru": int(row[1] or 0),
+                "en": int(row[2] or 0),
+                "stepik": int(row[3] or 0),
+                "cscagroup": int(row[4] or 0),
+                "solved_new": int(row[5] or 0),
+            }
+
+        async def _day_counts_visitors(day_start: datetime.datetime, day_end: datetime.datetime) -> dict:
+            ds = day_start.isoformat()
+            de = day_end.isoformat()
+            cursor = await db_conn.execute(
+                """
+                WITH av AS (
+                    SELECT id, language_code, source
+                    FROM users
+                    WHERE updated_at >= ? AND updated_at < ?
+                )
+                SELECT
+                    COUNT(*) as total_visitors,
+                    SUM(CASE WHEN language_code LIKE 'ru%' THEN 1 ELSE 0 END) as ru_visitors,
+                    SUM(CASE WHEN language_code LIKE 'en%' THEN 1 ELSE 0 END) as en_visitors,
+                    SUM(CASE WHEN source = 'stepik' THEN 1 ELSE 0 END) as stepik_visitors,
+                    SUM(CASE WHEN source = 'cscagroup' THEN 1 ELSE 0 END) as cscagroup_visitors,
+                    COUNT(DISTINCT CASE WHEN a.user_id IS NOT NULL THEN av.id END) as solved_visitors
+                FROM av
+                LEFT JOIN answers a
+                    ON a.user_id = av.id
+                    AND a.created_at >= ? AND a.created_at < ?
+                """,
+                (ds, de, ds, de),
+            )
+            row = await cursor.fetchone()
+            return {
+                "total": int(row[0] or 0),
+                "ru": int(row[1] or 0),
+                "en": int(row[2] or 0),
+                "stepik": int(row[3] or 0),
+                "cscagroup": int(row[4] or 0),
+                "solved_visitors": int(row[5] or 0),
+            }
+
+        days: list[datetime.datetime] = [window_start + datetime.timedelta(days=i) for i in range(7)]
+
+        out_lines: list[str] = []
+        if is_ru:
+            out_lines.append("📊 Admin statistics (последние 7 дней)")
+            out_lines.append("")
+            out_lines.append("1) Новые пользователи (created_at):")
+        else:
+            out_lines.append("📊 Admin statistics (last 7 days)")
+            out_lines.append("")
+            out_lines.append("1) New users (created_at):")
+
+        for ds in days:
+            de = ds + datetime.timedelta(days=1)
+            c = await _day_counts_new_users(ds, de)
+            day_lbl = ds.strftime("%Y-%m-%d")
+            if is_ru:
+                out_lines.append(
+                    f"• {day_lbl}: всего {c['total']}, ru {c['ru']}, en {c['en']}, "
+                    f"stepik {c['stepik']}, cscagroup {c['cscagroup']}, решили >=1 задачу {c['solved_new']}"
+                )
+            else:
+                out_lines.append(
+                    f"• {day_lbl}: total {c['total']}, ru {c['ru']}, en {c['en']}, "
+                    f"stepik {c['stepik']}, cscagroup {c['cscagroup']}, solved >=1 {c['solved_new']}"
+                )
+
+        if is_ru:
+            out_lines.append("")
+            out_lines.append("2) Посещения/активность (updated_at):")
+        else:
+            out_lines.append("")
+            out_lines.append("2) Visits/activity (updated_at):")
+
+        for ds in days:
+            de = ds + datetime.timedelta(days=1)
+            c = await _day_counts_visitors(ds, de)
+            day_lbl = ds.strftime("%Y-%m-%d")
+            if is_ru:
+                out_lines.append(
+                    f"• {day_lbl}: всего {c['total']}, ru {c['ru']}, en {c['en']}, "
+                    f"stepik {c['stepik']}, cscagroup {c['cscagroup']}, решили >=1 задачу {c['solved_visitors']}"
+                )
+            else:
+                out_lines.append(
+                    f"• {day_lbl}: total {c['total']}, ru {c['ru']}, en {c['en']}, "
+                    f"stepik {c['stepik']}, cscagroup {c['cscagroup']}, solved >=1 {c['solved_visitors']}"
+                )
+
+        # 3) медиана/среднее решённых задач на пользователя за окно
+        w_start = window_start.isoformat()
+        w_end = window_end.isoformat()
+        cur = await db_conn.execute(
+            """
+            SELECT COUNT(*) as solved_cnt
+            FROM answers
+            WHERE created_at >= ? AND created_at < ?
+            GROUP BY user_id
+            """,
+            (w_start, w_end),
+        )
+        counts_rows = await cur.fetchall()
+        solved_counts = [int(r[0] or 0) for r in counts_rows]
+        median_val = _median(solved_counts)
+        avg_val = (sum(solved_counts) / len(solved_counts)) if solved_counts else 0.0
+
+        if is_ru:
+            out_lines.append("")
+            out_lines.append("3) Решённых задач на пользователя за 7 дней:")
+            out_lines.append(f"• медиана: {median_val}")
+            out_lines.append(f"• среднее: {avg_val:.2f}")
+        else:
+            out_lines.append("")
+            out_lines.append("3) Solved tasks per user over 7 days:")
+            out_lines.append(f"• median: {median_val}")
+            out_lines.append(f"• average: {avg_val:.2f}")
+
+        # 4) прохождения экзаменов: считаем уникальных пользователей, ответивших >=1 раз на экзамен за окно
+        exam_map = [
+            ("21 dec", EXAM_21DEC_ID),
+            ("25 jan", EXAM_25JAN_ID),
+            ("15 mar", EXAM_MAR15_ID),
+        ]
+        if "EXAM_MOCK_ID" in globals():
+            exam_map.append(("mock", EXAM_MOCK_ID))
+
+        exam_total_sum = 0
+        exam_lines: list[str] = []
+        exam_topics = [exam_id for _, exam_id in exam_map]
+        for label, exam_id in exam_map:
+            cur = await db_conn.execute(
+                """
+                SELECT COUNT(DISTINCT user_id)
+                FROM answers
+                WHERE topic = ?
+                  AND created_at >= ? AND created_at < ?
+                """,
+                (exam_id, w_start, w_end),
+            )
+            row = await cur.fetchone()
+            cnt_users = int(row[0] or 0)
+            exam_total_sum += cnt_users
+            exam_lines.append(f"• {label}: {cnt_users}")
+
+        # уникальные пользователи, которые отвечали хотя бы на один экзамен из списка
+        placeholders = ",".join(["?"] * len(exam_topics))
+        cur = await db_conn.execute(
+            f"""
+            SELECT COUNT(DISTINCT user_id)
+            FROM answers
+            WHERE topic IN ({placeholders})
+              AND created_at >= ? AND created_at < ?
+            """,
+            (*exam_topics, w_start, w_end),
+        )
+        row = await cur.fetchone()
+        exam_total_unique = int(row[0] or 0)
+
+        if is_ru:
+            out_lines.append("")
+            out_lines.append("4) Прохождения экзаменов (уникальные пользователи):")
+            out_lines.append(f"• всего уникальных (любой экзамен): {exam_total_unique}")
+            out_lines.append(f"• всего (сумма по типам, с пересечениями): {exam_total_sum}")
+            out_lines.extend(exam_lines)
+        else:
+            out_lines.append("")
+            out_lines.append("4) Exam attempts (unique users):")
+            out_lines.append(f"• total unique (any exam): {exam_total_unique}")
+            out_lines.append(f"• total (sum by types, may overlap): {exam_total_sum}")
+            out_lines.extend(exam_lines)
+
+        await message.answer("\n".join(out_lines))
+    except Exception as e:
+        logging.error(f"Ошибка /adminstat: {e}")
+        await message.answer("Ошибка при построении статистики. Попробуйте позже.")
 
 
 @router.message(Command("exam25stats"))

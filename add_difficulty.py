@@ -48,8 +48,7 @@ def estimate_difficulty(item: dict) -> int:
         "ellipse",
         "logarithms",
         "complex numbers",
-        "sequence general term",
-        "other sequences",
+        "hard tasks",
     }
 
     if sub in easier_subs:
