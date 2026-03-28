@@ -15,6 +15,10 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.types import Message
 from aiogram.utils.chat_action import ChatActionSender
+from langchain_amvera import AmveraLLM
+from langchain_core.messages import SystemMessage, HumanMessage
+#from dotenv import load_dotenv
+
 
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
@@ -81,6 +85,40 @@ HINTS_IMAGES_DIR = os.path.join(DATA_DIR, "images", "hints")
 # cache_key: (bases_tuple, suf)
 # value: ordered list of hint image paths (n=0..)
 _HINT_IMAGE_CACHE: dict[tuple[tuple[str, ...], str], list[str]] = {}
+
+# --- RAG контекст ---
+_RAG_TEXT_CACHE: str | None = None
+
+
+def load_rag_text() -> str:
+    """
+    Загружает контекст для RAG из файла `data/rag.txt`.
+    Результат кешируется, чтобы не перечитывать файл на каждом сообщении.
+    """
+    global _RAG_TEXT_CACHE
+    if _RAG_TEXT_CACHE is not None:
+        return _RAG_TEXT_CACHE
+
+    rag_path = os.path.join(DATA_DIR, "rag.txt")
+    try:
+        if not os.path.isfile(rag_path):
+            _RAG_TEXT_CACHE = ""
+            return _RAG_TEXT_CACHE
+
+        with open(rag_path, "r", encoding="utf-8") as f:
+            txt = f.read().strip()
+        # Ограничим размер, чтобы не раздувать prompt слишком сильно
+        _RAG_TEXT_CACHE = txt[:20000]
+    except Exception as e:
+        logging.error(f"Ошибка чтения rag.txt: {e}")
+        _RAG_TEXT_CACHE = ""
+
+    return _RAG_TEXT_CACHE
+
+
+# Совместимость со старым именем (если где-то ещё вызывается)
+def _load_rag_text() -> str:
+    return load_rag_text()
 
 
 def _lang_suffix(lang_code: str) -> str:
@@ -207,13 +245,58 @@ topics = []
 
 kapibara = {}
 
-# Загружаем вопросы из одного агрегированного файла data.txt
+# Не загружаем выключенные задачи (topic="off")
+def _is_task_enabled(x: dict) -> bool:
+    try:
+        topic = (x.get("topic") or "").strip().lower()
+    except Exception:
+        return True
+    return topic != "off"
+
+
+# Загружаем вопросы из агрегированного data.txt + отдельного data_physics.txt
 try:
     data_path = os.path.join(DATA_DIR, 'data.txt')
     with open(data_path, 'r', encoding='utf-8') as f:
         kpb_raw = json.load(f)
     # В массиве могут попадаться не-словари (вложенные списки и т.п.) — оставляем только словари
-    kpb = [x for x in (kpb_raw if isinstance(kpb_raw, list) else [kpb_raw]) if isinstance(x, dict)]
+    kpb = [
+        x
+        for x in (kpb_raw if isinstance(kpb_raw, list) else [kpb_raw])
+        if isinstance(x, dict) and _is_task_enabled(x)
+    ]
+
+    # Подгружаем физику из отдельного файла (если есть)
+    physics_path = os.path.join(DATA_DIR, 'data_physics.txt')
+    try:
+        if os.path.exists(physics_path):
+            with open(physics_path, 'r', encoding='utf-8') as pf:
+                p_raw = json.load(pf)
+            p_list = [
+                x
+                for x in (p_raw if isinstance(p_raw, list) else [p_raw])
+                if isinstance(x, dict) and _is_task_enabled(x)
+            ]
+            kpb.extend(p_list)
+    except Exception as e:
+        logging.error(f"Ошибка загрузки data_physics.txt: {e}")
+        logging.error(traceback.format_exc())
+
+    # Подгружаем химию из отдельного файла (если есть)
+    chemistry_path = os.path.join(DATA_DIR, 'data_chemestry.txt')
+    try:
+        if os.path.exists(chemistry_path):
+            with open(chemistry_path, 'r', encoding='utf-8') as cf:
+                c_raw = json.load(cf)
+            c_list = [
+                x
+                for x in (c_raw if isinstance(c_raw, list) else [c_raw])
+                if isinstance(x, dict) and _is_task_enabled(x)
+            ]
+            kpb.extend(c_list)
+    except Exception as e:
+        logging.error(f"Ошибка загрузки data_chemestry.txt: {e}")
+        logging.error(traceback.format_exc())
 
     # Собираем список тем
     for k in kpb:
@@ -315,7 +398,7 @@ for top in topics:
             continue
         sub = (item.get("subtopic") or "").strip() or "general"
         subs.add(sub)
-    if top != "physics" and top in FIXED_SUBTOPIC_ORDER_BY_TOPIC:
+    if top not in ("physics", "chemistry") and top in FIXED_SUBTOPIC_ORDER_BY_TOPIC:
         order = FIXED_SUBTOPIC_ORDER_BY_TOPIC[top]
         sub_order_index = {name: i for i, name in enumerate(order)}
         # Сначала подтемы из фиксированного порядка, затем любые "лишние" (если вдруг появятся).
@@ -349,7 +432,7 @@ def _q_diff(q: dict) -> int:
 def _build_math_subtopic_avg() -> dict[tuple[str, str], float]:
     out: dict[tuple[str, str], float] = {}
     for top in topics:
-        if top == "physics":
+        if top in ("physics", "chemistry"):
             continue
         for sub in subtopics_by_topic.get(top, []):
             j_list = questions_by_topic_subtopic.get((top, sub), [])
@@ -579,7 +662,7 @@ async def _math_all_load_state(user_id: int) -> dict | None:
 
 
 def _math_all_all_topics() -> list[str]:
-    return [t for t in topics if t != "physics"]
+    return [t for t in topics if t not in ("physics", "chemistry")]
 
 
 def _math_all_task_id(topic: str, j: int) -> str:
@@ -905,8 +988,8 @@ def _txt(lang: str, ru_text: str, en_text: str) -> str:
 
 def _wrong_answer_training_extra_message(lang: str, wrong_today: int, total_today: int) -> str:
     """
-    Текст после «Нет, это не так» в тренировке по теме/подтеме: ошибки за сегодня (с полуночи)
-    и напоминание про теорию, если процент ошибок строго больше 40%.
+    Текст после «Нет, это не так» в тренировке по теме/подтеме: ошибки за сегодня (с полуночи),
+    при err_pct > 40 — напоминание про теорию; лимит ошибок за день — если wrong_today > 10.
     """
     if total_today <= 0:
         return ""
@@ -915,10 +998,20 @@ def _wrong_answer_training_extra_message(lang: str, wrong_today: int, total_toda
         block = f"Ошибок сегодня: {wrong_today} из {total_today} решений."
         if err_pct > 40:
             block += "\nНеобходимо сначала выучить теорию."
+        if wrong_today > 10:
+            block += (
+                "\n\nОграничение по ошибкам сегодня: не более 30. "
+                "\nНе перебирай ответы. Решай задачи внимательнее."
+            )
     else:
         block = f"Mistakes today: {wrong_today} out of {total_today} answers."
         if err_pct > 40:
             block += "\nYou need to learn the theory first."
+        if wrong_today > 10:
+            block += (
+                "\n\nToday's mistake limit: no more than 30. "
+                "\nDon't try random answers. Work through the problems more carefully."
+            )
     return block + "\n\n"
 
 
@@ -1163,6 +1256,19 @@ TRAINING_CORRECT_REACTION_EMOJIS = [
     "🏆",
     "💘",
     "🩷",
+    "🦊",
+    "🦄",
+    "🍹",
+    "🍾",
+    "🍭",
+    "🚀",
+    "⛩",
+    "❣️",
+    "💕",
+    "💖",
+    "🚘",
+    "🏎",
+    "🛰",
 ]
 
 
@@ -1337,6 +1443,12 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
     )
     builder.add(
         InlineKeyboardButton(
+            text="🧪 Химия" if lang == "ru" else "🧪 Chemistry",
+            callback_data="menu_chemistry",
+        )
+    )
+    builder.add(
+        InlineKeyboardButton(
             text="📝 Пройти экзамен" if lang == "ru" else "📝 Take exam",
             callback_data="menu_exams",
         )
@@ -1354,7 +1466,7 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
 def topics_menu_kb(lang: str = "en") -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for idx, top in enumerate(topics):
-        if top == "physics":
+        if top in ("physics", "chemistry"):
             continue
         builder.add(
             InlineKeyboardButton(
@@ -1460,6 +1572,16 @@ def _shuffled_option_indices(n: int) -> list[int]:
     return order
 
 
+def _option_display_indices(topic: str, q: dict, n: int) -> list[int]:
+    """
+    Порядок отображения вариантов ответа.
+    В физике и химии для задач с длинными вариантами (поле long) порядок не перемешивается.
+    """
+    if q.get("long"):
+        return list(range(n))
+    return _shuffled_option_indices(n)
+
+
 def _option_button_text_shuffled(raw: str, display_letter: str) -> str:
     """
     Текст кнопки после перемешивания: убираем ведущую метку A./B./… из данных,
@@ -1479,7 +1601,7 @@ def inline_kb(top, j: int, showvideo=1, lang_code: str = "en") -> InlineKeyboard
     builder = InlineKeyboardBuilder()
     q = kapibara[top][j]
     k = q["options"]
-    order = _shuffled_option_indices(len(k))
+    order = _option_display_indices(top, q, len(k))
     # Добавляем кнопки вопросов (порядок на экране случайный; буквы A,B,… заново сверху вниз)
     for pos, i in enumerate(order):
         letter = chr(ord("A") + pos)
@@ -1753,7 +1875,7 @@ def inline_kb_exam_by_type(idx: int, exam_type: str) -> InlineKeyboardMarkup:
         return builder.as_markup()
     q = arr[j]
     opts = q.get("options", [])
-    order = _shuffled_option_indices(len(opts))
+    order = _option_display_indices(top, q, len(opts))
     for pos, i in enumerate(order):
         letter = chr(ord("A") + pos)
         builder.add(
@@ -2118,7 +2240,7 @@ def inline_kb_exam_mock(idx: int) -> InlineKeyboardMarkup:
    top, j = mock_questions[idx]
    q = kapibara[top][j]
    opts = q["options"]
-   order = _shuffled_option_indices(len(opts))
+   order = _option_display_indices(top, q, len(opts))
    for pos, i in enumerate(order):
        letter = chr(ord("A") + pos)
        builder.add(
@@ -2269,7 +2391,7 @@ def inline_kb_sub(topic_idx: int, sub_idx: int, k: int, showvideo: int = 1, lang
     q = kapibara[topic][j]
     builder = InlineKeyboardBuilder()
     opts = q["options"]
-    order = _shuffled_option_indices(len(opts))
+    order = _option_display_indices(topic, q, len(opts))
     for pos, i in enumerate(order):
         letter = chr(ord("A") + pos)
         builder.add(
@@ -2355,7 +2477,7 @@ def inline_kb_explain_sub(topic_idx: int, sub_idx: int, k: int, showvideo: int =
                 callback_data=f"hint_sub_{topic_idx}_{sub_idx}_{k}",
             )
         )
-    if not k_item.get("img"):
+    if not k_item.get("img") and _has_solution_for_lang(k_item, lang_code):
         builder.row(
             InlineKeyboardButton(
                 text=_txt(lang_code, "Решение", "Solution"),
@@ -2401,7 +2523,7 @@ def inline_kb_explain(top, j, k, lang_code: str = "en") :
                callback_data=f"hint_{top}_{j}",
            )
        )
-   if not k.get("img"):
+   if not k.get("img") and _has_solution_for_lang(k, lang_code):
        try:
            top_idx = topics.index(top)
            builder.row(
@@ -2427,7 +2549,7 @@ def inline_kb_math_all(top: str, j: int, lang_code: str = "en") -> InlineKeyboar
    builder = InlineKeyboardBuilder()
    q = kapibara[top][j]
    opts = q.get("options", [])
-   order = _shuffled_option_indices(len(opts))
+   order = _option_display_indices(top, q, len(opts))
    top_idx = topics.index(top)
    for pos, i in enumerate(order):
        letter = chr(ord("A") + pos)
@@ -2461,7 +2583,7 @@ def inline_kb_math_all_explain(top: str, j: int, q: dict, lang_code: str = "en")
            )
        )
 
-   if not q.get("img"):
+   if not q.get("img") and _has_solution_for_lang(q, lang_code):
        builder.row(
            InlineKeyboardButton(
                text=_txt(lang_code, "Решение", "Solution"),
@@ -2499,6 +2621,13 @@ def _solution_text_for_lang(q: dict, lang_code: str) -> str:
     if txt:
         return txt
     return _txt(lang_code, "Решение пока отсутствует.", "Solution is not available yet.")
+
+
+def _has_solution_for_lang(q: dict, lang_code: str) -> bool:
+    """Есть ли текст решения именно на выбранном языке (без запасного варианта на другом)."""
+    if _normalize_lang(lang_code) == "ru":
+        return bool((q.get("solution_ru2") or q.get("solution_ru") or "").strip())
+    return bool((q.get("solution_en2") or q.get("solution_en") or "").strip())
 
 
 def _kb_solution_feedback_topic(top_idx: int, j: int, lang_code: str = "en") -> InlineKeyboardMarkup:
@@ -2968,6 +3097,11 @@ async def on_math_solution_show(call: CallbackQuery):
         await call.message.answer("Вопрос не найден.")
         return
     q = kapibara[top][j]
+    if not _has_solution_for_lang(q, lang):
+        await call.message.answer(
+            _txt(lang, "Решения на выбранном языке нет.", "There is no solution in your selected language."),
+        )
+        return
     log(call.from_user, ["solution_show_math", top, j, str(q.get("id") or "")])
     await call.message.answer(
         _solution_text_for_lang(q, lang),
@@ -3077,6 +3211,11 @@ async def on_topic_solution_show(call: CallbackQuery):
         await call.message.answer("Вопрос не найден.")
         return
     q = kapibara[top][j]
+    if not _has_solution_for_lang(q, lang):
+        await call.message.answer(
+            _txt(lang, "Решения на выбранном языке нет.", "There is no solution in your selected language."),
+        )
+        return
     log(call.from_user, ["solution_show_topic", top, j, str(q.get("id") or "")])
     await call.message.answer(
         _solution_text_for_lang(q, lang),
@@ -3183,6 +3322,11 @@ async def on_sub_solution_show(call: CallbackQuery):
         await call.message.answer("Вопрос не найден.")
         return
     q = kapibara[top][j]
+    if not _has_solution_for_lang(q, lang):
+        await call.message.answer(
+            _txt(lang, "Решения на выбранном языке нет.", "There is no solution in your selected language."),
+        )
+        return
     log(call.from_user, ["solution_show_sub", top, j, str(q.get("id") or "")])
     await call.message.answer(
         _solution_text_for_lang(q, lang),
@@ -3312,6 +3456,39 @@ async def on_menu_physics(call: CallbackQuery):
     _topic_clear_session(uid, top)
     _topic_linear_active[(uid, top)] = True
     log(call.from_user, ["menu_physics", "next", top, 0])
+    async with ChatActionSender(bot=bot, chat_id=uid, action="typing"):
+        await _deliver_topic_question_message(call, top, 0, showvideo)
+
+
+@router.callback_query(F.data == "menu_chemistry")
+async def on_menu_chemistry(call: CallbackQuery):
+    """Отдельный вход в химию (аналогично физике)."""
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    top = "chemistry"
+    if top not in kapibara or not kapibara[top]:
+        kb = await start_kb(call.from_user.id)
+        await call.message.answer(_txt(lang, "Задач по химии пока нет.", "No chemistry tasks yet."), reply_markup=kb)
+        return
+
+    showvideo = 1
+    if call.from_user.username == "evangecalista":
+        showvideo = 0
+    elif db_conn:
+        try:
+            cursor = await db_conn.execute("SELECT source FROM users WHERE id = ?", (call.from_user.id,))
+            row = await cursor.fetchone()
+            if row and row[0] == "stepik":
+                showvideo = 0
+        except Exception:
+            pass
+    elif str(call.from_user.id) in stepik:
+        showvideo = 0
+
+    uid = call.from_user.id
+    _topic_clear_session(uid, top)
+    _topic_linear_active[(uid, top)] = True
+    log(call.from_user, ["menu_chemistry", "next", top, 0])
     async with ChatActionSender(bot=bot, chat_id=uid, action="typing"):
         await _deliver_topic_question_message(call, top, 0, showvideo)
 
@@ -4253,7 +4430,7 @@ async def on_start_command(message: types.Message):
     start_text = None
     if message.text and len(message.text.split()) > 1:
         start_text = ' '.join(message.text.split()[1:])
-    user_status = await bot.get_chat_member(chat_id="@csca_math_exam", user_id=message.chat.id)
+    user_status =  '' #await bot.get_chat_member(chat_id="@csca_math_exam", user_id=message.chat.id)
     log(message.from_user,['status', str(user_status) ])
     
     # Сохраняем/обновляем пользователя в БД
@@ -4944,13 +5121,13 @@ async def pay(user) :
             f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
             "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
             "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
-            "100 Telegram Stars  по кнопк ниже."
+            "250 Telegram Stars  по кнопк ниже."
         )
         kb = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
              #       InlineKeyboardButton(text="💳 Оплатить 100 руб. через ЮKassa", callback_data="pay_yookassa"),
-                    InlineKeyboardButton(text="⭐ Оплатить 100 Telegram Stars", callback_data="pay_stars"),
+                    InlineKeyboardButton(text="⭐ Оплатить 250 Telegram Stars", callback_data="pay_stars"),
                 ]
             ]
         )
@@ -4962,14 +5139,14 @@ async def pay(user) :
             "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
             f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
             "access will be unlocked after three new users follow your link.\n\n"
-            "If none of these options works for you, you can pay 100 Telegram Stars  "
+            "If none of these options works for you, you can pay 250 Telegram Stars  "
             "using the button below."
         )
         kb = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
                 #    InlineKeyboardButton(text="💳 Pay 100 RUB via YooKassa", callback_data="pay_yookassa"),
-                    InlineKeyboardButton(text="⭐ Pay 100 Telegram Stars", callback_data="pay_stars"),
+                    InlineKeyboardButton(text="⭐ Pay 250 Telegram Stars", callback_data="pay_stars"),
                 ]
             ]
         )
@@ -4979,25 +5156,25 @@ async def pay(user) :
 
 @router.callback_query(F.data == "pay_stars")
 async def on_pay_stars(call: CallbackQuery):
-    """Кнопка 'Оплатить 100 Telegram Stars' — отправляем инвойс в звёздах."""
+    """Кнопка «Оплатить 250 Telegram Stars» — отправляем инвойс в звёздах."""
     await call.answer()
     user = call.from_user
     lang = await _get_user_lang(user)
 
     if lang.startswith("ru"):
         title = "Доступ к режиму экзамена"
-        description = "Оплата 100 Telegram Stars за неограниченный доступ ко всем функциям бота."
+        description = "Оплата 250 Telegram Stars за неограниченный доступ ко всем функциям бота."
     else:
         title = "Exam mode access"
-        description = "Get unlimited access to all bot functionality for 100 Telegram Stars."
+        description = "Get unlimited access to all bot functionality for 250 Telegram Stars."
 
-    # 100 Stars (используем то же значение, что и раньше в боте)
-    prices = [types.LabeledPrice(label="Exam access", amount=100)]
+    # 250 Stars (для XTR amount — число звёзд)
+    prices = [types.LabeledPrice(label="Exam access", amount=250)]
     await bot.send_invoice(
         chat_id=user.id,
         title=title,
         description=description,
-        payload="exam_access_100stars",
+        payload="exam_access_250stars",
         currency="XTR",
         prices=prices,
         provider_token="",
@@ -5062,9 +5239,9 @@ async def process_successful_payment(message: types.Message):
 
     lang = await _get_user_lang(message.from_user)
     if lang.startswith("ru"):
-        text = "Оплата 100 Telegram Stars получена. Доступ к режиму экзамена и Mock Exam открыт."
+        text = "Оплата 250 Telegram Stars получена. Доступ к режиму экзамена и Mock Exam открыт."
     else:
-        text = "Payment of 100 Telegram Stars received. Exam mode and Mock Exam are now unlocked for you."
+        text = "Payment of 250 Telegram Stars received. Exam mode and Mock Exam are now unlocked for you."
     await message.answer(text)
 
 
@@ -5090,15 +5267,68 @@ async def on_any_message(message: Message):
         await message.answer(greet, reply_markup=kb)
         return
 
+    # Не отправляем команды в LLM
+    if message.text and message.text.strip().startswith("/"):
+        log(message.from_user, ['message', str(chat_id), message.text.replace("\n"," ") if message.text else "" ])
+       
+        return
+
     # Не логируем сообщения из группы -1003634233318
     if chat_id != -1003634233318:
         log(message.from_user, ['message', str(chat_id), message.text.replace("\n"," ") if message.text else "" ])
-   # async with ChatActionSender(bot=bot, chat_id=message.chat.id, action="typing"):
-   #  await message.answer( "Спасибо! Передам сообщение разработчикам")
-   #   await message.answer( "Чтобы продолжить, ответь на любой предыдущий вопрос")
-   #   await message.answer( "Или начни сначала")
-   #   kb = await start_kb(message.from_user.id)
-   #   await message.answer( question_text, reply_markup=kb)
+        _llm_text = message.text or ""
+        if not (7 < len(_llm_text) < 300):
+            return
+
+        llm_base_url = os.environ.get("LLM_BASE_URL", "http://localhost:8000").rstrip("/")
+        access_token = os.environ.get("LLM_TOKEN", "").strip()
+        access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NTU1MTE2NTQsImlhdCI6MTc2MTE3MTQ3OCwiYXV0aF90aW1lIjoxNzYwNDcxNjU0LCJqdGkiOiIxZDVmYjRiZi1mNTY2LTQzMGEtYmE3Mi04NmNhYmZkYTA2MWMiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiNWUxN2Q3NDMtY2I3OC00MzI1LWFhNGItMzBkODU5MmUzYjg5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.SmGtYXk3_uasqFIh9DxMpxk5ubU_b5AX7iU7vLAr98X6Emini_60GdUxmuCYDeeLg2dRKq6b1a4IcoYiQ3iZIzAIsOFvCMd3KrY2tXTp4jOMkT8IFi3AKv8Re58DL_vQev8A1hAQgnjCHWkybR4tM1ConoS_2rzHhHXeLOD0VlcowzGrMy2zfVSCgR_alUDD9oEOwT0BhPyaPALRqeWsU_z1aMY3v2VT20LhL-YqB3bUF3OXiXWL-JHLnNrTOb_087b-yi0DjXajUVuXc6V7a0gMtErGXA-CWXScgqZt0c5K3l8jE4n8OwtWwZcZRh64gn_zhti8yWCIdNseFzMbLA"
+        access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NTU1MTE2NTQsImlhdCI6MTc2MTE3MTQ3OCwiYXV0aF90aW1lIjoxNzYwNDcxNjU0LCJqdGkiOiIxZDVmYjRiZi1mNTY2LTQzMGEtYmE3Mi04NmNhYmZkYTA2MWMiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiNWUxN2Q3NDMtY2I3OC00MzI1LWFhNGItMzBkODU5MmUzYjg5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.SmGtYXk3_uasqFIh9DxMpxk5ubU_b5AX7iU7vLAr98X6Emini_60GdUxmuCYDeeLg2dRKq6b1a4IcoYiQ3iZIzAIsOFvCMd3KrY2tXTp4jOMkT8IFi3AKv8Re58DL_vQev8A1hAQgnjCHWkybR4tM1ConoS_2rzHhHXeLOD0VlcowzGrMy2zfVSCgR_alUDD9oEOwT0BhPyaPALRqeWsU_z1aMY3v2VT20LhL-YqB3bUF3OXiXWL-JHLnNrTOb_087b-yi0DjXajUVuXc6V7a0gMtErGXA-CWXScgqZt0c5K3l8jE4n8OwtWwZcZRh64gn_zhti8yWCIdNseFzMbLA"
+        if not access_token:
+            await message.answer(
+                "LLM token is not set. Set env var `LLM_TOKEN` to enable chat Q&A."
+            )
+            return
+
+        
+       
+
+        def _do_llm_request() -> str:
+            llm = AmveraLLM(model="gpt-4.1", temperature=0, api_token=access_token)
+
+            rag_text = load_rag_text()
+            messages = [
+                SystemMessage(content=rag_text),
+                SystemMessage(content="Отвечай коротко и по делу"),
+                HumanMessage(content=_llm_text),
+            ]
+
+            response = llm.invoke(messages)
+            # langchain-модель возвращает объект с .content
+            return response.content
+
+            
+
+            
+
+        try:
+            async with ChatActionSender(bot=bot, chat_id=message.chat.id, action="typing"):
+                answer_text = await asyncio.to_thread(_do_llm_request)
+            if answer_text:
+                try:
+                    ans_one_line = (answer_text or "").replace("\n", " ").strip()
+                    # не раздуваем лог: максимум 2000 символов
+                    if len(ans_one_line) > 2000:
+                        ans_one_line = ans_one_line[:2000] + "..."
+                    log(message.from_user, ["llm_answer", str(chat_id), f"len={len(answer_text or '')}", ans_one_line])
+                except Exception:
+                    pass
+                await message.answer(answer_text)
+        except Exception as e:
+            logging.error(f"LLM request error: {e}")
+            await message.answer("Ошибка при обращении к LLM. Попробуйте позже.")
+
+    # else: (группа) — без LLM ответа
 
 
 

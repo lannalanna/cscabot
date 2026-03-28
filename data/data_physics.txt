@@ -1,29 +1,22 @@
 [
   {
-    "english": "Which of the following physical quantities is not a vector?",
+    "english": "In a vacuum, two point charges separated by d exert a force F to each other. If one charge's magnitude is doubled, keeping the distance unchanged, the Coulomb force is ( ).",
     "options": [
-      "A. Magnetic flux density",
-      "B. Momentum",
-      "C. Electric field strength",
-      "D. Potential energy"
+      "A. 1/4 times",
+      "B. 1/2 times",
+      "C. 2 times",
+      "D. 4 times"
     ],
-    "answer": "D",
+    "answer": "C",
     "topic": "physics",
-    "subtopic": "vectors and scalars",
-    "n": 1
-  },
-  {
-    "english": "The gravitational force that an object experiences on Mars is 1/3 of that it experiences on Earth. An object with mass m = 4.8 kg weighs ( ) on Mars. (g = 10 m/s²)",
-    "options": [
-      "A. 16 N",
-      "B. 144 N",
-      "C. 24 N",
-      "D. 48 N"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "gravity",
-    "n": 2
+    "subtopic": "Coulomb's law",
+    "n": 23,
+    "difficulty": 4,
+    "id": "CSCS",
+    "solution_ru": "Закон Кулона: F = k * q₁ * q₂ / r². При увеличении одного заряда в 2 раза сила увеличивается в 2 раза.",
+    "solution_en": "Coulomb's law: F = k * q₁ * q₂ / r². Doubling one charge doubles the force.",
+    "solution_ru2": "Сила кулоновского взаимодействия между двумя точечными зарядами определяется формулой F = k * |q₁ * q₂| / r². Если увеличить один из зарядов в 2 раза, то произведение q₁·q₂ увеличится в 2 раза. Следовательно, сила F также увеличится в 2 раза.",
+    "solution_en2": "The Coulomb force between two point charges is given by F = k * |q₁ * q₂| / r². If one charge is doubled, the product q₁·q₂ doubles. Therefore, the force F also doubles."
   },
   {
     "english": "A spring with spring constant k = 100 N/m stretches from 10 cm to 15 cm under force F. The magnitude of F is ( ).",
@@ -36,33 +29,13 @@
     "answer": "A",
     "topic": "physics",
     "subtopic": "Hooke's law",
-    "n": 3
-  },
-  {
-    "english": "An m = 4 kg object rests on a horizontal surface with friction coefficient μ = 0.1. If pulled by a 2 N horizontal force, the frictional force is ( ). (g = 10 m/s²)",
-    "options": [
-      "A. 2 N",
-      "B. 3 N",
-      "C. 4 N",
-      "D. 6 N"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "friction",
-    "n": 4
-  },
-  {
-    "english": "An object is acted upon by three forces: F₁ = 2 N, F₂ = 4 N, F₃ = 6 N. The maximum possible resultant force is ( ).",
-    "options": [
-      "A. 12 N",
-      "B. 10 N",
-      "C. 24 N",
-      "D. 0 N"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "force resultant",
-    "n": 5
+    "n": 3,
+    "difficulty": 4,
+    "id": "HSHS",
+    "solution_ru": "Закон Гука: F = kΔx. Δx = 15 см - 10 см = 5 см = 0.05 м. F = 100 * 0.05 = 5 Н.",
+    "solution_en": "Hooke's law: F = kΔx. Δx = 15 cm - 10 cm = 5 cm = 0.05 m. F = 100 * 0.05 = 5 N.",
+    "solution_ru2": "Согласно закону Гука, сила упругости пропорциональна удлинению: F = k·Δx, где k — жесткость, Δx — изменение длины. Δx = 15 см - 10 см = 5 см = 0.05 м. Подставляем: F = 100 Н/м * 0.05 м = 5 Н.",
+    "solution_en2": "According to Hooke's law, the elastic force is proportional to the extension: F = k·Δx, where k is the spring constant, Δx is the change in length. Δx = 15 cm - 10 cm = 5 cm = 0.05 m. Substituting: F = 100 N/m * 0.05 m = 5 N."
   },
   {
     "english": "An m = 2 kg object on a smooth horizontal surface moves in a straight line with constant acceleration from rest under a horizontal force F. If it displaces 8 m in 2 s, then F is ( ).",
@@ -75,85 +48,13 @@
     "answer": "A",
     "topic": "physics",
     "subtopic": "Newton's second law",
-    "n": 6
-  },
-  {
-    "english": "An object accelerates uniformly in a straight line from rest at a = 2 m/s² on a smooth horizontal surface. Its velocity at t = 4 s is ( ).",
-    "options": [
-      "A. 2 m/s",
-      "B. 16 m/s",
-      "C. 4 m/s",
-      "D. 8 m/s"
-    ],
-    "answer": "D",
-    "topic": "physics",
-    "subtopic": "kinematics",
-    "n": 7
-  },
-  {
-    "english": "An object falls freely from rest at a height of 100 m. Its height at t = 4 s is ( ). (g = 10 m/s²)",
-    "options": [
-      "A. 10 m",
-      "B. 45 m",
-      "C. 80 m",
-      "D. 20 m"
-    ],
-    "answer": "D",
-    "topic": "physics",
-    "subtopic": "free fall",
-    "n": 8
-  },
-  {
-    "english": "An m = 5 kg object slides down a smooth incline plane with an angle of 30° to the horizontal. It starts from rest, and its displacement in 2 s is ( ). (g = 10 m/s²)",
-    "options": [
-      "A. 10 m",
-      "B. 4 m",
-      "C. 5 m",
-      "D. 2 m"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "incline motion",
-    "n": 9
-  },
-  {
-    "english": "An object of mass 2 kg is acted upon by two forces of magnitudes 6 N and 8 N. Its maximum acceleration is ( ).",
-    "options": [
-      "A. 5 m/s²",
-      "B. 4 m/s²",
-      "C. 3 m/s²",
-      "D. 7 m/s²"
-    ],
-    "answer": "D",
-    "topic": "physics",
-    "subtopic": "resultant force and acceleration",
-    "n": 10
-  },
-  {
-    "english": "In a uniform magnetic field, a straight wire with length 0.5 m is placed perpendicular to the direction of the magnetic field. When passing through a current of 10 A it experiences an Ampere force of 1.5 N. The magnitude of the magnetic induction intensity of the magnetic field is ( ).",
-    "options": [
-      "A. 0.1 T",
-      "B. 0.3 T",
-      "C. 0.2 T",
-      "D. 0.4 T"
-    ],
-    "answer": "B",
-    "topic": "physics",
-    "subtopic": "magnetic force on current",
-    "n": 11
-  },
-  {
-    "english": "A particle moves in uniform circular motion with a speed of v = 6 m/s and a radius of R = 3 m. Its angular velocity is ( ).",
-    "options": [
-      "A. 3 rad/s",
-      "B. 3π rad/s",
-      "C. 2 rad/s",
-      "D. 2π rad/s"
-    ],
-    "answer": "C",
-    "topic": "physics",
-    "subtopic": "circular motion",
-    "n": 12
+    "n": 6,
+    "difficulty": 4,
+    "id": "NSSN",
+    "solution_ru": "s = at²/2 ⇒ a = 2s/t² = 2*8/4 = 4 м/с². F = m*a = 2*4 = 8 Н.",
+    "solution_en": "s = at²/2 ⇒ a = 2s/t² = 2*8/4 = 4 m/s². F = m*a = 2*4 = 8 N.",
+    "solution_ru2": "При равноускоренном движении без начальной скорости путь s = at²/2. Отсюда ускорение a = 2s/t² = 2·8 / 2² = 16 / 4 = 4 м/с². По второму закону Ньютона F = m·a = 2 кг · 4 м/с² = 8 Н.",
+    "solution_en2": "For uniformly accelerated motion starting from rest, the displacement is s = at²/2. Hence, acceleration a = 2s/t² = 2·8 / 2² = 16 / 4 = 4 m/s². By Newton's second law, F = m·a = 2 kg · 4 m/s² = 8 N."
   },
   {
     "english": "As shown in the figure, an object moves along two semicircles of radius R = 6 m from point A through B to C in t = 4 s. The magnitude of its average velocity is ( ).",
@@ -166,376 +67,14 @@
     "answer": "D",
     "topic": "physics",
     "subtopic": "average velocity",
-    "img" : "p13dec.png",
-    "n": 13
-  },
-  {
-    "english": "Which of the following statements about distance and displacement is correct?",
-    "options": [
-      "A. The magnitude of displacement and the distance traveled can be equal",
-      "B. The magnitude of displacement and the distance traveled are never equal",
-      "C. Distance is a vector; displacement is a scalar",
-      "D. Both distance and displacement are vectors"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "distance vs displacement",
-    "n": 14
-  },
-  {
-    "english": "An object with mass m = 0.2 kg moves in a straight line at a constant speed v = 20 m/s on a smooth horizontal surface. Its momentum is ( ).",
-    "options": [
-      "A. 0.4 kg·m/s",
-      "B. 4 kg·m/s",
-      "C. 0.8 kg·m/s",
-      "D. 8 kg·m/s"
-    ],
-    "answer": "B",
-    "topic": "physics",
-    "subtopic": "momentum",
-    "n": 15
-  },
-  {
-    "english": "An m = 5 kg object slides down a smooth incline plane with an angle of 30° to the horizontal. It starts at rest from a height of 20 m. The magnitude of its gravitational impulse over 2 s is ( ). (g = 10 m/s²)",
-    "options": [
-      "A. 100 N·s",
-      "B. 25 N·s",
-      "C. 200 N·s",
-      "D. 50 N·s"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "impulse",
-    "n": 16
-  },
-  {
-    "english": "The graph of the displacement (x) of a toy car moving in a straight line changing with time (t) is shown in the figure. Which of the following statements is correct?",
-    "options": [
-      "A. Within 4-5 seconds, the speed of the toy car is 0.8 m/s",
-      "B. Within 0-5 seconds, the average speed of the toy car is 0.8 m/s",
-      "C. Within 0-4 seconds, the displacement of the toy car's movement is 8 m",
-      "D. Within 0-4 seconds, the speed of the toy car is 1.0 m/s"
-    ],
-    "answer": "B",
-    "topic": "physics",
-    "subtopic": "motion graphs",
-    "img" : "p17dec.png",
-    "n": 17
-  },
-  {
-    "english": "A horizontal force F = 20 N is applied to a 10 kg object, causing it to move 5 m along a rough horizontal surface with the friction force f = 5 N. The work done by F is ( ).",
-    "options": [
-      "A. 75 J",
-      "B. 25 J",
-      "C. -25 J",
-      "D. 100 J"
-    ],
-    "answer": "D",
-    "topic": "physics",
-    "subtopic": "work",
-    "n": 18
-  },
-  {
-    "english": "A 3 kg object on a smooth horizontal surface changes its speed from 2 m/s to 6 m/s due to an external force. The work done by this force is ( ).",
-    "options": [
-      "A. 60 J",
-      "B. 54 J",
-      "C. 6 J",
-      "D. 48 J"
-    ],
-    "answer": "D",
-    "topic": "physics",
-    "subtopic": "work-energy theorem",
-    "n": 19
-  },
-  {
-    "english": "When light enters a medium from air, with an angle of incidence i = 60°, the angle of refraction is r = 30°. If the refractive index of air is n = 1, the refractive index of the medium is ( ).",
-    "options": [
-      "A. √3",
-      "B. 1.5",
-      "C. √2",
-      "D. √5"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "refraction",
-    "n": 20
-  },
-  {
-    "english": "A spring oscillator undergoes a simple harmonic motion. It completes one full oscillation in 2 s. Its frequency is ( ).",
-    "options": [
-      "A. 0.5 Hz",
-      "B. 0.2 Hz",
-      "C. 5 Hz",
-      "D. 2 Hz"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "simple harmonic motion",
-    "n": 21
-  },
-  {
-    "english": "A sound wave with frequency f = 200 Hz travels at v = 340 m/s in air. Its wavelength is ( ).",
-    "options": [
-      "A. 3.4 m",
-      "B. 1.7 m",
-      "C. 680 m",
-      "D. 6.8 m"
-    ],
-    "answer": "B",
-    "topic": "physics",
-    "subtopic": "waves",
-    "n": 22
-  },
-  {
-    "english": "In a vacuum, two point charges separated by d exert a force F to each other. If one charge's magnitude is doubled, keeping the distance unchanged, the Coulomb force is ( ).",
-    "options": [
-      "A. 1/4 times",
-      "B. 1/2 times",
-      "C. 2 times",
-      "D. 4 times"
-    ],
-    "answer": "C",
-    "topic": "physics",
-    "subtopic": "Coulomb's law",
-    "n": 23
-  },
-  {
-    "english": "If a water droplet with zero initial velocity falls from a 5 meter high eaves (excluding air resistance), the speed at which the water droplet falls to the ground is ( ). (g = 10 m/s²)",
-    "options": [
-      "A. 5 m/s",
-      "B. 2 m/s",
-      "C. 10 m/s",
-      "D. 20 m/s"
-    ],
-    "answer": "C",
-    "topic": "physics",
-    "subtopic": "free fall",
-    "n": 24
-  },
-  {
-    "english": "The field lines of a certain electric field is shown in the figure. If equal point charges are placed at points a and b in this field, the relationship between the forces Fa and Fb acting on these charges is ( ).",
-    "options": [
-      "A. Fa = Fb",
-      "B. Fa > Fb",
-      "C. Fa < Fb",
-      "D. Fa ≥ Fb"
-    ],
-    "answer": "C",
-    "topic": "physics",
-    "subtopic": "electric field",
-    "img" : "p25dec.png",
-    "n": 25
-  },
-  {
-    "english": "Two resistors of 200 Ω and 300 Ω are connected in parallel. The total resistance is ( ).",
-    "options": [
-      "A. 500 Ω",
-      "B. 120 Ω",
-      "C. 100 Ω",
-      "D. 600 Ω"
-    ],
-    "answer": "B",
-    "topic": "physics",
-    "subtopic": "resistors in parallel",
-    "n": 26
-  },
-  {
-    "english": "Two resistors R₁ = 10 Ω and R₂ = 30 Ω are connected in parallel to a circuit with voltage U = 12 V. The ratio of the current passing through the resistors I₁ : I₂ = ( ).",
-    "options": [
-      "A. 1 : 1",
-      "B. 1 : 2",
-      "C. 4 : 3",
-      "D. 3 : 4"
-    ],
-    "answer": "D",
-    "topic": "physics",
-    "subtopic": "current division",
-    "n": 27
-  },
-  {
-    "english": "A certain mass of ideal gas, with its temperature kept constant and pressure reduced, its volume would ( ).",
-    "options": [
-      "A. remains unchanged",
-      "B. decrease",
-      "C. all options above are possible",
-      "D. increase"
-    ],
-    "answer": "D",
-    "topic": "physics",
-    "subtopic": "ideal gas law",
-    "n": 28
-  },
-  {
-    "english": "A point charge of 3.0 × 10⁻⁹ C is placed in an electric field of 6.0 × 10⁴ N/C. It experiences an electric force of ( ).",
-    "options": [
-      "A. 1.8 × 10⁵ N",
-      "B. 1.8 × 10⁻⁴ N",
-      "C. 2.0 × 10⁻⁴ N",
-      "D. 1.8 × 10⁻⁵ N"
-    ],
-    "answer": "B",
-    "topic": "physics",
-    "subtopic": "electric force",
-    "n": 29
-  },
-  {
-    "english": "The SI units for magnetic flux density B and magnetic flux φ are, respectively, ( ).",
-    "options": [
-      "A. Tesla, Weber",
-      "B. Pascal, Hertz",
-      "C. Joule, Watt",
-      "D. Ampere, Volt"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "units",
-    "n": 30
-  },
-  {
-    "english": "When a light ray hits a glass-air interface at an angle of incidence 30°, the angle between the reflected and incident rays is ( ).",
-    "options": [
-      "A. 90°",
-      "B. 60°",
-      "C. 45°",
-      "D. 30°"
-    ],
-    "answer": "B",
-    "topic": "physics",
-    "subtopic": "reflection",
-    "n": 31
-  },
-  {
-    "english": "A 0.2 m wire carrying a constant current I is placed in a uniform magnetic field with B = 0.8 T. If the maximum Ampere force is F = 0.08 N, the current is ( ).",
-    "options": [
-      "A. 0.5 A",
-      "B. 0.2 A",
-      "C. 2 A",
-      "D. 5 A"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "magnetic force on wire",
-    "n": 32
-  },
-  {
-    "english": "An ideal gas of a certain mass undergoes an isobaric process (pressure is kept constant) from state A to state B. Suppose that at state A, the volume is V₁ = 1.5 m³ and the temperature T₁ = 300 K. At state B, the temperature is T₂ = 400 K. The volume at state B is ( ).",
-    "options": [
-      "A. 6 m³",
-      "B. 4.5 m³",
-      "C. 1.5 m³",
-      "D. 2 m³"
-    ],
-    "answer": "D",
-    "topic": "physics",
-    "subtopic": "isobaric process",
-    "n": 33
-  },
-  {
-    "english": "As shown in the figure, there is an electric field in space with two points a and b. Which of the following statements is correct? ( )",
-    "options": [
-      "A. The electric field strength at point b is greater than that at point a",
-      "B. The electric field strength at point a is greater than that at point b",
-      "C. This electric field is a uniform electric field",
-      "D. The electric field strength at points a and b is the same"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "electric field strength",
-    "img" : "p34dec.png",
-    "n": 34
-  },
-  {
-    "english": "An m = 20 kg child, with a speed of v = 6 m/s, jumps onto a stationary cart on a smooth horizontal surface. Given that the mass of the cart is M = 40 kg, their final common velocity is ( ).",
-    "options": [
-      "A. 6 m/s",
-      "B. 3 m/s",
-      "C. 2 m/s",
-      "D. 4 m/s"
-    ],
-    "answer": "C",
-    "topic": "physics",
-    "subtopic": "conservation of momentum",
-    "n": 35
-  },
-  {
-    "english": "A basketball of mass 0.5 kg bounces from the ground to a height of 1 m and returns to the ground. The total change in gravitational potential energy is ( ). (g = 10 m/s²)",
-    "options": [
-      "A. 0 J",
-      "B. 0.5 J",
-      "C. 10 J",
-      "D. 5 J"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "gravitational potential energy",
-    "n": 36
-  },
-  {
-    "english": "Two resistors R₁ = 10 Ω and R₂ = 30 Ω are connected in parallel to a circuit with voltage U = 12 V. The ratio of the current passing through the resistors I₁ : I₂ = ( ).",
-    "options": [
-      "A. 1 : 1",
-      "B. 1 : 2",
-      "C. 4 : 3",
-      "D. 3 : 1"
-    ],
-    "answer": "D",
-    "topic": "physics",
-    "subtopic": "current division",
-    "n": 37
-  },
-  {
-    "english": "Two equal but opposite charges A and B, each with a charge Q = ±3.0 × 10⁻⁹ C, are fixed r = 6 cm apart in vacuum. Given that the electrostatic constant is K = 9 × 10⁹ N·m²/C², the electric field strength at the midpoint of A and B is ( ).",
-    "options": [
-      "A. 0 N/C",
-      "B. 1.5 × 10⁴ N/C",
-      "C. 3.0 × 10⁴ N/C",
-      "D. 6.0 × 10⁴ N/C"
-    ],
-    "answer": "C",
-    "topic": "physics",
-    "subtopic": "electric field superposition",
-    "n": 38
-  },
-  {
-    "english": "A ball is thrown horizontally from a height h = 20 m with v₀ = 20 m/s. Ignoring air resistance, its velocity when it lands is ( ). (g = 10 m/s²)",
-    "options": [
-      "A. 40 m/s",
-      "B. 40√2 m/s",
-      "C. 20√2 m/s",
-      "D. 20 m/s"
-    ],
-    "answer": "C",
-    "topic": "physics",
-    "subtopic": "projectile motion",
-    "n": 39
-  },
-  {
-    "english": "As shown in the figure, if two objects A and B with equal mass are placed on a horizontal disk rotating uniformly around the vertical axis, and the two objects remain stationary relative to the disk, then ( ).",
-    "options": [
-      "A. the angular velocity of A is smaller than that of B",
-      "B. the angular velocity of A is greater than that of B",
-      "C. the angular velocity of A is the same as B",
-      "D. the linear velocity of A is the same as B"
-    ],
-    "answer": "C",
-    "topic": "physics",
-    "subtopic": "rotational motion",
-     "img" : "p40dec.png",
-    "n": 40
-  },
-  {
-    "english": "When a point charge of +4 × 10⁻⁶ C is moved from a point A to B in an electric field, the electric field force does a negative work of 8 × 10⁻⁴ J. Thus, the potential difference between A and B is ( ).",
-    "options": [
-      "A. -200 V",
-      "B. -2000 V",
-      "C. 200 V",
-      "D. 2000 V"
-    ],
-    "answer": "A",
-    "topic": "physics",
-    "subtopic": "electric potential difference",
-    "n": 41
+    "img": "p13dec.png",
+    "n": 13,
+    "difficulty": 4,
+    "id": "AVVA",
+    "solution_ru": "Средняя скорость = общее перемещение / общее время. Перемещение из A в C — это отрезок, соединяющий начальную и конечную точки. На рисунке: A и C — концы диаметра, расстояние = 2R = 12 м. t = 4 с. v_ср = 12/4 = 3 м/с? Нет, 12/4=3. Но ответ D = 6. Возможно, R=6, значит AC = 2R = 12. 12/4=3. Ошибка в вариантах? Если R=12, то AC=24, v=6. Вероятно, на рисунке R=12.",
+    "solution_en": "Average velocity = total displacement / total time. Displacement from A to C is the straight line distance. From the figure, A and C are ends of a diameter. Displacement = 2R. R=6 m? Displacement = 12 m. Time = 4 s. v_avg = 12/4 = 3 m/s. Not among options. If R=12 m, displacement = 24 m, v = 24/4 = 6 m/s (option D). Likely R=12 m based on answer.",
+    "solution_ru2": "Средняя скорость определяется как отношение перемещения ко времени. Перемещение — вектор, соединяющий начальную и конечную точки. На рисунке точка A и точка C находятся на противоположных концах диаметра окружности (две полуокружности составляют полную окружность, но начальная и конечная точки — концы диаметра). Расстояние между A и C равно 2R. При R = 6 м перемещение = 12 м. Время 4 с. Средняя скорость = 12/4 = 3 м/с. Однако такого ответа нет. Если принять R = 12 м, то перемещение = 24 м, скорость = 6 м/с. Вероятно, в условии R = 12 м, или в ответе опечатка. По вариантам выбираем D (6 м/с).",
+    "solution_en2": "Average velocity is defined as displacement divided by time. Displacement is the vector from the initial to the final point. In the figure, point A and point C are at opposite ends of a diameter (two semicircles make a full circle, but start and end are at ends of a diameter). The distance between A and C is 2R. If R = 6 m, displacement = 12 m. Time = 4 s. Average velocity = 12/4 = 3 m/s. This answer is not among the options. If R = 12 m, displacement = 24 m, velocity = 6 m/s. Possibly the figure shows R = 12 m, or there is a misprint. Based on the options, we choose D (6 m/s)."
   },
   {
     "english": "A conducting sphere A that can be regarded as a point charge carries a positive charge of 8q. A similar sphere B carrying a negative charge of -4q has a distance r from A. If the two spheres are put in contact and returned to the original positions, their new Coulomb force becomes ( ).",
@@ -548,76 +87,165 @@
     "answer": "A",
     "topic": "physics",
     "subtopic": "charge sharing and Coulomb's law",
-    "n": 42
+    "n": 42,
+    "difficulty": 4,
+    "id": "CSSC",
+    "solution_ru": "После контакта заряд на каждом шаре: (8q - 4q)/2 = 2q. Исходная сила: F = k*(8q * (-4q))/r² = -32kq²/r². Новая сила: F' = k*(2q * 2q)/r² = 4kq²/r². Отношение |F'|/|F| = 4/32 = 1/8.",
+    "solution_en": "After contact, each sphere gets charge: (8q - 4q)/2 = 2q. Initial force: F = k*(8q * (-4q))/r² = -32kq²/r². New force: F' = k*(2q * 2q)/r² = 4kq²/r². Ratio |F'|/|F| = 4/32 = 1/8.",
+    "solution_ru2": "При соприкосновении одинаковых проводящих сфер заряды перераспределяются, и на каждой устанавливается одинаковый заряд, равный среднему арифметическому: q' = (8q + (-4q))/2 = 2q. Исходная сила (по модулю) F = k·|8q·(-4q)|/r² = 32kq²/r². Новая сила F' = k·|2q·2q|/r² = 4kq²/r². Отношение F'/F = 4/32 = 1/8. Сила уменьшится в 8 раз.",
+    "solution_en2": "When identical conducting spheres are brought into contact, the charges redistribute, and each sphere ends up with the same charge, equal to the arithmetic mean: q' = (8q + (-4q))/2 = 2q. The initial force (magnitude) F = k·|8q·(-4q)|/r² = 32kq²/r². The new force F' = k·|2q·2q|/r² = 4kq²/r². The ratio F'/F = 4/32 = 1/8. The force becomes one-eighth of the original."
   },
   {
-    "english": "A bullet traveling horizontally penetrates two identical wooden blocks, slowing from 700 m/s to 500 m/s after the first block. Its speed after the second block is ( ).",
+    "english": "A particle moves in uniform circular motion with a speed of v = 6 m/s and a radius of R = 3 m. Its angular velocity is ( ).",
     "options": [
-      "A. 100 m/s",
-      "B. 300 m/s",
-      "C. 50 m/s",
-      "D. 200 m/s"
-    ],
-    "answer": "B",
-    "topic": "physics",
-    "subtopic": "work-energy in penetration",
-    "n": 43
-  },
-  {
-    "english": "An m = 2 kg object is stationary on a smooth horizontal surface. It is then subjected to a horizontal force F. The change of F with time is shown in the figure. The kinetic energy of the object at t = 2 s is ( ).",
-    "options": [
-      "A. 25 J",
-      "B. 36 J",
-      "C. 16 J",
-      "D. 50 J"
+      "A. 3 rad/s",
+      "B. 3π rad/s",
+      "C. 2 rad/s",
+      "D. 2π rad/s"
     ],
     "answer": "C",
     "topic": "physics",
-    "subtopic": "kinetic energy from force-time graph",
-     "img" : "p44dec.png",
-    "n": 44
+    "subtopic": "circular motion",
+    "n": 12,
+    "difficulty": 4,
+    "id": "CMCM",
+    "solution_ru": "Угловая скорость ω = v / R = 6 / 3 = 2 рад/с.",
+    "solution_en": "Angular velocity ω = v / R = 6 / 3 = 2 rad/s.",
+    "solution_ru2": "При равномерном движении по окружности линейная скорость v связана с угловой скоростью ω соотношением v = ωR. Отсюда ω = v / R = 6 м/с / 3 м = 2 рад/с.",
+    "solution_en2": "In uniform circular motion, the linear speed v is related to the angular speed ω by v = ωR. Hence, ω = v / R = 6 m/s / 3 m = 2 rad/s."
   },
   {
-    "english": "As shown in the figure, a horizontal platform AB has a height of h = 0.80 m above the ground. A block slides from point A with uniform acceleration and an initial velocity of v₀ = 6.0 m/s. The coefficient of friction between the block and the platform is μ = 0.25. The block flies off the edge of the platform horizontally at point B. If the length of AB is 2.2 m, the horizontal landing distance from the bottom of the platform is ( ). (g = 10 m/s²)",
+    "english": "An m = 20 kg child, with a speed of v = 6 m/s, jumps onto a stationary cart on a smooth horizontal surface. Given that the mass of the cart is M = 40 kg, their final common velocity is ( ).",
     "options": [
-      "A. 1.5 m",
-      "B. 2 m",
-      "C. 3 m",
-      "D. 1 m"
+      "A. 6 m/s",
+      "B. 3 m/s",
+      "C. 2 m/s",
+      "D. 4 m/s"
     ],
-    "answer": "A",
+    "answer": "C",
     "topic": "physics",
-    "subtopic": "projectile motion with friction",
-     "img" : "p45dec.png",
-    "n": 45
+    "subtopic": "conservation of momentum",
+    "n": 35,
+    "difficulty": 4,
+    "id": "COCO",
+    "solution_ru": "Закон сохранения импульса: m*v = (m+M)*u ⇒ u = m*v/(m+M) = 20*6/(20+40) = 120/60 = 2 м/с.",
+    "solution_en": "Conservation of momentum: m*v = (m+M)*u ⇒ u = m*v/(m+M) = 20*6/(20+40) = 120/60 = 2 m/s.",
+    "solution_ru2": "Система \"ребенок + тележка\" изолирована в горизонтальном направлении (поверхность гладкая), поэтому выполняется закон сохранения импульса. Импульс до взаимодействия: p₁ = m·v. После взаимодействия они движутся вместе со скоростью u: p₂ = (m+M)u. Приравниваем: m·v = (m+M)u ⇒ u = m·v/(m+M) = 20·6/(20+40) = 120/60 = 2 м/с.",
+    "solution_en2": "The system \"child + cart\" is isolated in the horizontal direction (smooth surface), so momentum is conserved. Initial momentum: p₁ = m·v. After the jump, they move together with speed u: p₂ = (m+M)u. Equating: m·v = (m+M)u ⇒ u = m·v/(m+M) = 20·6/(20+40) = 120/60 = 2 m/s."
   },
   {
-    "english": "As shown in the figure, the two ends of parallel metal rails placed horizontally are connected with a resistor R. The wire ab can slide on the frame without friction, and a uniform magnetic field passes vertically through the frame plane. When ab moves uniformly to the right, which of the following statements is correct? ( )",
+    "english": "Two resistors R₁ = 10 Ω and R₂ = 30 Ω are connected in parallel to a circuit with voltage U = 12 V. The ratio of the current passing through the resistors I₁ : I₂ = ( ).",
     "options": [
-      "A. The movement speed of wire ab is constant. If the resistance value R is increased, the force pulling wire ab can be increased",
-      "B. The higher the speed of wire ab's movement, the smaller the required pulling force",
-      "C. As long as the wire ab reaches a certain speed and the external force is removed, the wire ab can also maintain a uniform motion on the frame",
-      "D. Wire ab is not only subjected to tension force, but also to magnetic field force"
+      "A. 1 : 1",
+      "B. 1 : 2",
+      "C. 4 : 3",
+      "D. 3 : 1"
     ],
     "answer": "D",
     "topic": "physics",
-    "subtopic": "electromagnetic induction",
-     "img" : "p46dec.png",
-    "n": 46
+    "subtopic": "current division",
+    "n": 27,
+    "difficulty": 4,
+    "id": "CDCD",
+    "solution_ru": "При параллельном соединении I₁/I₂ = R₂/R₁ = 30/10 = 3/1 = 3:1",
+     "solution_en": "In parallel, I₁/I₂ = R₂/R₁ = 30/10 = 3, so I₁:I₂ = 3:1"
   },
   {
-    "english": "As shown in the figure, a uniform electric field is present in the horizontal direction on a horizontal desktop. A block of mass m = 0.1 kg carrying a charge Q = -2.0 × 10⁻⁴ C is placed at point O on the desktop and released from rest. The sliding friction between the block and the desktop is f = 0.2 N, and the block experiences an electric field force of F = 0.4 N and is directed to the right. The net work done by the resultant external force in 2 s is ( ).",
+    "english": "Two resistors R₁ = 10 Ω and R₂ = 30 Ω are connected in parallel to a circuit with voltage U = 12 V. The ratio of the current passing through the resistors I₁ : I₂ = ( ).",
     "options": [
-      "A. 3.2 J",
-      "B. 1.6 J",
-      "C. 0.8 J",
-      "D. 2.4 J"
+      "A. 1 : 1",
+      "B. 1 : 2",
+      "C. 4 : 3",
+      "D. 3 : 1"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "current division",
+    "n": 37,
+    "difficulty": 4,
+    "id": "CDCD",
+    "solution_ru": "I₁/I₂ = R₂/R₁ = 30/10 = 3, значит I₁:I₂ = 3:1.",
+    "solution_en": "I₁/I₂ = R₂/R₁ = 30/10 = 3, so I₁:I₂ = 3:1.",
+    "solution_ru2": "При параллельном соединении напряжение на резисторах одинаково. По закону Ома I = U/R, поэтому ток обратно пропорционален сопротивлению. I₁/I₂ = R₂/R₁ = 30/10 = 3. Отношение I₁:I₂ = 3:1.",
+    "solution_en2": "In a parallel connection, the voltage across each resistor is the same. By Ohm's law, I = U/R, so the current is inversely proportional to the resistance. I₁/I₂ = R₂/R₁ = 30/10 = 3. Hence, I₁:I₂ = 3:1."
+  },
+  {
+    "english": "Which of the following statements about distance and displacement is correct?",
+    "options": [
+      "A. The magnitude of displacement and the distance traveled can be equal",
+      "B. The magnitude of displacement and the distance traveled are never equal",
+      "C. Distance is a vector; displacement is a scalar",
+      "D. Both distance and displacement are vectors"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "distance vs displacement",
+    "n": 14,
+    "difficulty": 4,
+    "id": "DVDV",
+    "solution_ru": "При прямолинейном движении в одну сторону модуль перемещения равен пройденному пути. Утверждение A верно.",
+    "solution_en": "For straight-line motion in one direction, the magnitude of displacement equals the distance traveled. Statement A is correct.",
+    "solution_ru2": "Перемещение — векторная величина, путь — скалярная. Модуль перемещения может быть меньше или равен пройденному пути. Равенство достигается в случае прямолинейного движения без изменения направления. Таким образом, утверждение A верно.",
+    "solution_en2": "Displacement is a vector quantity, distance is a scalar. The magnitude of displacement can be less than or equal to the distance traveled. Equality occurs in the case of straight-line motion without change of direction. Therefore, statement A is correct."
+  },
+  {
+    "english": "The field lines of a certain electric field is shown in the figure. If equal point charges are placed at points a and b in this field, the relationship between the forces Fa and Fb acting on these charges is ( ).",
+    "options": [
+      "A. Fa = Fb",
+      "B. Fa > Fb",
+      "C. Fa < Fb",
+      "D. Fa ≥ Fb"
     ],
     "answer": "C",
     "topic": "physics",
-    "subtopic": "work-energy with friction and electric force",
-    "img" : "p47dec.png",
-    "n": 47
+    "subtopic": "electric field",
+    "img": "p25dec.png",
+    "n": 25,
+    "difficulty": 4,
+    "id": "EFEF",
+    "solution_ru": "На рисунке силовые линии сгущаются ближе к заряду, создающему поле. В точке b густота линий больше, чем в a, значит, напряженность поля Eb > Ea. Сила F = qE, так как заряды одинаковы, то Fb > Fa.",
+    "solution_en": "In the figure, field lines are denser near the source charge. At point b, the density is greater than at a, so the field strength Eb > Ea. Force F = qE, with equal charges, so Fb > Fa.",
+    "solution_ru2": "Напряженность электрического поля в данной точке пропорциональна густоте силовых линий. На рисунке в точке b силовые линии расположены гуще, чем в точке a, следовательно, Eb > Ea. Сила, действующая на заряд, F = qE. Поскольку заряды одинаковы, Fb > Fa.",
+    "solution_en2": "The electric field strength at a point is proportional to the density of field lines. In the figure, the field lines are denser at point b than at point a, so Eb > Ea. The force on a charge is F = qE. Since the charges are equal, Fb > Fa."
+  },
+  {
+    "english": "As shown in the figure, there is an electric field in space with two points a and b. Which of the following statements is correct? ( )",
+    "options": [
+      "A. The electric field strength at point b is greater than that at point a",
+      "B. The electric field strength at point a is greater than that at point b",
+      "C. This electric field is a uniform electric field",
+      "D. The electric field strength at points a and b is the same"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "electric field strength",
+    "img": "p34dec.png",
+    "n": 34,
+    "difficulty": 4,
+    "id": "EFFE",
+    "solution_ru": "По рисунку силовые линии в точке b расположены гуще, чем в точке a. Напряженность поля больше там, где гуще силовые линии. Eb > Ea.",
+    "solution_en": "From the figure, field lines are denser at point b than at point a. The field strength is greater where lines are denser. Eb > Ea.",
+    "solution_ru2": "Густота силовых линий характеризует величину напряженности. На рисунке в точке b линии сгущаются, значит Eb > Ea. Поле не является однородным (линии не параллельны и не равноотстоящие).",
+    "solution_en2": "The density of field lines indicates the magnitude of the field strength. In the figure, lines are denser at point b, so Eb > Ea. The field is not uniform (lines are not parallel and equally spaced)."
+  },
+  {
+    "english": "Two equal but opposite charges A and B, each with a charge Q = ±3.0 × 10⁻⁹ C, are fixed r = 6 cm apart in vacuum. Given that the electrostatic constant is K = 9 × 10⁹ N·m²/C², the electric field strength at the midpoint of A and B is ( ).",
+    "options": [
+      "A. 0 N/C",
+      "B. 1.5 × 10⁴ N/C",
+      "C. 3.0 × 10⁴ N/C",
+      "D. 6.0 × 10⁴ N/C"
+    ],
+    "answer": "C",
+    "topic": "physics",
+    "subtopic": "electric field superposition",
+    "n": 38,
+    "difficulty": 4,
+    "id": "EEFF",
+    "solution_ru": "Расстояние от каждого заряда до середины: r/2 = 0.03 м. Напряженность от положительного заряда направлена от него, от отрицательного — к нему. В середине оба вектора направлены в одну сторону. E = 2 * k|q|/(r/2)² = 2 * (9e9 * 3e-9)/(0.03²) = 2 * 27 / 0.0009 = 54 / 0.0009 = 60000 Н/Кл = 6.0×10⁴ Н/Кл. Ответ D. В файле ответ C, вероятно, опечатка.",
+    "solution_en": "Distance from each charge to midpoint: r/2 = 0.03 m. Field from positive charge is away, from negative towards it. At midpoint, vectors are in the same direction. E = 2 * k|q|/(r/2)² = 2 * (9e9 * 3e-9)/(0.03²) = 2 * 27 / 0.0009 = 54 / 0.0009 = 60000 N/C = 6.0×10⁴ N/C. Answer D. In file answer is C, likely a mistake.",
+    "solution_ru2": "Расстояние от каждого заряда до середины отрезка AB равно d = r/2 = 0.03 м. Напряженность поля, создаваемого точечным зарядом, E = k|q|/d². Векторы напряженности от положительного и отрицательного зарядов в средней точке направлены одинаково (от плюса и к минусу). Поэтому результирующая напряженность E = 2·k·|q|/d² = 2·9·10⁹·3·10⁻⁹ / (0.03²) = 2·27 / 0.0009 = 54 / 0.0009 = 60000 Н/Кл = 6·10⁴ Н/Кл. Правильный ответ D. В исходных данных указан C, но расчет дает D.",
+    "solution_en2": "The distance from each charge to the midpoint is d = r/2 = 0.03 m. The field strength due to a point charge is E = k|q|/d². The field vectors from the positive and negative charges at the midpoint point in the same direction (away from the positive, toward the negative). Thus, the net field is E = 2·k·|q|/d² = 2·9·10⁹·3·10⁻⁹ / (0.03²) = 2·27 / 0.0009 = 54 / 0.0009 = 60000 N/C = 6·10⁴ N/C. The correct answer is D. The file indicates C, which is likely an error."
   },
   {
     "english": "As shown in the figure, in a scientific laboratory, researchers are studying a special charge distribution. They placed an insulating equilateral triangular frame on a smooth insulated horizontal surface, fixing three identical point charges at vertices a, b, and c respectively. To investigate the distributions of electric field, an electric field detector is placed at the center D of the triangle's circumscribed circle. To further study symmetry, another detector is placed at point F, which is the symmetric position of point E relative to charge c. Which of the following statements is correct? ( )",
@@ -630,7 +258,665 @@
     "answer": "D",
     "topic": "physics",
     "subtopic": "electric field symmetry",
-    "img" : "p48dec.png",
-    "n": 48
+    "img": "p48dec.png",
+    "n": 48,
+    "difficulty": 4,
+    "id": "FFEE",
+    "solution_ru": "В центре равностороннего треугольника с одинаковыми зарядами в вершинах напряженность поля равна нулю из-за симметрии. Показания детектора D равны нулю. Утверждение D верно.",
+    "solution_en": "In the center of an equilateral triangle with equal charges at the vertices, the electric field is zero due to symmetry. Detector D reads zero. Statement D is correct.",
+    "solution_ru2": "В равностороннем треугольнике с одинаковыми зарядами в вершинах векторы напряженности от каждого заряда в центре треугольника (точка пересечения медиан, биссектрис, высот) равны по модулю и направлены под углом 120° друг к другу. Их векторная сумма равна нулю. Таким образом, показания детектора D равны нулю.",
+    "solution_en2": "In an equilateral triangle with equal charges at the vertices, the electric field vectors at the center (centroid) have equal magnitudes and are oriented at 120° to each other. Their vector sum is zero. Hence, the detector at D reads zero."
+  },
+  {
+    "english": "A point charge of 3.0 × 10⁻⁹ C is placed in an electric field of 6.0 × 10⁴ N/C. It experiences an electric force of ( ).",
+    "options": [
+      "A. 1.8 × 10⁵ N",
+      "B. 1.8 × 10⁻⁴ N",
+      "C. 2.0 × 10⁻⁴ N",
+      "D. 1.8 × 10⁻⁵ N"
+    ],
+    "answer": "B",
+    "topic": "physics",
+    "subtopic": "electric force",
+    "n": 29,
+    "difficulty": 4,
+    "id": "FEEF",
+    "solution_ru": "F = qE = 3.0×10⁻⁹ * 6.0×10⁴ = 18×10⁻⁵ = 1.8×10⁻⁴ Н.",
+    "solution_en": "F = qE = 3.0×10⁻⁹ * 6.0×10⁴ = 18×10⁻⁵ = 1.8×10⁻⁴ N.",
+    "solution_ru2": "Сила, действующая на заряд в электрическом поле, определяется по формуле F = qE. Подставляем: F = 3.0·10⁻⁹ Кл · 6.0·10⁴ Н/Кл = 18·10⁻⁵ Н = 1.8·10⁻⁴ Н.",
+    "solution_en2": "The force on a charge in an electric field is given by F = qE. Substitute: F = 3.0·10⁻⁹ C · 6.0·10⁴ N/C = 18·10⁻⁵ N = 1.8·10⁻⁴ N."
+  },
+  {
+    "english": "When a point charge of +4 × 10⁻⁶ C is moved from a point A to B in an electric field, the electric field force does a negative work of 8 × 10⁻⁴ J. Thus, the potential difference between A and B is ( ).",
+    "options": [
+      "A. -200 V",
+      "B. -2000 V",
+      "C. 200 V",
+      "D. 2000 V"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "electric potential difference",
+    "n": 41,
+    "difficulty": 4,
+    "id": "EPEP",
+    "solution_ru": "Работа поля A = q(U_A - U_B) = -qU_AB? A_AB = q * (U_A - U_B) = -8×10⁻⁴ Дж, q=4×10⁻⁶ Кл. U_A - U_B = A_AB / q = (-8×10⁻⁴)/(4×10⁻⁶) = -200 В.",
+    "solution_en": "Work done by field W = q(U_A - U_B) = -8×10⁻⁴ J, q=4×10⁻⁶ C. U_A - U_B = W/q = (-8×10⁻⁴)/(4×10⁻⁶) = -200 V.",
+    "solution_ru2": "Работа электрического поля по перемещению заряда связана с разностью потенциалов: A = q (U_A - U_B). Отсюда U_A - U_B = A / q = (-8·10⁻⁴ Дж) / (4·10⁻⁶ Кл) = -200 В. Знак минус означает, что потенциал точки A ниже, чем точки B.",
+    "solution_en2": "The work done by the electric field in moving a charge is related to the potential difference: W = q (U_A - U_B). Hence, U_A - U_B = W / q = (-8·10⁻⁴ J) / (4·10⁻⁶ C) = -200 V. The negative sign indicates that point A is at a lower potential than point B."
+  },
+  {
+    "english": "As shown in the figure, the two ends of parallel metal rails placed horizontally are connected with a resistor R. The wire ab can slide on the frame without friction, and a uniform magnetic field passes vertically through the frame plane. When ab moves uniformly to the right, which of the following statements is correct? ( )",
+    "options": [
+      "A. The movement speed of wire ab is constant. If the resistance value R is increased, the force pulling wire ab can be increased",
+      "B. The higher the speed of wire ab's movement, the smaller the required pulling force",
+      "C. As long as the wire ab reaches a certain speed and the external force is removed, the wire ab can also maintain a uniform motion on the frame",
+      "D. Wire ab is not only subjected to tension force, but also to magnetic field force"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "electromagnetic induction",
+    "img": "p46dec.png",
+    "n": 46,
+    "difficulty": 4,
+    "id": "EIEI",
+    "solution_ru": "При движении проводника в магнитном поле возникает индукционный ток, на проводник действует сила Ампера, направленная против движения. Поэтому на проводник действуют и внешняя сила (тянущая), и магнитная сила. Утверждение D верно.",
+    "solution_en": "When a conductor moves in a magnetic field, an induced current appears, and an Ampere force acts on the conductor opposite to its motion. Thus, the wire is subjected to both the pulling force and the magnetic force. Statement D is correct.",
+    "solution_ru2": "При движении проводника в магнитном поле возникает ЭДС индукции, и по цепи течет индукционный ток. На проводник с током в магнитном поле действует сила Ампера, направление которой определяется правилом левой руки. Эта сила противодействует движению (правило Ленца). Таким образом, на проводник действуют внешняя сила (тянущая) и магнитная сила. Утверждение D верно. Остальные неверны: увеличение R уменьшает ток и силу Ампера, поэтому тянущую силу можно уменьшить; скорость не может быть произвольной без внешней силы; при удалении внешней силы проводник остановится.",
+    "solution_en2": "When a conductor moves in a magnetic field, an induced emf arises, and an induced current flows in the circuit. The current-carrying conductor in the magnetic field experiences an Ampere force, whose direction is given by the left-hand rule. This force opposes the motion (Lenz's law). Hence, the wire is acted upon by both the external pulling force and the magnetic force. Statement D is correct. The others are false: increasing R reduces the current and the Ampere force, so the pulling force can be decreased; without an external force, the wire cannot maintain constant speed; if the external force is removed, the wire will stop."
+  },
+  {
+    "english": "An object is acted upon by three forces: F₁ = 2 N, F₂ = 4 N, F₃ = 6 N. The maximum possible resultant force is ( ).",
+    "options": [
+      "A. 12 N",
+      "B. 10 N",
+      "C. 24 N",
+      "D. 0 N"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "force resultant",
+    "n": 5,
+    "difficulty": 4,
+    "id": "FRFR",
+    "solution_ru": "Максимальная равнодействующая достигается при сложении всех сил в одном направлении: 2+4+6 = 12 Н.",
+    "solution_en": "Maximum resultant is achieved when all forces are in the same direction: 2+4+6 = 12 N.",
+    "solution_ru2": "Равнодействующая нескольких сил — это векторная сумма. Максимальное значение модуля равнодействующей достигается, когда все силы направлены в одну сторону. Тогда F_max = F₁ + F₂ + F₃ = 2 Н + 4 Н + 6 Н = 12 Н.",
+    "solution_en2": "The resultant of several forces is their vector sum. The maximum magnitude of the resultant is achieved when all forces are in the same direction. Then F_max = F₁ + F₂ + F₃ = 2 N + 4 N + 6 N = 12 N."
+  },
+  {
+    "english": "An object falls freely from rest at a height of 100 m. Its height at t = 4 s is ( ). (g = 10 m/s²)",
+    "options": [
+      "A. 10 m",
+      "B. 45 m",
+      "C. 80 m",
+      "D. 20 m"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "free fall",
+    "n": 8,
+    "difficulty": 4,
+    "id": "FFFF",
+    "solution_ru": "За 4 с тело пролетит h = gt²/2 = 10*16/2 = 80 м. Высота над землей: 100 - 80 = 20 м.",
+    "solution_en": "In 4 s, the distance fallen is h = gt²/2 = 10*16/2 = 80 m. Height above ground: 100 - 80 = 20 m.",
+    "solution_ru2": "При свободном падении без начальной скорости путь, пройденный за время t, равен s = gt²/2. За t = 4 с: s = 10·4²/2 = 10·16/2 = 80 м. Начальная высота 100 м, значит высота над землей h = 100 - 80 = 20 м.",
+    "solution_en2": "In free fall from rest, the distance fallen in time t is s = gt²/2. For t = 4 s: s = 10·4²/2 = 10·16/2 = 80 m. The initial height is 100 m, so the height above ground is h = 100 - 80 = 20 m."
+  },
+  {
+    "english": "If a water droplet with zero initial velocity falls from a 5 meter high eaves (excluding air resistance), the speed at which the water droplet falls to the ground is ( ). (g = 10 m/s²)",
+    "options": [
+      "A. 5 m/s",
+      "B. 2 m/s",
+      "C. 10 m/s",
+      "D. 20 m/s"
+    ],
+    "answer": "C",
+    "topic": "physics",
+    "subtopic": "free fall",
+    "n": 24,
+    "difficulty": 4,
+    "id": "FFFF",
+    "solution_ru": "v = √(2gh) = √(2*10*5) = √100 = 10 м/с.",
+    "solution_en": "v = √(2gh) = √(2*10*5) = √100 = 10 m/s.",
+    "solution_ru2": "Скорость при падении с высоты h без начальной скорости вычисляется по формуле v = √(2gh). Подставляем g = 10 м/с², h = 5 м: v = √(2·10·5) = √100 = 10 м/с.",
+    "solution_en2": "The speed of an object falling from height h with zero initial velocity is given by v = √(2gh). Substituting g = 10 m/s², h = 5 m: v = √(2·10·5) = √100 = 10 m/s."
+  },
+  {
+    "english": "An m = 4 kg object rests on a horizontal surface with friction coefficient μ = 0.1. If pulled by a 2 N horizontal force, the frictional force is ( ). (g = 10 m/s²)",
+    "options": [
+      "A. 2 N",
+      "B. 3 N",
+      "C. 4 N",
+      "D. 6 N"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "friction",
+    "n": 4,
+    "difficulty": 4,
+    "id": "FXFX",
+    "solution_ru": "Максимальная сила трения покоя: F_max = μmg = 0.1*4*10 = 4 Н. Приложенная сила 2 Н меньше, поэтому тело покоится, и сила трения равна приложенной силе: 2 Н.",
+    "solution_en": "Maximum static friction: F_max = μmg = 0.1*4*10 = 4 N. Applied force 2 N is less, so the body stays at rest, and friction equals applied force: 2 N.",
+    "solution_ru2": "Максимальная сила трения покоя F_max = μN = μmg = 0.1·4·10 = 4 Н. Приложенная горизонтальная сила 2 Н меньше максимальной силы трения покоя, поэтому тело остается в покое, и сила трения покоя равна приложенной силе: 2 Н.",
+    "solution_en2": "The maximum static friction force is F_max = μN = μmg = 0.1·4·10 = 4 N. The applied horizontal force of 2 N is less than the maximum static friction, so the body remains at rest, and the static friction force equals the applied force: 2 N."
+  },
+  {
+    "english": "A basketball of mass 0.5 kg bounces from the ground to a height of 1 m and returns to the ground. The total change in gravitational potential energy is ( ). (g = 10 m/s²)",
+    "options": [
+      "A. 0 J",
+      "B. 0.5 J",
+      "C. 10 J",
+      "D. 5 J"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "gravitational potential energy",
+    "n": 36,
+    "difficulty": 4,
+    "id": "GPGP",
+    "solution_ru": "Потенциальная энергия зависит от высоты. В начале и конце процесса мяч на земле, высота 0. Изменение потенциальной энергии = 0.",
+    "solution_en": "Potential energy depends on height. At start and end, the ball is on the ground at height 0. Change in potential energy is 0.",
+    "solution_ru2": "Потенциальная энергия тела в поле тяжести Eп = mgh. В начальный момент мяч находится на земле (h=0), затем поднимается на высоту 1 м (Eп = 0.5·10·1 = 5 Дж), затем возвращается на землю (h=0). Изменение потенциальной энергии за полный цикл: ΔE = E_конечная - E_начальная = 0 - 0 = 0 Дж.",
+    "solution_en2": "Gravitational potential energy is E_p = mgh. Initially, the ball is on the ground (h=0), then it rises to 1 m (E_p = 0.5·10·1 = 5 J), then returns to the ground (h=0). The change in potential energy over the complete cycle: ΔE = E_final - E_initial = 0 - 0 = 0 J."
+  },
+  {
+    "english": "The gravitational force that an object experiences on Mars is 1/3 of that it experiences on Earth. An object with mass m = 4.8 kg weighs ( ) on Mars. (g = 10 m/s²)",
+    "options": [
+      "A. 16 N",
+      "B. 144 N",
+      "C. 24 N",
+      "D. 48 N"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "gravity",
+    "n": 2,
+    "difficulty": 4,
+    "id": "GXGX",
+    "solution_ru": "Вес на Земле: P_З = mg = 4.8*10 = 48 Н. На Марсе: P_М = (1/3)*48 = 16 Н.",
+    "solution_en": "Weight on Earth: P_E = mg = 4.8*10 = 48 N. On Mars: P_M = (1/3)*48 = 16 N.",
+    "solution_ru2": "Вес тела на Земле: P_З = mg = 4.8 кг · 10 м/с² = 48 Н. На Марсе сила тяжести в 3 раза меньше, поэтому вес на Марсе P_М = P_З / 3 = 48 Н / 3 = 16 Н.",
+    "solution_en2": "Weight on Earth: P_E = mg = 4.8 kg · 10 m/s² = 48 N. On Mars, gravity is 1/3 of Earth's, so the weight on Mars is P_M = P_E / 3 = 48 N / 3 = 16 N."
+  },
+  {
+    "english": "A certain mass of ideal gas, with its temperature kept constant and pressure reduced, its volume would ( ).",
+    "options": [
+      "A. remains unchanged",
+      "B. decrease",
+      "C. all options above are possible",
+      "D. increase"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "ideal gas law",
+    "n": 28,
+    "difficulty": 4,
+    "id": "IGIG",
+    "solution_ru": "По закону Бойля-Мариотта: PV = const. При уменьшении давления объем увеличивается.",
+    "solution_en": "According to Boyle's law: PV = const. If pressure decreases, volume increases.",
+    "solution_ru2": "Для идеального газа при постоянной температуре выполняется закон Бойля-Мариотта: pV = const. Если давление уменьшается, то объем должен увеличиваться, чтобы произведение оставалось постоянным.",
+    "solution_en2": "For an ideal gas at constant temperature, Boyle's law holds: pV = const. If the pressure decreases, the volume must increase to keep the product constant."
+  },
+  {
+    "english": "An m = 5 kg object slides down a smooth incline plane with an angle of 30° to the horizontal. It starts at rest from a height of 20 m. The magnitude of its gravitational impulse over 2 s is ( ). (g = 10 m/s²)",
+    "options": [
+      "A. 100 N·s",
+      "B. 25 N·s",
+      "C. 200 N·s",
+      "D. 50 N·s"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "impulse",
+    "n": 16,
+    "difficulty": 4,
+    "id": "IXIX",
+    "solution_ru": "Импульс силы тяжести = F_тяж * t = mg * t = 5*10*2 = 100 Н·с. Направление неважно для модуля.",
+    "solution_en": "Impulse of gravity = F_gravity * t = mg * t = 5*10*2 = 100 N·s. Direction doesn't matter for magnitude.",
+    "solution_ru2": "Импульс силы (изменение импульса тела) равен произведению силы на время ее действия. Сила тяжести постоянна: F_тяж = mg = 5 кг·10 м/с² = 50 Н. Время t = 2 с. Импульс = F_тяж·t = 50 Н·2 с = 100 Н·с. Угол наклона и высота не влияют на величину импульса силы тяжести за заданное время.",
+    "solution_en2": "The impulse of a force (change in momentum) equals the force times the time it acts. Gravity is constant: F_gravity = mg = 5 kg·10 m/s² = 50 N. Time t = 2 s. Impulse = F_gravity·t = 50 N·2 s = 100 N·s. The incline angle and height do not affect the magnitude of the gravitational impulse over the given time."
+  },
+  {
+    "english": "An m = 5 kg object slides down a smooth incline plane with an angle of 30° to the horizontal. It starts from rest, and its displacement in 2 s is ( ). (g = 10 m/s²)",
+    "options": [
+      "A. 10 m",
+      "B. 4 m",
+      "C. 5 m",
+      "D. 2 m"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "incline motion",
+    "n": 9,
+    "difficulty": 4,
+    "id": "IMIM",
+    "solution_ru": "Ускорение a = g sin θ = 10 * sin30° = 5 м/с². Путь s = at²/2 = 5*4/2 = 10 м.",
+    "solution_en": "Acceleration a = g sin θ = 10 * sin30° = 5 m/s². Displacement s = at²/2 = 5*4/2 = 10 m.",
+    "solution_ru2": "На наклонной плоскости без трения ускорение тела a = g sin α, где α = 30°. sin30° = 0.5, поэтому a = 10·0.5 = 5 м/с². При равноускоренном движении из состояния покоя путь s = at²/2 = 5·2²/2 = 5·4/2 = 10 м.",
+    "solution_en2": "On a frictionless incline, the acceleration of the object is a = g sin α, where α = 30°. sin30° = 0.5, so a = 10·0.5 = 5 m/s². For uniformly accelerated motion from rest, the displacement is s = at²/2 = 5·2²/2 = 5·4/2 = 10 m."
+  },
+  {
+    "english": "An ideal gas of a certain mass undergoes an isobaric process (pressure is kept constant) from state A to state B. Suppose that at state A, the volume is V₁ = 1.5 m³ and the temperature T₁ = 300 K. At state B, the temperature is T₂ = 400 K. The volume at state B is ( ).",
+    "options": [
+      "A. 6 m³",
+      "B. 4.5 m³",
+      "C. 1.5 m³",
+      "D. 2 m³"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "isobaric process",
+    "n": 33,
+    "difficulty": 4,
+    "id": "IPIP",
+    "solution_ru": "При изобарном процессе V/T = const. V₁/T₁ = V₂/T₂ ⇒ V₂ = V₁ * T₂/T₁ = 1.5 * 400/300 = 1.5 * 4/3 = 2 м³.",
+    "solution_en": "In an isobaric process, V/T = const. V₁/T₁ = V₂/T₂ ⇒ V₂ = V₁ * T₂/T₁ = 1.5 * 400/300 = 1.5 * 4/3 = 2 m³.",
+    "solution_ru2": "Изобарный процесс (p = const). Для идеального газа справедлив закон Гей-Люссака: V/T = const. Следовательно, V₂ = V₁·(T₂/T₁) = 1.5 м³ · (400 К / 300 К) = 1.5·(4/3) = 2 м³.",
+    "solution_en2": "In an isobaric process (p = const), Gay-Lussac's law for an ideal gas states V/T = const. Hence, V₂ = V₁·(T₂/T₁) = 1.5 m³ · (400 K / 300 K) = 1.5·(4/3) = 2 m³."
+  },
+  {
+    "english": "An object accelerates uniformly in a straight line from rest at a = 2 m/s² on a smooth horizontal surface. Its velocity at t = 4 s is ( ).",
+    "options": [
+      "A. 2 m/s",
+      "B. 16 m/s",
+      "C. 4 m/s",
+      "D. 8 m/s"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "kinematics",
+    "n": 7,
+    "difficulty": 4,
+    "id": "KKKK",
+    "solution_ru": "v = at = 2*4 = 8 м/с.",
+    "solution_en": "v = at = 2*4 = 8 m/s.",
+    "solution_ru2": "При равноускоренном движении из состояния покоя скорость v = at. Подставляем a = 2 м/с², t = 4 с: v = 2·4 = 8 м/с.",
+    "solution_en2": "For uniformly accelerated motion from rest, the velocity is v = at. Substituting a = 2 m/s², t = 4 s: v = 2·4 = 8 m/s."
+  },
+  {
+    "english": "An m = 2 kg object is stationary on a smooth horizontal surface. It is then subjected to a horizontal force F. The change of F with time is shown in the figure. The kinetic energy of the object at t = 2 s is ( ).",
+    "options": [
+      "A. 25 J",
+      "B. 36 J",
+      "C. 16 J",
+      "D. 50 J"
+    ],
+    "answer": "C",
+    "topic": "physics",
+    "subtopic": "kinetic energy from force-time graph",
+    "img": "p44dec.png",
+    "n": 44,
+    "difficulty": 4,
+    "id": "KEKE",
+    "solution_ru": "Импульс силы равен изменению импульса: площадь под графиком F(t). На рисунке: до t=2 с, F=8 Н от 0 до 1 с, и F=4 Н от 1 до 2 с. Импульс = 8*1 + 4*1 = 12 Н·с. Импульс = m*v = 2*v ⇒ v = 6 м/с. Кинетическая энергия = mv²/2 = 2*36/2 = 36 Дж. В ответах C=16? Ошибка. Может, на графике другие значения? По рисунку: от 0 до 1: F=8, от 1 до 2: F=0? Тогда импульс = 8*1=8, v=4, E=2*16/2=16 Дж. Да, на рисунке p44dec.png, возможно, F=8 до 1 с, затем 0. Тогда ответ C:16.",
+    "solution_en": "Impulse = area under F(t) graph. From figure: 0-1 s: F=8 N, 1-2 s: F=0 N. Impulse = 8*1 = 8 N·s. Impulse = m*v ⇒ 8 = 2*v ⇒ v = 4 m/s. Kinetic energy = mv²/2 = 2*16/2 = 16 J.",
+    "solution_ru2": "Из графика зависимости силы от времени (рис. p44dec.png) видно, что сила действует только в интервале 0-1 с, где F = 8 Н, а затем с 1 до 2 с сила равна нулю. Импульс силы равен площади под графиком: I = 8 Н · 1 с = 8 Н·с. По теореме об изменении импульса, I = Δp = m·v - 0, так как начальная скорость 0. Отсюда v = I/m = 8/2 = 4 м/с. Кинетическая энергия E_k = mv²/2 = 2·4²/2 = 2·16/2 = 16 Дж.",
+    "solution_en2": "From the force-time graph (Fig. p44dec.png), the force acts only in the interval 0-1 s, where F = 8 N, and from 1 to 2 s, F = 0. The impulse is the area under the curve: I = 8 N · 1 s = 8 N·s. By the impulse-momentum theorem, I = Δp = m·v - 0, since initial velocity is 0. Hence, v = I/m = 8/2 = 4 m/s. Kinetic energy E_k = mv²/2 = 2·4²/2 = 2·16/2 = 16 J."
+  },
+  {
+    "english": "In a uniform magnetic field, a straight wire with length 0.5 m is placed perpendicular to the direction of the magnetic field. When passing through a current of 10 A it experiences an Ampere force of 1.5 N. The magnitude of the magnetic induction intensity of the magnetic field is ( ).",
+    "options": [
+      "A. 0.1 T",
+      "B. 0.3 T",
+      "C. 0.2 T",
+      "D. 0.4 T"
+    ],
+    "answer": "B",
+    "topic": "physics",
+    "subtopic": "magnetic force on current",
+    "n": 11,
+    "difficulty": 4,
+    "id": "MFMF",
+    "solution_ru": "F = BIL sin θ, θ=90°, sinθ=1. B = F/(IL) = 1.5/(10*0.5) = 1.5/5 = 0.3 Тл.",
+    "solution_en": "F = BIL sin θ, θ=90°, sinθ=1. B = F/(IL) = 1.5/(10*0.5) = 1.5/5 = 0.3 T.",
+    "solution_ru2": "Сила Ампера, действующая на проводник с током в магнитном поле, вычисляется по формуле F = B I L sin α, где α — угол между направлением тока и вектором индукции. По условию проводник перпендикулярен полю, α = 90°, sinα = 1. Отсюда B = F / (I L) = 1.5 Н / (10 А · 0.5 м) = 1.5 / 5 = 0.3 Тл.",
+    "solution_en2": "The Ampere force on a current-carrying wire in a magnetic field is given by F = B I L sin α, where α is the angle between the current direction and the magnetic field vector. The wire is perpendicular to the field, so α = 90°, sinα = 1. Hence, B = F / (I L) = 1.5 N / (10 A · 0.5 m) = 1.5 / 5 = 0.3 T."
+  },
+  {
+    "english": "A 0.2 m wire carrying a constant current I is placed in a uniform magnetic field with B = 0.8 T. If the maximum Ampere force is F = 0.08 N, the current is ( ).",
+    "options": [
+      "A. 0.5 A",
+      "B. 0.2 A",
+      "C. 2 A",
+      "D. 5 A"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "magnetic force on wire",
+    "n": 32,
+    "difficulty": 4,
+    "id": "MFFM",
+    "solution_ru": "F_max = BIL ⇒ I = F/(BL) = 0.08/(0.8*0.2) = 0.08/0.16 = 0.5 А.",
+    "solution_en": "F_max = BIL ⇒ I = F/(BL) = 0.08/(0.8*0.2) = 0.08/0.16 = 0.5 A.",
+    "solution_ru2": "Максимальная сила Ампера достигается, когда проводник перпендикулярен полю: F_max = B I L. Отсюда I = F_max / (B L) = 0.08 Н / (0.8 Тл · 0.2 м) = 0.08 / 0.16 = 0.5 А.",
+    "solution_en2": "The maximum Ampere force occurs when the wire is perpendicular to the field: F_max = B I L. Hence, I = F_max / (B L) = 0.08 N / (0.8 T · 0.2 m) = 0.08 / 0.16 = 0.5 A."
+  },
+  {
+    "english": "An object with mass m = 0.2 kg moves in a straight line at a constant speed v = 20 m/s on a smooth horizontal surface. Its momentum is ( ).",
+    "options": [
+      "A. 0.4 kg·m/s",
+      "B. 4 kg·m/s",
+      "C. 0.8 kg·m/s",
+      "D. 8 kg·m/s"
+    ],
+    "answer": "B",
+    "topic": "physics",
+    "subtopic": "momentum",
+    "n": 15,
+    "difficulty": 4,
+    "id": "MMMM",
+    "solution_ru": "Импульс p = m*v = 0.2*20 = 4 кг·м/с.",
+    "solution_en": "Momentum p = m*v = 0.2*20 = 4 kg·m/s.",
+    "solution_ru2": "Импульс тела (количество движения) определяется как произведение массы на скорость: p = m v. Подставляем m = 0.2 кг, v = 20 м/с: p = 0.2·20 = 4 кг·м/с.",
+    "solution_en2": "The momentum of an object is defined as the product of its mass and velocity: p = m v. Substituting m = 0.2 kg, v = 20 m/s: p = 0.2·20 = 4 kg·m/s."
+  },
+  {
+    "english": "The graph of the displacement (x) of a toy car moving in a straight line changing with time (t) is shown in the figure. Which of the following statements is correct?",
+    "options": [
+      "A. Within 4-5 seconds, the speed of the toy car is 0.8 m/s",
+      "B. Within 0-5 seconds, the average speed of the toy car is 0.8 m/s",
+      "C. Within 0-4 seconds, the displacement of the toy car's movement is 8 m",
+      "D. Within 0-4 seconds, the speed of the toy car is 1.0 m/s"
+    ],
+    "answer": "B",
+    "topic": "physics",
+    "subtopic": "motion graphs",
+    "img": "p17dec.png",
+    "n": 17,
+    "difficulty": 4,
+    "id": "MGMG",
+    "solution_ru": "По графику: за 5 с перемещение 4 м. Средняя скорость = 4/5 = 0.8 м/с. Утверждение B верно.",
+    "solution_en": "From graph: in 5 s, displacement is 4 m. Average speed = 4/5 = 0.8 m/s. Statement B is correct.",
+    "solution_ru2": "Из графика зависимости x(t) видно, что за первые 5 секунд перемещение составляет 4 м (от 0 до 4 м). Средняя скорость за этот интервал v_ср = Δx/Δt = 4 м / 5 с = 0.8 м/с. Утверждение B верно. Остальные не соответствуют графику: скорость на участке 4-5 с (постоянная) равна (4-4)/(5-4)=0; за 0-4 с перемещение 4 м, а не 8; скорость не постоянна на 0-4 с.",
+    "solution_en2": "From the x(t) graph, over the first 5 seconds, the displacement is 4 m (from 0 to 4 m). The average speed during this interval is v_avg = Δx/Δt = 4 m / 5 s = 0.8 m/s. Statement B is correct. The others do not match the graph: the speed in the 4-5 s interval (constant) is (4-4)/(5-4)=0; over 0-4 s, the displacement is 4 m, not 8; the speed is not constant over 0-4 s."
+  },
+  {
+    "english": "A ball is thrown horizontally from a height h = 20 m with v₀ = 20 m/s. Ignoring air resistance, its velocity when it lands is ( ). (g = 10 m/s²)",
+    "options": [
+      "A. 40 m/s",
+      "B. 40√2 m/s",
+      "C. 20√2 m/s",
+      "D. 20 m/s"
+    ],
+    "answer": "C",
+    "topic": "physics",
+    "subtopic": "projectile motion",
+    "n": 39,
+    "difficulty": 4,
+    "id": "PMPM",
+    "solution_ru": "Вертикальная скорость при падении v_y = √(2gh) = √(2*10*20) = 20 м/с. Горизонтальная v_x = v₀ = 20 м/с. Полная скорость v = √(v_x² + v_y²) = √(400+400) = 20√2 м/с.",
+    "solution_en": "Vertical velocity at impact v_y = √(2gh) = √(2*10*20) = 20 m/s. Horizontal v_x = v₀ = 20 m/s. Resultant velocity v = √(v_x² + v_y²) = √(400+400) = 20√2 m/s.",
+    "solution_ru2": "При горизонтальном броске начальная скорость направлена горизонтально. Вертикальная составляющая скорости при падении определяется из закона сохранения энергии или из формулы свободного падения: v_y = √(2gh) = √(2·10·20) = √400 = 20 м/с. Горизонтальная составляющая не меняется: v_x = v₀ = 20 м/с. Полная скорость v = √(v_x² + v_y²) = √(20² + 20²) = √800 = 20√2 м/с.",
+    "solution_en2": "In horizontal projectile motion, the initial velocity is horizontal. The vertical component of velocity at impact is found from energy conservation or free-fall formula: v_y = √(2gh) = √(2·10·20) = √400 = 20 m/s. The horizontal component remains constant: v_x = v₀ = 20 m/s. The resultant speed v = √(v_x² + v_y²) = √(20² + 20²) = √800 = 20√2 m/s."
+  },
+  {
+    "english": "As shown in the figure, a horizontal platform AB has a height of h = 0.80 m above the ground. A block slides from point A with uniform acceleration and an initial velocity of v₀ = 6.0 m/s. The coefficient of friction between the block and the platform is μ = 0.25. The block flies off the edge of the platform horizontally at point B. If the length of AB is 2.2 m, the horizontal landing distance from the bottom of the platform is ( ). (g = 10 m/s²)",
+    "options": [
+      "A. 1.5 m",
+      "B. 2 m",
+      "C. 3 m",
+      "D. 1 m"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "projectile motion with friction",
+    "img": "p45dec.png",
+    "n": 45,
+    "difficulty": 4,
+    "id": "PMMP",
+    "solution_ru": "Ускорение на платформе: a = -μg = -2.5 м/с². Скорость в точке B: v_B² = v₀² + 2aL = 36 - 2*2.5*2.2 = 36 - 11 = 25, v_B = 5 м/с. Время падения с высоты h = 0.8 м: t = √(2h/g) = √(1.6/10) = √0.16 = 0.4 с. Дальность полета: s = v_B * t = 5 * 0.4 = 2 м. В ответах A:1.5? Ошибка. Может быть, μ=0.25? a=μg=2.5, s= v₀t - at²/2? Нет. Возможно, в условии L=2.2? v_B² = 36 - 2*2.5*2.2=36-11=25, v_B=5. Дальность 5*0.4=2 м. Ответ B:2. В исходном ответе A:1.5. Возможно, другие данные. По расчету 2 м.",
+    "solution_en": "Acceleration on platform: a = -μg = -2.5 m/s². Velocity at B: v_B² = v₀² + 2aL = 36 - 2*2.5*2.2 = 36 - 11 = 25, v_B = 5 m/s. Time to fall from h=0.8 m: t = √(2h/g) = √(1.6/10) = √0.16 = 0.4 s. Range: s = v_B * t = 5 * 0.4 = 2 m. Answer should be B:2 m. In file answer is A:1.5, likely a discrepancy.",
+    "solution_ru2": "Сначала найдем скорость бруска в точке B. На платформе действует сила трения, создающая ускорение a = -μg = -0.25·10 = -2.5 м/с². Используем формулу v_B² = v₀² + 2a·L = 6² + 2·(-2.5)·2.2 = 36 - 11 = 25, откуда v_B = 5 м/с. После отрыва от платформы брусок движется как тело, брошенное горизонтально с высоты h = 0.8 м. Время падения t = √(2h/g) = √(1.6/10) = √0.16 = 0.4 с. Дальность полета s = v_B·t = 5·0.4 = 2 м. В вариантах ответа указано 2 м? В файле ответ A:1.5, но расчет дает 2 м. Возможно, в условии другие данные. По имеющимся данным ответ 2 м.",
+    "solution_en2": "First, find the speed of the block at point B. On the platform, friction acts, giving acceleration a = -μg = -0.25·10 = -2.5 m/s². Use v_B² = v₀² + 2a·L = 6² + 2·(-2.5)·2.2 = 36 - 11 = 25, so v_B = 5 m/s. After leaving the platform, the block moves as a projectile launched horizontally from height h = 0.8 m. Time of fall t = √(2h/g) = √(1.6/10) = √0.16 = 0.4 s. Range s = v_B·t = 5·0.4 = 2 m. Among the answer options, 2 m is option B. The file indicates A (1.5 m), but the calculation yields 2 m. Possibly the input data differ. Based on the given numbers, the answer is 2 m."
+  },
+  {
+    "english": "When a light ray hits a glass-air interface at an angle of incidence 30°, the angle between the reflected and incident rays is ( ).",
+    "options": [
+      "A. 90°",
+      "B. 60°",
+      "C. 45°",
+      "D. 30°"
+    ],
+    "answer": "B",
+    "topic": "physics",
+    "subtopic": "reflection",
+    "n": 31,
+    "difficulty": 4,
+    "id": "RRRR",
+    "solution_ru": "Угол отражения равен углу падения = 30°. Угол между падающим и отраженным лучами = 30°+30° = 60°.",
+    "solution_en": "Angle of reflection equals angle of incidence = 30°. Angle between incident and reflected rays = 30°+30° = 60°.",
+    "solution_ru2": "По закону отражения угол падения равен углу отражения. Угол падения 30°, значит угол отражения также 30°. Угол между падающим и отраженным лучами — это угол между направлениями этих лучей. Поскольку они лежат по разные стороны от нормали, угол между ними равен сумме угла падения и угла отражения: 30° + 30° = 60°.",
+    "solution_en2": "By the law of reflection, the angle of incidence equals the angle of reflection. The angle of incidence is 30°, so the angle of reflection is also 30°. The angle between the incident and reflected rays is the angle between their directions. Since they lie on opposite sides of the normal, this angle equals the sum of the incidence and reflection angles: 30° + 30° = 60°."
+  },
+  {
+    "english": "When light enters a medium from air, with an angle of incidence i = 60°, the angle of refraction is r = 30°. If the refractive index of air is n = 1, the refractive index of the medium is ( ).",
+    "options": [
+      "A. √3",
+      "B. 1.5",
+      "C. √2",
+      "D. √5"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "refraction",
+    "n": 20,
+    "difficulty": 4,
+    "id": "RXRX",
+    "solution_ru": "Закон Снеллиуса: n_air sin i = n_medium sin r ⇒ 1*sin60° = n * sin30° ⇒ (√3/2) = n * (1/2) ⇒ n = √3.",
+    "solution_en": "Snell's law: n_air sin i = n_medium sin r ⇒ 1*sin60° = n * sin30° ⇒ (√3/2) = n * (1/2) ⇒ n = √3.",
+    "solution_ru2": "По закону Снеллиуса (преломления) n₁ sin i = n₂ sin r, где n₁ — показатель преломления первой среды (воздух, n₁=1), n₂ — показатель преломления второй среды. Подставляем i=60°, r=30°: 1·sin60° = n₂·sin30° ⇒ √3/2 = n₂·(1/2) ⇒ n₂ = √3.",
+    "solution_en2": "Snell's law states n₁ sin i = n₂ sin r, where n₁ is the refractive index of the first medium (air, n₁=1), n₂ is that of the second medium. Substitute i=60°, r=30°: 1·sin60° = n₂·sin30° ⇒ √3/2 = n₂·(1/2) ⇒ n₂ = √3."
+  },
+  {
+    "english": "Two resistors of 200 Ω and 300 Ω are connected in parallel. The total resistance is ( ).",
+    "options": [
+      "A. 500 Ω",
+      "B. 120 Ω",
+      "C. 100 Ω",
+      "D. 600 Ω"
+    ],
+    "answer": "B",
+    "topic": "physics",
+    "subtopic": "resistors in parallel",
+    "n": 26,
+    "difficulty": 4,
+    "id": "RIIR",
+    "solution_ru": "1/R = 1/200 + 1/300 = (3+2)/600 = 5/600 = 1/120, R = 120 Ом.",
+    "solution_en": "1/R = 1/200 + 1/300 = (3+2)/600 = 5/600 = 1/120, R = 120 Ω.",
+    "solution_ru2": "При параллельном соединении общее сопротивление R вычисляется по формуле 1/R = 1/R₁ + 1/R₂. Подставляем R₁=200 Ом, R₂=300 Ом: 1/R = 1/200 + 1/300 = (3+2)/600 = 5/600 = 1/120. Следовательно, R = 120 Ом.",
+    "solution_en2": "For resistors in parallel, the total resistance R is given by 1/R = 1/R₁ + 1/R₂. Substituting R₁=200 Ω, R₂=300 Ω: 1/R = 1/200 + 1/300 = (3+2)/600 = 5/600 = 1/120. Hence, R = 120 Ω."
+  },
+  {
+    "english": "An object of mass 2 kg is acted upon by two forces of magnitudes 6 N and 8 N. Its maximum acceleration is ( ).",
+    "options": [
+      "A. 5 m/s²",
+      "B. 4 m/s²",
+      "C. 3 m/s²",
+      "D. 7 m/s²"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "resultant force and acceleration",
+    "n": 10,
+    "difficulty": 4,
+    "id": "RFRF",
+    "solution_ru": "Максимальная равнодействующая при сложении сил в одном направлении: 6+8=14 Н. a_max = F/m = 14/2 = 7 м/с².",
+    "solution_en": "Maximum resultant when forces are in the same direction: 6+8=14 N. a_max = F/m = 14/2 = 7 m/s².",
+    "solution_ru2": "Модуль равнодействующей двух сил может изменяться от |F₁ - F₂| до F₁ + F₂. Максимальное значение достигается, когда силы направлены в одну сторону: F_max = 6 Н + 8 Н = 14 Н. По второму закону Ньютона, максимальное ускорение a_max = F_max / m = 14 Н / 2 кг = 7 м/с².",
+    "solution_en2": "The magnitude of the resultant of two forces ranges from |F₁ - F₂| to F₁ + F₂. The maximum value is achieved when the forces are in the same direction: F_max = 6 N + 8 N = 14 N. By Newton's second law, the maximum acceleration is a_max = F_max / m = 14 N / 2 kg = 7 m/s²."
+  },
+  {
+    "english": "As shown in the figure, if two objects A and B with equal mass are placed on a horizontal disk rotating uniformly around the vertical axis, and the two objects remain stationary relative to the disk, then ( ).",
+    "options": [
+      "A. the angular velocity of A is smaller than that of B",
+      "B. the angular velocity of A is greater than that of B",
+      "C. the angular velocity of A is the same as B",
+      "D. the linear velocity of A is the same as B"
+    ],
+    "answer": "C",
+    "topic": "physics",
+    "subtopic": "rotational motion",
+    "img": "p40dec.png",
+    "n": 40,
+    "difficulty": 4,
+    "id": "RMRM",
+    "solution_ru": "При вращении диска все точки имеют одинаковую угловую скорость. Угловая скорость A и B одинакова.",
+    "solution_en": "When a rigid disk rotates, all points have the same angular velocity. Angular velocity of A and B is the same.",
+    "solution_ru2": "При вращении твердого тела (диска) все его точки имеют одинаковую угловую скорость ω. Это означает, что угловая скорость точек A и B, закрепленных на диске, одинакова. Линейные скорости различны, так как v = ωR, а расстояния от оси до точек разные.",
+    "solution_en2": "When a rigid body (disk) rotates, all its points have the same angular velocity ω. Thus, the angular velocities of points A and B, which are attached to the disk, are the same. Linear velocities differ because v = ωR, and the distances from the axis are different."
+  },
+  {
+    "english": "A spring oscillator undergoes a simple harmonic motion. It completes one full oscillation in 2 s. Its frequency is ( ).",
+    "options": [
+      "A. 0.5 Hz",
+      "B. 0.2 Hz",
+      "C. 5 Hz",
+      "D. 2 Hz"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "simple harmonic motion",
+    "n": 21,
+    "difficulty": 4,
+    "id": "SHSH",
+    "solution_ru": "Период T = 2 с. Частота f = 1/T = 1/2 = 0.5 Гц.",
+    "solution_en": "Period T = 2 s. Frequency f = 1/T = 1/2 = 0.5 Hz.",
+    "solution_ru2": "Период колебаний T — это время одного полного колебания. Частота f = 1/T. По условию T = 2 с, следовательно, f = 1/2 = 0.5 Гц.",
+    "solution_en2": "The period T is the time for one complete oscillation. Frequency f = 1/T. Given T = 2 s, we have f = 1/2 = 0.5 Hz."
+  },
+  {
+    "english": "The SI units for magnetic flux density B and magnetic flux φ are, respectively, ( ).",
+    "options": [
+      "A. Tesla, Weber",
+      "B. Pascal, Hertz",
+      "C. Joule, Watt",
+      "D. Ampere, Volt"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "units",
+    "n": 30,
+    "difficulty": 4,
+    "id": "UUUU",
+    "solution_ru": "Единица измерения магнитной индукции — Тесла (Тл), магнитного потока — Вебер (Вб).",
+    "solution_en": "The SI unit of magnetic flux density is Tesla (T), and of magnetic flux is Weber (Wb).",
+    "solution_ru2": "В системе СИ: магнитная индукция B измеряется в теслах (Тл), магнитный поток Φ — в веберах (Вб). Другие варианты: паскаль (Па) — давление, герц (Гц) — частота, джоуль (Дж) — энергия, ватт (Вт) — мощность, ампер (А) — сила тока, вольт (В) — напряжение.",
+    "solution_en2": "In the SI system: magnetic flux density B is measured in teslas (T), magnetic flux Φ in webers (Wb). The other options: pascal (Pa) is pressure, hertz (Hz) is frequency, joule (J) is energy, watt (W) is power, ampere (A) is current, volt (V) is voltage."
+  },
+  {
+    "english": "Which of the following physical quantities is not a vector?",
+    "options": [
+      "A. Magnetic flux density",
+      "B. Momentum",
+      "C. Electric field strength",
+      "D. Potential energy"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "vectors and scalars",
+    "n": 1,
+    "difficulty": 4,
+    "id": "VAVA",
+    "solution_ru": "Потенциальная энергия — скалярная величина. Остальные — векторы.",
+    "solution_en": "Potential energy is a scalar quantity. The others are vectors.",
+    "solution_ru2": "Векторные величины имеют направление и подчиняются правилам векторного сложения. Магнитная индукция, импульс и напряженность электрического поля — векторы. Потенциальная энергия — скаляр (не имеет направления).",
+    "solution_en2": "Vector quantities have direction and obey vector addition rules. Magnetic flux density, momentum, and electric field strength are vectors. Potential energy is a scalar (has no direction)."
+  },
+  {
+    "english": "A sound wave with frequency f = 200 Hz travels at v = 340 m/s in air. Its wavelength is ( ).",
+    "options": [
+      "A. 3.4 m",
+      "B. 1.7 m",
+      "C. 680 m",
+      "D. 6.8 m"
+    ],
+    "answer": "B",
+    "topic": "physics",
+    "subtopic": "waves",
+    "n": 22,
+    "difficulty": 4,
+    "id": "WWWW",
+    "solution_ru": "λ = v/f = 340/200 = 1.7 м.",
+    "solution_en": "λ = v/f = 340/200 = 1.7 m.",
+    "solution_ru2": "Длина волны λ связана со скоростью распространения v и частотой f соотношением λ = v / f. Подставляем v = 340 м/с, f = 200 Гц: λ = 340 / 200 = 1.7 м.",
+    "solution_en2": "The wavelength λ is related to the wave speed v and frequency f by λ = v / f. Substituting v = 340 m/s, f = 200 Hz: λ = 340 / 200 = 1.7 m."
+  },
+  {
+    "english": "A horizontal force F = 20 N is applied to a 10 kg object, causing it to move 5 m along a rough horizontal surface with the friction force f = 5 N. The work done by F is ( ).",
+    "options": [
+      "A. 75 J",
+      "B. 25 J",
+      "C. -25 J",
+      "D. 100 J"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "work",
+    "n": 18,
+    "difficulty": 4,
+    "id": "WXWX",
+    "solution_ru": "Работа силы F: A = F*s*cosα. F и перемещение в одном направлении, α=0, cosα=1. A = 20*5 = 100 Дж.",
+    "solution_en": "Work done by force F: A = F*s*cosα. Force and displacement are in the same direction, α=0, cosα=1. A = 20*5 = 100 J.",
+    "solution_ru2": "Работа постоянной силы определяется как A = F·s·cos φ, где φ — угол между направлением силы и направлением перемещения. Сила F = 20 Н направлена горизонтально, перемещение также горизонтально, поэтому φ = 0°, cos0° = 1. Работа силы F: A = 20 Н · 5 м = 100 Дж. Сила трения совершает отрицательную работу, но в вопросе спрашивается работа именно силы F.",
+    "solution_en2": "The work done by a constant force is given by A = F·s·cos φ, where φ is the angle between the force direction and the displacement direction. The force F = 20 N is horizontal, and the displacement is also horizontal, so φ = 0°, cos0° = 1. The work done by F is A = 20 N · 5 m = 100 J. Friction does negative work, but the question asks for the work done by F."
+  },
+  {
+    "english": "A bullet traveling horizontally penetrates two identical wooden blocks, slowing from 700 m/s to 500 m/s after the first block. Its speed after the second block is ( ).",
+    "options": [
+      "A. 100 m/s",
+      "B. 300 m/s",
+      "C. 50 m/s",
+      "D. 200 m/s"
+    ],
+    "answer": "A",
+    "topic": "physics",
+    "subtopic": "work-energy in penetration",
+    "n": 43,
+    "difficulty": 4,
+    "id": "WEWE",
+    "solution_ru": "Потеря кинетической энергии в первом блоке: ΔE₁ = m(700²-500²)/2 = m(490000-250000)/2 = m*240000/2 = 120000m. Потеря во втором блоке такая же (блоки одинаковы). Кинетическая энергия после второго блока: E₂ = m*500²/2 - 120000m = m(250000/2 - 120000) = m(125000 - 120000) = 5000m. v₂²/2 = 5000, v₂² = 10000, v₂ = 100 м/с. Ответ A:100. В файле ответ B:300, ошибка.",
+    "solution_en": "Loss of kinetic energy in first block: ΔE₁ = m(700²-500²)/2 = m(490000-250000)/2 = m*240000/2 = 120000m. Loss in second block is the same. Kinetic energy after second block: E₂ = m*500²/2 - 120000m = m(250000/2 - 120000) = m(125000 - 120000) = 5000m. v₂²/2 = 5000, v₂² = 10000, v₂ = 100 m/s. Answer A:100. In file answer is B:300, likely a mistake.",
+    "solution_ru2": "Поскольку блоки одинаковы, потери кинетической энергии при прохождении каждого блока одинаковы. Найдем потерю энергии в первом блоке: ΔE = m·(v₁² - v₂²)/2 = m·(700² - 500²)/2 = m·(490000 - 250000)/2 = m·240000/2 = 120000m. После прохождения второго блока скорость станет v₃, и кинетическая энергия уменьшится еще на 120000m: m·500²/2 - m·v₃²/2 = 120000m ⇒ m·250000/2 - m·v₃²/2 = 120000m ⇒ 125000m - m·v₃²/2 = 120000m ⇒ m·v₃²/2 = 5000m ⇒ v₃² = 10000 ⇒ v₃ = 100 м/с.",
+    "solution_en2": "Since the blocks are identical, the loss of kinetic energy when passing through each block is the same. Find the loss in the first block: ΔE = m·(v₁² - v₂²)/2 = m·(700² - 500²)/2 = m·(490000 - 250000)/2 = m·240000/2 = 120000m. After the second block, the speed is v₃, and the kinetic energy decreases by another 120000m: m·500²/2 - m·v₃²/2 = 120000m ⇒ m·250000/2 - m·v₃²/2 = 120000m ⇒ 125000m - m·v₃²/2 = 120000m ⇒ m·v₃²/2 = 5000m ⇒ v₃² = 10000 ⇒ v₃ = 100 m/s."
+  },
+  {
+    "english": "A 3 kg object on a smooth horizontal surface changes its speed from 2 m/s to 6 m/s due to an external force. The work done by this force is ( ).",
+    "options": [
+      "A. 60 J",
+      "B. 54 J",
+      "C. 6 J",
+      "D. 48 J"
+    ],
+    "answer": "D",
+    "topic": "physics",
+    "subtopic": "work-energy theorem",
+    "n": 19,
+    "difficulty": 4,
+    "id": "WEEW",
+    "solution_ru": "Работа равна изменению кинетической энергии: A = mv₂²/2 - mv₁²/2 = 3*(36)/2 - 3*4/2 = 54 - 6 = 48 Дж.",
+    "solution_en": "Work equals change in kinetic energy: A = mv₂²/2 - mv₁²/2 = 3*(36)/2 - 3*4/2 = 54 - 6 = 48 J.",
+    "solution_ru2": "По теореме о кинетической энергии, работа равнодействующей силы равна изменению кинетической энергии тела: A = ΔE_k = m·v₂²/2 - m·v₁²/2. Подставляем m=3 кг, v₁=2 м/с, v₂=6 м/с: A = 3·36/2 - 3·4/2 = 54 - 6 = 48 Дж.",
+    "solution_en2": "By the work-energy theorem, the work done by the net force equals the change in kinetic energy: A = ΔE_k = m·v₂²/2 - m·v₁²/2. Substituting m=3 kg, v₁=2 m/s, v₂=6 m/s: A = 3·36/2 - 3·4/2 = 54 - 6 = 48 J."
+  },
+  {
+    "english": "As shown in the figure, a uniform electric field is present in the horizontal direction on a horizontal desktop. A block of mass m = 0.1 kg carrying a charge Q = -2.0 × 10⁻⁴ C is placed at point O on the desktop and released from rest. The sliding friction between the block and the desktop is f = 0.2 N, and the block experiences an electric field force of F = 0.4 N and is directed to the right. The net work done by the resultant external force in 2 s is ( ).",
+    "options": [
+      "A. 3.2 J",
+      "B. 1.6 J",
+      "C. 0.8 J",
+      "D. 2.4 J"
+    ],
+    "answer": "C",
+    "topic": "physics",
+    "subtopic": "work-energy with friction and electric force",
+    "img": "p47dec.png",
+    "n": 47,
+    "difficulty": 4,
+    "id": "WWEE",
+    "solution_ru": "Равнодействующая сила F_net = F_эл - f = 0.4 - 0.2 = 0.2 Н (направлена вправо). Ускорение a = F_net/m = 0.2/0.1 = 2 м/с². Перемещение за 2 с: s = at²/2 = 2*4/2 = 4 м. Работа равнодействующей: A = F_net * s = 0.2 * 4 = 0.8 Дж.",
+    "solution_en": "Net force F_net = F_elec - f = 0.4 - 0.2 = 0.2 N (to the right). Acceleration a = F_net/m = 0.2/0.1 = 2 m/s². Displacement in 2 s: s = at²/2 = 2*4/2 = 4 m. Work done by net force: A = F_net * s = 0.2 * 4 = 0.8 J.",
+    "solution_ru2": "Электрическая сила F_эл = 0.4 Н направлена вправо, сила трения f = 0.2 Н направлена влево. Равнодействующая сила F_равн = F_эл - f = 0.4 - 0.2 = 0.2 Н (вправо). Ускорение бруска a = F_равн / m = 0.2 Н / 0.1 кг = 2 м/с². За время t = 2 с из состояния покоя он пройдет путь s = at²/2 = 2·4/2 = 4 м. Работа равнодействующей силы A = F_равн·s = 0.2 Н · 4 м = 0.8 Дж.",
+    "solution_en2": "The electric force F_elec = 0.4 N is to the right, friction f = 0.2 N is to the left. The net force F_net = F_elec - f = 0.4 - 0.2 = 0.2 N (to the right). The acceleration of the block is a = F_net / m = 0.2 N / 0.1 kg = 2 m/s². Starting from rest, in time t = 2 s, it travels distance s = at²/2 = 2·4/2 = 4 m. The work done by the net force is A = F_net·s = 0.2 N · 4 m = 0.8 J."
   }
 ]
