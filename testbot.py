@@ -22,8 +22,8 @@ from langchain_core.messages import SystemMessage, HumanMessage
 
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
-
-API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
+#Prod bot
+#API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -245,13 +245,16 @@ topics = []
 
 kapibara = {}
 
-# Не загружаем выключенные задачи (topic="off")
+# Не загружаем выключенные задачи (topic="off" или type="off")
 def _is_task_enabled(x: dict) -> bool:
     try:
         topic = (x.get("topic") or "").strip().lower()
+        typ = (x.get("type") or "").strip().lower()
     except Exception:
         return True
-    return topic != "off"
+    if topic == "off" or typ == "off":
+        return False
+    return True
 
 
 # Загружаем вопросы из агрегированного data.txt + отдельного data_physics.txt
@@ -1653,19 +1656,56 @@ def inline_kb_next(top: str, j: int, lang: str, user_id: int):
     return builder.as_markup()
 
 
-async def _deliver_topic_question_message(call: CallbackQuery, top: str, j: int, showvideo: int) -> None:
-    """Отправить задачу темы j и учесть показ для логики «первый ответ после показа»."""
-    uid = call.from_user.id
+async def _deliver_topic_question_to_chat(chat_id: int, from_user, top: str, j: int, showvideo: int) -> None:
+    """Отправить задачу темы j в чат; учёт показа для логики «первый ответ после показа»."""
+    uid = from_user.id
     linear = _topic_linear_active.get((uid, top), False)
     _register_topic_question_displayed(uid, top, j, linear)
     k = kapibara[top][j]
-    lang_code = await _get_user_lang(call.from_user)
+    lang_code = await _get_user_lang(from_user)
     if "img" in k:
         photo_path = os.path.join(DATA_DIR, "images", k["img"])
-        await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
-    # В режиме тренировки по теме номер задачи (Вопрос N из M) не показываем
+        await bot.send_photo(chat_id, photo=types.FSInputFile(photo_path))
     question_text = k["english"] + "\n" + k.get("chinese", "") + k.get("long", "")
-    await call.message.answer(question_text, reply_markup=inline_kb(top, j, showvideo, lang_code=lang_code))
+    await bot.send_message(chat_id, question_text, reply_markup=inline_kb(top, j, showvideo, lang_code=lang_code))
+
+
+async def _deliver_topic_question_message(call: CallbackQuery, top: str, j: int, showvideo: int) -> None:
+    """Отправить задачу темы j и учесть показ для логики «первый ответ после показа»."""
+    await _deliver_topic_question_to_chat(call.message.chat.id, call.from_user, top, j, showvideo)
+
+
+async def _start_topic_training_from_message(message: Message, top: str, log_prefix: str) -> None:
+    """Вход в тренировку по теме (физика/химия) из текстового сообщения — та же логика, что menu_physics / menu_chemistry."""
+    lang = await _get_user_lang(message.from_user)
+    if top not in kapibara or not kapibara[top]:
+        kb = await start_kb(message.from_user.id)
+        if top == "physics":
+            await message.answer(_txt(lang, "Задач по физике пока нет.", "No physics tasks yet."), reply_markup=kb)
+        else:
+            await message.answer(_txt(lang, "Задач по химии пока нет.", "No chemistry tasks yet."), reply_markup=kb)
+        return
+
+    showvideo = 1
+    if message.from_user.username == "evangecalista":
+        showvideo = 0
+    elif db_conn:
+        try:
+            cursor = await db_conn.execute("SELECT source FROM users WHERE id = ?", (message.from_user.id,))
+            row = await cursor.fetchone()
+            if row and row[0] == "stepik":
+                showvideo = 0
+        except Exception:
+            pass
+    elif str(message.from_user.id) in stepik:
+        showvideo = 0
+
+    uid = message.from_user.id
+    _topic_clear_session(uid, top)
+    _topic_linear_active[(uid, top)] = True
+    log(message.from_user, [log_prefix, "next", top, 0])
+    async with ChatActionSender(bot=bot, chat_id=uid, action="typing"):
+        await _deliver_topic_question_to_chat(message.chat.id, message.from_user, top, 0, showvideo)
 
 
 async def _deliver_subtopic_question_message(
@@ -5279,7 +5319,7 @@ async def on_any_message(message: Message):
         _llm_text = message.text or ""
         if not (7 < len(_llm_text) < 300):
             return
-
+        log(message.from_user, ['llm_len',str(len(_llm_text))])
         llm_base_url = os.environ.get("LLM_BASE_URL", "http://localhost:8000").rstrip("/")
         access_token = os.environ.get("LLM_TOKEN", "").strip()
         access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NTU1MTE2NTQsImlhdCI6MTc2MTE3MTQ3OCwiYXV0aF90aW1lIjoxNzYwNDcxNjU0LCJqdGkiOiIxZDVmYjRiZi1mNTY2LTQzMGEtYmE3Mi04NmNhYmZkYTA2MWMiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiNWUxN2Q3NDMtY2I3OC00MzI1LWFhNGItMzBkODU5MmUzYjg5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.SmGtYXk3_uasqFIh9DxMpxk5ubU_b5AX7iU7vLAr98X6Emini_60GdUxmuCYDeeLg2dRKq6b1a4IcoYiQ3iZIzAIsOFvCMd3KrY2tXTp4jOMkT8IFi3AKv8Re58DL_vQev8A1hAQgnjCHWkybR4tM1ConoS_2rzHhHXeLOD0VlcowzGrMy2zfVSCgR_alUDD9oEOwT0BhPyaPALRqeWsU_z1aMY3v2VT20LhL-YqB3bUF3OXiXWL-JHLnNrTOb_087b-yi0DjXajUVuXc6V7a0gMtErGXA-CWXScgqZt0c5K3l8jE4n8OwtWwZcZRh64gn_zhti8yWCIdNseFzMbLA"
@@ -5295,12 +5335,19 @@ async def on_any_message(message: Message):
 
         def _do_llm_request() -> str:
             llm = AmveraLLM(model="gpt-4.1", temperature=0, api_token=access_token)
-
+            addtext = """Определи о чем вопрос и верни одно из чисел: 
+1 задачи по математике, 
+2 физика 
+3 химия
+4 не понятно как решить задачу
+5 информация о CSCA"""
             rag_text = load_rag_text()
             messages = [
                 SystemMessage(content=rag_text),
                 SystemMessage(content="Отвечай коротко и по делу"),
-                HumanMessage(content=_llm_text),
+                
+
+                HumanMessage(content=_llm_text+addtext),
             ]
 
             response = llm.invoke(messages)
@@ -5315,15 +5362,39 @@ async def on_any_message(message: Message):
             async with ChatActionSender(bot=bot, chat_id=message.chat.id, action="typing"):
                 answer_text = await asyncio.to_thread(_do_llm_request)
             if answer_text:
-                try:
-                    ans_one_line = (answer_text or "").replace("\n", " ").strip()
-                    # не раздуваем лог: максимум 2000 символов
-                    if len(ans_one_line) > 2000:
-                        ans_one_line = ans_one_line[:2000] + "..."
-                    log(message.from_user, ["llm_answer", str(chat_id), f"len={len(answer_text or '')}", ans_one_line])
-                except Exception:
-                    pass
-                await message.answer(answer_text)
+                lang = await _get_user_lang(message.from_user)
+                resp_stripped = (answer_text or "").strip()
+                first_line = resp_stripped.split("\n")[0].strip() if resp_stripped else ""
+                first_token = first_line.split()[0] if first_line.split() else ""
+                # Классификатор LLM: 1 — математика (меню тем), 2 — физика, 3 — химия
+                if first_token in ("1", "1."):
+                    await message.answer(
+                        _txt(
+                            lang,
+                            "Ниже — список тем по математике. Выберите тему: в задачах есть проверка ответов и доступ к решению после попытки.",
+                            "Below is the math topic list. Pick a topic: you get answer checking and access to the solution after you try.",
+                        ),
+                        reply_markup=topics_menu_kb(lang),
+                    )
+                    log(message.from_user, ["llm_topics_menu", str(chat_id), "classifier=1"])
+                elif first_token in ("2", "2."):
+                    await _start_topic_training_from_message(message, "physics", "menu_physics")
+                    log(message.from_user, ["llm_classifier_physics", str(chat_id)])
+                elif first_token in ("3", "3."):
+                    await _start_topic_training_from_message(message, "chemistry", "menu_chemistry")
+                    log(message.from_user, ["llm_classifier_chemistry", str(chat_id)])
+                else:
+                    try:
+                        ans_one_line = (answer_text or "").replace("\n", " ").strip()
+                        if len(ans_one_line) > 2000:
+                            ans_one_line = ans_one_line[:2000] + "..."
+                        log(
+                            message.from_user,
+                            ["llm_answer", str(chat_id), f"len={len(answer_text or '')}", ans_one_line],
+                        )
+                    except Exception:
+                        pass
+                    await message.answer(answer_text)
         except Exception as e:
             logging.error(f"LLM request error: {e}")
             await message.answer("Ошибка при обращении к LLM. Попробуйте позже.")

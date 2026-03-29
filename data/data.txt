@@ -531,7 +531,7 @@
     "answer": "A",
     "topic": "inequalities",
     "subtopic": "absolute value",
-    "type": "extra",
+    "type": "off",
     "difficulty": 3,
     "id": "AV1",
     "solution_ru": "|2x-1| ≤ 3 ⇔ -3 ≤ 2x-1 ≤ 3 ⇔ -2 ≤ 2x ≤ 4 ⇔ -1 ≤ x ≤ 2. Решение: [-1, 2].",
@@ -551,7 +551,7 @@
     "answer": "A",
     "topic": "inequalities",
     "subtopic": "absolute value",
-    "type": "extra",
+    "type": "off",
     "difficulty": 3,
     "id": "AV2",
     "solution_ru": "|x+3| < 1 ⇔ -1 < x+3 < 1 ⇔ -4 < x < -2. Решение: (-4, -2).",
@@ -577,7 +577,8 @@
     "solution_ru": "|x+1| > 5 ⇔ x+1 < -5 или x+1 > 5 ⇔ x < -6 или x > 4. Решение: (-∞, -6) ∪ (4, +∞).",
     "solution_en": "|x+1| > 5 ⇔ x+1 < -5 or x+1 > 5 ⇔ x < -6 or x > 4. Solution: (-∞, -6) ∪ (4, +∞).",
     "solution_ru2": "Неравенство вида |A| > a (a ≥ 0) эквивалентно совокупности двух неравенств: A < -a или A > a. Здесь A = x+1, a = 5. Получаем: x+1 < -5 или x+1 > 5. Решаем каждое: x < -6 или x > 4. Объединение этих интервалов дает решение: (-∞, -6) ∪ (4, +∞).",
-    "solution_en2": "An inequality of the form |A| > a (a ≥ 0) is equivalent to the union of two inequalities: A < -a or A > a. Here A = x+1, a = 5. We get: x+1 < -5 or x+1 > 5. Solve each: x < -6 or x > 4. The union of these intervals gives the solution: (-∞, -6) ∪ (4, +∞)."
+    "solution_en2": "An inequality of the form |A| > a (a ≥ 0) is equivalent to the union of two inequalities: A < -a or A > a. Here A = x+1, a = 5. We get: x+1 < -5 or x+1 > 5. Solve each: x < -6 or x > 4. The union of these intervals gives the solution: (-∞, -6) ∪ (4, +∞).",
+    "type": "off"
   },
   {
     "chinese": "不等式 |x+2|≤3 的解集是什么？",
@@ -597,7 +598,8 @@
     "solution_ru": "|x+2| ≤ 3 ⇔ -3 ≤ x+2 ≤ 3 ⇔ -5 ≤ x ≤ 1. Решение: [-5, 1].",
     "solution_en": "|x+2| ≤ 3 ⇔ -3 ≤ x+2 ≤ 3 ⇔ -5 ≤ x ≤ 1. Solution: [-5, 1].",
     "solution_ru2": "Применим правило: |A| ≤ a ⇔ -a ≤ A ≤ a. Здесь A = x+2, a = 3. Получаем: -3 ≤ x+2 ≤ 3. Вычтем 2 из всех частей: -5 ≤ x ≤ 1. Неравенства нестрогие, поэтому концы отрезка включаются. Решение: [-5, 1].",
-    "solution_en2": "Apply the rule: |A| ≤ a ⇔ -a ≤ A ≤ a. Here A = x+2, a = 3. We get: -3 ≤ x+2 ≤ 3. Subtract 2 from all parts: -5 ≤ x ≤ 1. The inequalities are non-strict, so the endpoints are included. The solution is the closed interval [-5, 1]."
+    "solution_en2": "Apply the rule: |A| ≤ a ⇔ -a ≤ A ≤ a. Here A = x+2, a = 3. We get: -3 ≤ x+2 ≤ 3. Subtract 2 from all parts: -5 ≤ x ≤ 1. The inequalities are non-strict, so the endpoints are included. The solution is the closed interval [-5, 1].",
+    "type": "off"
   },
   {
     "chinese": "不等式 |x-4|≥2 的解集为",
@@ -611,7 +613,7 @@
     "answer": "A",
     "topic": "inequalities",
     "subtopic": "absolute value",
-    "type": "extra",
+    "type": "off",
     "difficulty": 3,
     "id": "AV5",
     "solution_ru": "|x-4| ≥ 2 ⇔ x-4 ≤ -2 или x-4 ≥ 2 ⇔ x ≤ 2 или x ≥ 6. Решение: (-∞, 2] ∪ [6, +∞).",
@@ -631,7 +633,7 @@
     "answer": "A",
     "topic": "inequalities",
     "subtopic": "absolute value",
-    "type": "extra",
+    "type": "off",
     "difficulty": 3,
     "id": "AV6",
     "solution_ru": "|x/2 - 1| > 3 ⇔ x/2 - 1 < -3 или x/2 - 1 > 3 ⇔ x/2 < -2 или x/2 > 4 ⇔ x < -4 или x > 8. Решение: (-∞, -4) ∪ (8, +∞).",
@@ -657,11 +659,12 @@
     "solution_ru": "|x-2| < 3 ⇔ -3 < x-2 < 3 ⇔ -1 < x < 5. Решение: (-1, 5).",
     "solution_en": "|x-2| < 3 ⇔ -3 < x-2 < 3 ⇔ -1 < x < 5. Solution: (-1, 5).",
     "solution_ru2": "Для строгого неравенства |A| < a (a > 0) имеем -a < A < a. Подставляем A = x-2, a = 3: -3 < x-2 < 3. Прибавляем 2: -1 < x < 5. Концы интервала не включаются. Решение: (-1, 5).",
-    "solution_en2": "For a strict inequality |A| < a (a > 0), we have -a < A < a. Substitute A = x-2, a = 3: -3 < x-2 < 3. Add 2: -1 < x < 5. The endpoints are not included. The solution is the open interval (-1, 5)."
+    "solution_en2": "For a strict inequality |A| < a (a > 0), we have -a < A < a. Substitute A = x-2, a = 3: -3 < x-2 < 3. Add 2: -1 < x < 5. The endpoints are not included. The solution is the open interval (-1, 5).",
+    "type": "off"
   },
   {
-    "chinese": "已知 a = 1 - √2，b = -1，那么（ ）",
-    "english": "Given a = 1 - √2 and b = -1, which of the following is correct?",
+    "chinese": "已知 a =  √2-1，b = 1//3，那么（ ）",
+    "english": "Given a = √2-1 and b = 1//3, which of the following is correct?",
     "options": [
       "A. a > b",
       "B. a < b",
@@ -670,7 +673,7 @@
     ],
     "answer": "A",
     "topic": "inequalities",
-    "type": "extra",
+    "type": "off",
     "subtopic": "real numbers",
     "difficulty": 3,
     "id": "RN1",
@@ -690,7 +693,7 @@
     ],
     "answer": "A",
     "topic": "inequalities",
-    "type": "extra",
+    "type": "off",
     "subtopic": "real numbers",
     "difficulty": 3,
     "id": "RN2",
@@ -710,7 +713,7 @@
     ],
     "answer": "B",
     "topic": "inequalities",
-    "type": "extra",
+    "type": "off",
     "subtopic": "real numbers",
     "difficulty": 3,
     "id": "RN2",
@@ -730,7 +733,7 @@
     ],
     "answer": "A",
     "topic": "inequalities",
-    "type": "extra",
+    "type": "off",
     "subtopic": "real numbers",
     "difficulty": 3,
     "id": "RN2",
@@ -750,7 +753,7 @@
     ],
     "answer": "A",
     "topic": "inequalities",
-    "type": "extra",
+    "type": "off",
     "subtopic": "real numbers",
     "difficulty": 3,
     "id": "RN2",
@@ -770,7 +773,7 @@
     ],
     "answer": "C",
     "topic": "inequalities",
-    "type": "extra",
+    "type": "off",
     "subtopic": "real numbers",
     "difficulty": 3,
     "id": "RN2",
@@ -5995,7 +5998,6 @@
     "solution_ru2": "c = √5, фокусы (±√5,0).",
     "solution_en2": "c = √5, foci (±√5,0)."
   },
-  
   {
     "chinese": "双曲线 x² - y² = 1 的焦点坐标是",
     "english": "The coordinates of the foci of the hyperbola x² - y² = 1 are",
