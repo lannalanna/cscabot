@@ -23,7 +23,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
 #Prod bot
-#API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
+API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -229,6 +229,9 @@ topic_links = { 'Algebraic and geometric mean' : 'https://t.me/csca_math_exam/22
                 'physics' : 'https://t.me/csca_math_exam/55',
                 'probability' : 'https://t.me/csca_math_exam/26'
                  }
+
+# Запасная ссылка «Перейти в чат» для ru, если тема не найдена в topic_links (кнопка после 👎 к решению из data.txt)
+DEFAULT_CHAT_FALLBACK_RU = "https://t.me/csca_math_exam/1"
 
 # Маппинг старых имён тем на новые (для обратной совместимости callback_data)
 TOPIC_ALIASES = {"algebra": "Algebraic and geometric mean"}
@@ -595,6 +598,78 @@ def _sub_clear_session(uid: int, topic_idx: int, sub_idx: int) -> None:
 
 # --- Режим "Все задачи по математике" ---
 _math_all_sessions: dict[int, dict] = {}
+
+# Последняя показанная задача из kapibara (для LLM): user_id -> (topic, j, порядок индексов вариантов как на экране или None)
+_last_seen_kapibara_question: dict[int, tuple[str, int, tuple[int, ...] | None]] = {}
+
+# user_id -> (topic, j), для которых уже показывали ответ LLM по задаче
+_llm_solution_shown_for_task: dict[int, set[tuple[str, int]]] = {}
+
+# Режим контекста для вызова LLM из произвольного текста (on_any_message)
+LLM_CONTEXT_ADDTEXT_ONLY = "addtext_only"  # addtext в системных сообщениях, без RAG
+LLM_CONTEXT_RAG_ONLY = "rag_only"  # только RAG, без addtext-классификатора
+LLM_CONTEXT_LAST_TASK = "last_task"  # условие и варианты последней показанной задачи
+
+
+def _record_last_seen_question(
+    user_id: int, top: str, j: int, option_order: list[int] | None = None
+) -> None:
+    oo = tuple(option_order) if option_order is not None else None
+    _last_seen_kapibara_question[user_id] = (top, int(j), oo)
+
+
+def _mark_llm_solution_shown(user_id: int, top: str, j: int) -> None:
+    _llm_solution_shown_for_task.setdefault(user_id, set()).add((top, int(j)))
+
+
+def _user_has_viewed_llm_solution_for_task(user_id: int, top: str, j: int) -> bool:
+    """Пользователь уже получал от бота ответ LLM по этой задаче (topic, j в kapibara)."""
+    return (top, int(j)) in _llm_solution_shown_for_task.get(user_id, set())
+
+
+def _format_last_seen_task_for_llm(user_id: int, lang: str) -> str | None:
+    key = _last_seen_kapibara_question.get(user_id)
+    if not key:
+        return None
+    if len(key) == 2:
+        top, j = key
+        order = None
+    else:
+        top, j, order = key
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        return None
+    q = kapibara[top][j]
+    stem = (q.get("english") or "") + "\n" + (q.get("chinese") or "") + (q.get("long") or "")
+    opts = q.get("options") or []
+    if not opts:
+        opt_lines = ""
+    else:
+        disp: list[int]
+        if order is None:
+            disp = list(range(len(opts)))
+        else:
+            disp = [i for i in order if 0 <= i < len(opts)]
+            if len(disp) != len(opts):
+                disp = list(range(len(opts)))
+        lines: list[str] = []
+        for pos, i in enumerate(disp):
+            letter = chr(ord("A") + pos)
+            lines.append(_option_button_text_shuffled(opts[i], letter))
+        opt_lines = "\n".join(lines)
+    tid = q.get("id") or ""
+    if _normalize_lang(lang) == "ru":
+        return (
+            f"Тема (данные): {top}\n"
+            f"id задачи: {tid}\n\n"
+            f"Условие:\n{stem.strip()}\n\n"
+            f"Варианты ответа:\n{opt_lines}"
+        )
+    return (
+        f"Topic (data): {top}\n"
+        f"Task id: {tid}\n\n"
+        f"Problem:\n{stem.strip()}\n\n"
+        f"Answer options:\n{opt_lines}"
+    )
 
 
 def _math_all_serialize_state(session: dict) -> str:
@@ -1004,7 +1079,7 @@ def _wrong_answer_training_extra_message(lang: str, wrong_today: int, total_toda
         if wrong_today > 10:
             block += (
                 "\n\nОграничение по ошибкам сегодня: не более 30. "
-                "\nНе перебирай ответы. Решай задачи внимательнее."
+                f"\n{_wrong_answer_limit_phrase(lang)}"
             )
     else:
         block = f"Mistakes today: {wrong_today} out of {total_today} answers."
@@ -1013,9 +1088,33 @@ def _wrong_answer_training_extra_message(lang: str, wrong_today: int, total_toda
         if wrong_today > 10:
             block += (
                 "\n\nToday's mistake limit: no more than 30. "
-                "\nDon't try random answers. Work through the problems more carefully."
+                f"\n{_wrong_answer_limit_phrase(lang)}"
             )
     return block + "\n\n"
+
+
+def _wrong_answer_limit_phrase(lang: str) -> str:
+    if _normalize_lang(lang) == "ru":
+        return random.choice(
+            [
+                "Не перебирай ответы.",
+                "Решай задачи внимательнее.",
+                "Вникай в суть задачи.",
+                "Анализируй условия тщательнее.",
+                "Решай последовательно и логически.",
+                "Думай над каждым ответом.",
+            ]
+        )
+    return random.choice(
+        [
+            "Don't guess answers.",
+            "Solve more carefully.",
+            "Focus on the actual problem.",
+            "Analyze the conditions more thoroughly.",
+            "Solve step by step and logically.",
+            "Think through each option.",
+        ]
+    )
 
 
 async def _wrong_answer_training_message(user_id: int, lang: str) -> str:
@@ -1600,11 +1699,18 @@ def _option_button_text_shuffled(raw: str, display_letter: str) -> str:
     return out.replace(". ", ".     ")
 
 
-def inline_kb(top, j: int, showvideo=1, lang_code: str = "en") -> InlineKeyboardMarkup:
+def inline_kb(
+    top,
+    j: int,
+    showvideo=1,
+    lang_code: str = "en",
+    *,
+    option_order: list[int] | None = None,
+) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     q = kapibara[top][j]
     k = q["options"]
-    order = _option_display_indices(top, q, len(k))
+    order = option_order if option_order is not None else _option_display_indices(top, q, len(k))
     # Добавляем кнопки вопросов (порядок на экране случайный; буквы A,B,… заново сверху вниз)
     for pos, i in enumerate(order):
         letter = chr(ord("A") + pos)
@@ -1667,7 +1773,13 @@ async def _deliver_topic_question_to_chat(chat_id: int, from_user, top: str, j: 
         photo_path = os.path.join(DATA_DIR, "images", k["img"])
         await bot.send_photo(chat_id, photo=types.FSInputFile(photo_path))
     question_text = k["english"] + "\n" + k.get("chinese", "") + k.get("long", "")
-    await bot.send_message(chat_id, question_text, reply_markup=inline_kb(top, j, showvideo, lang_code=lang_code))
+    order = _option_display_indices(top, k, len(k["options"]))
+    await bot.send_message(
+        chat_id,
+        question_text,
+        reply_markup=inline_kb(top, j, showvideo, lang_code=lang_code, option_order=order),
+    )
+    _record_last_seen_question(uid, top, j, order)
 
 
 async def _deliver_topic_question_message(call: CallbackQuery, top: str, j: int, showvideo: int) -> None:
@@ -1733,7 +1845,14 @@ async def _deliver_subtopic_question_message(
     lang_code = await _get_user_lang(call.from_user)
     # В режиме тренировки по подтеме номер задачи (Вопрос N из M) не показываем
     question_text = q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
-    await call.message.answer(question_text, reply_markup=inline_kb_sub(topic_idx, sub_idx, k, showvideo, lang_code=lang_code))
+    order = _option_display_indices(topic, q, len(q["options"]))
+    await call.message.answer(
+        question_text,
+        reply_markup=inline_kb_sub(
+            topic_idx, sub_idx, k, showvideo, lang_code=lang_code, option_order=order
+        ),
+    )
+    _record_last_seen_question(uid, topic, j, order)
 
 
 async def _get_exam_state(user_id: int):
@@ -1780,9 +1899,9 @@ def _find_next_exam_index(state):
    return None
 
 
-def inline_kb_exam(idx: int) -> InlineKeyboardMarkup:
+def inline_kb_exam(idx: int, *, option_order: list[int] | None = None) -> InlineKeyboardMarkup:
    """Клавиатура вариантов ответа для режима экзамена 25 января (exam_type=jan)."""
-   return inline_kb_exam_by_type(idx, "jan")
+   return inline_kb_exam_by_type(idx, "jan", option_order=option_order)
 
 
 async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
@@ -1902,7 +2021,9 @@ def _find_next_exam_index_by_type(state, exam_type: str):
     return None
 
 
-def inline_kb_exam_by_type(idx: int, exam_type: str) -> InlineKeyboardMarkup:
+def inline_kb_exam_by_type(
+    idx: int, exam_type: str, *, option_order: list[int] | None = None
+) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     cfg = _exam_cfg(exam_type)
     if not cfg or idx < 0 or idx >= len(cfg["questions"]):
@@ -1915,7 +2036,11 @@ def inline_kb_exam_by_type(idx: int, exam_type: str) -> InlineKeyboardMarkup:
         return builder.as_markup()
     q = arr[j]
     opts = q.get("options", [])
-    order = _option_display_indices(top, q, len(opts))
+    order = (
+        option_order
+        if option_order is not None
+        else _option_display_indices(top, q, len(opts))
+    )
     for pos, i in enumerate(order):
         letter = chr(ord("A") + pos)
         builder.add(
@@ -1964,8 +2089,14 @@ async def _send_exam_question_by_type(call: CallbackQuery, user_id: int, idx: in
     )
     question_text = header + diff_line + q.get("english", "") + "\n" + q.get("chinese", "") + q.get("long", "")
     log(call.from_user, [cfg["id"], "question", idx, _exam_log_task_id(q)])
+    opts = q.get("options", [])
+    order = _option_display_indices(top, q, len(opts))
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
-        await call.message.answer(question_text, reply_markup=inline_kb_exam_by_type(idx, exam_type))
+        await call.message.answer(
+            question_text,
+            reply_markup=inline_kb_exam_by_type(idx, exam_type, option_order=order),
+        )
+    _record_last_seen_question(user_id, top, j, order)
 
 
 async def _send_exam_summary_by_type(call: CallbackQuery, user_id: int, exam_type: str):
@@ -2142,9 +2273,9 @@ def _find_next_exam_dec_index(state):
    return None
 
 
-def inline_kb_exam_dec(idx: int) -> InlineKeyboardMarkup:
+def inline_kb_exam_dec(idx: int, *, option_order: list[int] | None = None) -> InlineKeyboardMarkup:
    """Клавиатура вариантов для экзамена 21 декабря (exam_type=dec)."""
-   return inline_kb_exam_by_type(idx, "dec")
+   return inline_kb_exam_by_type(idx, "dec", option_order=option_order)
 
 
 async def _send_exam_dec_question(call: CallbackQuery, user_id: int, idx: int):
@@ -2174,8 +2305,12 @@ async def _send_exam_dec_question(call: CallbackQuery, user_id: int, idx: int):
    else:
        diff_line = ""
    question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
+   order = _option_display_indices(top, q, len(q["options"]))
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
-       await call.message.answer(question_text, reply_markup=inline_kb_exam_dec(idx))
+       await call.message.answer(
+           question_text, reply_markup=inline_kb_exam_dec(idx, option_order=order)
+       )
+   _record_last_seen_question(user_id, top, j, order)
 
 
 async def _send_exam_dec_summary(call: CallbackQuery, user_id: int):
@@ -2272,7 +2407,7 @@ def _find_next_exam_mock_index(state):
    return None
 
 
-def inline_kb_exam_mock(idx: int) -> InlineKeyboardMarkup:
+def inline_kb_exam_mock(idx: int, *, option_order: list[int] | None = None) -> InlineKeyboardMarkup:
    builder = InlineKeyboardBuilder()
    if idx < 0 or idx >= len(mock_questions):
        builder.adjust(1)
@@ -2280,7 +2415,11 @@ def inline_kb_exam_mock(idx: int) -> InlineKeyboardMarkup:
    top, j = mock_questions[idx]
    q = kapibara[top][j]
    opts = q["options"]
-   order = _option_display_indices(top, q, len(opts))
+   order = (
+       option_order
+       if option_order is not None
+       else _option_display_indices(top, q, len(opts))
+   )
    for pos, i in enumerate(order):
        letter = chr(ord("A") + pos)
        builder.add(
@@ -2324,8 +2463,12 @@ async def _send_exam_mock_question(call: CallbackQuery, user_id: int, idx: int):
    )
    question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
    log(call.from_user, [EXAM_MOCK_ID, "question", idx, _exam_log_task_id(q)])
+   order = _option_display_indices(top, q, len(q["options"]))
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
-       await call.message.answer(question_text, reply_markup=inline_kb_exam_mock(idx))
+       await call.message.answer(
+           question_text, reply_markup=inline_kb_exam_mock(idx, option_order=order)
+       )
+   _record_last_seen_question(user_id, top, j, order)
 
 
 async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
@@ -2423,7 +2566,15 @@ def _get_subtopic_j(topic_idx: int, sub_idx: int, k: int):
     return topic, j_list[k]
 
 
-def inline_kb_sub(topic_idx: int, sub_idx: int, k: int, showvideo: int = 1, lang_code: str = "en") -> InlineKeyboardMarkup:
+def inline_kb_sub(
+    topic_idx: int,
+    sub_idx: int,
+    k: int,
+    showvideo: int = 1,
+    lang_code: str = "en",
+    *,
+    option_order: list[int] | None = None,
+) -> InlineKeyboardMarkup:
     """Клавиатура вариантов ответа для вопроса в режиме подтемы (callback qst_sub_)."""
     topic, j = _get_subtopic_j(topic_idx, sub_idx, k)
     if topic is None:
@@ -2431,7 +2582,11 @@ def inline_kb_sub(topic_idx: int, sub_idx: int, k: int, showvideo: int = 1, lang
     q = kapibara[topic][j]
     builder = InlineKeyboardBuilder()
     opts = q["options"]
-    order = _option_display_indices(topic, q, len(opts))
+    order = (
+        option_order
+        if option_order is not None
+        else _option_display_indices(topic, q, len(opts))
+    )
     for pos, i in enumerate(order):
         letter = chr(ord("A") + pos)
         builder.add(
@@ -2585,11 +2740,17 @@ def inline_kb_explain(top, j, k, lang_code: str = "en") :
    return builder.as_markup()
 
 
-def inline_kb_math_all(top: str, j: int, lang_code: str = "en") -> InlineKeyboardMarkup:
+def inline_kb_math_all(
+    top: str, j: int, lang_code: str = "en", *, option_order: list[int] | None = None
+) -> InlineKeyboardMarkup:
    builder = InlineKeyboardBuilder()
    q = kapibara[top][j]
    opts = q.get("options", [])
-   order = _option_display_indices(top, q, len(opts))
+   order = (
+       option_order
+       if option_order is not None
+       else _option_display_indices(top, q, len(opts))
+   )
    top_idx = topics.index(top)
    for pos, i in enumerate(order):
        letter = chr(ord("A") + pos)
@@ -2722,6 +2883,158 @@ def _kb_solution_feedback_math(top_idx: int, j: int, lang_code: str = "en") -> I
    )
    builder.adjust(1)
    return builder.as_markup()
+
+
+def _kb_soldn_after_ai_unclear(
+    lang: str,
+    topiclink: str,
+    next_callback_data: str,
+    *,
+    show_explain: bool = True,
+) -> InlineKeyboardMarkup:
+    """После «Решение сгенерировано нейросетью…»: Перейти в чат → [Объяснить подробнее, если не было LLM] → Следующая задача."""
+    kb = InlineKeyboardBuilder()
+    chat_url = (topiclink or "").strip()
+    if not chat_url:
+        chat_url = (
+            DEFAULT_CHAT_FALLBACK_RU
+            if _normalize_lang(lang) == "ru"
+            else "https://t.me/+hN3O2vl9211mZmU6"
+        )
+    kb.row(
+        InlineKeyboardButton(
+            text=_txt(lang, "Перейти в чат", "Go to chat"),
+            url=chat_url,
+        )
+    )
+    if show_explain:
+        kb.row(
+            InlineKeyboardButton(
+                text=_txt(lang, "Объяснить подробнее…", "Explain in more detail…"),
+                callback_data="llm_explain_last",
+            )
+        )
+    kb.row(
+        InlineKeyboardButton(
+            text=_txt(lang, "Следующая задача", "Next task"),
+            callback_data=next_callback_data,
+        )
+    )
+    return kb.as_markup()
+
+
+def _discussion_url_for_task(q: dict, lang: str) -> str:
+    """
+    URL для кнопки «Перейти в чат» после 👎 к решению из data.txt.
+    Не-ru — инвайт-ссылка; ru — тема из topic_links, иначе DEFAULT_CHAT_FALLBACK_RU.
+    """
+    fallback_en = "https://t.me/+hN3O2vl9211mZmU6"
+    topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
+    if _normalize_lang(lang) != "ru":
+        return fallback_en
+    return topiclink or DEFAULT_CHAT_FALLBACK_RU
+
+
+def _get_llm_access_token() -> str:
+    access_token = os.environ.get("LLM_TOKEN", "").strip()
+    access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NTU1MTE2NTQsImlhdCI6MTc2MTE3MTQ3OCwiYXV0aF90aW1lIjoxNzYwNDcxNjU0LCJqdGkiOiIxZDVmYjRiZi1mNTY2LTQzMGEtYmE3Mi04NmNhYmZkYTA2MWMiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiNWUxN2Q3NDMtY2I3OC00MzI1LWFhNGItMzBkODU5MmUzYjg5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.SmGtYXk3_uasqFIh9DxMpxk5ubU_b5AX7iU7vLAr98X6Emini_60GdUxmuCYDeeLg2dRKq6b1a4IcoYiQ3iZIzAIsOFvCMd3KrY2tXTp4jOMkT8IFi3AKv8Re58DL_vQev8A1hAQgnjCHWkybR4tM1ConoS_2rzHhHXeLOD0VlcowzGrMy2zfVSCgR_alUDD9oEOwT0BhPyaPALRqeWsU_z1aMY3v2VT20LhL-YqB3bUF3OXiXWL-JHLnNrTOb_087b-yi0DjXajUVuXc6V7a0gMtErGXA-CWXScgqZt0c5K3l8jE4n8OwtWwZcZRh64gn_zhti8yWCIdNseFzMbLA"
+    access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NTU1MTE2NTQsImlhdCI6MTc2MTE3MTQ3OCwiYXV0aF90aW1lIjoxNzYwNDcxNjU0LCJqdGkiOiIxZDVmYjRiZi1mNTY2LTQzMGEtYmE3Mi04NmNhYmZkYTA2MWMiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiNWUxN2Q3NDMtY2I3OC00MzI1LWFhNGItMzBkODU5MmUzYjg5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.SmGtYXk3_uasqFIh9DxMpxk5ubU_b5AX7iU7vLAr98X6Emini_60GdUxmuCYDeeLg2dRKq6b1a4IcoYiQ3iZIzAIsOFvCMd3KrY2tXTp4jOMkT8IFi3AKv8Re58DL_vQev8A1hAQgnjCHWkybR4tM1ConoS_2rzHhHXeLOD0VlcowzGrMy2zfVSCgR_alUDD9oEOwT0BhPyaPALRqeWsU_z1aMY3v2VT20LhL-YqB3bUF3OXiXWL-JHLnNrTOb_087b-yi0DjXajUVuXc6V7a0gMtErGXA-CWXScgqZt0c5K3l8jE4n8OwtWwZcZRh64gn_zhti8yWCIdNseFzMbLA"
+    return access_token
+
+
+def _do_llm_request(
+    mode: str,
+    user_text: str,
+    user_id: int,
+    chat_id: int,
+    from_user,
+    lang: str,
+    access_token: str,
+) -> str:
+    llm = AmveraLLM(model="gpt-4.1", temperature=0, api_token=access_token)
+    addtext = """Определи о чем вопрос и верни одно из чисел: 
+1 задачи по математике, 
+2 физика 
+3 химия
+4 не понятно как решить задачу
+5 информация о CSCA"""
+    short = _txt(lang, "Отвечай коротко и по делу.", "Answer briefly and to the point.")
+
+    if mode == LLM_CONTEXT_ADDTEXT_ONLY:
+        messages = [
+            SystemMessage(content=addtext),
+            SystemMessage(content=short),
+            HumanMessage(content=user_text),
+        ]
+    elif mode == LLM_CONTEXT_RAG_ONLY:
+        rag_text = load_rag_text()
+        messages = [
+            SystemMessage(content=rag_text),
+            SystemMessage(content=short),
+            HumanMessage(content=user_text),
+        ]
+    elif mode == LLM_CONTEXT_LAST_TASK:
+        task_block = _format_last_seen_task_for_llm(user_id, lang)
+        if not task_block:
+            log(from_user, ["llm_skip", str(chat_id), mode, "__NO_LAST_TASK__"])
+            return "__NO_LAST_TASK__"
+        hint = _txt(
+            lang,
+            "Ниже условие задачи и варианты ответа. Расскажи решение подробно. Используй текст в unicode. Не используй latex",
+            "Below is the problem statement and answer options. Explain the solution in detail. Do not use latex.Use unicode text",
+        )
+        messages = [
+            SystemMessage(content=hint),
+            SystemMessage(content=task_block),
+            HumanMessage(content=user_text),
+        ]
+    else:
+        messages = [
+            SystemMessage(content=addtext),
+            SystemMessage(content=short),
+            HumanMessage(content=user_text),
+        ]
+
+    response = llm.invoke(messages)
+    content = getattr(response, "content", None) or ""
+    try:
+        ans_one_line = (content or "").replace("\n", " ").strip()
+        if len(ans_one_line) > 2000:
+            ans_one_line = ans_one_line[:2000] + "..."
+        log(
+            from_user,
+            [
+                "llm_response",
+                str(chat_id),
+                mode,
+                f"len={len(content or '')}",
+                ans_one_line,
+            ],
+        )
+    except Exception:
+        log(from_user, ["llm_response", str(chat_id), mode, "len=?", "log_error"])
+    return content
+
+
+def _kb_llm_task_feedback(user_id: int, lang: str) -> InlineKeyboardMarkup | None:
+    """
+    Те же кнопки, что после показа решения из data.txt (solup/soldn),
+    с учётом режима «вся математика» (math_next) при активной сессии.
+    """
+    key = _last_seen_kapibara_question.get(user_id)
+    if not key or len(key) < 2:
+        return None
+    top, j = key[0], int(key[1])
+    if top not in kapibara or j < 0 or j >= len(kapibara[top]):
+        return None
+    try:
+        top_idx = topics.index(top)
+    except ValueError:
+        return None
+    sess = _math_all_sessions.get(user_id)
+    if sess and sess.get("current_question") == (top, j):
+        return _kb_solution_feedback_math(top_idx, j, lang)
+    return _kb_solution_feedback_topic(top_idx, j, lang)
 
 
 async def _math_all_allowed_topics(user_id: int) -> set[str]:
@@ -2921,7 +3234,11 @@ async def _math_all_send_question(call: CallbackQuery, user_id: int, key: tuple[
     title_ru = f"Тема: {_topic_display(top, lang)} | Подтема: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
     title_en = f"Topic: {_topic_display(top, lang)} | Subtopic: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
     text = _txt(lang, title_ru + "\n\n", title_en + "\n\n") + q.get("english", "") + "\n" + q.get("chinese", "") + q.get("long", "")
-    await call.message.answer(text, reply_markup=inline_kb_math_all(top, j, lang_code=lang))
+    order = _option_display_indices(top, q, len(q.get("options", [])))
+    await call.message.answer(
+        text, reply_markup=inline_kb_math_all(top, j, lang_code=lang, option_order=order)
+    )
+    _record_last_seen_question(user_id, top, j, order)
 
 
 @router.callback_query(F.data == "menu_all_math")
@@ -3112,8 +3429,12 @@ async def on_math_all_hint(call: CallbackQuery):
         title_ru = f"Тема: {_topic_display(top, lang)} | Подтема: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
         title_en = f"Topic: {_topic_display(top, lang)} | Subtopic: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
         text = _txt(lang, title_ru + "\n\n", title_en + "\n\n") + q.get("english", "") + "\n" + q.get("chinese", "") + q.get("long", "")
-        await call.message.answer(text, reply_markup=inline_kb_math_all(top, j, lang_code=lang))
-    
+        order = _option_display_indices(top, q, len(q.get("options", [])))
+        await call.message.answer(
+            text,
+            reply_markup=inline_kb_math_all(top, j, lang_code=lang, option_order=order),
+        )
+        _record_last_seen_question(call.from_user.id, top, j, order)
 
 @router.callback_query(F.data.startswith("sol_math_"))
 async def on_math_solution_show(call: CallbackQuery):
@@ -3206,27 +3527,21 @@ async def on_math_solution_down(call: CallbackQuery):
         return
     q = kapibara[top][j]
     log(call.from_user, ["solution_vote_down_math", top, j, str(q.get("id") or "")])
-    topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
+    topiclink = _discussion_url_for_task(q, lang)
+    uid = call.from_user.id
+    # Скрыть «Объяснить подробнее», если пользователь уже получал по этой задаче ответ LLM
+    show_explain = not _user_has_viewed_llm_solution_for_task(uid, top, j)
     msg = _txt(
         lang,
         "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
         "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
     )
-    kb = InlineKeyboardBuilder()
-    if topiclink:
-        kb.row(
-            InlineKeyboardButton(
-                text=_txt(lang, "Перейти в чат", "Go to chat"),
-                url=topiclink,
-            )
-        )
-    kb.row(
-        InlineKeyboardButton(
-            text=_txt(lang, "Следующая задача", "Next task"),
-            callback_data=f"math_next_{top_idx}_{j}",
-        )
+    await call.message.answer(
+        msg,
+        reply_markup=_kb_soldn_after_ai_unclear(
+            lang, topiclink, f"math_next_{top_idx}_{j}", show_explain=show_explain
+        ),
     )
-    await call.message.answer(msg, reply_markup=kb.as_markup())
 
 
 @router.callback_query(F.data.startswith("sol_top_"))
@@ -3319,27 +3634,20 @@ async def on_topic_solution_down(call: CallbackQuery):
         return
     q = kapibara[top][j]
     log(call.from_user, ["solution_vote_down_topic", top, j, str(q.get("id") or "")])
-    topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
+    topiclink = _discussion_url_for_task(q, lang)
+    uid = call.from_user.id
+    show_explain = not _user_has_viewed_llm_solution_for_task(uid, top, j)
     msg = _txt(
         lang,
         "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
         "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
     )
-    kb = InlineKeyboardBuilder()
-    if topiclink:
-        kb.row(
-            InlineKeyboardButton(
-                text=_txt(lang, "Перейти в чат", "Go to chat"),
-                url=topiclink,
-            )
-        )
-    kb.row(
-        InlineKeyboardButton(
-            text=_txt(lang, "Следующая задача", "Next task"),
-            callback_data=f"next_{top}_{j+1}",
-        )
+    await call.message.answer(
+        msg,
+        reply_markup=_kb_soldn_after_ai_unclear(
+            lang, topiclink, f"next_{top}_{j+1}", show_explain=show_explain
+        ),
     )
-    await call.message.answer(msg, reply_markup=kb.as_markup())
 
 
 @router.callback_query(F.data.startswith("sol_sub_"))
@@ -3426,27 +3734,97 @@ async def on_sub_solution_down(call: CallbackQuery):
         return
     q = kapibara[top][j]
     log(call.from_user, ["solution_vote_down_sub", top, j, str(q.get("id") or "")])
-    topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
+    topiclink = _discussion_url_for_task(q, lang)
+    uid = call.from_user.id
+    show_explain = not _user_has_viewed_llm_solution_for_task(uid, top, j)
     msg = _txt(
         lang,
         "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
         "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
     )
-    kb = InlineKeyboardBuilder()
-    if topiclink:
-        kb.row(
-            InlineKeyboardButton(
-                text=_txt(lang, "Перейти в чат", "Go to chat"),
-                url=topiclink,
+    await call.message.answer(
+        msg,
+        reply_markup=_kb_soldn_after_ai_unclear(
+            lang,
+            topiclink,
+            f"next_sub_{topic_idx}_{sub_idx}_{k+1}",
+            show_explain=show_explain,
+        ),
+    )
+
+
+@router.callback_query(F.data == "llm_explain_last")
+async def on_llm_explain_last(call: CallbackQuery):
+    """Подробное объяснение от LLM для последней показанной задачи (после 👎 к решению из data.txt)."""
+    await call.answer()
+    user_id = call.from_user.id
+    lang = await _get_user_lang(call.from_user)
+    access_token = _get_llm_access_token()
+    if not access_token:
+        await call.message.answer(
+            "LLM token is not set. Set env var `LLM_TOKEN` to enable chat Q&A."
+        )
+        return
+    user_text = _txt(
+        lang,
+        "Объясни решение этой задачи максимально подробно по шагам.",
+        "Explain the solution to this problem step by step in full detail.",
+    )
+    ks_snap = _last_seen_kapibara_question.get(user_id)
+    llm_task_snapshot: tuple[str, int] | None = None
+    if ks_snap and len(ks_snap) >= 2:
+        llm_task_snapshot = (ks_snap[0], int(ks_snap[1]))
+    try:
+        async with ChatActionSender(bot=bot, chat_id=call.message.chat.id, action="typing"):
+            answer_text = await asyncio.to_thread(
+                _do_llm_request,
+                LLM_CONTEXT_LAST_TASK,
+                user_text,
+                user_id,
+                call.message.chat.id,
+                call.from_user,
+                lang,
+                access_token,
+            )
+    except Exception as e:
+        logging.error(f"LLM request error (llm_explain_last): {e}")
+        await call.message.answer(
+            _txt(
+                lang,
+                "Ошибка при обращении к LLM. Попробуйте позже.",
+                "Something went wrong while contacting the LLM. Please try again later.",
             )
         )
-    kb.row(
-        InlineKeyboardButton(
-            text=_txt(lang, "Следующая задача", "Next task"),
-            callback_data=f"next_sub_{topic_idx}_{sub_idx}_{k+1}",
+        return
+    if answer_text == "__NO_LAST_TASK__":
+        await call.message.answer(
+            _txt(
+                lang,
+                "Сначала откройте задачу в боте (тема, подтема, экзамен или режим «вся математика»), затем снова нажмите кнопку.",
+                "Open a task in the bot first, then tap the button again.",
+            )
         )
-    )
-    await call.message.answer(msg, reply_markup=kb.as_markup())
+        return
+    if answer_text:
+        try:
+            ans_one_line = (answer_text or "").replace("\n", " ").strip()
+            if len(ans_one_line) > 2000:
+                ans_one_line = ans_one_line[:2000] + "..."
+            log(
+                call.from_user,
+                [
+                    "llm_explain_last_answer",
+                    str(call.message.chat.id),
+                    f"len={len(answer_text or '')}",
+                    ans_one_line,
+                ],
+            )
+        except Exception:
+            pass
+        if llm_task_snapshot:
+            _mark_llm_solution_shown(user_id, llm_task_snapshot[0], llm_task_snapshot[1])
+        fb = _kb_llm_task_feedback(user_id, lang)
+        await call.message.answer(answer_text, reply_markup=fb)
 
 
 @router.callback_query(F.data == "back_start")
@@ -4409,8 +4787,12 @@ async def on_hint_sub(call: CallbackQuery):
             await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
 
         question_text = q["english"] + "\n" + q.get("chinese", '') + q.get("long", '')
-        reply = inline_kb_sub(topic_idx, sub_idx, k, showvideo=1, lang_code=lang_code)
+        order = _option_display_indices(topic, q, len(q["options"]))
+        reply = inline_kb_sub(
+            topic_idx, sub_idx, k, showvideo=1, lang_code=lang_code, option_order=order
+        )
         await call.message.answer(question_text, reply_markup=reply)
+        _record_last_seen_question(user_id, topic, j, order)
 
 
 @router.callback_query(F.data.startswith('hint_') & ~F.data.startswith('hint_sub_'))
@@ -4457,8 +4839,10 @@ async def on_hint(call: CallbackQuery):
             await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
 
         question_text = q["english"] + "\n" + q.get("chinese", '') + q.get("long", '')
-        reply = inline_kb(top, j, showvideo=1, lang_code=lang_code)
+        order = _option_display_indices(top, q, len(q["options"]))
+        reply = inline_kb(top, j, showvideo=1, lang_code=lang_code, option_order=order)
         await call.message.answer(question_text, reply_markup=reply)
+        _record_last_seen_question(user_id, top, j, order)
 
 @router.message(Command("start"))
 async def on_start_command(message: types.Message):
@@ -5320,84 +5704,203 @@ async def on_any_message(message: Message):
         if not (7 < len(_llm_text) < 300):
             return
         log(message.from_user, ['llm_len',str(len(_llm_text))])
-        llm_base_url = os.environ.get("LLM_BASE_URL", "http://localhost:8000").rstrip("/")
-        access_token = os.environ.get("LLM_TOKEN", "").strip()
-        access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NTU1MTE2NTQsImlhdCI6MTc2MTE3MTQ3OCwiYXV0aF90aW1lIjoxNzYwNDcxNjU0LCJqdGkiOiIxZDVmYjRiZi1mNTY2LTQzMGEtYmE3Mi04NmNhYmZkYTA2MWMiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiNWUxN2Q3NDMtY2I3OC00MzI1LWFhNGItMzBkODU5MmUzYjg5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.SmGtYXk3_uasqFIh9DxMpxk5ubU_b5AX7iU7vLAr98X6Emini_60GdUxmuCYDeeLg2dRKq6b1a4IcoYiQ3iZIzAIsOFvCMd3KrY2tXTp4jOMkT8IFi3AKv8Re58DL_vQev8A1hAQgnjCHWkybR4tM1ConoS_2rzHhHXeLOD0VlcowzGrMy2zfVSCgR_alUDD9oEOwT0BhPyaPALRqeWsU_z1aMY3v2VT20LhL-YqB3bUF3OXiXWL-JHLnNrTOb_087b-yi0DjXajUVuXc6V7a0gMtErGXA-CWXScgqZt0c5K3l8jE4n8OwtWwZcZRh64gn_zhti8yWCIdNseFzMbLA"
-        access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NTU1MTE2NTQsImlhdCI6MTc2MTE3MTQ3OCwiYXV0aF90aW1lIjoxNzYwNDcxNjU0LCJqdGkiOiIxZDVmYjRiZi1mNTY2LTQzMGEtYmE3Mi04NmNhYmZkYTA2MWMiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiNWUxN2Q3NDMtY2I3OC00MzI1LWFhNGItMzBkODU5MmUzYjg5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.SmGtYXk3_uasqFIh9DxMpxk5ubU_b5AX7iU7vLAr98X6Emini_60GdUxmuCYDeeLg2dRKq6b1a4IcoYiQ3iZIzAIsOFvCMd3KrY2tXTp4jOMkT8IFi3AKv8Re58DL_vQev8A1hAQgnjCHWkybR4tM1ConoS_2rzHhHXeLOD0VlcowzGrMy2zfVSCgR_alUDD9oEOwT0BhPyaPALRqeWsU_z1aMY3v2VT20LhL-YqB3bUF3OXiXWL-JHLnNrTOb_087b-yi0DjXajUVuXc6V7a0gMtErGXA-CWXScgqZt0c5K3l8jE4n8OwtWwZcZRh64gn_zhti8yWCIdNseFzMbLA"
+        access_token = _get_llm_access_token()
         if not access_token:
             await message.answer(
                 "LLM token is not set. Set env var `LLM_TOKEN` to enable chat Q&A."
             )
             return
 
-        
-       
-
-        def _do_llm_request() -> str:
-            llm = AmveraLLM(model="gpt-4.1", temperature=0, api_token=access_token)
-            addtext = """Определи о чем вопрос и верни одно из чисел: 
-1 задачи по математике, 
-2 физика 
-3 химия
-4 не понятно как решить задачу
-5 информация о CSCA"""
-            rag_text = load_rag_text()
-            messages = [
-                SystemMessage(content=rag_text),
-                SystemMessage(content="Отвечай коротко и по делу"),
-                
-
-                HumanMessage(content=_llm_text+addtext),
-            ]
-
-            response = llm.invoke(messages)
-            # langchain-модель возвращает объект с .content
-            return response.content
-
-            
-
-            
+        lang = await _get_user_lang(message.from_user)
+        # Режим контекста LLM: addtext_only | rag_only | last_task (см. константы LLM_CONTEXT_*)
+        llm_context_mode = LLM_CONTEXT_ADDTEXT_ONLY
 
         try:
+            llm_task_snapshot: tuple[str, int] | None = None
+            if llm_context_mode == LLM_CONTEXT_LAST_TASK:
+                ks = _last_seen_kapibara_question.get(message.from_user.id)
+                if ks and len(ks) >= 2:
+                    llm_task_snapshot = (ks[0], int(ks[1]))
             async with ChatActionSender(bot=bot, chat_id=message.chat.id, action="typing"):
-                answer_text = await asyncio.to_thread(_do_llm_request)
-            if answer_text:
-                lang = await _get_user_lang(message.from_user)
-                resp_stripped = (answer_text or "").strip()
-                first_line = resp_stripped.split("\n")[0].strip() if resp_stripped else ""
-                first_token = first_line.split()[0] if first_line.split() else ""
-                # Классификатор LLM: 1 — математика (меню тем), 2 — физика, 3 — химия
-                if first_token in ("1", "1."):
-                    await message.answer(
-                        _txt(
-                            lang,
-                            "Ниже — список тем по математике. Выберите тему: в задачах есть проверка ответов и доступ к решению после попытки.",
-                            "Below is the math topic list. Pick a topic: you get answer checking and access to the solution after you try.",
-                        ),
-                        reply_markup=topics_menu_kb(lang),
+                answer_text = await asyncio.to_thread(
+                    _do_llm_request,
+                    llm_context_mode,
+                    _llm_text,
+                    message.from_user.id,
+                    chat_id,
+                    message.from_user,
+                    lang,
+                    access_token,
+                )
+            if answer_text == "__NO_LAST_TASK__":
+                await message.answer(
+                    _txt(
+                        lang,
+                        "Сначала откройте задачу в боте (тема, подтема, экзамен или режим «вся математика»), затем снова напишите сообщение.",
+                        "Open a task in the bot first (topic, subtopic, exam, or “all math” mode), then send your message again.",
                     )
-                    log(message.from_user, ["llm_topics_menu", str(chat_id), "classifier=1"])
-                elif first_token in ("2", "2."):
-                    await _start_topic_training_from_message(message, "physics", "menu_physics")
-                    log(message.from_user, ["llm_classifier_physics", str(chat_id)])
-                elif first_token in ("3", "3."):
-                    await _start_topic_training_from_message(message, "chemistry", "menu_chemistry")
-                    log(message.from_user, ["llm_classifier_chemistry", str(chat_id)])
-                else:
+                )
+                return
+            if answer_text:
+                if llm_context_mode != LLM_CONTEXT_ADDTEXT_ONLY:
                     try:
                         ans_one_line = (answer_text or "").replace("\n", " ").strip()
                         if len(ans_one_line) > 2000:
                             ans_one_line = ans_one_line[:2000] + "..."
                         log(
                             message.from_user,
-                            ["llm_answer", str(chat_id), f"len={len(answer_text or '')}", ans_one_line],
+                            [
+                                "llm_answer",
+                                str(chat_id),
+                                llm_context_mode,
+                                f"len={len(answer_text or '')}",
+                                ans_one_line,
+                            ],
                         )
                     except Exception:
                         pass
-                    await message.answer(answer_text)
+                    fb = (
+                        _kb_llm_task_feedback(message.from_user.id, lang)
+                        if llm_context_mode == LLM_CONTEXT_LAST_TASK
+                        else None
+                    )
+                    if (
+                        llm_context_mode == LLM_CONTEXT_LAST_TASK
+                        and llm_task_snapshot
+                        and answer_text
+                    ):
+                        _mark_llm_solution_shown(
+                            message.from_user.id,
+                            llm_task_snapshot[0],
+                            llm_task_snapshot[1],
+                        )
+                    await message.answer(answer_text, reply_markup=fb)
+                else:
+                    resp_stripped = (answer_text or "").strip()
+                    first_line = resp_stripped.split("\n")[0].strip() if resp_stripped else ""
+                    first_token = first_line.split()[0] if first_line.split() else ""
+                    # Классификатор LLM: 1 — математика (меню тем), 2 — физика, 3 — химия
+                    if first_token in ("1", "1."):
+                        await message.answer(
+                            _txt(
+                                lang,
+                                "Ниже — список тем по математике. Выберите тему: в задачах есть проверка ответов и доступ к решению после попытки.",
+                                "Below is the math topic list. Pick a topic: you get answer checking and access to the solution after you try.",
+                            ),
+                            reply_markup=topics_menu_kb(lang),
+                        )
+                        log(message.from_user, ["llm_topics_menu", str(chat_id), "classifier=1"])
+                    elif first_token in ("2", "2."):
+                        await _start_topic_training_from_message(message, "physics", "menu_physics")
+                        log(message.from_user, ["llm_classifier_physics", str(chat_id)])
+                    elif first_token in ("3", "3."):
+                        await _start_topic_training_from_message(message, "chemistry", "menu_chemistry")
+                        log(message.from_user, ["llm_classifier_chemistry", str(chat_id)])
+                    elif first_token in ("4", "4."):
+                        log(message.from_user, ["llm_classifier_last_task", str(chat_id)])
+                        ks4 = _last_seen_kapibara_question.get(message.from_user.id)
+                        llm_task_snapshot_4: tuple[str, int] | None = None
+                        if ks4 and len(ks4) >= 2:
+                            llm_task_snapshot_4 = (ks4[0], int(ks4[1]))
+                        async with ChatActionSender(
+                            bot=bot, chat_id=message.chat.id, action="typing"
+                        ):
+                            second_answer = await asyncio.to_thread(
+                                _do_llm_request,
+                                LLM_CONTEXT_LAST_TASK,
+                                _llm_text,
+                                message.from_user.id,
+                                chat_id,
+                                message.from_user,
+                                lang,
+                                access_token,
+                            )
+                        if second_answer == "__NO_LAST_TASK__":
+                            await message.answer(
+                                _txt(
+                                    lang,
+                                    "Сначала откройте задачу в боте (тема, подтема, экзамен или режим «вся математика»), затем снова напишите сообщение.",
+                                    "Open a task in the bot first (topic, subtopic, exam, or “all math” mode), then send your message again.",
+                                )
+                            )
+                            return
+                        if second_answer:
+                            try:
+                                ans_one_line = (second_answer or "").replace("\n", " ").strip()
+                                if len(ans_one_line) > 2000:
+                                    ans_one_line = ans_one_line[:2000] + "..."
+                                log(
+                                    message.from_user,
+                                    [
+                                        "llm_followup_last_task",
+                                        str(chat_id),
+                                        f"len={len(second_answer or '')}",
+                                        ans_one_line,
+                                    ],
+                                )
+                            except Exception:
+                                pass
+                            if llm_task_snapshot_4:
+                                _mark_llm_solution_shown(
+                                    message.from_user.id,
+                                    llm_task_snapshot_4[0],
+                                    llm_task_snapshot_4[1],
+                                )
+                            fb = _kb_llm_task_feedback(message.from_user.id, lang)
+                            await message.answer(second_answer, reply_markup=fb)
+                    elif first_token in ("5", "5."):
+                        log(message.from_user, ["llm_classifier_rag", str(chat_id)])
+                        async with ChatActionSender(
+                            bot=bot, chat_id=message.chat.id, action="typing"
+                        ):
+                            second_answer = await asyncio.to_thread(
+                                _do_llm_request,
+                                LLM_CONTEXT_RAG_ONLY,
+                                _llm_text,
+                                message.from_user.id,
+                                chat_id,
+                                message.from_user,
+                                lang,
+                                access_token,
+                            )
+                        if second_answer:
+                            try:
+                                ans_one_line = (second_answer or "").replace("\n", " ").strip()
+                                if len(ans_one_line) > 2000:
+                                    ans_one_line = ans_one_line[:2000] + "..."
+                                log(
+                                    message.from_user,
+                                    [
+                                        "llm_followup_rag",
+                                        str(chat_id),
+                                        f"len={len(second_answer or '')}",
+                                        ans_one_line,
+                                    ],
+                                )
+                            except Exception:
+                                pass
+                            await message.answer(second_answer)
+                    else:
+                        try:
+                            ans_one_line = (answer_text or "").replace("\n", " ").strip()
+                            if len(ans_one_line) > 2000:
+                                ans_one_line = ans_one_line[:2000] + "..."
+                            log(
+                                message.from_user,
+                                ["llm_answer", str(chat_id), f"len={len(answer_text or '')}", ans_one_line],
+                            )
+                        except Exception:
+                            pass
+                        await message.answer(answer_text)
         except Exception as e:
             logging.error(f"LLM request error: {e}")
-            await message.answer("Ошибка при обращении к LLM. Попробуйте позже.")
+            await message.answer(
+                _txt(
+                    lang,
+                    "Ошибка при обращении к LLM. Попробуйте позже.",
+                    "Something went wrong while contacting the LLM. Please try again later.",
+                )
+            )
 
     # else: (группа) — без LLM ответа
 
