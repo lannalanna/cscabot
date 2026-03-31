@@ -23,7 +23,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
 #Prod bot
-API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
+#API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -1969,6 +1969,8 @@ def inline_kb_next(top: str, j: int, lang: str, user_id: int):
 async def _deliver_topic_question_to_chat(chat_id: int, from_user, top: str, j: int, showvideo: int) -> None:
     """Отправить задачу темы j в чат; учёт показа для логики «первый ответ после показа»."""
     uid = from_user.id
+    if await _maybe_redirect_train_limit_to_pay(from_user):
+        return
     linear = _topic_linear_active.get((uid, top), False)
     _register_topic_question_displayed(uid, top, j, linear)
     k = kapibara[top][j]
@@ -2045,6 +2047,8 @@ async def _deliver_subtopic_question_message(
 ) -> None:
     """Показать k-й вопрос подтемы (k — индекс в j_list)."""
     uid = call.from_user.id
+    if await _maybe_redirect_train_limit_to_pay(call.from_user):
+        return
     topic = topics[topic_idx]
     subs = subtopics_by_topic.get(topic, [])
     sub_name = subs[sub_idx] if sub_idx < len(subs) else None
@@ -2363,6 +2367,7 @@ async def _send_exam_summary_by_type(call: CallbackQuery, user_id: int, exam_typ
 
     if db_conn:
         try:
+            await db.mark_user_exam_completed(db_conn, user_id=user_id, exam_type=exam_type)
             await db.save_user_exam_recommendations(
                 db_conn,
                 user_id=user_id,
@@ -2750,6 +2755,7 @@ async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
 
    if db_conn:
        try:
+           await db.mark_user_exam_completed(db_conn, user_id=user_id, exam_type="mock")
            await db.save_user_exam_recommendations(
                db_conn,
                user_id=user_id,
@@ -3498,6 +3504,8 @@ def _math_all_session_answer_update(session: dict, key: tuple[str, int], ansok: 
 
 
 async def _math_all_send_question(call: CallbackQuery, user_id: int, key: tuple[str, int]) -> None:
+    if await _maybe_redirect_train_limit_to_pay(call.from_user):
+        return
     top, j = key
     q = kapibara[top][j]
     lang = await _get_user_lang(call.from_user)
@@ -3701,6 +3709,8 @@ async def on_math_all_hint(call: CallbackQuery):
     if top not in kapibara or j < 0 or j >= len(kapibara[top]):
         await call.message.answer("Вопрос не найден.")
         return
+    if await _maybe_redirect_train_limit_to_pay(call.from_user):
+        return
     q = kapibara[top][j]
     lang = await _get_user_lang(call.from_user)
     hint_paths = _get_hint_image_path(q, lang)
@@ -3747,6 +3757,8 @@ async def on_math_solution_show(call: CallbackQuery):
     top = topics[top_idx]
     if top not in kapibara or j < 0 or j >= len(kapibara[top]):
         await call.message.answer("Вопрос не найден.")
+        return
+    if await _maybe_redirect_train_limit_to_pay(call.from_user):
         return
     q = kapibara[top][j]
     if not _has_solution_for_lang(q, lang):
@@ -4314,6 +4326,10 @@ def _format_exam_stats_line(state) -> str:
     )
 
 
+# Лимит ошибок/ответов для ограничения доступа.
+N = 30
+
+
 def _inline_kb_exam_entry_choice() -> InlineKeyboardMarkup:
     """Клавиатура при входе в экзамен, если есть статистика: Очистить / Продолжить."""
     builder = InlineKeyboardBuilder()
@@ -4335,18 +4351,33 @@ def _inline_kb_exam_finished() -> InlineKeyboardMarkup:
 
 
 # --- Общий обработчик экзаменов jan / dec / mar ---
-async def _should_redirect_exam_access_to_pay(user_id: int) -> bool:
+async def _should_redirect__to_pay(user_id: int, mode: str = "exam") -> bool:
     """
     Единая проверка доступа к экзаменам (как в Mock Exam сейчас).
     Возвращает True, если нужно показать pay().
     """
+    if mode not in ("exam", "train"):
+        return False
+
+    # Для режима экзамена: если пользователь ещё не завершал ни одного экзамена — редирект не применяем.
+    if mode == "exam":
+        if not db_conn:
+            return False
+        try:
+            has_completed_any_exam = await db.user_has_any_completed_exam(db_conn, user_id)
+            if not has_completed_any_exam:
+                return False
+        except Exception as e:
+            logging.error(f"Ошибка проверки завершённых экзаменов для пользователя {user_id}: {e}")
+            return False
+
     invites_count = len(invite_relations.get(user_id, set()))
     paid_access = False
     user_created_at = None
     total_answered = 0
     if db_conn:
         try:
-            paid_access = await db.user_has_exam_access_by_payment(db_conn, user_id)
+            paid_access = await db.user_has_access_by_payment(db_conn, user_id)
             user_created_at = await db.get_user_created_at(db_conn, user_id)
             stats = await db.get_user_stats(db_conn, user_id)
             total_answered = stats.get("total_answered", 0)
@@ -4366,12 +4397,33 @@ async def _should_redirect_exam_access_to_pay(user_id: int) -> bool:
             from datetime import datetime, timedelta
 
             created_dt = datetime.fromisoformat(user_created_at)
-            if datetime.now() - created_dt > timedelta(days=3) and total_answered > 30:
+            if datetime.now() - created_dt > timedelta(days=3) and total_answered > N:
                 meets_activity_limits = True
         except Exception as e:
             logging.error(f"Ошибка разбора created_at для пользователя {user_id}: {e}")
 
     return no_privileges and meets_activity_limits
+
+
+async def _maybe_redirect_train_limit_to_pay(user) -> bool:
+    """
+    Для тренировок: если сегодня ошибок больше N, проверяем доступ через
+    _should_redirect__to_pay(mode='train') и при необходимости отправляем pay(mode='train').
+    """
+    if not db_conn:
+        return False
+    try:
+        wrong_today, _ = await db.get_training_answers_today_counts(db_conn, user.id)
+    except Exception as e:
+        logging.error(f"Ошибка подсчёта ошибок за сегодня для пользователя {user.id}: {e}")
+        return False
+    if wrong_today <= N:
+        return False
+    if await _should_redirect__to_pay(user.id, mode="train"):
+        log(user, ["train_limit_pay_redirect", f"wrong_today={wrong_today}", f"N={N}"])
+        await pay(user, mode="train")
+        return True
+    return False
 
 
 @router.callback_query(F.data.in_(["exam_start_jan", "exam_start_dec", "exam_start_mar"]))
@@ -4383,7 +4435,7 @@ async def on_exam_start(call: CallbackQuery):
     if not cfg:
         return
     user_id = call.from_user.id
-    if await _should_redirect_exam_access_to_pay(user_id):
+    if await _should_redirect__to_pay(user_id, mode="exam"):
         log(call.from_user, [f"{cfg['id']}_reject"])
         await pay(call.from_user)
         return
@@ -4483,7 +4535,7 @@ async def on_exam_continue(call: CallbackQuery):
 async def on_exam_mock_start(call: CallbackQuery):
     await call.answer()
     user_id = call.from_user.id
-    if await _should_redirect_exam_access_to_pay(user_id):
+    if await _should_redirect__to_pay(user_id, mode="exam"):
         log(call.from_user, ["mockexamreject"])
         # Показываем то же сообщение об оплате/условиях доступа, что и в команде /pay
         await pay(call.from_user)
@@ -4737,6 +4789,8 @@ async def on_exam_mock_answer(call: CallbackQuery):
 async def random_any_task(call: CallbackQuery):
     """Показать случайную задачу (кроме темы physics)."""
     await call.answer()
+    if await _maybe_redirect_train_limit_to_pay(call.from_user):
+        return
     # Собираем все (topic, j), кроме physics
     candidates = []
     for top in topics:
@@ -5128,6 +5182,8 @@ async def on_hint_sub(call: CallbackQuery):
     topic, j = _get_subtopic_j(topic_idx, sub_idx, k)
     if topic is None or j is None:
         await call.message.answer("Вопрос не найден.")
+        return
+    if await _maybe_redirect_train_limit_to_pay(call.from_user):
         return
 
     q = kapibara[topic][j]
@@ -5929,8 +5985,11 @@ async def cmd_pay(message: types.Message):
     await pay(message.from_user)
 
 
-async def pay(user) :
+async def pay(user, mode: str = "exam"):
     lang = await _get_user_lang(user)
+    mode_norm = (mode or "exam").lower()
+    if mode_norm == "tarin":
+        mode_norm = "train"
     # Строим персональную ссылку так же, как в makeinvite()
     try:
         uid = user.id
@@ -5941,15 +6000,27 @@ async def pay(user) :
         invite_link = "https://t.me/csca_mathbot"
 
     if lang.startswith("ru"):
-        text = (
-            "Режим экзамена недоступен.\n\n"
-            "Если вы приобретали курс  https://stepik.org/a/268161, перейдите в бот по ссылке из первого урока.\n"
-            "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
-            f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
-            "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
-            "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
-            "250 Telegram Stars  по кнопк ниже."
-        )
+        if mode_norm == "train":
+            text = (
+                f"Вы сделали больше {N} ошибок сегодня. Можете продолжить тренироваку завтра.\n\n"
+                "Как снять ограничения:\n"
+                "Если вы приобретали курс  https://stepik.org/a/268161, перейдите в бот по ссылке из первого урока.\n"
+                "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
+                f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
+                "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
+                "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
+                "250 Telegram Stars по кнопке ниже."
+            )
+        else:
+            text = (
+                "Режим экзамена недоступен.\n\n"
+                "Если вы приобретали курс  https://stepik.org/a/268161, перейдите в бот по ссылке из первого урока.\n"
+                "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
+                f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
+                "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
+                "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
+                "250 Telegram Stars  по кнопке ниже."
+            )
         kb = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
@@ -5959,16 +6030,29 @@ async def pay(user) :
             ]
         )
     else:
-        text = (
-            "The exam mode is currently unavailable.\n\n"
-            "If you purchased the course https://stepik.org/a/268161, please open the bot using the link "
-            "from the first lesson.\n"
-            "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
-            f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
-            "access will be unlocked after three new users follow your link.\n\n"
-            "If none of these options works for you, you can pay 250 Telegram Stars  "
-            "using the button below."
-        )
+        if mode_norm == "train":
+            text = (
+                f"You made more than {N} mistakes today. You can continue training tomorrow.\n\n"
+                "How to remove restrictions:\n"
+                "If you purchased the course https://stepik.org/a/268161, please open the bot using the link "
+                "from the first lesson.\n"
+                "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
+                f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
+                "access will be unlocked after three new users follow your link.\n\n"
+                "If none of these options works for you, you can pay 250 Telegram Stars "
+                "using the button below."
+            )
+        else:
+            text = (
+                "The exam mode is currently unavailable.\n\n"
+                "If you purchased the course https://stepik.org/a/268161, please open the bot using the link "
+                "from the first lesson.\n"
+                "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
+                f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
+                "access will be unlocked after three new users follow your link.\n\n"
+                "If none of these options works for you, you can pay 250 Telegram Stars  "
+                "using the button below."
+            )
         kb = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
