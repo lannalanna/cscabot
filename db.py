@@ -134,6 +134,12 @@ async def init_db() -> aiosqlite.Connection:
     except Exception:
         # Колонка уже существует или ALTER не применим — это ок
         pass
+    # Миграция: добавляем поле exam_language в users, если база старая
+    try:
+        await conn.execute("ALTER TABLE users ADD COLUMN exam_language TEXT")
+    except Exception:
+        # Колонка уже существует или ALTER не применим — это ок
+        pass
     
     await conn.commit()
     return conn
@@ -646,6 +652,30 @@ async def set_user_language(conn: aiosqlite.Connection, user_id: int, language: 
     now = datetime.now().isoformat()
     await conn.execute(
         "UPDATE users SET language = ?, updated_at = ? WHERE id = ?",
+        (language, now, user_id),
+    )
+    await conn.commit()
+
+
+async def get_user_exam_language(conn: aiosqlite.Connection, user_id: int) -> Optional[str]:
+    """
+    Возвращает сохранённый язык экзамена пользователя из users.exam_language или None.
+    """
+    cursor = await conn.execute(
+        "SELECT exam_language FROM users WHERE id = ? LIMIT 1",
+        (user_id,),
+    )
+    row = await cursor.fetchone()
+    return row[0] if row and row[0] else None
+
+
+async def set_user_exam_language(conn: aiosqlite.Connection, user_id: int, language: str) -> None:
+    """
+    Сохраняет язык экзамена пользователя в users.exam_language.
+    """
+    now = datetime.now().isoformat()
+    await conn.execute(
+        "UPDATE users SET exam_language = ?, updated_at = ? WHERE id = ?",
         (language, now, user_id),
     )
     await conn.commit()

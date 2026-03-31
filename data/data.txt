@@ -297,7 +297,7 @@
     "chinese": "下列结论正确的是",
     "english": "Which of the following statements is correct?",
     "options": [
-      "A. 若  If a ∈ ℕ，b ∈ ℕ，则  then a - b ∈ ℕ   ",
+      "A. 若  If a ∈ ℕ，b ∈ ℕ，则  then a - b ∈ ℕ",
       "B. 若  If a ∈ ℕ，则  then a ∈ ℚ",
       "C. 若  If a ≥ 0，则  then a ∈ ℕ",
       "D. 若  If a ∈ ℤ，则 then a ∉ ℚ"
@@ -311,7 +311,19 @@
     "solution_ru": "Натуральные числа являются подмножеством рациональных чисел (ℕ ⊂ ℚ). Поэтому, если a ∈ ℕ, то a ∈ ℚ.",
     "solution_en": "Natural numbers are a subset of rational numbers (ℕ ⊂ ℚ). Therefore, if a ∈ ℕ, then a ∈ ℚ.",
     "solution_ru2": "Натуральные числа (1, 2, 3, ...) — это частный случай рациональных чисел, так как любое натуральное число n можно представить в виде дроби n/1. Следовательно, ℕ ⊂ ℚ. Поэтому из a ∈ ℕ следует a ∈ ℚ. Остальные утверждения: разность натуральных чисел может быть отрицательной или нулем, которые не являются натуральными (например, 2 - 3 = -1 ∉ ℕ); условие a ≥ 0 не гарантирует, что a — натуральное (например, 0.5 ≥ 0, но 0.5 ∉ ℕ); целое число может быть рациональным (например, 2 ∈ ℤ и 2 ∈ ℚ).",
-    "solution_en2": "Natural numbers (1, 2, 3, ...) are a special case of rational numbers, since any natural number n can be expressed as the fraction n/1. Therefore, ℕ ⊂ ℚ. So if a ∈ ℕ, then a ∈ ℚ. The other statements: the difference of two natural numbers can be negative or zero, which are not natural (e.g., 2 - 3 = -1 ∉ ℕ); the condition a ≥ 0 does not guarantee a is natural (e.g., 0.5 ≥ 0 but 0.5 ∉ ℕ); an integer can be rational (e.g., 2 ∈ ℤ and 2 ∈ ℚ)."
+    "solution_en2": "Natural numbers (1, 2, 3, ...) are a special case of rational numbers, since any natural number n can be expressed as the fraction n/1. Therefore, ℕ ⊂ ℚ. So if a ∈ ℕ, then a ∈ ℚ. The other statements: the difference of two natural numbers can be negative or zero, which are not natural (e.g., 2 - 3 = -1 ∉ ℕ); the condition a ≥ 0 does not guarantee a is natural (e.g., 0.5 ≥ 0 but 0.5 ∉ ℕ); an integer can be rational (e.g., 2 ∈ ℤ and 2 ∈ ℚ).",
+    "options_en": [
+      "A. If a ∈ ℕ，b ∈ ℕ then a - b ∈ ℕ",
+      "B. If a ∈ ℕ，then a ∈ ℚ",
+      "C. If a ≥ 0， then a ∈ ℕ",
+      "D. If a ∈ ℤ then a ∉ ℚ"
+    ],
+    "options_ch": [
+      "A. 若 a ∈ ℕ，b ∈ ℕ，则 a - b ∈ ℕ",
+      "B. 若 a ∈ ℕ，则 a ∈ ℚ",
+      "C. 若 a ≥ 0，则 a ∈ ℕ",
+      "D. 若 a ∈ ℤ，则 a ∉ ℚ"
+    ]
   },
   {
     "chinese": "如果 a < b，c 是任意实数，那么下列选项正确的是（ ）",
@@ -373,7 +385,19 @@
     "solution_ru": "Прибавление одного и того же числа c к обеим частям неравенства сохраняет знак.",
     "solution_en": "Adding the same number c to both sides of an inequality preserves the inequality.",
     "solution_ru2": "Если a > b, то прибавим к обеим частям одно и то же число c. По свойству неравенств, знак сохраняется: a + c > b + c. Остальные утверждения не всегда верны: умножение на c меняет знак, если c < 0; из ac > bc нельзя заключить a > b, если c < 0 (знак бы изменился); возведение в квадрат не сохраняет порядок для отрицательных чисел (например, -1 > -2, но (-1)² < (-2)²).",
-    "solution_en2": "If a > b, add the same number c to both sides. By the properties of inequalities, the sign is preserved: a + c > b + c. The other statements are not always true: multiplying by c reverses the sign if c < 0; from ac > bc we cannot conclude a > b if c < 0 (the sign would flip); squaring does not preserve order for negative numbers (e.g., -1 > -2, but (-1)² < (-2)²)."
+    "solution_en2": "If a > b, add the same number c to both sides. By the properties of inequalities, the sign is preserved: a + c > b + c. The other statements are not always true: multiplying by c reverses the sign if c < 0; from ac > bc we cannot conclude a > b if c < 0 (the sign would flip); squaring does not preserve order for negative numbers (e.g., -1 > -2, but (-1)² < (-2)²).",
+    "options_en": [
+      "A. If a > b， then ac > bc",
+      "B. If a > b，then a + c > b + c",
+      "C. If ac > bc，then a > b",
+      "D. If a > b then a² > b²"
+    ],
+    "options_ch": [
+      "A. 如果 a > b，那么 ac > bc",
+      "B. 如果 a > b，那么 a + c > b + c",
+      "C. 如果 ac > bc，那么 a > b",
+      "D. 如果 a > b，那么 a > b"
+    ]
   },
   {
     "n": 23,
@@ -648,7 +672,7 @@
       "A. (-1,5)",
       "B. (-1, 5]",
       "C. [-1, 5]",
-      "D. other"
+      "D. other / 其他"
     ],
     "answer": "A",
     "link": "https://t.me/c/3305923058/309",
@@ -660,7 +684,19 @@
     "solution_en": "|x-2| < 3 ⇔ -3 < x-2 < 3 ⇔ -1 < x < 5. Solution: (-1, 5).",
     "solution_ru2": "Для строгого неравенства |A| < a (a > 0) имеем -a < A < a. Подставляем A = x-2, a = 3: -3 < x-2 < 3. Прибавляем 2: -1 < x < 5. Концы интервала не включаются. Решение: (-1, 5).",
     "solution_en2": "For a strict inequality |A| < a (a > 0), we have -a < A < a. Substitute A = x-2, a = 3: -3 < x-2 < 3. Add 2: -1 < x < 5. The endpoints are not included. The solution is the open interval (-1, 5).",
-    "type": "off"
+    "type": "off",
+    "options_en": [
+      "A. (-1,5)",
+      "B. (-1, 5]",
+      "C. [-1, 5]",
+      "D. other"
+    ],
+    "options_ch": [
+      "A. (-1,5)",
+      "B. (-1, 5]",
+      "C. [-1, 5]",
+      "D. 其他"
+    ]
   },
   {
     "chinese": "已知 a =  √2-1，b = 1//3，那么（ ）",
@@ -861,7 +897,13 @@
     "solution_ru": "Дробь ≤ 0, когда числитель и знаменатель имеют разные знаки или числитель = 0. Нули: x = 2 (числитель), x = 1 (знаменатель). Решение: 1 < x ≤ 2.",
     "solution_en": "The fraction ≤ 0 when the numerator and denominator have opposite signs or the numerator is zero. Zeros: x = 2 (numerator), x = 1 (denominator). Solution: 1 < x ≤ 2.",
     "solution_ru2": "Сначала упростим: (2x-4)/(x-1) = 2(x-2)/(x-1). Знак дроби определяется выражением (x-2)/(x-1). Нули: x=2 (числитель), x=1 (знаменатель, исключаем). Метод интервалов: точки 1 и 2. Интервалы: (-∞, 1), (1, 2), (2, +∞). Проверяем знаки: при x=0: (0-2)/(0-1)=(-2)/(-1)=2>0; при x=1.5: (1.5-2)/(1.5-1)=(-0.5)/(0.5)=-1<0; при x=3: (3-2)/(3-1)=1/2>0. Нам нужно ≤0, то есть отрицательные или ноль. Отрицательные на (1, 2). Ноль при x=2. Точка x=1 не входит. Решение: 1 < x ≤ 2.",
-    "solution_en2": "First simplify: (2x-4)/(x-1) = 2(x-2)/(x-1). The sign is determined by (x-2)/(x-1). Zeros: x=2 (numerator), x=1 (denominator, excluded). Interval method: points 1 and 2. Intervals: (-∞, 1), (1, 2), (2, +∞). Check signs: at x=0: (0-2)/(0-1)=(-2)/(-1)=2>0; at x=1.5: (1.5-2)/(1.5-1)=(-0.5)/(0.5)=-1<0; at x=3: (3-2)/(3-1)=1/2>0. We need ≤0, i.e., negative or zero. Negative on (1, 2). Zero at x=2. Point x=1 is excluded. Solution: 1 < x ≤ 2."
+    "solution_en2": "First simplify: (2x-4)/(x-1) = 2(x-2)/(x-1). The sign is determined by (x-2)/(x-1). Zeros: x=2 (numerator), x=1 (denominator, excluded). Interval method: points 1 and 2. Intervals: (-∞, 1), (1, 2), (2, +∞). Check signs: at x=0: (0-2)/(0-1)=(-2)/(-1)=2>0; at x=1.5: (1.5-2)/(1.5-1)=(-0.5)/(0.5)=-1<0; at x=3: (3-2)/(3-1)=1/2>0. We need ≤0, i.e., negative or zero. Negative on (1, 2). Zero at x=2. Point x=1 is excluded. Solution: 1 < x ≤ 2.",
+    "options_ch": [
+      "A. {x | 1 < x ≤ 2}",
+      "B. {x | 1 ≤ x < 2}",
+      "C. {x | 1 ≤ x ≤ 2}",
+      "D. {x | x < 1 或 x > 2}"
+    ]
   },
   {
     "n": 11,
@@ -1093,7 +1135,7 @@
     "chinese": "不等式 x² - x - 6 > 0 的解集是",
     "english": "The solution set of the inequality x² - x - 6 > 0 is",
     "options": [
-      "A. {x | x < -2 or x > 3}",
+      "A. {x | x < -2 或 x > 3} / {x | x < -2 or x > 3}",
       "B. {x | -2 < x < 3}",
       "C. {x | x > 3}",
       "D. {x | x < -2}"
@@ -1108,7 +1150,13 @@
     "solution_ru": "Разложите на множители: (x - 3)(x + 2) > 0, Нули x=3 и x=-2. Знак больше, т.е. нужна 'внешняя' часть -   x < -2 или x > 3.",
     "id": "QI2",
     "solution_ru2": "Разложим квадратный трехчлен на множители: x² - x - 6 = (x - 3)(x + 2). Найдем корни: x = 3 и x = -2. Поскольку коэффициент при x² положителен (1 > 0), парабола направлена вверх. Неравенство > 0 выполняется на интервалах, где функция положительна, то есть слева от меньшего корня и справа от большего корня. Таким образом, x < -2 или x > 3. Решение: (-∞, -2) ∪ (3, +∞).",
-    "solution_en2": "Factor the quadratic trinomial: x² - x - 6 = (x - 3)(x + 2). Find the roots: x = 3 and x = -2. Since the coefficient of x² is positive (1 > 0), the parabola opens upward. The inequality > 0 holds on intervals where the function is positive, i.e., to the left of the smaller root and to the right of the larger root. Thus, x < -2 or x > 3. Solution: (-∞, -2) ∪ (3, +∞)."
+    "solution_en2": "Factor the quadratic trinomial: x² - x - 6 = (x - 3)(x + 2). Find the roots: x = 3 and x = -2. Since the coefficient of x² is positive (1 > 0), the parabola opens upward. The inequality > 0 holds on intervals where the function is positive, i.e., to the left of the smaller root and to the right of the larger root. Thus, x < -2 or x > 3. Solution: (-∞, -2) ∪ (3, +∞).",
+    "options_ch": [
+      "A. {x | x < -2 或 x > 3}",
+      "B. {x | -2 < x < 3}",
+      "C. {x | x > 3}",
+      "D. {x | x < -2}"
+    ]
   },
   {
     "chinese": "一元二次不等式 x² - 5x + 4 < 0 的解集为",
@@ -1136,9 +1184,9 @@
     "chinese": "不等式 x² - x - 2 > 0 的解集是（ ）。",
     "english": "The solution set of the inequality x² - x - 2 > 0 is ( ).",
     "options": [
-      "A. {x | x < -1 or x > 2}",
+      "A. {x | x < -1 或 x > 2} / {x | x < -1 or x > 2}",
       "B. {x | -1 < x < 2}",
-      "C. {x | x < -2 or x > -1}",
+      "C. {x | x < -2 或 x > -1} / {x | x < -2 or x > -1}",
       "D. {x | -2 < x ≤ 1}"
     ],
     "answer": "A",
@@ -1152,16 +1200,22 @@
     "solution_ru": "Разложите на множители: (x-2)(x+1) > 0. Нули: x=2, x=-1. Решение: x < -1 или x > 2.",
     "solution_en": "Factorize: (x-2)(x+1) > 0. Zeros: x=2, x=-1. Solution: x < -1 or x > 2.",
     "solution_ru2": "Разложим: x² - x - 2 = (x-2)(x+1). Корни: x=2, x=-1. Коэффициент при x² положительный, парабола направлена вверх. Неравенство > 0 выполняется на интервалах, где функция положительна: слева от меньшего корня и справа от большего корня. То есть x < -1 или x > 2. Решение: (-∞, -1) ∪ (2, +∞).",
-    "solution_en2": "Factor: x² - x - 2 = (x-2)(x+1). Roots: x=2, x=-1. The coefficient of x² is positive, so the parabola opens upward. The inequality > 0 holds on intervals where the function is positive: to the left of the smaller root and to the right of the larger root. That is, x < -1 or x > 2. Solution: (-∞, -1) ∪ (2, +∞)."
+    "solution_en2": "Factor: x² - x - 2 = (x-2)(x+1). Roots: x=2, x=-1. The coefficient of x² is positive, so the parabola opens upward. The inequality > 0 holds on intervals where the function is positive: to the left of the smaller root and to the right of the larger root. That is, x < -1 or x > 2. Solution: (-∞, -1) ∪ (2, +∞).",
+    "options_ch": [
+      "A. {x | x < -1 或 x > 2}",
+      "B. {x | -1 < x < 2}",
+      "C. {x | x < -2 或 x > -1}",
+      "D. {x | -2 < x ≤ 1}"
+    ]
   },
   {
     "chinese": "不等式 x² - 7x - 18 > 0 的解集是",
     "english": "The solution set of the inequality x² - 7x - 18 > 0 is",
     "options": [
-      "A. (-∞, -2) ∪ (9, +∞)",
-      "B. (-∞, -2] ∪ [9, +∞)",
-      "C. (-2, 9)",
-      "D. [-2, 9]"
+      "A. {x | x < -1 或 x > 2} / {x | x < -1 or x > 2}",
+      "B. {x | -1 < x < 2}",
+      "C. {x | x < -2 或 x > -1} / {x | x < -2 or x > -1}",
+      "D. {x | -2 < x ≤ 1}"
     ],
     "topic": "inequalities",
     "type": "choice",
@@ -1172,7 +1226,13 @@
     "solution_ru": "Разложите на множители: (x-9)(x+2) > 0. Нули: x=9, x=-2. Решение: x < -2 или x > 9.",
     "solution_en": "Factorize: (x-9)(x+2) > 0. Zeros: x=9, x=-2. Solution: x < -2 or x > 9.",
     "solution_ru2": "Найдем корни квадратного уравнения x² - 7x - 18 = 0. Дискриминант D = 49 + 72 = 121, √D = 11. Корни: x = (7 ± 11)/2 = 9 и -2. Разложение: (x-9)(x+2) > 0. Коэффициент при x² положителен, парабола вверх. Неравенство > 0 выполняется на интервалах (-∞, -2) и (9, +∞). Решение: (-∞, -2) ∪ (9, +∞).",
-    "solution_en2": "Find the roots of the quadratic equation x² - 7x - 18 = 0. Discriminant D = 49 + 72 = 121, √D = 11. Roots: x = (7 ± 11)/2 = 9 and -2. Factorization: (x-9)(x+2) > 0. The coefficient of x² is positive, so the parabola opens upward. The inequality > 0 holds on intervals (-∞, -2) and (9, +∞). Solution: (-∞, -2) ∪ (9, +∞)."
+    "solution_en2": "Find the roots of the quadratic equation x² - 7x - 18 = 0. Discriminant D = 49 + 72 = 121, √D = 11. Roots: x = (7 ± 11)/2 = 9 and -2. Factorization: (x-9)(x+2) > 0. The coefficient of x² is positive, so the parabola opens upward. The inequality > 0 holds on intervals (-∞, -2) and (9, +∞). Solution: (-∞, -2) ∪ (9, +∞).",
+    "options_ch": [
+      "A. {x | x < -1 或 x > 2}",
+      "B. {x | -1 < x < 2}",
+      "C. {x | x < -2 或 x > -1}",
+      "D. {x | -2 < x ≤ 1}"
+    ]
   },
   {
     "chinese": "解不等式 x² - 5x + 6 > 0",
@@ -1211,7 +1271,13 @@
     "solution_ru": "x² - 6x + 9 = (x-3)² ≤ 0. Квадрат числа не может быть отрицательным, но может быть равен нулю, когда x-3=0, т.е. x=3. Решение: {3}.",
     "solution_en": "x² - 6x + 9 = (x-3)² ≤ 0. A square cannot be negative, but it can be zero when x-3=0, i.e., x=3. Solution: {3}.",
     "solution_ru2": "Заметим, что x² - 6x + 9 = (x-3)². Квадрат любого действительного числа всегда неотрицателен: (x-3)² ≥ 0. Неравенство (x-3)² ≤ 0 требует, чтобы квадрат был меньше или равен нулю. Единственная возможность — равенство нулю: (x-3)² = 0 ⇒ x-3 = 0 ⇒ x = 3. Таким образом, решение состоит из одной точки: {3}.",
-    "solution_en2": "Note that x² - 6x + 9 = (x-3)². The square of any real number is always non-negative: (x-3)² ≥ 0. The inequality (x-3)² ≤ 0 requires the square to be less than or equal to zero. The only possibility is equality to zero: (x-3)² = 0 ⇒ x-3 = 0 ⇒ x = 3. Thus, the solution set is a single point: {3}."
+    "solution_en2": "Note that x² - 6x + 9 = (x-3)². The square of any real number is always non-negative: (x-3)² ≥ 0. The inequality (x-3)² ≤ 0 requires the square to be less than or equal to zero. The only possibility is equality to zero: (x-3)² = 0 ⇒ x-3 = 0 ⇒ x = 3. Thus, the solution set is a single point: {3}.",
+    "options_ch": [
+      "A. {x | x < 3 或 or x > 3}",
+      "B. {x | -3 < x < 3}",
+      "C. {3}",
+      "D. {x | x ≤ 3}"
+    ]
   },
   {
     "chinese": "不等式 x² + 2 x + 1  >0  的解集是（ ）。",
@@ -1230,7 +1296,13 @@
     "solution_ru": "x² + 2x + 1 = (x+1)² > 0. Квадрат числа всегда неотрицателен. Он равен нулю только при x = -1. Следовательно, неравенство выполняется для всех x, кроме -1. Решение: x < -1 или x > -1.",
     "solution_en": "x² + 2x + 1 = (x+1)² > 0. The square of a number is always non-negative. It equals zero only when x = -1. Therefore, the inequality holds for all x except -1. Solution: x < -1 or x > -1.",
     "solution_ru2": "Преобразуем: x² + 2x + 1 = (x+1)². Квадрат любого числа неотрицателен, и он строго больше нуля для всех x, кроме тех, где он обращается в ноль. (x+1)² = 0 только при x = -1. Таким образом, неравенство (x+1)² > 0 выполняется для всех x ≠ -1. Решение: x < -1 или x > -1, что можно записать как ℝ \\ {-1}.",
-    "solution_en2": "Rewrite: x² + 2x + 1 = (x+1)². The square of any number is non-negative, and it is strictly greater than zero for all x except where it equals zero. (x+1)² = 0 only when x = -1. Hence, the inequality (x+1)² > 0 holds for all x ≠ -1. The solution is x < -1 or x > -1, which can be written as ℝ \\ {-1}."
+    "solution_en2": "Rewrite: x² + 2x + 1 = (x+1)². The square of any number is non-negative, and it is strictly greater than zero for all x except where it equals zero. (x+1)² = 0 only when x = -1. Hence, the inequality (x+1)² > 0 holds for all x ≠ -1. The solution is x < -1 or x > -1, which can be written as ℝ \\ {-1}.",
+    "options_ch": [
+      "A. {x | x < -1 或 or x > -1}",
+      "B. {x | -1 < x < 1}",
+      "C. {-1}",
+      "D. {x | x ≤ -1}"
+    ]
   },
   {
     "chinese": "一元二次不等式 x² + 5x + 6 > 0 的解集为",
@@ -1444,10 +1516,10 @@
     "chinese": "在其定义域上, 函数 f(x) = ln (x²) 是",
     "english": "Over its domain, the function f(x) = ln (x²) is",
     "options": [
-      "A. uncertain about its parity",
-      "B. neither odd nor even",
-      "C. odd",
-      "D. even"
+      "A. uncertain about its parity / 无法确定其奇偶性",
+      "B. neither odd nor even / 既非奇函数也非偶函数",
+      "C. odd / 奇函数",
+      "D. even / 偶函数"
     ],
     "answer": "D",
     "topic": "functions",
@@ -1459,7 +1531,19 @@
     "solution_ru": "Область определения x ≠ 0 симметрична относительно начала координат, f(-x) = ln((-x)^2) = ln(x^2) = f(x), следовательно, это четная функция.",
     "id": "FP1",
     "solution_ru2": "Область определения функции f(x) = ln(x²) — это все x, для которых x² > 0, то есть x ≠ 0. Эта область симметрична относительно нуля. Проверим четность: f(-x) = ln((-x)²) = ln(x²) = f(x). Поскольку f(-x) = f(x) для всех x из области определения, функция является четной. Она не является нечетной, так как f(-x) ≠ -f(x).",
-    "solution_en2": "The domain of f(x) = ln(x²) is all x such that x² > 0, i.e., x ≠ 0. This domain is symmetric about zero. Check parity: f(-x) = ln((-x)²) = ln(x²) = f(x). Since f(-x) = f(x) for all x in the domain, the function is even. It is not odd because f(-x) ≠ -f(x)."
+    "solution_en2": "The domain of f(x) = ln(x²) is all x such that x² > 0, i.e., x ≠ 0. This domain is symmetric about zero. Check parity: f(-x) = ln((-x)²) = ln(x²) = f(x). Since f(-x) = f(x) for all x in the domain, the function is even. It is not odd because f(-x) ≠ -f(x).",
+    "options_en": [
+      "A. uncertain about its parity",
+      "B. neither odd nor even",
+      "C. odd",
+      "D. even"
+    ],
+    "options_ch": [
+      "A. 无法确定其奇偶性",
+      "B. 既非奇函数也非偶函数",
+      "C. 奇函数",
+      "D. 偶函数"
+    ]
   },
   {
     "chinese": "下列函数是偶函数的是",
@@ -1501,7 +1585,19 @@
     "solution_ru": "f(-x) = (-x)⁴ + 3 = x⁴ + 3 = f(x). Функция четная.",
     "solution_en": "f(-x) = (-x)⁴ + 3 = x⁴ + 3 = f(x). The function is even.",
     "solution_ru2": "Вычислим f(-x): f(-x) = (-x)⁴ + 3 = x⁴ + 3 = f(x). Так как f(-x) = f(x) для всех x, функция является четной. Она не является нечетной, так как f(-x) ≠ -f(x).",
-    "solution_en2": "Compute f(-x): f(-x) = (-x)⁴ + 3 = x⁴ + 3 = f(x). Since f(-x) = f(x) for all x, the function is even. It is not odd because f(-x) ≠ -f(x)."
+    "solution_en2": "Compute f(-x): f(-x) = (-x)⁴ + 3 = x⁴ + 3 = f(x). Since f(-x) = f(x) for all x, the function is even. It is not odd because f(-x) ≠ -f(x).",
+    "options_en": [
+      "A. The function is odd",
+      "B. None is true",
+      "C. Neither odd nor even",
+      "D. The function is even"
+    ],
+    "options_ch": [
+      "A. 函数是奇函数",
+      "B. 以上都不是",
+      "C. 函数既不是奇函数也不是偶函数",
+      "D. 函数是偶函数"
+    ]
   },
   {
     "n": 9,
@@ -1550,10 +1646,10 @@
     "chinese": "已知 y = |x|，下列哪个结论是正确的？（）。",
     "english": "Given that y = |x|, which of the following conclusions is correct? ().",
     "options": [
-      "A. 当 x < 0 时，函数是增函数 When x<0 it's an increasing function",
-      "B. 当 x > 0 时，函数是增函数 When x>0 it's an increasing function",
-      "C. 当 x ∈ ℝ 时，函数是减函数 When x∈R is's a decreasing function",
-      "D. 当 x ∈ ℝ 时，函数是增函数 When x∈R is's a increasing function"
+      "A. 当 x < 0 时，函数是增函数 / When x < 0, it is an increasing function",
+      "B. 当 x > 0 时，函数是增函数 / When x > 0, it is an increasing function",
+      "C. 当 x ∈ ℝ 时，函数是减函数 / When x ∈ R, it is a decreasing function",
+      "D. 当 x ∈ ℝ 时，函数是增函数 / When x ∈ R, it is an increasing function"
     ],
     "answer": "B",
     "topic": "functions",
@@ -1565,7 +1661,19 @@
     "solution_ru": "y = |x| = x при x ≥ 0 и y = -x при x < 0. На интервале (0, +∞) функция y = x является возрастающей.",
     "solution_en": "y = |x| = x for x ≥ 0 and y = -x for x < 0. On the interval (0, +∞), the function y = x is increasing.",
     "solution_ru2": "Функция y = |x| определена на всей числовой прямой. При x ≥ 0 она совпадает с y = x, которая возрастает на [0, +∞). При x < 0 она совпадает с y = -x, которая убывает на (-∞, 0). Таким образом, функция возрастает на интервале (0, +∞) и убывает на (-∞, 0). Утверждение B верно.",
-    "solution_en2": "The function y = |x| is defined on the entire real line. For x ≥ 0, it coincides with y = x, which is increasing on [0, +∞). For x < 0, it coincides with y = -x, which is decreasing on (-∞, 0). Thus, the function is increasing on the interval (0, +∞) and decreasing on (-∞, 0). Statement B is correct."
+    "solution_en2": "The function y = |x| is defined on the entire real line. For x ≥ 0, it coincides with y = x, which is increasing on [0, +∞). For x < 0, it coincides with y = -x, which is decreasing on (-∞, 0). Thus, the function is increasing on the interval (0, +∞) and decreasing on (-∞, 0). Statement B is correct.",
+    "options_en": [
+      "A. When x < 0, it is an increasing function",
+      "B. When x > 0, it is an increasing function",
+      "C. When x ∈ R, it is a decreasing function",
+      "D. When x ∈ R, it is an increasing function"
+    ],
+    "options_ch": [
+      "A. 当 x < 0 时，函数是增函数",
+      "B. 当 x > 0 时，函数是增函数",
+      "C. 当 x ∈ ℝ 时，函数是减函数",
+      "D. 当 x ∈ ℝ 时，函数是增函数"
+    ]
   },
   {
     "n": 31,
@@ -1672,7 +1780,19 @@
     "solution_ru": "Экспоненциальная функция y = aˣ является возрастающей только при a > 1. При 0 < a < 1 она убывающая. Утверждение C не всегда верно.",
     "solution_en": "The exponential function y = aˣ is increasing only if a > 1. For 0 < a < 1, it is decreasing. Statement C is not always true.",
     "solution_ru2": "Рассмотрим свойства показательной функции y = aˣ при a > 0, a ≠ 1. Область определения: ℝ, верно. Область значений: (0, +∞), верно. График проходит через точку (0, 1), так как a⁰ = 1, верно. Монотонность: при a > 1 функция возрастает, при 0 < a < 1 — убывает. Утверждение \"функция в определении является возрастающей\" неверно, так как это зависит от значения a. Поэтому C — неверное утверждение.",
-    "solution_en2": "Consider the properties of the exponential function y = aˣ for a > 0, a ≠ 1. Domain: ℝ, true. Range: (0, +∞), true. Graph passes through (0, 1) because a⁰ = 1, true. Monotonicity: if a > 1, the function is increasing; if 0 < a < 1, it is decreasing. The statement 'the function is increasing on its domain' is false because it depends on the value of a. Thus, C is the incorrect statement."
+    "solution_en2": "Consider the properties of the exponential function y = aˣ for a > 0, a ≠ 1. Domain: ℝ, true. Range: (0, +∞), true. Graph passes through (0, 1) because a⁰ = 1, true. Monotonicity: if a > 1, the function is increasing; if 0 < a < 1, it is decreasing. The statement 'the function is increasing on its domain' is false because it depends on the value of a. Thus, C is the incorrect statement.",
+    "options_en": [
+      "A. The range is (0, +∞)",
+      "B. Graph passes through (0, 1)",
+      "C. It is ncreasing function",
+      "D. The domain is ℝ"
+    ],
+    "options_ch": [
+      "A. 值域是",
+      "B. 图像经过",
+      "C. 函数在定义域上是增函数",
+      "D. 定义域是"
+    ]
   },
   {
     "chinese": "下列关于函数 y = (1/2)^x 的描述正确的是",
@@ -1694,7 +1814,19 @@
     "solution_ru": "Основание показательной функции 0 < 1/2 < 1, поэтому функция убывает на всей области определения.",
     "solution_en": "The base of the exponential function is 0 < 1/2 < 1, so the function is decreasing over its entire domain.",
     "solution_ru2": "Функция y = (1/2)^x — показательная с основанием a = 1/2, которое удовлетворяет условию 0 < a < 1. Для таких показательных функций характерно убывание на всей области определения (ℝ). При увеличении x значение y уменьшается. Функция не обладает симметрией относительно начала координат или оси x. Таким образом, верное описание — \"функция монотонно убывает\".",
-    "solution_en2": "The function y = (1/2)^x is an exponential function with base a = 1/2, which satisfies 0 < a < 1. For such exponential functions, they are decreasing over their entire domain (ℝ). As x increases, y decreases. The function does not have symmetry about the origin or the x-axis. Therefore, the correct description is 'the function is monotonically decreasing'."
+    "solution_en2": "The function y = (1/2)^x is an exponential function with base a = 1/2, which satisfies 0 < a < 1. For such exponential functions, they are decreasing over their entire domain (ℝ). As x increases, y decreases. The function does not have symmetry about the origin or the x-axis. Therefore, the correct description is 'the function is monotonically decreasing'.",
+    "options_en": [
+      "A. Symmetric about the origin",
+      "B. Symmetric about the x-axis",
+      "C. Increasing",
+      "D. Decreasing"
+    ],
+    "options_ch": [
+      "A. 该函数属于原点对称",
+      "B. 该函数属于 x 轴对称",
+      "C. 该函数单调递增",
+      "D. 该函数单调递减"
+    ]
   },
   {
     "n": 36,
@@ -1803,10 +1935,10 @@
     "chinese": "关于函数 f(x) = tan x 的描述，下列哪个是错误的？",
     "english": "Which of the following descriptions about the function f(x) = tan x is incorrect?",
     "options": [
-      "A. f(x) satisfies f(-x) = -f(x) on its domain",
-      "B. f(x) is even",
-      "C. f(x) is monotonic increasing over (-π/2, π/2)",
-      "D. f(x) has exactly one zero on the interval (-π/2, π/2)"
+      "A. f(x) satisfies f(-x) = -f(x) on its domain / f(x) 在其定义域上满足 f(-x) = -f(x)",
+      "B. f(x) is even / f(x) 是偶函数",
+      "C. f(x) is monotonic increasing over (-π/2, π/2) / f(x) 在区间 (-π/2, π/2) 上单调递增",
+      "D. f(x) has exactly one zero on the interval (-π/2, π/2) / f(x) 在区间 (-π/2, π/2) 上恰有一个零点"
     ],
     "answer": "B",
     "topic": "trigonometry",
@@ -1818,7 +1950,19 @@
     "solution_ru": "tan x - нечетная функция, а не четная",
     "id": "FP16",
     "solution_ru2": "Функция тангенса определена на множестве x ≠ π/2 + πk. Она является нечетной, так как tan(-x) = -tan x. Следовательно, утверждение B (функция четная) неверно. Остальные утверждения верны: A — свойство нечетности; C — тангенс возрастает на каждом интервале (-π/2 + πk, π/2 + πk), в частности на (-π/2, π/2); D — на этом интервале tan x = 0 только при x = 0.",
-    "solution_en2": "The tangent function is defined for x ≠ π/2 + πk. It is odd because tan(-x) = -tan x. Hence, statement B (the function is even) is incorrect. The other statements are correct: A describes the oddness property; C — tangent is increasing on each interval (-π/2 + πk, π/2 + πk), in particular on (-π/2, π/2); D — on this interval, tan x = 0 only at x = 0."
+    "solution_en2": "The tangent function is defined for x ≠ π/2 + πk. It is odd because tan(-x) = -tan x. Hence, statement B (the function is even) is incorrect. The other statements are correct: A describes the oddness property; C — tangent is increasing on each interval (-π/2 + πk, π/2 + πk), in particular on (-π/2, π/2); D — on this interval, tan x = 0 only at x = 0.",
+    "options_en": [
+      "A. f(x) satisfies f(-x) = -f(x) on its domain",
+      "B. f(x) is even",
+      "C. f(x) is monotonic increasing over (-π/2, π/2)",
+      "D. f(x) has exactly one zero on the interval (-π/2, π/2)"
+    ],
+    "options_ch": [
+      "A. f(x) 在其定义域上满足 f(-x) = -f(x)",
+      "B. f(x) 是偶函数",
+      "C. f(x) 在区间 (-π/2, π/2) 上单调递增",
+      "D. f(x) 在区间 (-π/2, π/2) 上恰有一个零点"
+    ]
   },
   {
     "chinese": "函数 y = eˣ + 2 的值域是什么？",
@@ -1877,7 +2021,19 @@
     "solution_ru": "Функции y = x³ и y = x^{1/3} являются обратными друг другу. Графики обратных функций симметричны относительно прямой y = x.",
     "solution_en": "The functions y = x³ and y = x^{1/3} are inverses of each other. The graphs of inverse functions are symmetric with respect to the line y = x.",
     "solution_ru2": "Функция y = x³ и y = x^{1/3} (или ∛x) являются взаимно обратными: если y = x³, то x = ∛y. Для обратных функций справедливо свойство: их графики симметричны относительно прямой y = x. Проверим: точка (a, a³) на графике y = x³ переходит в точку (a³, a) на графике обратной функции, и эти точки симметричны относительно y = x. Остальные варианты неверны.",
-    "solution_en2": "The functions y = x³ and y = x^{1/3} (or ∛x) are inverses of each other: if y = x³, then x = ∛y. Inverse functions have the property that their graphs are symmetric with respect to the line y = x. Check: a point (a, a³) on the graph of y = x³ maps to (a³, a) on the graph of the inverse function, and these points are symmetric about y = x. The other options are incorrect."
+    "solution_en2": "The functions y = x³ and y = x^{1/3} (or ∛x) are inverses of each other: if y = x³, then x = ∛y. Inverse functions have the property that their graphs are symmetric with respect to the line y = x. Check: a point (a, a³) on the graph of y = x³ maps to (a³, a) on the graph of the inverse function, and these points are symmetric about y = x. The other options are incorrect.",
+    "options_en": [
+      "A. Graphs are symmetric with respect to the x‑axis",
+      "B. Graphs are symmetric with respect to the line y = x",
+      "C. Graphs are symmetric with respect to the y‑axis",
+      "D. Graphs are symmetric with respect the origin"
+    ],
+    "options_ch": [
+      "A. 两函数的图像关于 x 轴对称",
+      "B. 两函数的图像关于直线 y = x 对称",
+      "C. 两函数的图像关于 y 轴对称",
+      "D. 两函数的图像关于原点对称"
+    ]
   },
   {
     "chinese": "如果函数 f(x) = aˣ（其中 a > 0 且 a ≠ 1）经过点 (2, 9)，那么 f(-1) 的值是多少？",
@@ -2174,7 +2330,13 @@
     "solution_ru": "√((x-1)²) = |x-1| по определению. Области определения: x ∈ ℝ для |x-1|, и x ∈ ℝ для √((x-1)²). Функции совпадают.",
     "solution_en": "√((x-1)²) = |x-1| by definition. Domains: x ∈ ℝ for |x-1|, and x ∈ ℝ for √((x-1)²). The functions are identical.",
     "solution_ru2": "Функция y = |x-1| определена при всех x. Функция y = √((x-1)²) также определена при всех x, так как под корнем всегда неотрицательное число, и по определению арифметического корня √((x-1)²) = |x-1|. Таким образом, обе функции совпадают и по области определения, и по закону соответствия. Другие пары: A — разная область определения (ln x² определена при x ≠ 0, 2 ln x — при x > 0); C — вторая функция не определена при x = ±1; D — область определения первой функции: x(x-1) > 0, второй: x > 0 и x-1 > 0 ⇒ x > 1.",
-    "solution_en2": "The function y = |x-1| is defined for all x. The function y = √((x-1)²) is also defined for all x, because the radicand is always non-negative, and by definition of the principal square root, √((x-1)²) = |x-1|. Thus, both functions are identical in both domain and mapping. Other pairs: A — different domains (ln x² defined for x ≠ 0, 2 ln x for x > 0); C — the second function is undefined at x = ±1; D — domain of the first: x(x-1) > 0, of the second: x > 0 and x-1 > 0 ⇒ x > 1."
+    "solution_en2": "The function y = |x-1| is defined for all x. The function y = √((x-1)²) is also defined for all x, because the radicand is always non-negative, and by definition of the principal square root, √((x-1)²) = |x-1|. Thus, both functions are identical in both domain and mapping. Other pairs: A — different domains (ln x² defined for x ≠ 0, 2 ln x for x > 0); C — the second function is undefined at x = ±1; D — domain of the first: x(x-1) > 0, of the second: x > 0 and x-1 > 0 ⇒ x > 1.",
+    "options_ch": [
+      "A. y = ln x² 与 y = 2 ln x",
+      "B. y = |x - 1| 与 y = √((x - 1)²)",
+      "C. y = x² + 1 与 y = (x⁴ - 1)/(x² - 1)",
+      "D. y = ln x(x - 1) 与 y = ln x + ln(x - 1)"
+    ]
   },
   {
     "chinese": "下列哪个陈述是正确的？（ ）",
@@ -2195,7 +2357,19 @@
     "solution_ru": "y = (x⁴ - 1)/(x² + 1). Разложим числитель: (x²-1)(x²+1). Сократим на (x²+1) (x²+1 ≠ 0 для всех x ∈ ℝ). Получим y = x² - 1. Области определения обеих функций — ℝ.",
     "solution_en": "y = (x⁴ - 1)/(x² + 1). Factor the numerator: (x²-1)(x²+1). Cancel (x²+1) (x²+1 ≠ 0 for all x ∈ ℝ). This yields y = x² - 1. The domain of both functions is ℝ.",
     "solution_ru2": "Рассмотрим пару B. Выражение (x⁴ - 1)/(x² + 1). Разложим числитель: x⁴ - 1 = (x² - 1)(x² + 1). Знаменатель x² + 1 никогда не обращается в ноль (всегда положителен). Следовательно, можно сократить на (x²+1), получим y = x² - 1. Область определения исходной функции — все действительные числа (знаменатель не нуль), и область определения функции x² - 1 — тоже ℝ. Функции совпадают. Остальные пары: A — разные области определения ((√x)² требует x ≥ 0); C — разные области определения (y=1 определена при всех x, y=x² определена при всех x, но законы разные); D — y = √(x²) = |x|, а не x.",
-    "solution_en2": "Consider pair B. The expression (x⁴ - 1)/(x² + 1). Factor the numerator: x⁴ - 1 = (x² - 1)(x² + 1). The denominator x² + 1 is never zero (always positive). Hence, we can cancel (x²+1) to get y = x² - 1. The domain of the original function is all real numbers (denominator non-zero), and the domain of x² - 1 is also ℝ. The functions are identical. Other pairs: A — different domains ((√x)² requires x ≥ 0); C — different domains (y=1 is defined for all x, y=x² is defined for all x, but the rules differ); D — y = √(x²) = |x|, not x."
+    "solution_en2": "Consider pair B. The expression (x⁴ - 1)/(x² + 1). Factor the numerator: x⁴ - 1 = (x² - 1)(x² + 1). The denominator x² + 1 is never zero (always positive). Hence, we can cancel (x²+1) to get y = x² - 1. The domain of the original function is all real numbers (denominator non-zero), and the domain of x² - 1 is also ℝ. The functions are identical. Other pairs: A — different domains ((√x)² requires x ≥ 0); C — different domains (y=1 is defined for all x, y=x² is defined for all x, but the rules differ); D — y = √(x²) = |x|, not x.",
+    "options_en": [
+      "A. y = (√x)² and y = √(x²) are the same function",
+      "B. y = (x⁴ - 1)/(x² + 1) and y = x² - 1 are the same function",
+      "C. y = 1 and y = x² are the same function",
+      "D. y = x and y = √(x²) are the same function"
+    ],
+    "options_ch": [
+      "A. y = (√x)² 和 y = √(x²) 是同一个函数",
+      "B. y = (x⁴ - 1)/(x² + 1) 和 y = x² - 1 是同一个函数",
+      "C. y = 1 和 y = x² 是同一个函数",
+      "D. y = x 和 y = √(x²) 是同一个函数"
+    ]
   },
   {
     "chinese": "下列哪个陈述是正确的？（ ）",
@@ -2215,7 +2389,19 @@
     "solution_ru": "√(x⁴) = x² для всех x ∈ ℝ, так как x⁴ ≥ 0 и арифметический корень неотрицателен, а x² также неотрицателен. Области определения совпадают (ℝ).",
     "solution_en": "√(x⁴) = x² for all x ∈ ℝ, because x⁴ ≥ 0 and the principal square root is non-negative, and x² is also non-negative. The domains match (ℝ).",
     "solution_ru2": "Функция y = √(x⁴) определена для всех x, так как x⁴ ≥ 0. Арифметический квадратный корень из x⁴ равен x², потому что x² ≥ 0 и (x²)² = x⁴. Таким образом, y = √(x⁴) = x² для всех x. Область определения совпадает с областью определения y = x² (все ℝ), и законы соответствия одинаковы. Остальные пары: A — разные области определения ((√x)² требует x ≥ 0); B — y = x/x не определена при x = 0; D — y = (x²-1)/(x-1) не определена при x = 1.",
-    "solution_en2": "The function y = √(x⁴) is defined for all x because x⁴ ≥ 0. The principal square root of x⁴ is x², since x² ≥ 0 and (x²)² = x⁴. Thus, y = √(x⁴) = x² for all x. The domain matches that of y = x² (all ℝ), and the mapping is the same. Other pairs: A — different domains ((√x)² requires x ≥ 0); B — y = x/x is undefined at x = 0; D — y = (x²-1)/(x-1) is undefined at x = 1."
+    "solution_en2": "The function y = √(x⁴) is defined for all x because x⁴ ≥ 0. The principal square root of x⁴ is x², since x² ≥ 0 and (x²)² = x⁴. Thus, y = √(x⁴) = x² for all x. The domain matches that of y = x² (all ℝ), and the mapping is the same. Other pairs: A — different domains ((√x)² requires x ≥ 0); B — y = x/x is undefined at x = 0; D — y = (x²-1)/(x-1) is undefined at x = 1.",
+    "options_en": [
+      "A. y = x and y=(√x)²",
+      "B. y = 1 and y = x/x",
+      "C. y = x² and y = √x⁴",
+      "D. y = x + 1 and y = (x² - 1)/(x - 1)"
+    ],
+    "options_ch": [
+      "A. y = x 和 y=(√x)²",
+      "B. y = 1 和 y = x/x",
+      "C. y = x² 和 y = √x⁴",
+      "D. y = x + 1 和 y = (x² - 1)/(x - 1)"
+    ]
   },
   {
     "chinese": "假设一个角 α = 30°。那么下列哪个陈述是正确的？（ ）。",
@@ -3069,7 +3255,19 @@
     "solution_ru": "y = cos x — периодическая функция с периодом 2π.",
     "solution_en": "y = cos x is a periodic function with period 2π.",
     "solution_ru2": "Косинус является периодической функцией с периодом 2π: cos(x + 2π) = cos x. Он не является монотонным на всей области определения: на интервале [0, π] он убывает, на [π, 2π] возрастает. Косинус — четная функция: cos(-x) = cos x, а не нечетная.",
-    "solution_en2": "Cosine is a periodic function with period 2π: cos(x + 2π) = cos x. It is not monotonic over its entire domain: on [0, π] it decreases, on [π, 2π] it increases. Cosine is an even function: cos(-x) = cos x, not odd."
+    "solution_en2": "Cosine is a periodic function with period 2π: cos(x + 2π) = cos x. It is not monotonic over its entire domain: on [0, π] it decreases, on [π, 2π] it increases. Cosine is an even function: cos(-x) = cos x, not odd.",
+    "options_en": [
+      "A. It is a periodic function",
+      "B. It is a decreasing function",
+      "C. It is an increasing function",
+      "D. It is an odd function"
+    ],
+    "options_ch": [
+      "A. 该函数为周期函数",
+      "B. 该函数为减函数",
+      "C. 该函数为增函数",
+      "D. 该函数为奇函数"
+    ]
   },
   {
     "chinese": "关于函数 y = cos x，下列说法正确的是",
@@ -3091,7 +3289,19 @@
     "solution_ru": "y = cos x имеет период 2π.",
     "solution_en": "y = cos x has a period of 2π.",
     "solution_ru2": "Косинус имеет период 2π: cos(x + 2π) = cos x. Другие утверждения: cos(x + π) = -cos x, а не cos x; косинус четный, а не нечетный; на [0, π] косинус убывает от 1 до -1, а не возрастает.",
-    "solution_en2": "Cosine has a period of 2π: cos(x + 2π) = cos x. Other statements: cos(x + π) = -cos x, not cos x; cosine is even, not odd; on [0, π], cosine decreases from 1 to -1, not increases."
+    "solution_en2": "Cosine has a period of 2π: cos(x + 2π) = cos x. Other statements: cos(x + π) = -cos x, not cos x; cosine is even, not odd; on [0, π], cosine decreases from 1 to -1, not increases.",
+    "options_en": [
+      "A. cos(x + π) = cos x",
+      "B. Is an odd function",
+      "C. Is monotonically increasing on the interval [0,π]",
+      "D. Is periodic with a period of 2π"
+    ],
+    "options_ch": [
+      "A. (x + π) = x",
+      "B. 该函数是一个奇函数",
+      "C. 该函数在区间 [0, π] 上单调递增",
+      "D. 该函数是一个以 2π 为周期的函数"
+    ]
   },
   {
     "chinese": "关于正切函数 y = tan x，下列说法不正确的是",
@@ -3099,8 +3309,8 @@
     "options": [
       "A. 值域为 R / The range is R",
       "B. 是奇函数 / It is an odd function",
-      "C. 是周期函数，且最小正周期为 π /  It is a periodic, and its smallest positive period is π",
-      "D. 定义域为 /The domain is {x | x ≠ kπ, k ∈ Z}"
+      "C. 是周期函数，且最小正周期为 π / It is periodic, and its smallest positive period is π",
+      "D. 定义域为 {x | x ≠ kπ, k ∈ Z} / The domain is {x | x ≠ kπ, k ∈ Z}"
     ],
     "answer": "D",
     "topic": "trigonometry",
@@ -3112,7 +3322,19 @@
     "solution_ru": "Область определения тангенса: x ≠ π/2 + kπ, k ∈ Z. Утверждение D неверно.",
     "solution_en": "The domain of tangent is x ≠ π/2 + kπ, k ∈ Z. Statement D is incorrect.",
     "solution_ru2": "Тангенс определен для всех углов, кроме тех, где cos x = 0, то есть x ≠ π/2 + kπ. Область определения, указанная в D (x ≠ kπ), неверна: при x = π/2, например, тангенс не определен, но π/2 не равно kπ. Остальные утверждения верны: tan x принимает все действительные значения, tan(-x) = -tan x, tan(x + π) = tan x.",
-    "solution_en2": "Tangent is defined for all angles except where cos x = 0, i.e., x ≠ π/2 + kπ. The domain given in D (x ≠ kπ) is incorrect: at x = π/2, for example, tangent is undefined, but π/2 is not equal to kπ. The other statements are correct: tan x takes all real values, tan(-x) = -tan x, tan(x + π) = tan x."
+    "solution_en2": "Tangent is defined for all angles except where cos x = 0, i.e., x ≠ π/2 + kπ. The domain given in D (x ≠ kπ) is incorrect: at x = π/2, for example, tangent is undefined, but π/2 is not equal to kπ. The other statements are correct: tan x takes all real values, tan(-x) = -tan x, tan(x + π) = tan x.",
+    "options_en": [
+      "A. The range is R",
+      "B. It is an odd function",
+      "C. It is periodic, and its smallest positive period is π",
+      "D. The domain is {x | x ≠ kπ, k ∈ Z}"
+    ],
+    "options_ch": [
+      "A. 值域为 R",
+      "B. 是奇函数",
+      "C. 是周期函数，且最小正周期为 π",
+      "D. 定义域为 {x | x ≠ kπ, k ∈ Z}"
+    ]
   },
   {
     "chinese": "给定正弦函数 y = sin x，下列哪个陈述是不正确的？（ ）",
@@ -3121,7 +3343,7 @@
       "A. 最大值和最小值分别是 1 和 -1 / ​The max and min values are 1 and −1",
       "B. 该函数是周期函数 / It'a s periodic function",
       "C. 该函数是偶函数 / It is even",
-      "D. 定义域是 ℝ / ​Domain is R​"
+      "D. 定义域是 ℝ / ​Domain is ℝ"
     ],
     "answer": "C",
     "topic": "trigonometry",
@@ -3133,7 +3355,19 @@
     "solution_ru": "Синус — нечетная функция (sin(-x) = -sin x), а не четная.",
     "solution_en": "Sine is an odd function (sin(-x) = -sin x), not even.",
     "solution_ru2": "Синус — нечетная функция, так как sin(-x) = -sin x. Он не является четным. Остальные утверждения верны: амплитуда 1, период 2π, область определения ℝ.",
-    "solution_en2": "Sine is an odd function because sin(-x) = -sin x. It is not even. The other statements are true: amplitude 1, period 2π, domain ℝ."
+    "solution_en2": "Sine is an odd function because sin(-x) = -sin x. It is not even. The other statements are true: amplitude 1, period 2π, domain ℝ.",
+    "options_en": [
+      "A. ​The max and min values are 1 and −1",
+      "B. It'a s periodic function",
+      "C. It is even",
+      "D. ​Domain is ℝ"
+    ],
+    "options_ch": [
+      "A. 最大值和最小值分别是 1 和 -1",
+      "B. 该函数是周期函数",
+      "C. 该函数是偶函数",
+      "D. 定义域是 ℝ"
+    ]
   },
   {
     "chinese": "关于正切函数 y = tan x，下列哪个陈述是正确的？（ ）",
@@ -3142,7 +3376,7 @@
       "A. 值域是 / The  range is [-1,1]",
       "B. 定义域是 / The domain is ℝ",
       "C. 该函数是偶函数 / It is even",
-      "D. 该函数的最小正周期是 π / ​Minimum positive period = π"
+      "D. 该函数的最小正周期是 π / ​Minimum positive period is π"
     ],
     "answer": "D",
     "topic": "trigonometry",
@@ -3154,7 +3388,19 @@
     "solution_ru": "Период тангенса равен π.",
     "solution_en": "The period of the tangent function is π.",
     "solution_ru2": "Тангенс имеет период π: tan(x + π) = tan x. Это минимальный положительный период. Область значений тангенса — все ℝ, а не [-1,1]; область определения — x ≠ π/2 + πk; тангенс — нечетная функция.",
-    "solution_en2": "Tangent has a period of π: tan(x + π) = tan x. This is the minimum positive period. The range of tangent is all ℝ, not [-1,1]; the domain is x ≠ π/2 + πk; tangent is an odd function."
+    "solution_en2": "Tangent has a period of π: tan(x + π) = tan x. This is the minimum positive period. The range of tangent is all ℝ, not [-1,1]; the domain is x ≠ π/2 + πk; tangent is an odd function.",
+    "options_en": [
+      "A. The  range is [-1,1]",
+      "B. The domain is ℝ",
+      "C. It is even",
+      "D. ​Minimum positive period is π"
+    ],
+    "options_ch": [
+      "A. 值域是 [-1,1]",
+      "B. 定义域是 ℝ",
+      "C. 该函数是偶函数",
+      "D. 该函数的最小正周期是 π"
+    ]
   },
   {
     "chinese": "函数 f(x) = sin(2x + π/3) 的最小正周期是：",
@@ -4081,10 +4327,10 @@
     "chinese": "若 a = -2, ab < 0, 则点 (a, b) 位于",
     "english": "If a = -2 , ab < 0 , then the point (a, b) belongs to",
     "options": [
-      "A. the third quadrant",
-      "B. the fourth quadrant",
-      "C. the second quadrant",
-      "D. the first quadrant"
+      "A. the third quadrant / 第三象限",
+      "B. the fourth quadrant / 第四象限",
+      "C. the second quadrant / 第二象限",
+      "D. the first quadrant / 第一象限"
     ],
     "answer": "C",
     "topic": "geometry",
@@ -4096,7 +4342,19 @@
     "solution_ru": "a = -2 < 0, ab < 0 означает b > 0. Абсцисса отрицательна, ордината положительна, точка находится во второй четверти.",
     "id": "CG1",
     "solution_ru2": "Дано a = -2, то есть x-координата отрицательна. Условие ab < 0 означает, что a и b имеют разные знаки. Так как a < 0, то b > 0. Точка имеет x < 0, y > 0, что соответствует второй четверти.",
-    "solution_en2": "Given a = -2, so the x-coordinate is negative. The condition ab < 0 means a and b have opposite signs. Since a < 0, then b > 0. The point has x < 0, y > 0, which corresponds to the second quadrant."
+    "solution_en2": "Given a = -2, so the x-coordinate is negative. The condition ab < 0 means a and b have opposite signs. Since a < 0, then b > 0. The point has x < 0, y > 0, which corresponds to the second quadrant.",
+    "options_en": [
+      "A. The third quadrant",
+      "B. The fourth quadrant",
+      "C. The second quadrant",
+      "D. The first quadrant"
+    ],
+    "options_ch": [
+      "A. 第三象限",
+      "B. 第四象限",
+      "C. 第二象限",
+      "D. 第一象限"
+    ]
   },
   {
     "chinese": "点(-1, 3 - π)位于平面直角坐标系的",
@@ -4118,7 +4376,19 @@
     "solution_ru": "x = -1 < 0. π ≈ 3.14, 3 - π ≈ -0.14 < 0. Обе координаты отрицательны, точка в третьей четверти.",
     "solution_en": "x = -1 < 0. π ≈ 3.14, 3 - π ≈ -0.14 < 0. Both coordinates are negative, point in the third quadrant.",
     "solution_ru2": "Абсцисса x = -1 < 0. Ордината y = 3 - π. Поскольку π ≈ 3.1416, то 3 - π ≈ -0.1416 < 0. Обе координаты отрицательны, значит, точка находится в третьей четверти.",
-    "solution_en2": "The abscissa x = -1 < 0. The ordinate y = 3 - π. Since π ≈ 3.1416, 3 - π ≈ -0.1416 < 0. Both coordinates are negative, so the point lies in the third quadrant."
+    "solution_en2": "The abscissa x = -1 < 0. The ordinate y = 3 - π. Since π ≈ 3.1416, 3 - π ≈ -0.1416 < 0. Both coordinates are negative, so the point lies in the third quadrant.",
+    "options_en": [
+      "A. Third quadrant",
+      "B. First quadrant",
+      "C. Second quadrant",
+      "D. Fourth quadrant"
+    ],
+    "options_ch": [
+      "A. 第三象限",
+      "B. 第一象限",
+      "C. 第二象限",
+      "D. 第四象限"
+    ]
   },
   {
     "chinese": "设 P(1,2) 是直角坐标系中的一个点。如果一个点 Q 与 P 关于 x 轴对称，那么 Q 的坐标是（ ）。",
@@ -4200,7 +4470,19 @@
     "solution_ru": "Точки (-3,5) и (5,-3) являются симметричными относительно прямой y = x, так как их координаты поменялись местами и изменился знак? Нет, при симметрии относительно y=x координаты меняются местами: (a,b) -> (b,a). Здесь (-3,5) -> (5,-3). Не просто местами, а с изменением знака? Нет, знак не меняется. (a,b) -> (b,a). Для (-3,5) это (5,-3). Условие выполнено.",
     "solution_en": "Points (-3,5) and (5,-3) are symmetric about the line y = x, as their coordinates are swapped: (a,b) -> (b,a). Here (-3,5) -> (5,-3).",
     "solution_ru2": "При симметрии относительно прямой y = x координаты точки меняются местами: (x, y) → (y, x). Для точки (-3,5) получаем (5,-3). Условие выполнено. Симметрия относительно осей или начала координат дала бы другие результаты.",
-    "solution_en2": "Under reflection across the line y = x, the coordinates of a point are swapped: (x, y) → (y, x). For point (-3,5), this gives (5,-3). This condition holds. Reflection across axes or the origin would yield different results."
+    "solution_en2": "Under reflection across the line y = x, the coordinates of a point are swapped: (x, y) → (y, x). For point (-3,5), this gives (5,-3). This condition holds. Reflection across axes or the origin would yield different results.",
+    "options_en": [
+      "A. The y-axis",
+      "B. The x-axis",
+      "C. The origin",
+      "D. The line y = x"
+    ],
+    "options_ch": [
+      "A. y 轴对称",
+      "B. x 轴对称",
+      "C. 原点对称",
+      "D. 直线 y = x 对称"
+    ]
   },
   {
     "chinese": "点 (-3,5) 和点 (3,-5) 关于",
@@ -4219,7 +4501,19 @@
     "solution_ru": "Точки (-3,5) и (3,-5) симметричны относительно начала координат, так как (x, y) → (-x, -y).",
     "solution_en": "Points (-3,5) and (3,-5) are symmetric about the origin, as (x, y) → (-x, -y).",
     "solution_ru2": "При симметрии относительно начала координат координаты точки умножаются на -1: (x, y) → (-x, -y). Для (-3,5) получаем (3,-5). Условие выполнено.",
-    "solution_en2": "Under reflection about the origin, the coordinates of a point are multiplied by -1: (x, y) → (-x, -y). For (-3,5), this gives (3,-5). The condition holds."
+    "solution_en2": "Under reflection about the origin, the coordinates of a point are multiplied by -1: (x, y) → (-x, -y). For (-3,5), this gives (3,-5). The condition holds.",
+    "options_en": [
+      "A. The y-axis",
+      "B. The x-axis",
+      "C. The origin",
+      "D. The line y = x"
+    ],
+    "options_ch": [
+      "A. y 轴对称",
+      "B. x 轴对称",
+      "C. 原点对称",
+      "D. 直线 y = x 对称"
+    ]
   },
   {
     "chinese": "若点 M(a + 3, a + 1) 在 x 轴上，则点 M 的坐标为",
@@ -4484,9 +4778,9 @@
     "english": "Given lines l₁: ax + 2y - 1 = 0 and l₂: x + (a + 1)y + 4 = 0 are parallel, then a =",
     "options": [
       "A. 1",
-      "B. -2 或 (and)  1",
+      "B. -2 或 and 1",
       "C. -2",
-      "D. 2 或  (and) -1"
+      "D. 2 或 and -1"
     ],
     "answer": "B",
     "topic": "geometry",
@@ -4498,7 +4792,19 @@
     "solution_ru": "Для параллельности необходимо A₁/A₂ = B₁/B₂ ≠ C₁/C₂. a/1 = 2/(a+1) ⇒ a(a+1)=2 ⇒ a² + a - 2 = 0 ⇒ a = 1 или a = -2. При a = 1: l₁: x + 2y - 1 = 0, l₂: x + 2y + 4 = 0 (параллельны). При a = -2: l₁: -2x + 2y - 1 = 0, l₂: x - y + 4 = 0 (параллельны).",
     "solution_en": "For parallel lines, A₁/A₂ = B₁/B₂ ≠ C₁/C₂. a/1 = 2/(a+1) ⇒ a(a+1)=2 ⇒ a² + a - 2 = 0 ⇒ a = 1 or a = -2. For a = 1: l₁: x + 2y - 1 = 0, l₂: x + 2y + 4 = 0 (parallel). For a = -2: l₁: -2x + 2y - 1 = 0, l₂: x - y + 4 = 0 (parallel).",
     "solution_ru2": "Условие параллельности прямых A₁x + B₁y + C₁ = 0 и A₂x + B₂y + C₂ = 0: A₁/A₂ = B₁/B₂ ≠ C₁/C₂. Здесь A₁ = a, B₁ = 2, A₂ = 1, B₂ = a+1, C₁ = -1, C₂ = 4. Условие a/1 = 2/(a+1) ⇒ a(a+1) = 2 ⇒ a² + a - 2 = 0 ⇒ (a+2)(a-1)=0 ⇒ a = -2 или a = 1. Проверяем, что при этих a прямые не совпадают (C₁/C₂ ≠ A₁/A₂). При a=1: 1/1 = 2/2 = 1, C₁/C₂ = -1/4 ≠ 1, параллельны. При a=-2: A₁/A₂ = -2, B₁/B₂ = 2/(-1) = -2, C₁/C₂ = -1/4 ≠ -2, параллельны.",
-    "solution_en2": "Condition for parallel lines A₁x + B₁y + C₁ = 0 and A₂x + B₂y + C₂ = 0: A₁/A₂ = B₁/B₂ ≠ C₁/C₂. Here A₁ = a, B₁ = 2, A₂ = 1, B₂ = a+1, C₁ = -1, C₂ = 4. Condition a/1 = 2/(a+1) ⇒ a(a+1) = 2 ⇒ a² + a - 2 = 0 ⇒ (a+2)(a-1)=0 ⇒ a = -2 or a = 1. Check that the lines are not coincident (C₁/C₂ ≠ A₁/A₂). For a=1: 1/1 = 2/2 = 1, C₁/C₂ = -1/4 ≠ 1, parallel. For a=-2: A₁/A₂ = -2, B₁/B₂ = 2/(-1) = -2, C₁/C₂ = -1/4 ≠ -2, parallel."
+    "solution_en2": "Condition for parallel lines A₁x + B₁y + C₁ = 0 and A₂x + B₂y + C₂ = 0: A₁/A₂ = B₁/B₂ ≠ C₁/C₂. Here A₁ = a, B₁ = 2, A₂ = 1, B₂ = a+1, C₁ = -1, C₂ = 4. Condition a/1 = 2/(a+1) ⇒ a(a+1) = 2 ⇒ a² + a - 2 = 0 ⇒ (a+2)(a-1)=0 ⇒ a = -2 or a = 1. Check that the lines are not coincident (C₁/C₂ ≠ A₁/A₂). For a=1: 1/1 = 2/2 = 1, C₁/C₂ = -1/4 ≠ 1, parallel. For a=-2: A₁/A₂ = -2, B₁/B₂ = 2/(-1) = -2, C₁/C₂ = -1/4 ≠ -2, parallel.",
+    "options_en": [
+      "A. 1",
+      "B. -2 and 1",
+      "C. -2",
+      "D. 2 and -1"
+    ],
+    "options_ch": [
+      "A. 1",
+      "B. -2 或 1",
+      "C. -2",
+      "D. 2 或 -1"
+    ]
   },
   {
     "n": 33,
@@ -4817,7 +5123,19 @@
     "solution_ru": "Условие перпендикулярности A₁A₂ + B₁B₂ = 0. a*2 + (a-1)*a = 0 ⇒ 2a + a² - a = 0 ⇒ a² + a = 0 ⇒ a(a+1) = 0 ⇒ a = 0 или a = -1.",
     "solution_en": "Perpendicular condition: A₁A₂ + B₁B₂ = 0. a*2 + (a-1)*a = 0 ⇒ 2a + a² - a = 0 ⇒ a² + a = 0 ⇒ a(a+1) = 0 ⇒ a = 0 or a = -1.",
     "solution_ru2": "Для прямых, заданных в общем виде A₁x + B₁y + C₁ = 0 и A₂x + B₂y + C₂ = 0, условие перпендикулярности: A₁A₂ + B₁B₂ = 0. Здесь A₁ = a, B₁ = a-1, A₂ = 2, B₂ = a. Подставляем: a*2 + (a-1)*a = 0 ⇒ 2a + a² - a = 0 ⇒ a² + a = 0 ⇒ a(a+1)=0 ⇒ a = 0 или a = -1.",
-    "solution_en2": "For lines in general form A₁x + B₁y + C₁ = 0 and A₂x + B₂y + C₂ = 0, the perpendicularity condition is A₁A₂ + B₁B₂ = 0. Here A₁ = a, B₁ = a-1, A₂ = 2, B₂ = a. Substitute: a*2 + (a-1)*a = 0 ⇒ 2a + a² - a = 0 ⇒ a² + a = 0 ⇒ a(a+1)=0 ⇒ a = 0 or a = -1."
+    "solution_en2": "For lines in general form A₁x + B₁y + C₁ = 0 and A₂x + B₂y + C₂ = 0, the perpendicularity condition is A₁A₂ + B₁B₂ = 0. Here A₁ = a, B₁ = a-1, A₂ = 2, B₂ = a. Substitute: a*2 + (a-1)*a = 0 ⇒ 2a + a² - a = 0 ⇒ a² + a = 0 ⇒ a(a+1)=0 ⇒ a = 0 or a = -1.",
+    "options_ch": [
+      "A. -1",
+      "B. -1 或 1",
+      "C. 1",
+      "D. 0 或 -1"
+    ],
+    "options_en": [
+      "A. -1",
+      "B. -1 or 1",
+      "C. 1",
+      "D. 0 or -1"
+    ]
   },
   {
     "chinese": "设向量 a = (-1, 2), b = (3, -1)，则 3a - b =",
@@ -4907,10 +5225,10 @@
     "chinese": "已知向量 AB = a + 5b, BC = -2a + 8b, CD = 3a - 3b。因此，（ ）。",
     "english": "Given that vector AB = a + 5b, BC = -2a + 8b, CD = 3a - 3b. Thus, ( ).",
     "options": [
-      "A. A, C, D 在同一直线上 аre on the same line",
-      "B. A, B, D 在同一直线上 аre on the same line",
-      "C. B, C, D 在同一直线上 аre on the same line",
-      "D. A, B, C 在同一直线上 аre on the same line"
+      "A. A, C, D 在同一直线上 / A, C, D are on the same line",
+      "B. A, B, D 在同一直线上 / A, B, D are on the same line",
+      "C. B, C, D 在同一直线上 / B, C, D are on the same line",
+      "D. A, B, C 在同一直线上 / A, B, C are on the same line"
     ],
     "answer": "B",
     "topic": "geometry",
@@ -4922,7 +5240,19 @@
     "solution_ru": "Найдем AD = AB + BC + CD = (a+5b) + (-2a+8b) + (3a-3b) = (1-2+3)a + (5+8-3)b = 2a + 10b = 2(a+5b) = 2AB. Векторы AB и AD коллинеарны, значит точки A, B, D лежат на одной прямой.",
     "solution_en": "Find AD = AB + BC + CD = (a+5b) + (-2a+8b) + (3a-3b) = (1-2+3)a + (5+8-3)b = 2a + 10b = 2(a+5b) = 2AB. Vectors AB and AD are collinear, so points A, B, D lie on the same line.",
     "solution_ru2": "Вычислим вектор AD = AB + BC + CD = (a+5b) + (-2a+8b) + (3a-3b) = (1-2+3)a + (5+8-3)b = 2a + 10b = 2(a+5b) = 2AB. Так как AD = 2AB, векторы AB и AD коллинеарны, и точка A общая, следовательно, точки A, B и D лежат на одной прямой. Остальные комбинации не дают коллинеарности.",
-    "solution_en2": "Compute vector AD = AB + BC + CD = (a+5b) + (-2a+8b) + (3a-3b) = (1-2+3)a + (5+8-3)b = 2a + 10b = 2(a+5b) = 2AB. Since AD = 2AB, vectors AB and AD are collinear, and they share point A, so points A, B, and D are collinear. Other combinations do not yield collinearity."
+    "solution_en2": "Compute vector AD = AB + BC + CD = (a+5b) + (-2a+8b) + (3a-3b) = (1-2+3)a + (5+8-3)b = 2a + 10b = 2(a+5b) = 2AB. Since AD = 2AB, vectors AB and AD are collinear, and they share point A, so points A, B, and D are collinear. Other combinations do not yield collinearity.",
+    "options_en": [
+      "A. A, C, D are on the same line",
+      "B. A, B, D are on the same line",
+      "C. B, C, D are on the same line",
+      "D. A, B, C are on the same line"
+    ],
+    "options_ch": [
+      "A. A, C, D 在同一直线上",
+      "B. A, B, D 在同一直线上",
+      "C. B, C, D 在同一直线上",
+      "D. A, B, C 在同一直线上"
+    ]
   },
   {
     "n": 20,
@@ -5051,7 +5381,19 @@
     "solution_ru": "Выделим полный квадрат: (x² - 4x + 4) + y² - 4 - 3 = 0 ⇒ (x - 2)² + y² = 7. Центр (2, 0), радиус √7.",
     "solution_en": "Complete the square: (x² - 4x + 4) + y² - 4 - 3 = 0 ⇒ (x - 2)² + y² = 7. Center (2, 0), radius √7.",
     "solution_ru2": "Приведем уравнение к стандартному виду, выделив полный квадрат по x: x² - 4x + y² - 3 = 0. Добавим и вычтем 4: (x² - 4x + 4) + y² - 4 - 3 = 0 ⇒ (x - 2)² + y² = 7. Это окружность с центром в (2, 0) и радиусом √7.",
-    "solution_en2": "Rewrite the equation in standard form by completing the square for x: x² - 4x + y² - 3 = 0. Add and subtract 4: (x² - 4x + 4) + y² - 4 - 3 = 0 ⇒ (x - 2)² + y² = 7. This is a circle with center (2, 0) and radius √7."
+    "solution_en2": "Rewrite the equation in standard form by completing the square for x: x² - 4x + y² - 3 = 0. Add and subtract 4: (x² - 4x + 4) + y² - 4 - 3 = 0 ⇒ (x - 2)² + y² = 7. This is a circle with center (2, 0) and radius √7.",
+    "options_ch": [
+      "A. (0,2) 和 √7",
+      "B. (0,2) 和 7",
+      "C. (2,0) 和 √7",
+      "D. (2,0) 和 7"
+    ],
+    "options_en": [
+      "A. (0,2) and √7",
+      "B. (0,2) and 7",
+      "C. (2,0) and √7",
+      "D. (2,0) and 7"
+    ]
   },
   {
     "chinese": "设圆的方程为 x² + y² + 2x - 2y = 0，则该圆的半径为",
@@ -5197,7 +5539,19 @@
     "solution_ru": "(x² - 6x + 9) + (y² + 4y + 4) - 3 - 9 - 4 = 0 ⇒ (x-3)² + (y+2)² = 16. Центр (3, -2), радиус 4.",
     "solution_en": "(x² - 6x + 9) + (y² + 4y + 4) - 3 - 9 - 4 = 0 ⇒ (x-3)² + (y+2)² = 16. Center (3, -2), radius 4.",
     "solution_ru2": "Выделим полные квадраты: (x² - 6x + 9) + (y² + 4y + 4) - 3 - 9 - 4 = 0 ⇒ (x - 3)² + (y + 2)² = 16. Центр (3, -2), радиус √16 = 4.",
-    "solution_en2": "Complete the squares: (x² - 6x + 9) + (y² + 4y + 4) - 3 - 9 - 4 = 0 ⇒ (x - 3)² + (y + 2)² = 16. Center (3, -2), radius √16 = 4."
+    "solution_en2": "Complete the squares: (x² - 6x + 9) + (y² + 4y + 4) - 3 - 9 - 4 = 0 ⇒ (x - 3)² + (y + 2)² = 16. Center (3, -2), radius √16 = 4.",
+    "options_en": [
+      "A. (3, -2) and 4",
+      "B. (-3, 2) and 4",
+      "C. (3, -2) and 2",
+      "D. (-3, 2) and 2"
+    ],
+    "options_ch": [
+      "A. (3, -2) 和 4",
+      "B. (-3, 2) 和 4",
+      "C. (3, -2) 和 2 ",
+      "D. (-3, 2) 和 2 "
+    ]
   },
   {
     "chinese": "圆心在 (4, -1)，半径为 5 的圆的方程是",
@@ -5245,10 +5599,10 @@
     "chinese": "关于抛物线 y² = 4x，下列说法正确的是",
     "english": "Which of the following statements about the parabola y² = 4x is correct?",
     "options": [
-      "A. 通过点 (Passes through the point)   (-4, 4)",
-      "B. 对称轴为 (The axis of symmetry is) x = 0",
-      "C. 焦点坐标为 (The coordinates of the foci are)  (±1, 0)",
-      "D. 焦点坐标为 (The coordinates of the focus are)  (1, 0)"
+      "A. 通过点 (-4, 4) / Passes through the point (-4, 4)",
+      "B. 对称轴为 x = 0 / The axis of symmetry is x = 0",
+      "C. 焦点坐标为 (±1, 0) / The coordinates of the foci are (±1, 0)",
+      "D. 焦点坐标为 (1, 0) / The coordinates of the focus are (1, 0)"
     ],
     "answer": "D",
     "topic": "conic curves",
@@ -5261,7 +5615,19 @@
     "solution_ru": "Для параболы y² = 4x, p = 2. Фокус находится в (p/2, 0) = (1, 0).",
     "solution_en": "For the parabola y² = 4x, p = 2. The focus is at (p/2, 0) = (1, 0).",
     "solution_ru2": "Уравнение y² = 4x соответствует параболе с вершиной в начале координат, осью симметрии Ox, ветви направлены вправо. Параметр p находится из 2p = 4 ⇒ p = 2. Фокус расположен в точке (p/2, 0) = (1, 0). Директриса: x = -p/2 = -1. Точка (-4,4) не лежит на параболе (4² = 16, 4*(-4) = -16).",
-    "solution_en2": "The equation y² = 4x corresponds to a parabola with vertex at the origin, axis of symmetry Ox, opening to the right. The parameter p is found from 2p = 4 ⇒ p = 2. The focus is at (p/2, 0) = (1, 0). The directrix is x = -p/2 = -1. The point (-4,4) does not lie on the parabola (4² = 16, 4*(-4) = -16)."
+    "solution_en2": "The equation y² = 4x corresponds to a parabola with vertex at the origin, axis of symmetry Ox, opening to the right. The parameter p is found from 2p = 4 ⇒ p = 2. The focus is at (p/2, 0) = (1, 0). The directrix is x = -p/2 = -1. The point (-4,4) does not lie on the parabola (4² = 16, 4*(-4) = -16).",
+    "options_en": [
+      "A. Passes through the point (-4, 4)",
+      "B. The axis of symmetry is x = 0",
+      "C. The coordinates of the foci are (±1, 0)",
+      "D. The coordinates of the focus are (1, 0)"
+    ],
+    "options_ch": [
+      "A. 通过点 (-4, 4)",
+      "B. 对称轴为 x = 0",
+      "C. 焦点坐标为 (±1, 0)",
+      "D. 焦点坐标为 (1, 0)"
+    ]
   },
   {
     "n": 37,
@@ -5759,9 +6125,9 @@
     "chinese": "已知椭圆的中心在原点，其长轴是短轴的 2 倍，且过点 P(-2, 0)，则该椭圆方程为",
     "english": "The center of an ellipse is at origin, its major axis is twice the minor axis, and it passes through point P(-2, 0), then its equation is",
     "options": [
-      "A. x²/16 + y²/4 = 1 或  (and) x²/4 + y² = 1",
+      "A. x²/16 + y²/4 = 1 或 or  x²/4 + y² = 1",
       "B. x² + y²/4 = 1",
-      "C. x²/4 + y²/16 = 1 或 (and) x²/4 + y² = 1",
+      "C. x²/4 + y²/16 = 1 或 or x²/4 + y² = 1",
       "D. x²/16 + y²/4 = 1"
     ],
     "answer": "C",
@@ -5774,16 +6140,28 @@
     "solution_ru": "Если a = 2b и фокусы на оси x: x²/(4b²) + y²/b² = 1. Подставляем (-2,0): 4/(4b²) = 1 ⇒ 1/b² = 1 ⇒ b² = 1 ⇒ a² = 4. Уравнение: x²/4 + y² = 1. Если фокусы на оси y: x²/b² + y²/(4b²) = 1. Подставляем (-2,0): 4/b² = 1 ⇒ b² = 4 ⇒ a² = 16. Уравнение: x²/4 + y²/16 = 1.",
     "solution_en": "If a = 2b and foci on x-axis: x²/(4b²) + y²/b² = 1. Substitute (-2,0): 4/(4b²) = 1 ⇒ 1/b² = 1 ⇒ b² = 1 ⇒ a² = 4. Equation: x²/4 + y² = 1. If foci on y-axis: x²/b² + y²/(4b²) = 1. Substitute (-2,0): 4/b² = 1 ⇒ b² = 4 ⇒ a² = 16. Equation: x²/4 + y²/16 = 1.",
     "solution_ru2": "Возможны два случая: большая ось на оси Ox или на оси Oy. Пусть a = 2b. Случай 1: фокусы на Ox, уравнение x²/a² + y²/b² = 1 ⇒ x²/(4b²) + y²/b² = 1. Точка (-2,0) лежит на эллипсе, значит 4/(4b²) = 1 ⇒ b² = 1 ⇒ a² = 4. Уравнение: x²/4 + y² = 1. Случай 2: фокусы на Oy, уравнение x²/b² + y²/a² = 1 ⇒ x²/b² + y²/(4b²) = 1. Подставляем (-2,0): 4/b² = 1 ⇒ b² = 4 ⇒ a² = 16. Уравнение: x²/4 + y²/16 = 1. Правильный ответ: x²/4 + y² = 1 или x²/4 + y²/16 = 1.",
-    "solution_en2": "Two cases are possible: the major axis on the x-axis or on the y-axis. Let a = 2b. Case 1: foci on Ox, equation x²/a² + y²/b² = 1 ⇒ x²/(4b²) + y²/b² = 1. Point (-2,0) lies on the ellipse, so 4/(4b²) = 1 ⇒ b² = 1 ⇒ a² = 4. Equation: x²/4 + y² = 1. Case 2: foci on Oy, equation x²/b² + y²/a² = 1 ⇒ x²/b² + y²/(4b²) = 1. Substitute (-2,0): 4/b² = 1 ⇒ b² = 4 ⇒ a² = 16. Equation: x²/4 + y²/16 = 1. The correct answer is x²/4 + y² = 1 or x²/4 + y²/16 = 1."
+    "solution_en2": "Two cases are possible: the major axis on the x-axis or on the y-axis. Let a = 2b. Case 1: foci on Ox, equation x²/a² + y²/b² = 1 ⇒ x²/(4b²) + y²/b² = 1. Point (-2,0) lies on the ellipse, so 4/(4b²) = 1 ⇒ b² = 1 ⇒ a² = 4. Equation: x²/4 + y² = 1. Case 2: foci on Oy, equation x²/b² + y²/a² = 1 ⇒ x²/b² + y²/(4b²) = 1. Substitute (-2,0): 4/b² = 1 ⇒ b² = 4 ⇒ a² = 16. Equation: x²/4 + y²/16 = 1. The correct answer is x²/4 + y² = 1 or x²/4 + y²/16 = 1.",
+    "options_ch": [
+      "A. x²/16 + y²/4 = 1 或 x²/4 + y² = 1",
+      "B. x² + y²/4 = 1",
+      "C. x²/4 + y²/16 = 1 或 x²/4 + y² = 1",
+      "D. x²/16 + y²/4 = 1"
+    ],
+    "options_en": [
+      "A. x²/16 + y²/4 = 1  or  x²/4 + y² = 1",
+      "B. x² + y²/4 = 1",
+      "C. x²/4 + y²/16 = 1  or  x²/4 + y² = 1",
+      "D. x²/16 + y²/4 = 1"
+    ]
   },
   {
     "chinese": "关于椭圆 x²/4 + y²/20 = 1，下面说法正确的是",
     "english": "Which of the following statements about the ellipse x²/4 + y²/20 = 1 is correct?",
     "options": [
-      "A. 该椭圆的两个焦点为 (The foci of this ellipse are) (0, ±4)",
-      "B. 该椭圆的两个焦点为 (The foci of this ellipse are) (±4, 0)",
-      "C. 该椭圆的顶点坐标为 (The vertices of this ellipse are ) (±4, 0) 和 (and) (0, ±20)",
-      "D. 该椭圆长轴和短轴的长度分别是  (The lengths of the major and minor axes of this ellipse are ) 20 和 (and) 4"
+      "A. 该椭圆的两个焦点为 (0, ±4) / The foci of this ellipse are (0, ±4)",
+      "B. 该椭圆的两个焦点为 (±4, 0) / The foci of this ellipse are (±4, 0)",
+      "C. 该椭圆的顶点坐标为 (±4, 0) 和 (0, ±20) / The vertices of this ellipse are (±4, 0) and (0, ±20)",
+      "D. 该椭圆长轴和短轴的长度分别是 20 和 4 / The lengths of the major and minor axes of this ellipse are 20 and 4"
     ],
     "answer": "A",
     "topic": "conic curves",
@@ -5796,7 +6174,19 @@
     "solution_ru": "a² = 20 (под y), b² = 4 (под x). c = √(a² - b²) = √16 = 4. Фокусы на оси y: (0, ±4).",
     "solution_en": "a² = 20 (under y), b² = 4 (under x). c = √(a² - b²) = √16 = 4. Foci on y-axis: (0, ±4).",
     "solution_ru2": "В уравнении x²/4 + y²/20 = 1 знаменатель под y² больше, значит большая ось направлена по оси Oy. a² = 20, b² = 4. c = √(a² - b²) = √(20-4) = √16 = 4. Фокусы расположены на оси Oy: (0, ±c) = (0, ±4). Вершины: (0, ±a) = (0, ±√20) ≈ (0, ±4.47) и (±b, 0) = (±2, 0). Длина большой оси 2a = 2√20 ≈ 8.94, малой оси 2b = 4.",
-    "solution_en2": "In the equation x²/4 + y²/20 = 1, the denominator under y² is larger, so the major axis is along the y-axis. a² = 20, b² = 4. c = √(a² - b²) = √(20-4) = √16 = 4. The foci are on the y-axis: (0, ±c) = (0, ±4). Vertices: (0, ±a) = (0, ±√20) ≈ (0, ±4.47) and (±b, 0) = (±2, 0). Major axis length 2a = 2√20 ≈ 8.94, minor axis length 2b = 4."
+    "solution_en2": "In the equation x²/4 + y²/20 = 1, the denominator under y² is larger, so the major axis is along the y-axis. a² = 20, b² = 4. c = √(a² - b²) = √(20-4) = √16 = 4. The foci are on the y-axis: (0, ±c) = (0, ±4). Vertices: (0, ±a) = (0, ±√20) ≈ (0, ±4.47) and (±b, 0) = (±2, 0). Major axis length 2a = 2√20 ≈ 8.94, minor axis length 2b = 4.",
+    "options_en": [
+      "A. The foci of this ellipse are (0, ±4)",
+      "B. The foci of this ellipse are (±4, 0)",
+      "C. The vertices of this ellipse are (±4, 0) and (0, ±20)",
+      "D. The lengths of the major and minor axes of this ellipse are 20 and 4"
+    ],
+    "options_ch": [
+      "A. 该椭圆的两个焦点为 (0, ±4)",
+      "B. 该椭圆的两个焦点为 (±4, 0)",
+      "C. 该椭圆的顶点坐标为 (±4, 0) 和 (0, ±20)",
+      "D. 该椭圆长轴和短轴的长度分别是 20 和 4"
+    ]
   },
   {
     "chinese": "假设椭圆 x²/9 + y²/4 = 1 的焦点是 F₁, F₂，并且点 P 在椭圆上。那么 |PF₁| + |PF₂| =",
@@ -6084,10 +6474,10 @@
     "chinese": "已知双曲线的方程是 x²/64 - y²/16 = 1，下列哪个陈述是正确的？（ ）",
     "english": "Given that the equation of a hyperbola is x²/64 - y²/16 = 1, which of the following statements is correct? ( )",
     "options": [
-      "A. 焦距是 / focal distance = 8√5",
-      "B. 半长轴的长度是 / semi-major axis  = 4",
-      "C. 双曲线的离心率是 /eccentricity  = √5",
-      "D. 半短轴的长度是 / semi-minor axis = 8"
+      "A. 焦距是 8√5 / focal distance = 8√5",
+      "B. 半长轴的长度是 4 / semi-major axis = 4",
+      "C. 双曲线的离心率是 √5 / eccentricity = √5",
+      "D. 半短轴的长度是 8 / semi-minor axis = 8"
     ],
     "answer": "A",
     "topic": "conic curves",
@@ -6099,7 +6489,19 @@
     "solution_ru": "a² = 64, b² = 16, c = √(a² + b²) = √80 = 4√5. Фокусное расстояние 2c = 8√5.",
     "solution_en": "a² = 64, b² = 16, c = √(a² + b²) = √80 = 4√5. Focal distance 2c = 8√5.",
     "solution_ru2": "Из уравнения x²/64 - y²/16 = 1 имеем a² = 64 ⇒ a = 8, b² = 16 ⇒ b = 4. c = √(a² + b²) = √(64+16) = √80 = 4√5. Фокусное расстояние (расстояние между фокусами) равно 2c = 8√5. Полуоси: a = 8, b = 4. Эксцентриситет e = c/a = (4√5)/8 = √5/2 ≈ 1.118.",
-    "solution_en2": "From the equation x²/64 - y²/16 = 1, we have a² = 64 ⇒ a = 8, b² = 16 ⇒ b = 4. c = √(a² + b²) = √(64+16) = √80 = 4√5. The focal distance (distance between foci) is 2c = 8√5. Semi-axes: a = 8, b = 4. Eccentricity e = c/a = (4√5)/8 = √5/2 ≈ 1.118."
+    "solution_en2": "From the equation x²/64 - y²/16 = 1, we have a² = 64 ⇒ a = 8, b² = 16 ⇒ b = 4. c = √(a² + b²) = √(64+16) = √80 = 4√5. The focal distance (distance between foci) is 2c = 8√5. Semi-axes: a = 8, b = 4. Eccentricity e = c/a = (4√5)/8 = √5/2 ≈ 1.118.",
+    "options_en": [
+      "A. focal distance = 8√5",
+      "B. semi-major axis = 4",
+      "C. eccentricity = √5",
+      "D. semi-minor axis = 8"
+    ],
+    "options_ch": [
+      "A. 焦距是 8√5",
+      "B. 半长轴的长度是 4",
+      "C. 双曲线的离心率是 √5",
+      "D. 半短轴的长度是 8"
+    ]
   },
   {
     "chinese": "双曲线 x²/7 - y²/9 = 1 的焦点坐标是",
@@ -6468,8 +6870,8 @@
     "solution_en2": "c=3, foci (±3,0)."
   },
   {
-    "chinese": "log₂32 =",
-    "english": "",
+    "chinese": "计算 log₂32 =",
+    "english": "Calculate  log₂32 =",
     "options": [
       "A. 3",
       "B. 4",
@@ -6489,8 +6891,8 @@
     "solution_en2": "The logarithm of a number b to base a is the exponent to which a must be raised to obtain b. We need to find x such that 2ˣ = 32. Since 2⁵ = 32, we have log₂32 = 5."
   },
   {
-    "chinese": "log₂(1/4) =",
-    "english": "",
+    "chinese": "计算 log₂(1/4) =",
+    "english": "Calculate  log₂(1/4) = ",
     "options": [
       "A. 3",
       "B. -3",
@@ -6554,8 +6956,8 @@
     "solution_en2": "The logarithmic function with base 5 > 1 is increasing. Hence, the inequality log₅(2x+1) ≥ 0 is equivalent to 2x+1 ≥ 5⁰ = 1, provided the argument of the logarithm is positive: 2x+1 > 0. Solve the system: 2x+1 ≥ 1 ⇒ 2x ≥ 0 ⇒ x ≥ 0; and 2x+1 > 0 ⇒ x > -0.5. The intersection of conditions gives x ≥ 0."
   },
   {
-    "chinese": "log₄27 / log₂3 =",
-    "english": "",
+    "chinese": "计算 log₄27 / log₂3 =",
+    "english": "Calculate log₄27 / log₂3 =",
     "options": [
       "A. 3/2",
       "B. -3/2",
@@ -6597,8 +6999,8 @@
     "solution_en2": "Properties of logarithms: ln(aᵇ) = b ln a is true; ln(a/b) = ln a - ln b is true; ln(ab) = ln a + ln b is true. The change of base formula is logₐ b = ln b / ln a, not ln a / ln b. Therefore, statement B is incorrect."
   },
   {
-    "chinese": "log₂32 + log_{1/2} 32 =",
-    "english": "",
+    "chinese": "计算 log₂32 + log_{1/2} 32 =",
+    "english": "Calculate  log₂32 + log_{1/2} 32 =",
     "options": [
       "A. -5",
       "B. 10",
@@ -6643,10 +7045,10 @@
     "chinese": "关于对数函数 y = logₐx，下面说法正确的是",
     "english": "Which of the following statements about the logarithmic function y = logₐx is correct?",
     "options": [
-      "A. 该函数的定义域为 (The domain of this function is) (−∞, +∞)",
-      "B. 当 a > 1 时，在定义域上是一个单调递减函数 / When a>1, it is a monotonically decreasing function over its domain",
-      "C. 当 a > 1 时，对任意的 x > 0 总有 logₐ x > 1 / When a>1, for any x>0, we always have logₐx>1",
-      "D. 当 0 < a < 1 时，在定义域上是一个单调递减函数 / When 0<a<1, it is a monotonically decreasing function over its domain"
+      "A. 该函数的定义域为 (-∞, +∞) / The domain of this function is (-∞, +∞)",
+      "B. 当 a > 1 时，在定义域上是一个单调递减函数 / When a > 1, it is a monotonically decreasing function over its domain",
+      "C. 当 a > 1 时，对任意的 x > 0 总有 logₐx > 1 / When a > 1, for any x > 0, we always have logₐx > 1",
+      "D. 当 0 < a < 1 时，在定义域上是一个单调递减函数 / When 0 < a < 1, it is a monotonically decreasing function over its domain"
     ],
     "answer": "D",
     "topic": "logarithmic functions",
@@ -6659,7 +7061,19 @@
     "solution_ru": "Логарифмическая функция y = logₐx при 0 < a < 1 убывает на всей области определения (0, +∞).",
     "solution_en": "The logarithmic function y = logₐx for 0 < a < 1 is decreasing over its entire domain (0, +∞).",
     "solution_ru2": "Логарифмическая функция y = logₐx определена при x > 0. При a > 1 она возрастает, при 0 < a < 1 — убывает. Утверждение D верно: при 0 < a < 1 функция убывает. Остальные неверны: область определения — (0, +∞); при a > 1 функция возрастает; logₐ x может быть меньше 1 (например, log₂2 = 1, log₂1 = 0).",
-    "solution_en2": "The logarithmic function y = logₐx is defined for x > 0. For a > 1, it is increasing; for 0 < a < 1, it is decreasing. Statement D is correct: for 0 < a < 1, the function is decreasing. The others are false: the domain is (0, +∞); for a > 1, the function is increasing; logₐ x can be less than 1 (e.g., log₂2 = 1, log₂1 = 0)."
+    "solution_en2": "The logarithmic function y = logₐx is defined for x > 0. For a > 1, it is increasing; for 0 < a < 1, it is decreasing. Statement D is correct: for 0 < a < 1, the function is decreasing. The others are false: the domain is (0, +∞); for a > 1, the function is increasing; logₐ x can be less than 1 (e.g., log₂2 = 1, log₂1 = 0).",
+    "options_en": [
+      "A. The domain of this function is (-∞, +∞)",
+      "B. When a > 1, it is a monotonically decreasing function over its domain",
+      "C. When a > 1, for any x > 0, we always have logₐx > 1",
+      "D. When 0 < a < 1, it is a monotonically decreasing function over its domain"
+    ],
+    "options_ch": [
+      "A. 该函数的定义域为 (-∞, +∞)",
+      "B. 当 a > 1 时，在定义域上是一个单调递减函数",
+      "C. 当 a > 1 时，对任意的 x > 0 总有 logₐx > 1",
+      "D. 当 0 < a < 1 时，在定义域上是一个单调递减函数"
+    ]
   },
   {
     "chinese": "已知 a = 2 - √3 和 b = 2 + √3，a 和 b 的算术平均数是（）。",
@@ -6704,7 +7118,7 @@
   },
   {
     "n": 12,
-    "chinese": "3和12的等比中项是",
+    "chinese": "3 和 12 的等比中项是",
     "english": "The geometric mean of 3 and 12 is",
     "options": [
       "A. ±10",
@@ -6894,8 +7308,8 @@
     "solution_en2": "In an arithmetic sequence, the middle term is the arithmetic mean of the two adjacent terms: b = (a + c)/2. Substituting a + c = 20 gives b = 10."
   },
   {
-    "chinese": "在以下四个数列中，等差数列的个数是（ ）。",
-    "english": "Among the four sequences below, the number of arithmetic sequences is ( ).  \n  (1) 7,13,19,25  (2) 2,4,7,11   (3) -1,-3,-5,-7    (4) 2,4,8,16",
+    "chinese": "在以下四个数列中，等差数列的个数是（ ）。 \n (1) 7,13,19,25  (2) 2,4,7,11   (3) -1,-3,-5,-7    (4) 2,4,8,16",
+    "english": "Among the four sequences below, the number of arithmetic sequences is \n  (1) 7,13,19,25  (2) 2,4,7,11   (3) -1,-3,-5,-7    (4) 2,4,8,16",
     "options": [
       "A. 2",
       "B. 3",
@@ -6961,10 +7375,10 @@
     "chinese": "在等差数列 {aₙ} 中，如果 a₂ = 1 且 a₄ = 5，那么首项 a₁ 和公差 d 分别是（ ）。",
     "english": "In an arithmetic sequence {aₙ}, if a₂ = 1 and a₄ = 5, then the first term a₁ and common difference d are ( ) respectively.",
     "options": [
-      "A. -1,2",
+      "A. -1, 2",
       "B. 1, -2",
       "C. -1, -2",
-      "D. 1,2"
+      "D. 1, 2"
     ],
     "answer": "A",
     "topic": "sequences",
@@ -7276,8 +7690,8 @@
     "solution_en2": "From the condition 1/aₙ + 2/aₙ₊₁ = 0 ⇒ 2/aₙ₊₁ = -1/aₙ ⇒ aₙ₊₁ = -2aₙ. This is a geometric progression with ratio q = -2 and a₁ = 1. Then aₙ = a₁·q^{n-1} = (-2)^{n-1}. The absolute value bₙ = |aₙ| = 2^{n-1}. The sum of the first n terms of a geometric progression with ratio 2 is Sₙ = (2ⁿ - 1)/(2-1) = 2ⁿ - 1."
   },
   {
-    "chinese": "(1+i)² =",
-    "english": "",
+    "chinese": "计算 (1+i)² =",
+    "english": "Calculate (1+i)² =",
     "options": [
       "A. 1",
       "B. i",
@@ -7352,7 +7766,19 @@
     "solution_ru": "z = 2/(1+i) = 2(1-i)/((1+i)(1-i)) = 2(1-i)/2 = 1 - i. Точка (1, -1) в IV четверти.",
     "solution_en": "z = 2/(1+i) = 2(1-i)/((1+i)(1-i)) = 2(1-i)/2 = 1 - i. Point (1, -1) in Quadrant IV.",
     "solution_ru2": "Упростим дробь, умножив числитель и знаменатель на сопряженное знаменателя: z = 2(1-i)/((1+i)(1-i)) = 2(1-i)/(1²+1²) = 2(1-i)/2 = 1 - i. Действительная часть 1, мнимая -1. Точка (1, -1) находится в четвертой четверти.",
-    "solution_en2": "Simplify the fraction by multiplying numerator and denominator by the conjugate of the denominator: z = 2(1-i)/((1+i)(1-i)) = 2(1-i)/(1²+1²) = 2(1-i)/2 = 1 - i. The real part is 1, the imaginary part is -1. The point (1, -1) lies in the fourth quadrant."
+    "solution_en2": "Simplify the fraction by multiplying numerator and denominator by the conjugate of the denominator: z = 2(1-i)/((1+i)(1-i)) = 2(1-i)/(1²+1²) = 2(1-i)/2 = 1 - i. The real part is 1, the imaginary part is -1. The point (1, -1) lies in the fourth quadrant.",
+    "options_en": [
+      "A. First Quadrant",
+      "B. Second Quadrant",
+      "C. Third Quadrant",
+      "D. Fourth Quadrant"
+    ],
+    "options_ch": [
+      "A. 第一象限",
+      "B. 第二象限",
+      "C. 第三象限",
+      "D. 第四象限"
+    ]
   },
   {
     "chinese": "复数 z = 1 + i√3 的三角形式为",
@@ -7435,7 +7861,13 @@
     "solution_ru": "Условие: z = x + iy, x - y = 0 ⇒ y = x, z = x + ix = x(1+i). Корни квадратного уравнения с действительными коэффициентами являются комплексно-сопряженными, если они комплексные. Если z — корень, то и \bar{z} — корень. Пусть z = a + ia. Тогда \bar{z} = a - ia. Произведение корней: z * \bar{z} = a² + a² = 2a² = 4 ⇒ a² = 2 ⇒ a = ±√2. Сумма корней: z + \bar{z} = 2a = -m ⇒ m = -2a. При a = √2, m = -2√2; при a = -√2, m = 2√2. m = ±2√2.",
     "solution_en": "Condition: z = x + iy, x - y = 0 ⇒ y = x, z = x + ix = x(1+i). Roots of a quadratic with real coefficients are complex conjugates. Let z = a + ia. Then \bar{z} = a - ia. Product: z \bar{z} = a² + a² = 2a² = 4 ⇒ a² = 2 ⇒ a = ±√2. Sum: z + \bar{z} = 2a = -m ⇒ m = -2a. For a = √2, m = -2√2; for a = -√2, m = 2√2. So m = ±2√2.",
     "solution_ru2": "Так как точка, изображающая z, лежит на прямой x=y, то z = a + ia. Коэффициенты квадратного уравнения действительные, поэтому его корни комплексно-сопряжены. Следовательно, второй корень равен \bar{z} = a - ia. Произведение корней: z·\bar{z} = (a+ia)(a-ia) = a² + a² = 2a². По теореме Виета произведение равно 4, поэтому 2a² = 4 ⇒ a² = 2 ⇒ a = ±√2. Сумма корней: z + \bar{z} = 2a = -m ⇒ m = -2a. Если a = √2, то m = -2√2; если a = -√2, то m = 2√2. Таким образом, m = ±2√2.",
-    "solution_en2": "Since the point representing z lies on the line x=y, we have z = a + ia. The coefficients of the quadratic are real, so its roots are complex conjugates. Therefore, the other root is \bar{z} = a - ia. The product of the roots: z·\bar{z} = (a+ia)(a-ia) = a² + a² = 2a². By Vieta's theorem, the product equals 4, so 2a² = 4 ⇒ a² = 2 ⇒ a = ±√2. The sum of the roots: z + \bar{z} = 2a = -m ⇒ m = -2a. If a = √2, then m = -2√2; if a = -√2, then m = 2√2. Thus, m = ±2√2."
+    "solution_en2": "Since the point representing z lies on the line x=y, we have z = a + ia. The coefficients of the quadratic are real, so its roots are complex conjugates. Therefore, the other root is \bar{z} = a - ia. The product of the roots: z·\bar{z} = (a+ia)(a-ia) = a² + a² = 2a². By Vieta's theorem, the product equals 4, so 2a² = 4 ⇒ a² = 2 ⇒ a = ±√2. The sum of the roots: z + \bar{z} = 2a = -m ⇒ m = -2a. If a = √2, then m = -2√2; if a = -√2, then m = 2√2. Thus, m = ±2√2.",
+    "options_ch": [
+      "A. √2 或 or 2√2",
+      "B. 2√2 或 or -2√2",
+      "C. -√2 或 or -2√2",
+      "D. √2 或 or -√2"
+    ]
   },
   {
     "n": 46,
