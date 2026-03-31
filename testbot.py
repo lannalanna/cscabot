@@ -383,15 +383,6 @@ except Exception as e:
     logging.error(f"Ошибка загрузки data.txt: {e}")
     logging.error(traceback.format_exc())
 
-for top in topics:
-    for k in kapibara.get(top, []):
-        if not isinstance(k, dict) or 'options' not in k:
-            continue
-        long = [x for x in k.get('options', []) if isinstance(x, str) and len(x) > 45]
-        if len(long) > 0:
-            k['long'] = "\n\n" + "\n".join(k.get('options', []))
-            k['options'] = ["A.", "B.", "C.", "D."]
-
 # Меню второго уровня: topic -> subtopics -> вопросы
 # subtopics_by_topic[topic] = список уникальных подтем (строка)
 # questions_by_topic_subtopic[(topic, subtopic)] = список индексов j в kapibara[topic]
@@ -598,6 +589,7 @@ def _sub_clear_session(uid: int, topic_idx: int, sub_idx: int) -> None:
 
 # --- Режим "Все задачи по математике" ---
 _math_all_sessions: dict[int, dict] = {}
+_pending_exam_language_selection: set[int] = set()
 
 # Последняя показанная задача из kapibara (для LLM): user_id -> (topic, j, порядок индексов вариантов как на экране или None)
 _last_seen_kapibara_question: dict[int, tuple[str, int, tuple[int, ...] | None]] = {}
@@ -627,7 +619,9 @@ def _user_has_viewed_llm_solution_for_task(user_id: int, top: str, j: int) -> bo
     return (top, int(j)) in _llm_solution_shown_for_task.get(user_id, set())
 
 
-def _format_last_seen_task_for_llm(user_id: int, lang: str) -> str | None:
+def _format_last_seen_task_for_llm(
+    user_id: int, lang: str, exam_lang: str | None = None
+) -> str | None:
     key = _last_seen_kapibara_question.get(user_id)
     if not key:
         return None
@@ -639,11 +633,11 @@ def _format_last_seen_task_for_llm(user_id: int, lang: str) -> str | None:
     if top not in kapibara or j < 0 or j >= len(kapibara[top]):
         return None
     q = kapibara[top][j]
-    stem = (q.get("english") or "") + "\n" + (q.get("chinese") or "") + (q.get("long") or "")
-    opts = q.get("options") or []
-    if not opts:
-        opt_lines = ""
-    else:
+    stem_only = _task_text_for_exam_lang(q, exam_lang)
+    opts = _task_options_for_display(q, exam_lang)
+    tid = q.get("id") or ""
+    opt_lines = ""
+    if opts and not _options_any_line_over(opts):
         disp: list[int]
         if order is None:
             disp = list(range(len(opts)))
@@ -651,24 +645,40 @@ def _format_last_seen_task_for_llm(user_id: int, lang: str) -> str | None:
             disp = [i for i in order if 0 <= i < len(opts)]
             if len(disp) != len(opts):
                 disp = list(range(len(opts)))
-        lines: list[str] = []
+        lines_llm: list[str] = []
         for pos, i in enumerate(disp):
             letter = chr(ord("A") + pos)
-            lines.append(_option_button_text_shuffled(opts[i], letter))
-        opt_lines = "\n".join(lines)
-    tid = q.get("id") or ""
+            lines_llm.append(_option_button_text_shuffled(opts[i], letter))
+        opt_lines = "\n".join(lines_llm)
+        body = stem_only.strip()
+    elif opts and _options_any_line_over(opts):
+        body = _question_stem_plus_answer_lines_if_long(stem_only, opts).strip()
+    else:
+        body = stem_only.strip()
     if _normalize_lang(lang) == "ru":
+        if opt_lines:
+            return (
+                f"Тема (данные): {top}\n"
+                f"id задачи: {tid}\n\n"
+                f"Условие:\n{body}\n\n"
+                f"Варианты ответа:\n{opt_lines}"
+            )
         return (
             f"Тема (данные): {top}\n"
             f"id задачи: {tid}\n\n"
-            f"Условие:\n{stem.strip()}\n\n"
-            f"Варианты ответа:\n{opt_lines}"
+            f"Условие и варианты ответа:\n{body}"
+        )
+    if opt_lines:
+        return (
+            f"Topic (data): {top}\n"
+            f"Task id: {tid}\n\n"
+            f"Problem:\n{body}\n\n"
+            f"Answer options:\n{opt_lines}"
         )
     return (
         f"Topic (data): {top}\n"
         f"Task id: {tid}\n\n"
-        f"Problem:\n{stem.strip()}\n\n"
-        f"Answer options:\n{opt_lines}"
+        f"Problem and answer choices:\n{body}"
     )
 
 
@@ -1030,14 +1040,20 @@ j=0
 # Соединение с БД (будет инициализировано при старте)
 db_conn = None
 
-def log(usr, lg = []) :
+# Кэш языков для колонок ui_lang / exam_lang в log() (обновляется при чтении из БД и при смене)
+_log_user_langs: dict[int, tuple[str, str]] = {}
+
+
+def log(usr, lg=None):
+   if lg is None:
+       lg = []
    dt = datetime.datetime.now()
    id = usr.id
    username = usr.username
    # Признак источника: сейчас различаем stepik / не stepik
    try:
-        if str(id) in stepik : 
-           src = "stepik" 
+        if str(id) in stepik :
+           src = "stepik"
         else  :
             if str(id) in cscagroup:
                  src = "cscagroup"
@@ -1045,7 +1061,8 @@ def log(usr, lg = []) :
                  src = ''
    except Exception:
        src = ""
-   l = [dt, id, username, src] + lg
+   ui_l, ex_l = _log_user_langs.get(id, ("", ""))
+   l = [dt, id, username, src, ui_l, ex_l] + list(lg)
    # Сохраняем в файл для обратной совместимости
    res_file = os.path.join(DATA_DIR, "res.txt")
    try:
@@ -1058,6 +1075,28 @@ def log(usr, lg = []) :
 def _normalize_lang(lang: str) -> str:
    v = (lang or "").lower()
    return "ru" if v.startswith("ru") else "en"
+
+
+def _sync_log_lang_ui(user_id: int, ui: str) -> None:
+   ui_n = _normalize_lang(ui)
+   exam = ""
+   if user_id in _log_user_langs:
+       _, exam = _log_user_langs[user_id]
+   _log_user_langs[user_id] = (ui_n, exam)
+
+
+def _sync_log_lang_exam(user_id: int, exam: str | None) -> None:
+   ui = "en"
+   if user_id in _log_user_langs:
+       ui, _ = _log_user_langs[user_id]
+   ex = exam if exam in ("en", "zh") else ""
+   _log_user_langs[user_id] = (ui, ex)
+
+
+async def _refresh_log_lang_cache(user) -> None:
+   """Подгрузить язык интерфейса и экзамена из БД перед log(), если хендлер ещё не вызывал геттеры."""
+   await _get_user_lang(user)
+   await _get_user_exam_lang_by_id(user.id)
 
 
 def _txt(lang: str, ru_text: str, en_text: str) -> str:
@@ -1396,10 +1435,14 @@ async def _get_user_lang(user) -> str:
        try:
            saved = await db.get_user_language(db_conn, user.id)
            if saved:
-               return _normalize_lang(saved)
+               lang = _normalize_lang(saved)
+               _sync_log_lang_ui(user.id, lang)
+               return lang
        except Exception as e:
            logging.error(f"Ошибка чтения языка пользователя {user.id}: {e}")
-   return _normalize_lang(getattr(user, "language_code", "") or "en")
+   lang = _normalize_lang(getattr(user, "language_code", "") or "en")
+   _sync_log_lang_ui(user.id, lang)
+   return lang
 
 
 async def _get_user_lang_by_id(user_id: int) -> str:
@@ -1407,10 +1450,123 @@ async def _get_user_lang_by_id(user_id: int) -> str:
        try:
            saved = await db.get_user_language(db_conn, user_id)
            if saved:
-               return _normalize_lang(saved)
+               lang = _normalize_lang(saved)
+               _sync_log_lang_ui(user_id, lang)
+               return lang
        except Exception as e:
            logging.error(f"Ошибка чтения языка пользователя {user_id}: {e}")
+   _sync_log_lang_ui(user_id, "en")
    return "en"
+
+
+async def _get_user_exam_lang_by_id(user_id: int) -> str | None:
+   """
+   Язык экзамена из users.exam_language:
+   - 'en' -> показываем english
+   - 'zh' -> показываем chinese
+   - None -> показываем обе строки
+   """
+   if db_conn:
+       try:
+           saved = await db.get_user_exam_language(db_conn, user_id)
+           if saved in ("en", "zh"):
+               _sync_log_lang_exam(user_id, saved)
+               return saved
+       except Exception as e:
+           logging.error(f"Ошибка чтения языка экзамена пользователя {user_id}: {e}")
+   _sync_log_lang_exam(user_id, None)
+   return None
+
+
+def _task_text_for_exam_lang(q: dict, exam_lang: str | None) -> str:
+   en = (q.get("english") or "").strip()
+   zh = (q.get("chinese") or "").strip()
+   if exam_lang == "en":
+       stem = en or zh
+   elif exam_lang == "zh":
+       stem = zh or en
+   else:
+       if en and zh:
+           stem = en + "\n" + zh
+       else:
+           stem = en or zh
+   return stem
+
+
+def _options_for_exam_lang(q: dict, exam_lang: str | None) -> list[str]:
+    """
+    Варианты для показа: при установленном языке экзамена — options_en / options_ch,
+    если список есть и совпадает по длине с options; иначе как раньше — options.
+    Индексы вариантов совпадают с полем options (callback_data не меняется).
+    """
+    base = q.get("options")
+    if not isinstance(base, list) or not base:
+        return []
+    if exam_lang not in ("en", "zh"):
+        return list(base)
+    key = "options_en" if exam_lang == "en" else "options_ch"
+    alt = q.get(key)
+    if isinstance(alt, list) and len(alt) == len(base) and alt:
+        return list(alt)
+    return list(base)
+
+
+def _task_options_for_display(q: dict, exam_lang: str | None) -> list[str]:
+    """Варианты для UI с учётом языка экзамена (как для кнопок)."""
+    return _options_for_exam_lang(q, exam_lang) or (q.get("options") or [])
+
+
+_LONG_OPTION_INLINE_THRESHOLD = 45
+
+
+def _options_any_line_over(opts: list[str], limit: int = _LONG_OPTION_INLINE_THRESHOLD) -> bool:
+    return any(isinstance(x, str) and len(x) > limit for x in opts)
+
+
+def _question_stem_plus_answer_lines_if_long(stem: str, opts_display: list[str]) -> str:
+    """
+    Если хотя бы один вариант длиннее limit — добавить все варианты отдельными строками A. … B. …
+    """
+    if not opts_display or not _options_any_line_over(opts_display):
+        return stem
+    
+    def _strip_leading_option_letter_prefix(raw: str) -> str:
+        """
+        Убирает начальные префиксы вроде `A.` / `A)` / `B.` / ... (и повторы),
+        чтобы не было дубля `A. A. Iron...` (мы добавляем `A.` снаружи).
+        """
+        t = (raw or "").lstrip()
+        while True:
+            m = re.match(r"^[A-Da-d]\s*[\.\)]\s*", t)
+            if not m:
+                break
+            t = t[m.end():].lstrip()
+        return t
+
+    lines: list[str] = []
+    if (stem or "").strip():
+        lines.append(stem.rstrip())
+    for i, s in enumerate(opts_display):
+        letter = chr(ord("A") + i)
+        t = _strip_leading_option_letter_prefix((s or "").strip())
+        lines.append(f"{letter}. {t}" if t else f"{letter}.")
+    return "\n".join(lines) if lines else stem
+
+
+def _full_task_question_text(q: dict, exam_lang: str | None) -> str:
+    """Текст задачи для сообщения: условие + при длинных вариантах — все варианты в теле."""
+    stem = _task_text_for_exam_lang(q, exam_lang)
+    opts = _task_options_for_display(q, exam_lang)
+    return _question_stem_plus_answer_lines_if_long(stem, opts)
+
+
+def _keyboard_option_labels_from_display(opts_display: list[str]) -> list[str]:
+    """Подписи кнопок: полный текст или только A. B. C. при длинных вариантах."""
+    if not opts_display:
+        return []
+    if _options_any_line_over(opts_display):
+        return [f"{chr(ord('A') + i)}." for i in range(len(opts_display))]
+    return list(opts_display)
 
 
 def _language_switch_kb(current_lang: str) -> InlineKeyboardMarkup:
@@ -1419,6 +1575,16 @@ def _language_switch_kb(current_lang: str) -> InlineKeyboardMarkup:
         builder.row(InlineKeyboardButton(text="Switch to English", callback_data="set_lang_en"))
     else:
         builder.row(InlineKeyboardButton(text="Сменить язык на русский", callback_data="set_lang_ru"))
+    return builder.as_markup()
+
+
+def _exam_language_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="English", callback_data="set_exam_lang_en"),
+        InlineKeyboardButton(text="中文", callback_data="set_exam_lang_zh"),
+    )
+    builder.adjust(2)
     return builder.as_markup()
 
 
@@ -1555,6 +1721,25 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
             callback_data="menu_exams",
         )
     )
+    exam_lang = "en"
+    if user_id and db_conn:
+        try:
+            saved_exam_lang = await db.get_user_exam_language(db_conn, user_id)
+            if saved_exam_lang in ("en", "zh"):
+                exam_lang = saved_exam_lang
+        except Exception as e:
+            logging.error(f"Ошибка чтения языка экзамена пользователя {user_id}: {e}")
+
+    builder.add(
+        InlineKeyboardButton(
+            text=(
+                f"🈯 Изменить язык экзамена ({'English' if exam_lang == 'en' else '中文'})"
+                if lang == "ru"
+                else f"🈯 Change exam language ({'English' if exam_lang == 'en' else '中文'})"
+            ),
+            callback_data="menu_exam_language",
+        )
+    )
     builder.add(
         InlineKeyboardButton(
             text="🌐 Switch to English" if lang == "ru" else "🌐 Сменить язык на русский",
@@ -1674,12 +1859,23 @@ def _shuffled_option_indices(n: int) -> list[int]:
     return order
 
 
-def _option_display_indices(topic: str, q: dict, n: int) -> list[int]:
+def _option_display_indices(
+    topic: str,
+    q: dict,
+    n: int,
+    *,
+    opts_for_shuffle_check: list[str] | None = None,
+) -> list[int]:
     """
     Порядок отображения вариантов ответа.
-    В физике и химии для задач с длинными вариантами (поле long) порядок не перемешивается.
+    Для вариантов, показываемых в тексте (любой >45 симв. в списке для языка экзамена), не перемешиваем.
     """
-    if q.get("long"):
+    opts = (
+        opts_for_shuffle_check
+        if opts_for_shuffle_check is not None
+        else (q.get("options") or [])
+    )
+    if _options_any_line_over(opts):
         return list(range(n))
     return _shuffled_option_indices(n)
 
@@ -1706,11 +1902,19 @@ def inline_kb(
     lang_code: str = "en",
     *,
     option_order: list[int] | None = None,
+    exam_lang: str | None = None,
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     q = kapibara[top][j]
-    k = q["options"]
-    order = option_order if option_order is not None else _option_display_indices(top, q, len(k))
+    opts_src = _task_options_for_display(q, exam_lang)
+    k = _keyboard_option_labels_from_display(opts_src)
+    order = (
+        option_order
+        if option_order is not None
+        else _option_display_indices(
+            top, q, len(k), opts_for_shuffle_check=opts_src
+        )
+    )
     # Добавляем кнопки вопросов (порядок на экране случайный; буквы A,B,… заново сверху вниз)
     for pos, i in enumerate(order):
         letter = chr(ord("A") + pos)
@@ -1772,12 +1976,23 @@ async def _deliver_topic_question_to_chat(chat_id: int, from_user, top: str, j: 
     if "img" in k:
         photo_path = os.path.join(DATA_DIR, "images", k["img"])
         await bot.send_photo(chat_id, photo=types.FSInputFile(photo_path))
-    question_text = k["english"] + "\n" + k.get("chinese", "") + k.get("long", "")
-    order = _option_display_indices(top, k, len(k["options"]))
+    exam_lang = await _get_user_exam_lang_by_id(uid)
+    question_text = _full_task_question_text(k, exam_lang)
+    opts_n = _task_options_for_display(k, exam_lang)
+    order = _option_display_indices(
+        top, k, len(opts_n), opts_for_shuffle_check=opts_n
+    )
     await bot.send_message(
         chat_id,
         question_text,
-        reply_markup=inline_kb(top, j, showvideo, lang_code=lang_code, option_order=order),
+        reply_markup=inline_kb(
+            top,
+            j,
+            showvideo,
+            lang_code=lang_code,
+            option_order=order,
+            exam_lang=exam_lang,
+        ),
     )
     _record_last_seen_question(uid, top, j, order)
 
@@ -1815,6 +2030,7 @@ async def _start_topic_training_from_message(message: Message, top: str, log_pre
     uid = message.from_user.id
     _topic_clear_session(uid, top)
     _topic_linear_active[(uid, top)] = True
+    await _get_user_exam_lang_by_id(message.from_user.id)
     log(message.from_user, [log_prefix, "next", top, 0])
     async with ChatActionSender(bot=bot, chat_id=uid, action="typing"):
         await _deliver_topic_question_to_chat(message.chat.id, message.from_user, top, 0, showvideo)
@@ -1844,12 +2060,22 @@ async def _deliver_subtopic_question_message(
         await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
     lang_code = await _get_user_lang(call.from_user)
     # В режиме тренировки по подтеме номер задачи (Вопрос N из M) не показываем
-    question_text = q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
-    order = _option_display_indices(topic, q, len(q["options"]))
+    exam_lang = await _get_user_exam_lang_by_id(uid)
+    question_text = _full_task_question_text(q, exam_lang)
+    opts_n = _task_options_for_display(q, exam_lang)
+    order = _option_display_indices(
+        topic, q, len(opts_n), opts_for_shuffle_check=opts_n
+    )
     await call.message.answer(
         question_text,
         reply_markup=inline_kb_sub(
-            topic_idx, sub_idx, k, showvideo, lang_code=lang_code, option_order=order
+            topic_idx,
+            sub_idx,
+            k,
+            showvideo,
+            lang_code=lang_code,
+            option_order=order,
+            exam_lang=exam_lang,
         ),
     )
     _record_last_seen_question(uid, topic, j, order)
@@ -1899,9 +2125,13 @@ def _find_next_exam_index(state):
    return None
 
 
-def inline_kb_exam(idx: int, *, option_order: list[int] | None = None) -> InlineKeyboardMarkup:
+def inline_kb_exam(
+    idx: int, *, option_order: list[int] | None = None, exam_lang: str | None = None
+) -> InlineKeyboardMarkup:
    """Клавиатура вариантов ответа для режима экзамена 25 января (exam_type=jan)."""
-   return inline_kb_exam_by_type(idx, "jan", option_order=option_order)
+   return inline_kb_exam_by_type(
+       idx, "jan", option_order=option_order, exam_lang=exam_lang
+   )
 
 
 async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
@@ -1926,8 +2156,13 @@ async def _send_exam_question(call: CallbackQuery, user_id: int, idx: int):
    diff_line = (
        _txt(lang, f"Сложность: {stars}\n", f"Difficulty: {stars}\n") if stars else ""
    )
-   question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
-   reply = inline_kb_exam(idx)
+   exam_lang = await _get_user_exam_lang_by_id(user_id)
+   question_text = header + diff_line + _full_task_question_text(q, exam_lang)
+   opts_n = _task_options_for_display(q, exam_lang)
+   order = _option_display_indices(
+       top, q, len(opts_n), opts_for_shuffle_check=opts_n
+   )
+   reply = inline_kb_exam(idx, option_order=order, exam_lang=exam_lang)
    log(call.from_user, [EXAM_25JAN_ID, "question", idx, _exam_log_task_id(q)])
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(question_text, reply_markup=reply)
@@ -2022,7 +2257,11 @@ def _find_next_exam_index_by_type(state, exam_type: str):
 
 
 def inline_kb_exam_by_type(
-    idx: int, exam_type: str, *, option_order: list[int] | None = None
+    idx: int,
+    exam_type: str,
+    *,
+    option_order: list[int] | None = None,
+    exam_lang: str | None = None,
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     cfg = _exam_cfg(exam_type)
@@ -2035,17 +2274,20 @@ def inline_kb_exam_by_type(
         builder.adjust(1)
         return builder.as_markup()
     q = arr[j]
-    opts = q.get("options", [])
+    opts_src = _task_options_for_display(q, exam_lang)
+    k = _keyboard_option_labels_from_display(opts_src)
     order = (
         option_order
         if option_order is not None
-        else _option_display_indices(top, q, len(opts))
+        else _option_display_indices(
+            top, q, len(k), opts_for_shuffle_check=opts_src
+        )
     )
     for pos, i in enumerate(order):
         letter = chr(ord("A") + pos)
         builder.add(
             InlineKeyboardButton(
-                text=_option_button_text_shuffled(opts[i], letter),
+                text=_option_button_text_shuffled(k[i], letter),
                 callback_data=f'exam_q_{exam_type}_{idx}_{i}',
             )
         )
@@ -2087,14 +2329,19 @@ async def _send_exam_question_by_type(call: CallbackQuery, user_id: int, idx: in
     diff_line = (
         _txt(lang, f"Сложность: {stars}\n", f"Difficulty: {stars}\n") if stars else ""
     )
-    question_text = header + diff_line + q.get("english", "") + "\n" + q.get("chinese", "") + q.get("long", "")
+    exam_lang = await _get_user_exam_lang_by_id(user_id)
+    question_text = header + diff_line + _full_task_question_text(q, exam_lang)
     log(call.from_user, [cfg["id"], "question", idx, _exam_log_task_id(q)])
-    opts = q.get("options", [])
-    order = _option_display_indices(top, q, len(opts))
+    opts = _task_options_for_display(q, exam_lang)
+    order = _option_display_indices(
+        top, q, len(opts), opts_for_shuffle_check=opts
+    )
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
         await call.message.answer(
             question_text,
-            reply_markup=inline_kb_exam_by_type(idx, exam_type, option_order=order),
+            reply_markup=inline_kb_exam_by_type(
+                idx, exam_type, option_order=order, exam_lang=exam_lang
+            ),
         )
     _record_last_seen_question(user_id, top, j, order)
 
@@ -2273,9 +2520,13 @@ def _find_next_exam_dec_index(state):
    return None
 
 
-def inline_kb_exam_dec(idx: int, *, option_order: list[int] | None = None) -> InlineKeyboardMarkup:
+def inline_kb_exam_dec(
+    idx: int, *, option_order: list[int] | None = None, exam_lang: str | None = None
+) -> InlineKeyboardMarkup:
    """Клавиатура вариантов для экзамена 21 декабря (exam_type=dec)."""
-   return inline_kb_exam_by_type(idx, "dec", option_order=option_order)
+   return inline_kb_exam_by_type(
+       idx, "dec", option_order=option_order, exam_lang=exam_lang
+   )
 
 
 async def _send_exam_dec_question(call: CallbackQuery, user_id: int, idx: int):
@@ -2304,11 +2555,16 @@ async def _send_exam_dec_question(call: CallbackQuery, user_id: int, idx: int):
        )
    else:
        diff_line = ""
-   question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
-   order = _option_display_indices(top, q, len(q["options"]))
+   exam_lang = await _get_user_exam_lang_by_id(user_id)
+   question_text = header + diff_line + _full_task_question_text(q, exam_lang)
+   opts_n = _task_options_for_display(q, exam_lang)
+   order = _option_display_indices(
+       top, q, len(opts_n), opts_for_shuffle_check=opts_n
+   )
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(
-           question_text, reply_markup=inline_kb_exam_dec(idx, option_order=order)
+           question_text,
+           reply_markup=inline_kb_exam_dec(idx, option_order=order, exam_lang=exam_lang),
        )
    _record_last_seen_question(user_id, top, j, order)
 
@@ -2407,24 +2663,29 @@ def _find_next_exam_mock_index(state):
    return None
 
 
-def inline_kb_exam_mock(idx: int, *, option_order: list[int] | None = None) -> InlineKeyboardMarkup:
+def inline_kb_exam_mock(
+    idx: int, *, option_order: list[int] | None = None, exam_lang: str | None = None
+) -> InlineKeyboardMarkup:
    builder = InlineKeyboardBuilder()
    if idx < 0 or idx >= len(mock_questions):
        builder.adjust(1)
        return builder.as_markup()
    top, j = mock_questions[idx]
    q = kapibara[top][j]
-   opts = q["options"]
+   opts_src = _task_options_for_display(q, exam_lang)
+   k = _keyboard_option_labels_from_display(opts_src)
    order = (
        option_order
        if option_order is not None
-       else _option_display_indices(top, q, len(opts))
+       else _option_display_indices(
+           top, q, len(k), opts_for_shuffle_check=opts_src
+       )
    )
    for pos, i in enumerate(order):
        letter = chr(ord("A") + pos)
        builder.add(
            InlineKeyboardButton(
-               text=_option_button_text_shuffled(opts[i], letter),
+               text=_option_button_text_shuffled(k[i], letter),
                callback_data=f'exam_mock_q_{idx}_{i}',
            )
        )
@@ -2461,12 +2722,17 @@ async def _send_exam_mock_question(call: CallbackQuery, user_id: int, idx: int):
    diff_line = (
        _txt(lang, f"Сложность: {stars}\n", f"Difficulty: {stars}\n") if stars else ""
    )
-   question_text = header + diff_line + q["english"] + "\n" + q.get("chinese", "") + q.get("long", "")
+   exam_lang = await _get_user_exam_lang_by_id(user_id)
+   question_text = header + diff_line + _full_task_question_text(q, exam_lang)
    log(call.from_user, [EXAM_MOCK_ID, "question", idx, _exam_log_task_id(q)])
-   order = _option_display_indices(top, q, len(q["options"]))
+   opts_n = _task_options_for_display(q, exam_lang)
+   order = _option_display_indices(
+       top, q, len(opts_n), opts_for_shuffle_check=opts_n
+   )
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(
-           question_text, reply_markup=inline_kb_exam_mock(idx, option_order=order)
+           question_text,
+           reply_markup=inline_kb_exam_mock(idx, option_order=order, exam_lang=exam_lang),
        )
    _record_last_seen_question(user_id, top, j, order)
 
@@ -2574,6 +2840,7 @@ def inline_kb_sub(
     lang_code: str = "en",
     *,
     option_order: list[int] | None = None,
+    exam_lang: str | None = None,
 ) -> InlineKeyboardMarkup:
     """Клавиатура вариантов ответа для вопроса в режиме подтемы (callback qst_sub_)."""
     topic, j = _get_subtopic_j(topic_idx, sub_idx, k)
@@ -2581,17 +2848,20 @@ def inline_kb_sub(
         return None
     q = kapibara[topic][j]
     builder = InlineKeyboardBuilder()
-    opts = q["options"]
+    opts_src = _task_options_for_display(q, exam_lang)
+    opt_labels = _keyboard_option_labels_from_display(opts_src)
     order = (
         option_order
         if option_order is not None
-        else _option_display_indices(topic, q, len(opts))
+        else _option_display_indices(
+            topic, q, len(opt_labels), opts_for_shuffle_check=opts_src
+        )
     )
     for pos, i in enumerate(order):
         letter = chr(ord("A") + pos)
         builder.add(
             InlineKeyboardButton(
-                text=_option_button_text_shuffled(opts[i], letter),
+                text=_option_button_text_shuffled(opt_labels[i], letter),
                 callback_data=f'qst_sub_{topic_idx}_{sub_idx}_{k}_{i}'
             )
         )
@@ -2741,22 +3011,30 @@ def inline_kb_explain(top, j, k, lang_code: str = "en") :
 
 
 def inline_kb_math_all(
-    top: str, j: int, lang_code: str = "en", *, option_order: list[int] | None = None
+    top: str,
+    j: int,
+    lang_code: str = "en",
+    *,
+    option_order: list[int] | None = None,
+    exam_lang: str | None = None,
 ) -> InlineKeyboardMarkup:
    builder = InlineKeyboardBuilder()
    q = kapibara[top][j]
-   opts = q.get("options", [])
+   opts_src = _task_options_for_display(q, exam_lang)
+   k = _keyboard_option_labels_from_display(opts_src)
    order = (
        option_order
        if option_order is not None
-       else _option_display_indices(top, q, len(opts))
+       else _option_display_indices(
+           top, q, len(k), opts_for_shuffle_check=opts_src
+       )
    )
    top_idx = topics.index(top)
    for pos, i in enumerate(order):
        letter = chr(ord("A") + pos)
        builder.add(
            InlineKeyboardButton(
-               text=_option_button_text_shuffled(opts[i], letter),
+               text=_option_button_text_shuffled(k[i], letter),
                callback_data=f"math_q_{top_idx}_{j}_{i}",
            )
        )
@@ -2937,8 +3215,7 @@ def _discussion_url_for_task(q: dict, lang: str) -> str:
 
 def _get_llm_access_token() -> str:
     access_token = os.environ.get("LLM_TOKEN", "").strip()
-    access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NTU1MTE2NTQsImlhdCI6MTc2MTE3MTQ3OCwiYXV0aF90aW1lIjoxNzYwNDcxNjU0LCJqdGkiOiIxZDVmYjRiZi1mNTY2LTQzMGEtYmE3Mi04NmNhYmZkYTA2MWMiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiNWUxN2Q3NDMtY2I3OC00MzI1LWFhNGItMzBkODU5MmUzYjg5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.SmGtYXk3_uasqFIh9DxMpxk5ubU_b5AX7iU7vLAr98X6Emini_60GdUxmuCYDeeLg2dRKq6b1a4IcoYiQ3iZIzAIsOFvCMd3KrY2tXTp4jOMkT8IFi3AKv8Re58DL_vQev8A1hAQgnjCHWkybR4tM1ConoS_2rzHhHXeLOD0VlcowzGrMy2zfVSCgR_alUDD9oEOwT0BhPyaPALRqeWsU_z1aMY3v2VT20LhL-YqB3bUF3OXiXWL-JHLnNrTOb_087b-yi0DjXajUVuXc6V7a0gMtErGXA-CWXScgqZt0c5K3l8jE4n8OwtWwZcZRh64gn_zhti8yWCIdNseFzMbLA"
-    access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NTU1MTE2NTQsImlhdCI6MTc2MTE3MTQ3OCwiYXV0aF90aW1lIjoxNzYwNDcxNjU0LCJqdGkiOiIxZDVmYjRiZi1mNTY2LTQzMGEtYmE3Mi04NmNhYmZkYTA2MWMiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiNWUxN2Q3NDMtY2I3OC00MzI1LWFhNGItMzBkODU5MmUzYjg5IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.SmGtYXk3_uasqFIh9DxMpxk5ubU_b5AX7iU7vLAr98X6Emini_60GdUxmuCYDeeLg2dRKq6b1a4IcoYiQ3iZIzAIsOFvCMd3KrY2tXTp4jOMkT8IFi3AKv8Re58DL_vQev8A1hAQgnjCHWkybR4tM1ConoS_2rzHhHXeLOD0VlcowzGrMy2zfVSCgR_alUDD9oEOwT0BhPyaPALRqeWsU_z1aMY3v2VT20LhL-YqB3bUF3OXiXWL-JHLnNrTOb_087b-yi0DjXajUVuXc6V7a0gMtErGXA-CWXScgqZt0c5K3l8jE4n8OwtWwZcZRh64gn_zhti8yWCIdNseFzMbLA"
+    access_token = "--"
     return access_token
 
 
@@ -2950,8 +3227,9 @@ def _do_llm_request(
     from_user,
     lang: str,
     access_token: str,
+    exam_lang: str | None = None,
 ) -> str:
-    llm = AmveraLLM(model="gpt-4.1", temperature=0, api_token=access_token)
+    llm = AmveraLLM(model="gpt-4.1",  api_token=access_token)
     addtext = """Определи о чем вопрос и верни одно из чисел: 
 1 задачи по математике, 
 2 физика 
@@ -2974,7 +3252,7 @@ def _do_llm_request(
             HumanMessage(content=user_text),
         ]
     elif mode == LLM_CONTEXT_LAST_TASK:
-        task_block = _format_last_seen_task_for_llm(user_id, lang)
+        task_block = _format_last_seen_task_for_llm(user_id, lang, exam_lang)
         if not task_block:
             log(from_user, ["llm_skip", str(chat_id), mode, "__NO_LAST_TASK__"])
             return "__NO_LAST_TASK__"
@@ -3233,10 +3511,17 @@ async def _math_all_send_question(call: CallbackQuery, user_id: int, key: tuple[
     log(call.from_user, ["math_all_question", top, j, qid])
     title_ru = f"Тема: {_topic_display(top, lang)} | Подтема: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
     title_en = f"Topic: {_topic_display(top, lang)} | Subtopic: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
-    text = _txt(lang, title_ru + "\n\n", title_en + "\n\n") + q.get("english", "") + "\n" + q.get("chinese", "") + q.get("long", "")
-    order = _option_display_indices(top, q, len(q.get("options", [])))
+    exam_lang = await _get_user_exam_lang_by_id(user_id)
+    text = _txt(lang, title_ru + "\n\n", title_en + "\n\n") + _full_task_question_text(q, exam_lang)
+    opts_n = _task_options_for_display(q, exam_lang)
+    order = _option_display_indices(
+        top, q, len(opts_n), opts_for_shuffle_check=opts_n
+    )
     await call.message.answer(
-        text, reply_markup=inline_kb_math_all(top, j, lang_code=lang, option_order=order)
+        text,
+        reply_markup=inline_kb_math_all(
+            top, j, lang_code=lang, option_order=order, exam_lang=exam_lang
+        ),
     )
     _record_last_seen_question(user_id, top, j, order)
 
@@ -3428,11 +3713,17 @@ async def on_math_all_hint(call: CallbackQuery):
             await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
         title_ru = f"Тема: {_topic_display(top, lang)} | Подтема: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
         title_en = f"Topic: {_topic_display(top, lang)} | Subtopic: {_subtopic_display(top, _math_all_subtopic(top, j), lang)}"
-        text = _txt(lang, title_ru + "\n\n", title_en + "\n\n") + q.get("english", "") + "\n" + q.get("chinese", "") + q.get("long", "")
-        order = _option_display_indices(top, q, len(q.get("options", [])))
+        exam_lang = await _get_user_exam_lang_by_id(call.from_user.id)
+        text = _txt(lang, title_ru + "\n\n", title_en + "\n\n") + _full_task_question_text(q, exam_lang)
+        opts_n = _task_options_for_display(q, exam_lang)
+        order = _option_display_indices(
+            top, q, len(opts_n), opts_for_shuffle_check=opts_n
+        )
         await call.message.answer(
             text,
-            reply_markup=inline_kb_math_all(top, j, lang_code=lang, option_order=order),
+            reply_markup=inline_kb_math_all(
+                top, j, lang_code=lang, option_order=order, exam_lang=exam_lang
+            ),
         )
         _record_last_seen_question(call.from_user.id, top, j, order)
 
@@ -3770,6 +4061,7 @@ async def on_llm_explain_last(call: CallbackQuery):
         "Объясни решение этой задачи максимально подробно по шагам.",
         "Explain the solution to this problem step by step in full detail.",
     )
+    exam_lang = await _get_user_exam_lang_by_id(user_id)
     ks_snap = _last_seen_kapibara_question.get(user_id)
     llm_task_snapshot: tuple[str, int] | None = None
     if ks_snap and len(ks_snap) >= 2:
@@ -3785,6 +4077,7 @@ async def on_llm_explain_last(call: CallbackQuery):
                 call.from_user,
                 lang,
                 access_token,
+                exam_lang,
             )
     except Exception as e:
         logging.error(f"LLM request error (llm_explain_last): {e}")
@@ -3873,6 +4166,7 @@ async def on_menu_physics(call: CallbackQuery):
     uid = call.from_user.id
     _topic_clear_session(uid, top)
     _topic_linear_active[(uid, top)] = True
+    await _get_user_exam_lang_by_id(call.from_user.id)
     log(call.from_user, ["menu_physics", "next", top, 0])
     async with ChatActionSender(bot=bot, chat_id=uid, action="typing"):
         await _deliver_topic_question_message(call, top, 0, showvideo)
@@ -3906,6 +4200,7 @@ async def on_menu_chemistry(call: CallbackQuery):
     uid = call.from_user.id
     _topic_clear_session(uid, top)
     _topic_linear_active[(uid, top)] = True
+    await _get_user_exam_lang_by_id(call.from_user.id)
     log(call.from_user, ["menu_chemistry", "next", top, 0])
     async with ChatActionSender(bot=bot, chat_id=uid, action="typing"):
         await _deliver_topic_question_message(call, top, 0, showvideo)
@@ -3933,12 +4228,21 @@ async def on_set_language(call: CallbackQuery):
             save_status = "save_error"
             logging.error(f"Ошибка сохранения языка для пользователя {call.from_user.id}: {e}")
 
+    _sync_log_lang_ui(call.from_user.id, new_lang)
     log(call.from_user, ["set_language", old_lang, new_lang, save_status])
+
+    lang = await _get_user_lang(call.from_user)
+    # Для новых пользователей в сценарии /start сначала выбираем язык экзамена.
+    if call.from_user.id in _pending_exam_language_selection:
+        await call.message.answer(
+            _txt(lang, "Выберите язык экзамена:", "Choose exam language:"),
+            reply_markup=_exam_language_kb(),
+        )
+        return
 
     # После смены языка запускаем тот же пользовательский сценарий, что и при /start:
     # показываем приветствие и главное меню с актуальным языком.
     kb = await start_kb(call.from_user.id)
-    lang = await _get_user_lang(call.from_user)
     if lang.startswith("ru"):
         greet = """Привет! Я бот для подготовки к CSCA. 
 Помогу сдать экзамен на отлично! Проходи тестовые экзамены, узнавай свои баллы или тренируйся по любой теме. Не знаешь, как решать? Встроенные справочные материалы и чат с обсуждением задач всегда к твоим услугам.
@@ -3948,6 +4252,52 @@ async def on_set_language(call: CallbackQuery):
     else:
         greet = "Hi!! I'm your CSCA math exam preparation bot, ready to help you pass with confidence. You can take full-length practice tests to evaluate your score or focus on specific topics for targeted practice. I'll guide you step by step until you're fully prepared for exam day."
     await call.message.answer(greet, reply_markup=kb)
+
+
+@router.callback_query(F.data.in_(["set_exam_lang_en", "set_exam_lang_zh"]))
+async def on_set_exam_language(call: CallbackQuery):
+    await call.answer()
+    exam_lang = "en" if call.data == "set_exam_lang_en" else "zh"
+    save_status = "no_db"
+    if db_conn:
+        try:
+            await db.set_user_exam_language(db_conn, call.from_user.id, exam_lang)
+            save_status = "saved"
+        except Exception as e:
+            save_status = "save_error"
+            logging.error(f"Ошибка сохранения языка экзамена для пользователя {call.from_user.id}: {e}")
+    _pending_exam_language_selection.discard(call.from_user.id)
+    _sync_log_lang_exam(call.from_user.id, exam_lang)
+    log(call.from_user, ["set_exam_language", exam_lang, save_status])
+    logging.info(
+        "exam_language_selected user_id=%s username=%s choice=%s save=%s callback=%s",
+        call.from_user.id,
+        getattr(call.from_user, "username", None),
+        exam_lang,
+        save_status,
+        call.data,
+    )
+
+    kb = await start_kb(call.from_user.id)
+    lang = await _get_user_lang(call.from_user)
+    await call.message.answer(
+        _txt(
+            lang,
+            f"Язык экзамена — {'English' if exam_lang == 'en' else '中文'}",
+            f"Exam language — {'English' if exam_lang == 'en' else '中文'}",
+        ),
+        reply_markup=kb,
+    )
+
+
+@router.callback_query(F.data == "menu_exam_language")
+async def on_menu_exam_language(call: CallbackQuery):
+    await call.answer()
+    lang = await _get_user_lang(call.from_user)
+    await call.message.answer(
+        _txt(lang, "Выберите язык экзамена:", "Choose exam language:"),
+        reply_markup=_exam_language_kb(),
+    )
 
 
 def _format_exam_stats_line(state) -> str:
@@ -3985,6 +4335,45 @@ def _inline_kb_exam_finished() -> InlineKeyboardMarkup:
 
 
 # --- Общий обработчик экзаменов jan / dec / mar ---
+async def _should_redirect_exam_access_to_pay(user_id: int) -> bool:
+    """
+    Единая проверка доступа к экзаменам (как в Mock Exam сейчас).
+    Возвращает True, если нужно показать pay().
+    """
+    invites_count = len(invite_relations.get(user_id, set()))
+    paid_access = False
+    user_created_at = None
+    total_answered = 0
+    if db_conn:
+        try:
+            paid_access = await db.user_has_exam_access_by_payment(db_conn, user_id)
+            user_created_at = await db.get_user_created_at(db_conn, user_id)
+            stats = await db.get_user_stats(db_conn, user_id)
+            total_answered = stats.get("total_answered", 0)
+        except Exception as e:
+            logging.error(f"Ошибка проверки доступа к экзаменам для пользователя {user_id}: {e}")
+
+    no_privileges = (
+        str(user_id) not in stepik
+        and str(user_id) not in cscagroup
+        and invites_count < 3
+        and not paid_access
+    )
+
+    meets_activity_limits = False
+    if user_created_at:
+        try:
+            from datetime import datetime, timedelta
+
+            created_dt = datetime.fromisoformat(user_created_at)
+            if datetime.now() - created_dt > timedelta(days=3) and total_answered > 30:
+                meets_activity_limits = True
+        except Exception as e:
+            logging.error(f"Ошибка разбора created_at для пользователя {user_id}: {e}")
+
+    return no_privileges and meets_activity_limits
+
+
 @router.callback_query(F.data.in_(["exam_start_jan", "exam_start_dec", "exam_start_mar"]))
 async def on_exam_start(call: CallbackQuery):
     """Старт экзамена по типу: jan, dec, mar."""
@@ -3994,6 +4383,10 @@ async def on_exam_start(call: CallbackQuery):
     if not cfg:
         return
     user_id = call.from_user.id
+    if await _should_redirect_exam_access_to_pay(user_id):
+        log(call.from_user, [f"{cfg['id']}_reject"])
+        await pay(call.from_user)
+        return
     lang = await _get_user_lang(call.from_user)
     questions = cfg["questions"]
     if not questions:
@@ -4090,51 +4483,7 @@ async def on_exam_continue(call: CallbackQuery):
 async def on_exam_mock_start(call: CallbackQuery):
     await call.answer()
     user_id = call.from_user.id
-    # Доступ к Mock Exam только для:
-    # - пользователей из списка stepik
-    # - пользователей из списка cscagroup
-    # - пользователей, пригласивших не менее трёх новых пользователей
-    # - пользователей, оплативших доступ в Telegram Stars
-    invites_count = len(invite_relations.get(user_id, set()))
-    paid_access = False
-    user_created_at = None
-    total_answered = 0
-    if db_conn:
-        try:
-            paid_access = await db.user_has_exam_access_by_payment(db_conn, user_id)
-            # дата регистрации
-            user_created_at = await db.get_user_created_at(db_conn, user_id)
-            # всего решённых задач
-            stats = await db.get_user_stats(db_conn, user_id)
-            total_answered = stats.get("total_answered", 0)
-        except Exception as e:
-            logging.error(f"Ошибка проверки доступа к Mock Exam для пользователя {user_id}: {e}")
-
-    should_redirect_to_pay = False
-
-    # Базовые условия отсутствия привилегий
-    no_privileges = (
-        str(user_id) not in stepik
-        and str(user_id) not in cscagroup
-        and invites_count < 3
-        and not paid_access
-    )
-
-    # Дополнительные условия: зарегистрирован > 3 дней назад и решил > 10 задач
-    meets_activity_limits = False
-    if user_created_at:
-        try:
-            from datetime import datetime, timedelta
-            created_dt = datetime.fromisoformat(user_created_at)
-            if datetime.now() - created_dt > timedelta(days=3) and total_answered > 10:
-                meets_activity_limits = True
-        except Exception as e:
-            logging.error(f"Ошибка разбора created_at для пользователя {user_id}: {e}")
-
-    if (no_privileges and meets_activity_limits) or (str(user_id) == "780221999" and not paid_access):
-        should_redirect_to_pay = True
-
-    if should_redirect_to_pay:
+    if await _should_redirect_exam_access_to_pay(user_id):
         log(call.from_user, ["mockexamreject"])
         # Показываем то же сообщение об оплате/условиях доступа, что и в команде /pay
         await pay(call.from_user)
@@ -4432,8 +4781,15 @@ async def random_any_task(call: CallbackQuery):
         diff_line = _txt(lang, f"Сложность: {stars}\n", f"Difficulty: {stars}\n")
     else:
         diff_line = ""
-    question_text = question_num + diff_line + k["english"] + "\n" + k.get("chinese", '') + k.get("long", '')
-    reply = inline_kb(top, j, showvideo, lang_code=lang)
+    exam_lang = await _get_user_exam_lang_by_id(call.from_user.id)
+    question_text = question_num + diff_line + _full_task_question_text(k, exam_lang)
+    opts_n = _task_options_for_display(k, exam_lang)
+    order = _option_display_indices(
+        top, k, len(opts_n), opts_for_shuffle_check=opts_n
+    )
+    reply = inline_kb(
+        top, j, showvideo, lang_code=lang, option_order=order, exam_lang=exam_lang
+    )
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
         await call.message.answer(question_text, reply_markup=reply)
 
@@ -4610,6 +4966,7 @@ async def on_answer_sub(call: CallbackQuery):
     correct_h = {'A': '0', 'B': '1', 'C': '2', 'D': '3', 'E': '4'}
     await call.answer()
     lang_code = await _get_user_lang(call.from_user)
+    await _get_user_exam_lang_by_id(call.from_user.id)
     parts = call.data.replace('qst_sub_', '').split('_')
     if len(parts) < 4:
         await call.message.answer("Ошибка формата.")
@@ -4681,6 +5038,7 @@ async def on_answer_topic(call: CallbackQuery):
     correct_h = {"A": "0", "B": "1", "C": "2", "D": "3", "E": "4"}
     await call.answer()
     lang_code = await _get_user_lang(call.from_user)
+    await _get_user_exam_lang_by_id(call.from_user.id)
     try:
         top, j, ans_id = _parse_qst_topic_callback(call.data)
     except (ValueError, IndexError):
@@ -4751,6 +5109,7 @@ async def on_hint_sub(call: CallbackQuery):
     await call.answer()
     user_id = call.from_user.id
     if user_id == 7567696331:
+        await _refresh_log_lang_cache(call.from_user)
         log(call.from_user, ["hint_sub_blocked"])
         return
 
@@ -4773,6 +5132,7 @@ async def on_hint_sub(call: CallbackQuery):
 
     q = kapibara[topic][j]
     lang_code = await _get_user_lang(call.from_user)
+    await _get_user_exam_lang_by_id(call.from_user.id)
     skh = _sub_key(user_id, topic_idx, sub_idx)
     if _sub_linear_active.get(skh):
         _register_sub_question_displayed(user_id, topic_idx, sub_idx, k, True)
@@ -4786,10 +5146,20 @@ async def on_hint_sub(call: CallbackQuery):
             photo_path = os.path.join(DATA_DIR, "images", q["img"])
             await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
 
-        question_text = q["english"] + "\n" + q.get("chinese", '') + q.get("long", '')
-        order = _option_display_indices(topic, q, len(q["options"]))
+        exam_lang = await _get_user_exam_lang_by_id(user_id)
+        question_text = _full_task_question_text(q, exam_lang)
+        opts_n = _task_options_for_display(q, exam_lang)
+        order = _option_display_indices(
+            topic, q, len(opts_n), opts_for_shuffle_check=opts_n
+        )
         reply = inline_kb_sub(
-            topic_idx, sub_idx, k, showvideo=1, lang_code=lang_code, option_order=order
+            topic_idx,
+            sub_idx,
+            k,
+            showvideo=1,
+            lang_code=lang_code,
+            option_order=order,
+            exam_lang=exam_lang,
         )
         await call.message.answer(question_text, reply_markup=reply)
         _record_last_seen_question(user_id, topic, j, order)
@@ -4804,6 +5174,7 @@ async def on_hint(call: CallbackQuery):
     await call.answer()
     user_id = call.from_user.id
     if user_id == 7567696331:
+        await _refresh_log_lang_cache(call.from_user)
         log(call.from_user, ["hint_blocked"])
         return
 
@@ -4826,6 +5197,7 @@ async def on_hint(call: CallbackQuery):
 
     q = kapibara[top][j]
     lang_code = await _get_user_lang(call.from_user)
+    await _get_user_exam_lang_by_id(user_id)
     if _topic_linear_active.get((user_id, top)):
         _register_topic_question_displayed(user_id, top, j, True)
     hint_paths = _get_hint_image_path(q, lang_code)
@@ -4838,25 +5210,39 @@ async def on_hint(call: CallbackQuery):
             photo_path = os.path.join(DATA_DIR, "images", q["img"])
             await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
 
-        question_text = q["english"] + "\n" + q.get("chinese", '') + q.get("long", '')
-        order = _option_display_indices(top, q, len(q["options"]))
-        reply = inline_kb(top, j, showvideo=1, lang_code=lang_code, option_order=order)
+        exam_lang = await _get_user_exam_lang_by_id(user_id)
+        question_text = _full_task_question_text(q, exam_lang)
+        opts_n = _task_options_for_display(q, exam_lang)
+        order = _option_display_indices(
+            top, q, len(opts_n), opts_for_shuffle_check=opts_n
+        )
+        reply = inline_kb(
+            top,
+            j,
+            showvideo=1,
+            lang_code=lang_code,
+            option_order=order,
+            exam_lang=exam_lang,
+        )
         await call.message.answer(question_text, reply_markup=reply)
         _record_last_seen_question(user_id, top, j, order)
 
 @router.message(Command("start"))
 async def on_start_command(message: types.Message):
-    # Не логируем сообщения из конкретной группы
-    if message.chat.id != -1003634233318:
-        log(message.from_user, ['start', message.text])
-    
     # Извлекаем аргумент команды (текст после /start)
     start_text = None
     if message.text and len(message.text.split()) > 1:
         start_text = ' '.join(message.text.split()[1:])
     user_status =  '' #await bot.get_chat_member(chat_id="@csca_math_exam", user_id=message.chat.id)
-    log(message.from_user,['status', str(user_status) ])
-    
+    # Для сценария первого входа определяем, есть ли пользователь в БД до upsert.
+    is_new_user = False
+    if db_conn:
+        try:
+            cursor = await db_conn.execute("SELECT 1 FROM users WHERE id = ? LIMIT 1", (message.from_user.id,))
+            is_new_user = (await cursor.fetchone()) is None
+        except Exception as e:
+            logging.error(f"Ошибка проверки нового пользователя {message.from_user.id}: {e}")
+
     # Сохраняем/обновляем пользователя в БД
     if db_conn:
         try:
@@ -4945,8 +5331,12 @@ async def on_start_command(message: types.Message):
         except:
             pass
     
-    kb = await start_kb(message.from_user.id)
     lang = await _get_user_lang(message.from_user)
+    await _get_user_exam_lang_by_id(message.from_user.id)
+    if message.chat.id != -1003634233318:
+        log(message.from_user, ['start', message.text])
+    log(message.from_user, ['status', str(user_status)])
+
     if lang.startswith("ru"):
         greet = """Привет! Я бот для подготовки к CSCA. 
 Помогу сдать экзамен на отлично! Проходи тестовые экзамены, узнавай свои баллы или тренируйся по любой теме. Запутался в решении? Встроенные справочные материалы и чат с обсуждением задач всегда к твоим услугам.
@@ -4957,7 +5347,17 @@ async def on_start_command(message: types.Message):
     else:
         greet = "Hi!! I'm your CSCA math exam preparation bot, ready to help you pass with confidence. You can take full-length practice tests to evaluate your score or focus on specific topics for targeted practice. I'll guide you step by step until you're fully prepared for exam day."
   
-    await message.answer(greet, reply_markup=kb)
+    if is_new_user:
+        _pending_exam_language_selection.add(message.from_user.id)
+        # На первом входе: приветствие + кнопка переключения интерфейса, затем выбор языка экзамена.
+        await message.answer(greet, reply_markup=_language_switch_kb(lang))
+        await message.answer(
+            _txt(lang, "Выберите язык экзамена:", "Choose exam language:"),
+            reply_markup=_exam_language_kb(),
+        )
+    else:
+        kb = await start_kb(message.from_user.id)
+        await message.answer(greet, reply_markup=kb)
    
    # await message.answer("Это тестовая версия бота. Нашел ошибку? Есть идея? Пиши @csca_math_exam или прямо здесь.", reply_markup=start_kb()) 
    # await message.answer("Видео-разборы задач в группе https://t.me/milgecru/385") 
@@ -4982,6 +5382,7 @@ async def on_explain(call: CallbackQuery):
     if top not in kapibara or j < 0 or j >= len(kapibara[top]):
         await call.answer("Вопрос не найден.")
         return
+    await _refresh_log_lang_cache(call.from_user)
     log(call.from_user, ['explain', top, j])
     # Отключаем показ ссылок на видео, но не ломаем старые callback'и
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
@@ -4994,10 +5395,12 @@ async def on_explain(call: CallbackQuery):
 async def on_next_question(call: CallbackQuery):
     if call.from_user.id == 7567696331:
         await call.answer()
+        await _refresh_log_lang_cache(call.from_user)
         log(call.from_user, ["next_blocked"])
         return
 
     await call.answer()
+    await _refresh_log_lang_cache(call.from_user)
 
     showvideo = 1
     user = call.from_user.username
@@ -5684,6 +6087,7 @@ async def on_any_message(message: Message):
             except Exception as e:
                 save_status = "save_error"
                 logging.error(f"Ошибка сохранения языка по текстовому триггеру для пользователя {message.from_user.id}: {e}")
+        _sync_log_lang_ui(message.from_user.id, "en")
         log(message.from_user, ["set_language_by_text", old_lang, "en", save_status, "trigger=english"])
         kb = await start_kb(message.from_user.id)
         await message.answer("Interface language switched to English.", reply_markup=kb)
@@ -5693,12 +6097,14 @@ async def on_any_message(message: Message):
 
     # Не отправляем команды в LLM
     if message.text and message.text.strip().startswith("/"):
+        await _refresh_log_lang_cache(message.from_user)
         log(message.from_user, ['message', str(chat_id), message.text.replace("\n"," ") if message.text else "" ])
        
         return
 
     # Не логируем сообщения из группы -1003634233318
     if chat_id != -1003634233318:
+        await _refresh_log_lang_cache(message.from_user)
         log(message.from_user, ['message', str(chat_id), message.text.replace("\n"," ") if message.text else "" ])
         _llm_text = message.text or ""
         if not (7 < len(_llm_text) < 300):
@@ -5712,6 +6118,7 @@ async def on_any_message(message: Message):
             return
 
         lang = await _get_user_lang(message.from_user)
+        exam_lang = await _get_user_exam_lang_by_id(message.from_user.id)
         # Режим контекста LLM: addtext_only | rag_only | last_task (см. константы LLM_CONTEXT_*)
         llm_context_mode = LLM_CONTEXT_ADDTEXT_ONLY
 
@@ -5731,6 +6138,7 @@ async def on_any_message(message: Message):
                     message.from_user,
                     lang,
                     access_token,
+                    exam_lang,
                 )
             if answer_text == "__NO_LAST_TASK__":
                 await message.answer(
@@ -5814,6 +6222,7 @@ async def on_any_message(message: Message):
                                 message.from_user,
                                 lang,
                                 access_token,
+                                exam_lang,
                             )
                         if second_answer == "__NO_LAST_TASK__":
                             await message.answer(
@@ -5862,6 +6271,7 @@ async def on_any_message(message: Message):
                                 message.from_user,
                                 lang,
                                 access_token,
+                                None,
                             )
                         if second_answer:
                             try:
