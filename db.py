@@ -117,6 +117,21 @@ async def init_db() -> aiosqlite.Connection:
         CREATE INDEX IF NOT EXISTS idx_user_exam_recommendations_user_exam
         ON user_exam_recommendations(user_id, exam_type, created_at)
     """)
+
+    # Факт завершения экзаменов пользователем (не очищается clear_exam_answers)
+    await conn.execute("""
+        CREATE TABLE IF NOT EXISTS user_completed_exams (
+            user_id INTEGER NOT NULL,
+            exam_type TEXT NOT NULL,
+            completed_at TEXT NOT NULL,
+            PRIMARY KEY (user_id, exam_type),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+    await conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_user_completed_exams_user
+        ON user_completed_exams(user_id, completed_at)
+    """)
     
     # Состояние режима "Все задачи по математике" (для восстановления после перезапуска)
     await conn.execute("""
@@ -604,7 +619,7 @@ async def save_star_payment(
     await conn.commit()
 
 
-async def user_has_exam_access_by_payment(conn: aiosqlite.Connection, user_id: int) -> bool:
+async def user_has_access_by_payment(conn: aiosqlite.Connection, user_id: int) -> bool:
     """
     Проверяет, есть ли у пользователя хотя бы одна оплата, дающая доступ к режиму экзамена/Mock Exam.
     """
@@ -616,6 +631,42 @@ async def user_has_exam_access_by_payment(conn: aiosqlite.Connection, user_id: i
         LIMIT 1
         """,
         (user_id, "exam_access"),
+    )
+    row = await cursor.fetchone()
+    return row is not None
+
+
+async def mark_user_exam_completed(
+    conn: aiosqlite.Connection, user_id: int, exam_type: str
+) -> None:
+    """
+    Фиксирует факт завершения экзамена пользователем.
+    Повторный вызов для того же (user_id, exam_type) обновляет completed_at.
+    """
+    now = datetime.now().isoformat()
+    await conn.execute(
+        """
+        INSERT INTO user_completed_exams (user_id, exam_type, completed_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id, exam_type) DO UPDATE SET completed_at = excluded.completed_at
+        """,
+        (user_id, exam_type, now),
+    )
+    await conn.commit()
+
+
+async def user_has_any_completed_exam(conn: aiosqlite.Connection, user_id: int) -> bool:
+    """
+    Проверяет, есть ли у пользователя хотя бы один завершённый экзамен.
+    """
+    cursor = await conn.execute(
+        """
+        SELECT 1
+        FROM user_completed_exams
+        WHERE user_id = ?
+        LIMIT 1
+        """,
+        (user_id,),
     )
     row = await cursor.fetchone()
     return row is not None
