@@ -259,7 +259,7 @@
       "A. -2 ∈ ℕ",
       "B. π ∈ ℚ",
       "C. 3/2 ∈ ℤ",
-      "D. √3 ∈ R"
+      "D. √3 ∈ ℝ"
     ],
     "answer": "D",
     "topic": "sets",
@@ -268,9 +268,9 @@
     "subtopic": "numerical sets",
     "difficulty": 1,
     "id": "NS1",
-    "solution_ru": "ℕ — натуральные числа (1, 2, 3...), ℚ — рациональные числа, ℤ — целые числа, R — действительные числа. √3 — иррациональное, но действительное число, поэтому √3 ∈ R.",
-    "solution_en": "ℕ are natural numbers (1, 2, 3...), ℚ are rational numbers, ℤ are integers, R are real numbers. √3 is irrational but a real number, so √3 ∈ R.",
-    "solution_ru2": "Напомним обозначения числовых множеств: ℕ = {1, 2, 3, ...} — натуральные числа (иногда включают 0, но обычно нет); ℤ = {..., -2, -1, 0, 1, 2, ...} — целые числа; ℚ — рациональные числа, представимые в виде дроби p/q, где p, q ∈ ℤ, q ≠ 0; ℝ — действительные числа, включающие все рациональные и иррациональные числа. Проверим: -2 — целое, но не натуральное, поэтому -2 ∉ ℕ; π — иррациональное, не представимо в виде дроби, поэтому π ∉ ℚ; 3/2 — дробь, не целое, поэтому 3/2 ∉ ℤ; √3 — иррациональное, но оно принадлежит множеству действительных чисел, так как ℝ включает все числа на числовой прямой. Следовательно, √3 ∈ R.",
+    "solution_ru": "ℕ — натуральные числа (1, 2, 3...), ℚ — рациональные числа, ℤ — целые числа, ℝ — действительные числа. √3 — иррациональное, но действительное число, поэтому √3 ∈ ℝ.",
+    "solution_en": "ℕ are natural numbers (1, 2, 3...), ℚ are rational numbers, ℤ are integers, ℝ are real numbers. √3 is irrational but a real number, so √3 ∈ ℝ.",
+    "solution_ru2": "Напомним обозначения числовых множеств: ℕ = {1, 2, 3, ...} — натуральные числа (иногда включают 0, но обычно нет); ℤ = {..., -2, -1, 0, 1, 2, ...} — целые числа; ℚ — рациональные числа, представимые в виде дроби p/q, где p, q ∈ ℤ, q ≠ 0; ℝ — действительные числа, включающие все рациональные и иррациональные числа. Проверим: -2 — целое, но не натуральное, поэтому -2 ∉ ℕ; π — иррациональное, не представимо в виде дроби, поэтому π ∉ ℚ; 3/2 — дробь, не целое, поэтому 3/2 ∉ ℤ; √3 — иррациональное, но оно принадлежит множеству действительных чисел, так как ℝ включает все числа на числовой прямой. Следовательно, √3 ∈ ℝ.",
     "solution_en2": "Recall the notation for number sets: ℕ = {1, 2, 3, ...} — natural numbers (sometimes 0 is included, but typically not); ℤ = {..., -2, -1, 0, 1, 2, ...} — integers; ℚ — rational numbers, expressible as a fraction p/q where p, q ∈ ℤ, q ≠ 0; ℝ — real numbers, including all rational and irrational numbers. Check: -2 is an integer but not a natural number, so -2 ∉ ℕ; π is irrational, cannot be expressed as a fraction, so π ∉ ℚ; 3/2 is a fraction, not an integer, so 3/2 ∉ ℤ; √3 is irrational, but it belongs to the set of real numbers because ℝ includes all numbers on the number line. Hence, √3 ∈ ℝ."
   },
   {
@@ -280,7 +280,7 @@
       "A. -1 ∈ ℕ",
       "B. 3.14 ∈ ℚ",
       "C. √5 ∈ ℤ",
-      "D. π + 3 ∉ R"
+      "D. π + 3 ∉ ℝ"
     ],
     "answer": "B",
     "topic": "sets",
@@ -414,9 +414,9 @@
     "subtopic": "properties of inequalities",
     "type": "mar",
     "difficulty": 2,
-    "solution_en": "The function y = x³ is monotonically increasing on R, a > b means a³ > b³; B, C, D can be overturned by counterexamples.",
-    "solution_ch": "函数 y = x³ 在 R 上单调递增, a > b 则 a³ > b³; B、C、D 可举反例推翻。",
-    "solution_ru": "Функция y = x³ монотонно возрастает на R, a > b означает a³ > b³; B, C, D можно опровергнуть контрпримерами.",
+    "solution_en": "The function y = x³ is monotonically increasing on ℝ, a > b means a³ > b³; B, C, D can be overturned by counterexamples.",
+    "solution_ch": "函数 y = x³ 在 ℝ 上单调递增, a > b 则 a³ > b³; B、C、D 可举反例推翻。",
+    "solution_ru": "Функция y = x³ монотонно возрастает на ℝ, a > b означает a³ > b³; B, C, D можно опровергнуть контрпримерами.",
     "id": "PO4",
     "solution_ru2": "Функция f(x) = x³ является строго возрастающей на всей числовой прямой, так как ее производная 3x² ≥ 0 и равна нулю только в точке 0, но функция все равно монотонна. Из a > b следует f(a) > f(b), то есть a³ > b³. Для остальных вариантов можно привести контрпримеры: возьмем a = 1, b = -2. Тогда a > b (1 > -2), но |a| = 1, |b| = 2, и |a| < |b|, а не >; a² = 1, b² = 4, и a² < b². Таким образом, варианты B, C, D не всегда верны.",
     "solution_en2": "The function f(x) = x³ is strictly increasing on the entire real line, because its derivative 3x² ≥ 0 and is zero only at x=0, but the function is still monotonic. From a > b it follows that f(a) > f(b), i.e., a³ > b³. For the other options, we can provide counterexamples: take a = 1, b = -2. Then a > b (1 > -2), but |a| = 1, |b| = 2, so |a| < |b|, not >; a² = 1, b² = 4, so a² < b². Thus, options B, C, D are not always true."
@@ -1135,7 +1135,7 @@
     "chinese": "不等式 x² - x - 6 > 0 的解集是",
     "english": "The solution set of the inequality x² - x - 6 > 0 is",
     "options": [
-      "A. {x | x < -2 或 x > 3} / {x | x < -2 or x > 3}",
+      "A. {x | x < -2 或 or or x > 3}",
       "B. {x | -2 < x < 3}",
       "C. {x | x > 3}",
       "D. {x | x < -2}"
@@ -1153,6 +1153,12 @@
     "solution_en2": "Factor the quadratic trinomial: x² - x - 6 = (x - 3)(x + 2). Find the roots: x = 3 and x = -2. Since the coefficient of x² is positive (1 > 0), the parabola opens upward. The inequality > 0 holds on intervals where the function is positive, i.e., to the left of the smaller root and to the right of the larger root. Thus, x < -2 or x > 3. Solution: (-∞, -2) ∪ (3, +∞).",
     "options_ch": [
       "A. {x | x < -2 或 x > 3}",
+      "B. {x | -2 < x < 3}",
+      "C. {x | x > 3}",
+      "D. {x | x < -2}"
+    ],
+     "options_en": [
+      "A. {x | x < -2 or x > 3}",
       "B. {x | -2 < x < 3}",
       "C. {x | x > 3}",
       "D. {x | x < -2}"
@@ -1184,9 +1190,9 @@
     "chinese": "不等式 x² - x - 2 > 0 的解集是（ ）。",
     "english": "The solution set of the inequality x² - x - 2 > 0 is ( ).",
     "options": [
-      "A. {x | x < -1 或 x > 2} / {x | x < -1 or x > 2}",
+      "A. {x | x < -1 或 or x > 2}",
       "B. {x | -1 < x < 2}",
-      "C. {x | x < -2 或 x > -1} / {x | x < -2 or x > -1}",
+      "C. {x | x < -2 或 or x > -1}",
       "D. {x | -2 < x ≤ 1}"
     ],
     "answer": "A",
@@ -1206,15 +1212,21 @@
       "B. {x | -1 < x < 2}",
       "C. {x | x < -2 或 x > -1}",
       "D. {x | -2 < x ≤ 1}"
+    ],
+   "options_en": [
+      "A. {x | x < -1 or  x > 2}",
+      "B. {x | -1 < x < 2}",
+      "C. {x | x < -2 or  x > -1}",
+      "D. {x | -2 < x ≤ 1}"
     ]
   },
   {
     "chinese": "不等式 x² - 7x - 18 > 0 的解集是",
     "english": "The solution set of the inequality x² - 7x - 18 > 0 is",
     "options": [
-      "A. {x | x < -1 或 x > 2} / {x | x < -1 or x > 2}",
+      "A. {x | x < -1 或  or x > 2} ",
       "B. {x | -1 < x < 2}",
-      "C. {x | x < -2 或 x > -1} / {x | x < -2 or x > -1}",
+      "C. {x | x < -2 或 or x > -1} ",
       "D. {x | -2 < x ≤ 1}"
     ],
     "topic": "inequalities",
@@ -1231,6 +1243,12 @@
       "A. {x | x < -1 或 x > 2}",
       "B. {x | -1 < x < 2}",
       "C. {x | x < -2 或 x > -1}",
+      "D. {x | -2 < x ≤ 1}"
+    ],
+    "options_en": [
+      "A. {x | x < -1 or  x > 2}",
+      "B. {x | -1 < x < 2}",
+      "C. {x | x < -2 or  x > -1}",
       "D. {x | -2 < x ≤ 1}"
     ]
   },
@@ -1273,7 +1291,13 @@
     "solution_ru2": "Заметим, что x² - 6x + 9 = (x-3)². Квадрат любого действительного числа всегда неотрицателен: (x-3)² ≥ 0. Неравенство (x-3)² ≤ 0 требует, чтобы квадрат был меньше или равен нулю. Единственная возможность — равенство нулю: (x-3)² = 0 ⇒ x-3 = 0 ⇒ x = 3. Таким образом, решение состоит из одной точки: {3}.",
     "solution_en2": "Note that x² - 6x + 9 = (x-3)². The square of any real number is always non-negative: (x-3)² ≥ 0. The inequality (x-3)² ≤ 0 requires the square to be less than or equal to zero. The only possibility is equality to zero: (x-3)² = 0 ⇒ x-3 = 0 ⇒ x = 3. Thus, the solution set is a single point: {3}.",
     "options_ch": [
-      "A. {x | x < 3 或 or x > 3}",
+      "A. {x | x < 3 或  x > 3}",
+      "B. {x | -3 < x < 3}",
+      "C. {3}",
+      "D. {x | x ≤ 3}"
+    ],
+    "options_en": [
+      "A. {x | x < 3 or x > 3}",
       "B. {x | -3 < x < 3}",
       "C. {3}",
       "D. {x | x ≤ 3}"
@@ -1298,10 +1322,16 @@
     "solution_ru2": "Преобразуем: x² + 2x + 1 = (x+1)². Квадрат любого числа неотрицателен, и он строго больше нуля для всех x, кроме тех, где он обращается в ноль. (x+1)² = 0 только при x = -1. Таким образом, неравенство (x+1)² > 0 выполняется для всех x ≠ -1. Решение: x < -1 или x > -1, что можно записать как ℝ \\ {-1}.",
     "solution_en2": "Rewrite: x² + 2x + 1 = (x+1)². The square of any number is non-negative, and it is strictly greater than zero for all x except where it equals zero. (x+1)² = 0 only when x = -1. Hence, the inequality (x+1)² > 0 holds for all x ≠ -1. The solution is x < -1 or x > -1, which can be written as ℝ \\ {-1}.",
     "options_ch": [
-      "A. {x | x < -1 或 or x > -1}",
+      "A. {x | x < -1 或  x > -1}",
       "B. {x | -1 < x < 1}",
       "C. {-1}",
       "D. {x | x ≤ -1}"
+    ],
+    "options_en": [
+      "A. {x | x < 3 or x > 3}",
+      "B. {x | -3 < x < 3}",
+      "C. {3}",
+      "D. {x | x ≤ 3}"
     ]
   },
   {
@@ -1348,7 +1378,7 @@
     "chinese": "不等式 x² + 2 x + 5  < 0  的解集是（ ）。",
     "english": "The solution set of the inequality x² + 2 x + 5  < 0  is ( ).",
     "options": [
-      "A. R",
+      "A. ℝ",
       "B. ∅ ",
       "C. {-2}",
       "D. {x | x ≤ -2}"
@@ -1367,7 +1397,7 @@
     "chinese": "不等式 x² + 2 x + 5  >  0  的解集是（ ）。",
     "english": "The solution set of the inequality x² + 2 x + 5  >0  is ( ).",
     "options": [
-      "A. R",
+      "A. ℝ",
       "B. ∅ ",
       "C. {-2}",
       "D. {x | x ≤ -2}"
@@ -1377,8 +1407,8 @@
     "subtopic": "quadratic inequalities",
     "difficulty": 5,
     "id": "QI6",
-    "solution_ru": "Дискриминант D = 4 - 20 = -16 < 0, и коэффициент при x² положителен (1 > 0). Это означает, что квадратичная функция всегда положительна. Неравенство > 0 выполняется для всех x. Решение: R.",
-    "solution_en": "The discriminant D = 4 - 20 = -16 < 0, and the coefficient of x² is positive (1 > 0). This means the quadratic function is always positive. The inequality > 0 holds for all x. Solution: R.",
+    "solution_ru": "Дискриминант D = 4 - 20 = -16 < 0, и коэффициент при x² положителен (1 > 0). Это означает, что квадратичная функция всегда положительна. Неравенство > 0 выполняется для всех x. Решение: ℝ",
+    "solution_en": "The discriminant D = 4 - 20 = -16 < 0, and the coefficient of x² is positive (1 > 0). This means the quadratic function is always positive. The inequality > 0 holds for all x. Solution: ℝ",
     "solution_ru2": "Для квадратного трехчлена x² + 2x + 5 дискриминант D = -16 < 0, а старший коэффициент 1 > 0. Следовательно, парабола направлена вверх и лежит выше оси x для всех x. Значит, x² + 2x + 5 > 0 выполняется при любом действительном x. Решение — все действительные числа, то есть ℝ.",
     "solution_en2": "For the quadratic trinomial x² + 2x + 5, the discriminant D = -16 < 0, and the leading coefficient 1 > 0. Hence, the parabola opens upward and lies above the x-axis for all x. Therefore, x² + 2x + 5 > 0 holds for all real x. The solution set is all real numbers, i.e., ℝ."
   },
@@ -1648,8 +1678,8 @@
     "options": [
       "A. 当 x < 0 时，函数是增函数 / When x < 0, it is an increasing function",
       "B. 当 x > 0 时，函数是增函数 / When x > 0, it is an increasing function",
-      "C. 当 x ∈ ℝ 时，函数是减函数 / When x ∈ R, it is a decreasing function",
-      "D. 当 x ∈ ℝ 时，函数是增函数 / When x ∈ R, it is an increasing function"
+      "C. 当 x ∈ ℝ 时，函数是减函数 / When x ∈ ℝ, it is a decreasing function",
+      "D. 当 x ∈ ℝ 时，函数是增函数 / When x ∈ ℝ, it is an increasing function"
     ],
     "answer": "B",
     "topic": "functions",
@@ -1665,8 +1695,8 @@
     "options_en": [
       "A. When x < 0, it is an increasing function",
       "B. When x > 0, it is an increasing function",
-      "C. When x ∈ R, it is a decreasing function",
-      "D. When x ∈ R, it is an increasing function"
+      "C. When x ∈ ℝ, it is a decreasing function",
+      "D. When x ∈ ℝ, it is an increasing function"
     ],
     "options_ch": [
       "A. 当 x < 0 时，函数是增函数",
@@ -1830,7 +1860,7 @@
   },
   {
     "n": 36,
-    "chinese": "函数 f(x) = 1/(1 + |x|) (x ∈ R) 的值域是",
+    "chinese": "函数 f(x) = 1/(1 + |x|) (x ∈ ℝ) 的值域是",
     "english": "The range of the function f(x) = 1/(1 + |x|) (x ∈ ℝ) is",
     "options": [
       "A. (0, 1]",
@@ -1857,7 +1887,7 @@
       "A. {y | y ≥ -1}",
       "B. {y | y > -1}",
       "C. {y | y ≥ 0}",
-      "D. {y | y ∈ R}"
+      "D. {y | y ∈ ℝ}"
     ],
     "answer": "A",
     "topic": "functions",
@@ -1876,7 +1906,7 @@
       "A. {y | y ≥ 1}",
       "B. {y | y > 1}",
       "C. {y | y ≤ 3}",
-      "D. {y | y ∈ R}"
+      "D. {y | y ∈ ℝ}"
     ],
     "answer": "C",
     "topic": "functions",
@@ -1910,7 +1940,7 @@
   },
   {
     "n": 25,
-    "chinese": "若指数函数 y = aˣ 在 R 上单调递增, 则 a 的取值范围是",
+    "chinese": "若指数函数 y = aˣ 在 ℝ 上单调递增, 则 a 的取值范围是",
     "english": "If an exponential function y = aˣ is monotonic increasing on ℝ, then the range of a is",
     "options": [
       "A. a > 1",
@@ -1968,7 +1998,7 @@
     "chinese": "函数 y = eˣ + 2 的值域是什么？",
     "english": "What is the range of the function y = eˣ + 2?",
     "options": [
-      "A. R",
+      "A. ℝ",
       "B. [2, +∞)",
       "C. (0, +∞)",
       "D. (2, +∞)"
@@ -3307,7 +3337,7 @@
     "chinese": "关于正切函数 y = tan x，下列说法不正确的是",
     "english": "Regarding the tangent function y = tan x, which statement is incorrect?",
     "options": [
-      "A. 值域为 R / The range is R",
+      "A. 值域为 ℝ / The range is ℝ",
       "B. 是奇函数 / It is an odd function",
       "C. 是周期函数，且最小正周期为 π / It is periodic, and its smallest positive period is π",
       "D. 定义域为 {x | x ≠ kπ, k ∈ Z} / The domain is {x | x ≠ kπ, k ∈ Z}"
@@ -3324,13 +3354,13 @@
     "solution_ru2": "Тангенс определен для всех углов, кроме тех, где cos x = 0, то есть x ≠ π/2 + kπ. Область определения, указанная в D (x ≠ kπ), неверна: при x = π/2, например, тангенс не определен, но π/2 не равно kπ. Остальные утверждения верны: tan x принимает все действительные значения, tan(-x) = -tan x, tan(x + π) = tan x.",
     "solution_en2": "Tangent is defined for all angles except where cos x = 0, i.e., x ≠ π/2 + kπ. The domain given in D (x ≠ kπ) is incorrect: at x = π/2, for example, tangent is undefined, but π/2 is not equal to kπ. The other statements are correct: tan x takes all real values, tan(-x) = -tan x, tan(x + π) = tan x.",
     "options_en": [
-      "A. The range is R",
+      "A. The range is ℝ",
       "B. It is an odd function",
       "C. It is periodic, and its smallest positive period is π",
       "D. The domain is {x | x ≠ kπ, k ∈ Z}"
     ],
     "options_ch": [
-      "A. 值域为 R",
+      "A. 值域为 ℝ",
       "B. 是奇函数",
       "C. 是周期函数，且最小正周期为 π",
       "D. 定义域为 {x | x ≠ kπ, k ∈ Z}"
@@ -7689,6 +7719,63 @@
     "solution_ru2": "Из условия 1/aₙ + 2/aₙ₊₁ = 0 ⇒ 2/aₙ₊₁ = -1/aₙ ⇒ aₙ₊₁ = -2aₙ. Это геометрическая прогрессия со знаменателем q = -2 и a₁ = 1. Тогда aₙ = a₁·q^{n-1} = (-2)^{n-1}. Модуль bₙ = |aₙ| = 2^{n-1}. Сумма первых n членов геометрической прогрессии со знаменателем 2: Sₙ = (2ⁿ - 1)/(2-1) = 2ⁿ - 1.",
     "solution_en2": "From the condition 1/aₙ + 2/aₙ₊₁ = 0 ⇒ 2/aₙ₊₁ = -1/aₙ ⇒ aₙ₊₁ = -2aₙ. This is a geometric progression with ratio q = -2 and a₁ = 1. Then aₙ = a₁·q^{n-1} = (-2)^{n-1}. The absolute value bₙ = |aₙ| = 2^{n-1}. The sum of the first n terms of a geometric progression with ratio 2 is Sₙ = (2ⁿ - 1)/(2-1) = 2ⁿ - 1."
   },
+
+  {
+    "chinese": "计算 z₁ + z₂，其中 z₁ = 1 + i，z₂ = 2 + 3i",
+    "english": "Calculate z₁ + z₂, where z₁ = 1 + i, z₂ = 2 + 3i",
+    "options": [
+        "A. 3 + 4i",
+        "B. 3 + 2i",
+        "C. 1 + 4i",
+        "D. 2 + 3i"
+    ],
+    "answer": "A",
+    "topic": "complex numbers",
+    "type": "moc",
+    "subtopic": "simple tasks",
+    "difficulty": 2,
+    "id": "CNS0",
+    "solution_ru2": "Складываем действительные и мнимые части отдельно: (1 + i) + (2 + 3i) = (1 + 2) + (1 + 3)i = 3 + 4i.",
+    "solution_en2": "Add the real and imaginary parts separately: (1 + i) + (2 + 3i) = (1 + 2) + (1 + 3)i = 3 + 4i."
+   },
+   {
+    "chinese": "设 z₁ = i，z₂ = 1 + i，计算 z₁ z₂",
+    "english": "Let z₁ = i, z₂ = 1 + i. Compute z₁ z₂",
+    "options": [
+        "A. 1 + i",
+        "B. -1 + i",
+        "C. 1 - i",
+        "D. i - 1"
+    ],
+    "answer": "B",
+    "topic": "complex numbers",
+    "type": "moc",
+    "subtopic": "simple tasks",
+    "difficulty": 2,
+    "id": "CNS1",
+    "solution_ru2": "Умножаем: i·(1 + i) = i·1 + i·i = i + i² = i + (-1) = -1 + i.",
+    "solution_en2": "Multiply: i·(1 + i) = i·1 + i·i = i + i² = i + (-1) = -1 + i."
+},
+
+  {
+    "chinese": "设 z₁ = 1 + i，z₂ = 1 - i，计算 z₁ · z₂",
+    "english": "Let z₁ = 1 + i, z₂ = 1 - i. Compute z₁ · z₂",
+    "options": [
+        "A. 2",
+        "B. 2i",
+        "C. 0",
+        "D. 1 + i"
+    ],
+    "answer": "A",
+    "topic": "complex numbers",
+    "type": "moc",
+    "subtopic": "simple tasks",
+    "difficulty": 2,
+    "id": "CNS1",
+    "solution_ru2": "Используем формулу разности квадратов: (1 + i)(1 - i) = 1² - i² = 1 - (-1) = 2.",
+    "solution_en2": "Use the difference of squares formula: (1 + i)(1 - i) = 1² - i² = 1 - (-1) = 2."
+},
+
   {
     "chinese": "计算 (1+i)² =",
     "english": "Calculate (1+i)² =",

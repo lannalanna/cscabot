@@ -5329,6 +5329,17 @@ async def on_start_command(message: types.Message):
                             logging.error(f"Ошибка получения статистики приглашённых для пользователя {message.from_user.id}: {e}")
                     # Сообщение пользователю о его вкладе
                     lang = await _get_user_lang(message.from_user)
+                    await _get_user_exam_lang_by_id(message.from_user.id)
+                    log(
+                        message.from_user,
+                        [
+                            "own_invite_link",
+                            "invited_count",
+                            invited_count,
+                            "total_answers_by_invited",
+                            total_answers_by_invited,
+                        ],
+                    )
                     if lang.startswith("ru"):
                         text = (
                             "📊 Ваша статистика приглашений:\n\n"
