@@ -22,8 +22,6 @@ from langchain_core.messages import SystemMessage, HumanMessage
 
 API_TOKEN = os.environ.get('BOT_TOKEN', '8162784129:AAHbZZ1JZONUH8sujANe4txembuBeRsXaCM')
 
-#Prod bot
-#API_TOKEN = os.environ.get('BOT_TOKEN', '8211322326:AAFbYxJ-qI0ERUJOUygYSbOzAfXK-vjt0us')
 # Базовые пути и выбор директории данных
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -1117,7 +1115,7 @@ def _wrong_answer_training_extra_message(lang: str, wrong_today: int, total_toda
             block += "\nНеобходимо сначала выучить теорию."
         if wrong_today > 10:
             block += (
-                "\n\nОграничение по ошибкам сегодня: не более 30. "
+                f"\n\nОграничение по ошибкам сегодня: не более {N}. "
                 f"\n{_wrong_answer_limit_phrase(lang)}"
             )
     else:
@@ -1126,7 +1124,7 @@ def _wrong_answer_training_extra_message(lang: str, wrong_today: int, total_toda
             block += "\nYou need to learn the theory first."
         if wrong_today > 10:
             block += (
-                "\n\nToday's mistake limit: no more than 30. "
+                f"\n\nToday's mistake limit: no more than {N}. "
                 f"\n{_wrong_answer_limit_phrase(lang)}"
             )
     return block + "\n\n"
@@ -1650,11 +1648,11 @@ async def makeinvite(usr) :
        lang = await _get_user_lang(usr)
        link = "https://t.me/csca_mathbot?start=invite"+inv
        if lang.startswith("ru") :
-                message = "CSCA math bot бесплатный (пока). Чтобы продолжать пользоваться им неограниченно, отправьте ссылку-приглашения друзьям или опубликуйте ее в любом CSCA чате"
+                message = "Чтобы продолжать пользоваться CSCA math bot без ограничений, отправьте ссылку-приглашение друзьям или опубликуйте ее в любом CSCA-чате."
                 message = message+"\n Персональная ссылка-приглашение "+link
                 
        else :    
-                message = "CSCA math bot is free. To continue using it without limits, send an invitation link to friends or post it in any CSCA chat."
+                message = "To keep using CSCA math bot without limits, send an invitation link to friends or post it in any CSCA chat."
                 message = message+"\n Your personal invitation link "+link
                 
        return message
@@ -2409,6 +2407,8 @@ async def _send_exam_summary_by_type(call: CallbackQuery, user_id: int, exam_typ
             f"You solved {state.get('correct_count', 0)} out of {total_q} tasks correctly and scored {k:.2f} points."
             f"{stats}"
         )
+    await _refresh_log_lang_cache(call.from_user)
+    log(call.from_user, [cfg["id"], "summary", round(k, 2)])
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
         await call.message.answer(msg, reply_markup=kb)
 
@@ -2486,6 +2486,8 @@ async def _send_exam_summary(call: CallbackQuery, user_id: int):
            f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points."
            f"{stats}"
        )
+   await _refresh_log_lang_cache(call.from_user)
+   log(call.from_user, [EXAM_25JAN_ID, "summary", round(k, 2)])
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(msg, reply_markup=kb)
 
@@ -2610,6 +2612,8 @@ async def _send_exam_dec_summary(call: CallbackQuery, user_id: int):
            f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points."
            f"{stats}"
        )
+   await _refresh_log_lang_cache(call.from_user)
+   log(call.from_user, [EXAM_21DEC_ID, "summary", round(k, 2)])
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(msg, reply_markup=kb)
 
@@ -2791,6 +2795,8 @@ async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
            f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points."
            f"{rec_text}"
        )
+   await _refresh_log_lang_cache(call.from_user)
+   log(call.from_user, [EXAM_MOCK_ID, "summary", round(k, 2)])
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(msg, reply_markup=kb)
 
@@ -3191,7 +3197,7 @@ def _kb_soldn_after_ai_unclear(
             url=chat_url,
         )
     )
-    if show_explain:
+    if  show_explain:
         kb.row(
             InlineKeyboardButton(
                 text=_txt(lang, "Объяснить подробнее…", "Explain in more detail…"),
@@ -3221,7 +3227,7 @@ def _discussion_url_for_task(q: dict, lang: str) -> str:
 
 def _get_llm_access_token() -> str:
     access_token = os.environ.get("LLM_TOKEN", "").strip()
-    access_token = "--"
+  #  access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NjkwNTI4MDgsImlhdCI6MTc3NDk2NzQzMywiYXV0aF90aW1lIjoxNzc0MDk5MjA4LCJqdGkiOiJmYTZlOTU2My02ZGFjLTRjYTEtYTBhMi03NWQ1NTcxNDVlMTgiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiZWFmNWYxODYtNjIzZi00MjE1LTgxOGUtZDE4ZGJlZWFhY2E3IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.McrZQDL2b3KOAV5-a4YLna3wKQnxa1gWVDOX6RmgmdGXMSpdGMjHLDgHuUsEyhLoepFXZqCAL1PmLAq081mbRLscu_c-HInXijfCj2n-raK_MBUfaU3KY1XIGcWh7XzHtaEwMorO5goENF4L_COLBreBz8Am4kRquwIZ4AWZkv6iyfc7YFQpSWEJd8y_7DFgMRe6kNy18Qmvg3bxTaVfjNctcm6qmnNiLUhLg35PnPkKASs3ftGw0YIKqEN47dAf_WVKfoSJnnI6ycxmQMHRGpwX1nfiD7XxXfOXTcoZlDnWAJa_7Q4_Nm0CbJskjAQvjqV3XpoVYQyafbX2dDrrag"
     return access_token
 
 
@@ -3235,14 +3241,14 @@ def _do_llm_request(
     access_token: str,
     exam_lang: str | None = None,
 ) -> str:
-    llm = AmveraLLM(model="gpt-4.1",  api_token=access_token)
+    llm = AmveraLLM(model="gpt-5",  api_token=access_token)
     addtext = """Определи о чем вопрос и верни одно из чисел: 
 1 задачи по математике, 
 2 физика 
 3 химия
 4 не понятно как решить задачу
-5 информация о CSCA"""
-    short = _txt(lang, "Отвечай коротко и по делу.", "Answer briefly and to the point.")
+5 информация об экзамене, CSCA, о работе бота"""
+    short = _txt(lang, "Ты бот подготовки к экзамену CSCA. Отвечай коротко и по делу.", "You are CSCA exam prep bot. Answer briefly and to the point.")
 
     if mode == LLM_CONTEXT_ADDTEXT_ONLY:
         messages = [
@@ -3274,7 +3280,7 @@ def _do_llm_request(
         ]
     else:
         messages = [
-            SystemMessage(content=addtext),
+          #  SystemMessage(content=addtext),
             SystemMessage(content=short),
             HumanMessage(content=user_text),
         ]
@@ -4105,8 +4111,8 @@ async def on_llm_explain_last(call: CallbackQuery):
         await call.message.answer(
             _txt(
                 lang,
-                "Сначала откройте задачу в боте (тема, подтема, экзамен или режим «вся математика»), затем снова нажмите кнопку.",
-                "Open a task in the bot first, then tap the button again.",
+                "Если вам нужна помощь по задаче, сначала откройте задачу в боте (тема, подтема, экзамен или режим «вся математика»), затем снова нажмите кнопку.",
+                "If you need help, open a task in the bot first, then tap the button again.",
             )
         )
         return
@@ -5325,7 +5331,7 @@ async def on_start_command(message: types.Message):
                     lang = await _get_user_lang(message.from_user)
                     if lang.startswith("ru"):
                         text = (
-                            "📊 Ваша пригласительная статистика:\n\n"
+                            "📊 Ваша статистика приглашений:\n\n"
                             f"По вашей ссылке пришло новых пользователей: {invited_count}.\n"
                             f"Суммарно они решили задач: {total_answers_by_invited}."
                         )
@@ -5887,6 +5893,8 @@ async def cmd_exam25stats(message: types.Message):
     )
     text = ru_block + "\n\n" + en_block
     kb = await start_kb(message.from_user.id)
+    await _refresh_log_lang_cache(message.from_user)
+    log(message.from_user, [EXAM_25JAN_ID, "summary", round(k, 2)])
     await message.answer(text, reply_markup=kb)
 
 
@@ -5916,6 +5924,8 @@ async def cmd_exam21decstats(message: types.Message):
     )
     text = ru_block + "\n\n" + en_block
     kb = await start_kb(message.from_user.id)
+    await _refresh_log_lang_cache(message.from_user)
+    log(message.from_user, [EXAM_21DEC_ID, "summary", round(k, 2)])
     await message.answer(text, reply_markup=kb)
 
 
@@ -5945,6 +5955,8 @@ async def cmd_exam_mock_stats(message: types.Message):
     )
     text = ru_block + "\n\n" + en_block
     kb = await start_kb(message.from_user.id)
+    await _refresh_log_lang_cache(message.from_user)
+    log(message.from_user, [EXAM_MOCK_ID, "summary", round(k, 2)])
     await message.answer(text, reply_markup=kb)
 
 
@@ -6009,7 +6021,8 @@ async def pay(user, mode: str = "exam"):
                 f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
                 "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
                 "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
-                "250 Telegram Stars по кнопке ниже."
+                "250 Telegram Stars по кнопке ниже.\n"
+                "Это разовый платеж, который снимает все ограничения навсегда."
             )
         else:
             text = (
@@ -6019,7 +6032,8 @@ async def pay(user, mode: str = "exam"):
                 f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
                 "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
                 "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
-                "250 Telegram Stars  по кнопке ниже."
+                "250 Telegram Stars  по кнопке ниже.\n"
+                "Это разовый платеж, который снимает все ограничения навсегда."
             )
         kb = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -6040,7 +6054,8 @@ async def pay(user, mode: str = "exam"):
                 f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
                 "access will be unlocked after three new users follow your link.\n\n"
                 "If none of these options works for you, you can pay 250 Telegram Stars "
-                "using the button below."
+                "using the button below.\n"
+                "This is a one-time payment that removes all restrictions forever."
             )
         else:
             text = (
@@ -6051,7 +6066,8 @@ async def pay(user, mode: str = "exam"):
                 f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
                 "access will be unlocked after three new users follow your link.\n\n"
                 "If none of these options works for you, you can pay 250 Telegram Stars  "
-                "using the button below."
+                "using the button below.\n"
+                "This is a one-time payment that removes all restrictions forever."
             )
         kb = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -6228,8 +6244,8 @@ async def on_any_message(message: Message):
                 await message.answer(
                     _txt(
                         lang,
-                        "Сначала откройте задачу в боте (тема, подтема, экзамен или режим «вся математика»), затем снова напишите сообщение.",
-                        "Open a task in the bot first (topic, subtopic, exam, or “all math” mode), then send your message again.",
+                        "Если вам нужна помощь по задаче, сначала откройте задачу в боте, затем снова напишите сообщение.",
+                        "If you need help, open a task in the bot first, then send your message again.",
                     )
                 )
                 return
@@ -6312,8 +6328,8 @@ async def on_any_message(message: Message):
                             await message.answer(
                                 _txt(
                                     lang,
-                                    "Сначала откройте задачу в боте (тема, подтема, экзамен или режим «вся математика»), затем снова напишите сообщение.",
-                                    "Open a task in the bot first (topic, subtopic, exam, or “all math” mode), then send your message again.",
+                                    "Если вам нужна помощь по задаче, откройте задачу в боте, затем снова напишите сообщение.",
+                                    "Open a task in the bot first, then send your message again.",
                                 )
                             )
                             return
