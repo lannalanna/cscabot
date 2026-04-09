@@ -1,0 +1,21 @@
+﻿python : Traceback (most recent call last):
+C:\Users\Sveta\AppData\Local\Temp\ps-script-1c9f6422-9069-43c1-9391-08df486aa3b3.ps1:75 знак:1
++ python -c "import json; from pathlib import Path; p=Path(r'c:/Users/S ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "<string>", line 10, in <module>
+    print('en:',repr((x.get('english')or'')[:200]))
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sveta\anaconda3\Lib\encodings\cp1251.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2083' in position 15: character maps to <undefined>
+indices [312, 313, 315, 316, 317, 319, 328, 360, 361, 362]
+--- 312 LLL2 ---
+en: 'Calculate  log_0.5(8) = '
+opts: ['A. 3', 'B. -3', 'C. 2', 'D. -2']
+ans: B
+--- 313 LLL2 ---
+en: 

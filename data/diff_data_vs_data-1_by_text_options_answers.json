@@ -1,0 +1,457 @@
+{
+  "diff_by_text": [
+    {
+      "match_by": "english",
+      "english": "The equation of the directrix of the parabola y² = -x is",
+      "id_a": "PPC5",
+      "id_b": "PPC6",
+      "topic_a": "conic curves",
+      "topic_b": "conic curves",
+      "subtopic_a": "parabola",
+      "subtopic_b": "parabola",
+      "type_a": "mar",
+      "type_b": "dec",
+      "n_a": 37,
+      "n_b": 39,
+      "answer_a": "A",
+      "answer_b": "C",
+      "options_a": [
+        "A. x = 1/4",
+        "B. x = 1/2",
+        "C. x = -1/4",
+        "D. x = -1/2"
+      ],
+      "options_b": [
+        "A. x = 1/2",
+        "B. x = -1/2",
+        "C. x = 1/4",
+        "D. x = -1/4"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "The equation of the directrix of the parabola y² = -x is",
+      "id_a": "PPC6",
+      "id_b": "PPC5",
+      "topic_a": "conic curves",
+      "topic_b": "conic curves",
+      "subtopic_a": "parabola",
+      "subtopic_b": "parabola",
+      "type_a": "dec",
+      "type_b": "mar",
+      "n_a": 39,
+      "n_b": 37,
+      "answer_a": "C",
+      "answer_b": "A",
+      "options_a": [
+        "A. x = 1/2",
+        "B. x = -1/2",
+        "C. x = 1/4",
+        "D. x = -1/4"
+      ],
+      "options_b": [
+        "A. x = 1/4",
+        "B. x = 1/2",
+        "C. x = -1/4",
+        "D. x = -1/2"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Two resistors R₁ = 10 Ω and R₂ = 30 Ω are connected in parallel to a circuit with voltage U = 12 V. The ratio of the current passing through the resistors I₁ : I₂ = ( ).",
+      "id_a": "CDCD",
+      "id_b": "CDCD",
+      "topic_a": "physics",
+      "topic_b": "physics",
+      "subtopic_a": "current division",
+      "subtopic_b": "current division",
+      "type_a": null,
+      "type_b": null,
+      "n_a": 27,
+      "n_b": 37,
+      "answer_a": "D",
+      "answer_b": "D",
+      "options_a": [
+        "A. 1 : 1",
+        "B. 1 : 2",
+        "C. 4 : 3",
+        "D. 3 : 4"
+      ],
+      "options_b": [
+        "A. 1 : 1",
+        "B. 1 : 2",
+        "C. 4 : 3",
+        "D. 3 : 1"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Two resistors R₁ = 10 Ω and R₂ = 30 Ω are connected in parallel to a circuit with voltage U = 12 V. The ratio of the current passing through the resistors I₁ : I₂ = ( ).",
+      "id_a": "CDCD",
+      "id_b": "CDCD",
+      "topic_a": "physics",
+      "topic_b": "physics",
+      "subtopic_a": "current division",
+      "subtopic_b": "current division",
+      "type_a": null,
+      "type_b": null,
+      "n_a": 37,
+      "n_b": 27,
+      "answer_a": "D",
+      "answer_b": "D",
+      "options_a": [
+        "A. 1 : 1",
+        "B. 1 : 2",
+        "C. 4 : 3",
+        "D. 3 : 1"
+      ],
+      "options_b": [
+        "A. 1 : 1",
+        "B. 1 : 2",
+        "C. 4 : 3",
+        "D. 3 : 4"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following are the same function ? ( )",
+      "id_a": "FP13",
+      "id_b": "FP20",
+      "topic_a": "functions",
+      "topic_b": "functions",
+      "subtopic_a": "identical functions",
+      "subtopic_b": "identical functions",
+      "type_a": "jan",
+      "type_b": "-",
+      "n_a": 35,
+      "n_b": null,
+      "answer_a": "B",
+      "answer_b": "C",
+      "options_a": [
+        "A. y = (√x)² 和 and y = √(x²) 是同一个函数",
+        "B. y = (x⁴ - 1)/(x² + 1) 和  and y = x² - 1 是同一个函数",
+        "C. y = 1 和 and y = x² 是同一个函数",
+        "D. y = x 和 and y = √(x²) 是同一个函数"
+      ],
+      "options_b": [
+        "A. y = x 和 and y=(√x)² ",
+        "B. y = 1 和  and y = x/x",
+        "C. y = x² 和 and y = √x⁴",
+        "D. y = x + 1 和 and y = (x² - 1)/(x - 1)"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following are the same function ? ( )",
+      "id_a": "FP20",
+      "id_b": "FP13",
+      "topic_a": "functions",
+      "topic_b": "functions",
+      "subtopic_a": "identical functions",
+      "subtopic_b": "identical functions",
+      "type_a": "-",
+      "type_b": "jan",
+      "n_a": null,
+      "n_b": 35,
+      "answer_a": "C",
+      "answer_b": "B",
+      "options_a": [
+        "A. y = x 和 and y=(√x)² ",
+        "B. y = 1 和  and y = x/x",
+        "C. y = x² 和 and y = √x⁴",
+        "D. y = x + 1 和 and y = (x² - 1)/(x - 1)"
+      ],
+      "options_b": [
+        "A. y = (√x)² 和 and y = √(x²) 是同一个函数",
+        "B. y = (x⁴ - 1)/(x² + 1) 和  and y = x² - 1 是同一个函数",
+        "C. y = 1 和 and y = x² 是同一个函数",
+        "D. y = x 和 and y = √(x²) 是同一个函数"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following functions is an odd function?",
+      "id_a": "FP4",
+      "id_b": "FP22",
+      "topic_a": "functions",
+      "topic_b": "functions",
+      "subtopic_a": "functions properties",
+      "subtopic_b": "functions properties",
+      "type_a": "dec",
+      "type_b": null,
+      "n_a": 8,
+      "n_b": null,
+      "answer_a": "D",
+      "answer_b": "C",
+      "options_a": [
+        "A. y = x sin x",
+        "B. y = x^4",
+        "C. y = cos x",
+        "D. y = x + x³"
+      ],
+      "options_b": [
+        "A. y = (sin x)² ",
+        "B. y = x²",
+        "C. y = tan x",
+        "D. y = 1 + x³"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following functions is an odd function?",
+      "id_a": "FP22",
+      "id_b": "FP4",
+      "topic_a": "functions",
+      "topic_b": "functions",
+      "subtopic_a": "functions properties",
+      "subtopic_b": "functions properties",
+      "type_a": null,
+      "type_b": "dec",
+      "n_a": null,
+      "n_b": 8,
+      "answer_a": "C",
+      "answer_b": "D",
+      "options_a": [
+        "A. y = (sin x)² ",
+        "B. y = x²",
+        "C. y = tan x",
+        "D. y = 1 + x³"
+      ],
+      "options_b": [
+        "A. y = x sin x",
+        "B. y = x^4",
+        "C. y = cos x",
+        "D. y = x + x³"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following inequalities is correct?",
+      "id_a": "PO1",
+      "id_b": "II2",
+      "topic_a": "functions",
+      "topic_b": "functions",
+      "subtopic_a": "inequalities",
+      "subtopic_b": "inequalities",
+      "type_a": "mar",
+      "type_b": "dec",
+      "n_a": 19,
+      "n_b": 15,
+      "answer_a": "A",
+      "answer_b": "D",
+      "options_a": [
+        "A. 2.1^(2/3) > 1.2^(2/3)",
+        "B. 2.1^(-2) > 1.2^(-2)",
+        "C. 3^(2.25) > 3^3",
+        "D. 0.75^(-0.2) > 0.75^(-0.4)"
+      ],
+      "options_b": [
+        "A. 0.75^(-0.2) > 0.75^(-0.4)",
+        "B. 3^(4.5) > 3^5",
+        "C. 2.1^(-2) > 2.1^(-2)",
+        "D. 2.1^(2/3) > 1.2^(2/3)"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following inequalities is correct?",
+      "id_a": "II2",
+      "id_b": "PO1",
+      "topic_a": "functions",
+      "topic_b": "functions",
+      "subtopic_a": "inequalities",
+      "subtopic_b": "inequalities",
+      "type_a": "dec",
+      "type_b": "mar",
+      "n_a": 15,
+      "n_b": 19,
+      "answer_a": "D",
+      "answer_b": "A",
+      "options_a": [
+        "A. 0.75^(-0.2) > 0.75^(-0.4)",
+        "B. 3^(4.5) > 3^5",
+        "C. 2.1^(-2) > 2.1^(-2)",
+        "D. 2.1^(2/3) > 1.2^(2/3)"
+      ],
+      "options_b": [
+        "A. 2.1^(2/3) > 1.2^(2/3)",
+        "B. 2.1^(-2) > 1.2^(-2)",
+        "C. 3^(2.25) > 3^3",
+        "D. 0.75^(-0.2) > 0.75^(-0.4)"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following statements is correct?",
+      "id_a": "NS1",
+      "id_b": "NS1",
+      "topic_a": "sets",
+      "topic_b": "sets",
+      "subtopic_a": "numerical sets",
+      "subtopic_b": "numerical sets",
+      "type_a": "oct",
+      "type_b": "choice",
+      "n_a": 1,
+      "n_b": null,
+      "answer_a": "D",
+      "answer_b": "B",
+      "options_a": [
+        "A. -2 ∈ ℕ",
+        "B. π ∈ ℚ",
+        "C. 3/2 ∈ ℤ",
+        "D. √3 ∈ R"
+      ],
+      "options_b": [
+        "A. -1 ∈ ℕ",
+        "B. 3.14 ∈ ℚ",
+        "C. √5 ∈ ℤ",
+        "D. π + 3 ∉ R"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following statements is correct?",
+      "id_a": "NS1",
+      "id_b": "NS1",
+      "topic_a": "sets",
+      "topic_b": "sets",
+      "subtopic_a": "numerical sets",
+      "subtopic_b": "numerical sets",
+      "type_a": "oct",
+      "type_b": "choice",
+      "n_a": 1,
+      "n_b": null,
+      "answer_a": "D",
+      "answer_b": "B",
+      "options_a": [
+        "A. -2 ∈ ℕ",
+        "B. π ∈ ℚ",
+        "C. 3/2 ∈ ℤ",
+        "D. √3 ∈ R"
+      ],
+      "options_b": [
+        "A. 若  If a ∈ ℕ，b ∈ ℕ，则  then a - b ∈ ℕ   ",
+        "B. 若  If a ∈ ℕ，则  then a ∈ ℚ",
+        "C. 若  If a ≥ 0，则  then a ∈ ℕ",
+        "D. 若  If a ∈ ℤ，则 then a ∉ ℚ"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following statements is correct?",
+      "id_a": "NS1",
+      "id_b": "NS1",
+      "topic_a": "sets",
+      "topic_b": "sets",
+      "subtopic_a": "numerical sets",
+      "subtopic_b": "numerical sets",
+      "type_a": "choice",
+      "type_b": "oct",
+      "n_a": null,
+      "n_b": 1,
+      "answer_a": "B",
+      "answer_b": "D",
+      "options_a": [
+        "A. -1 ∈ ℕ",
+        "B. 3.14 ∈ ℚ",
+        "C. √5 ∈ ℤ",
+        "D. π + 3 ∉ R"
+      ],
+      "options_b": [
+        "A. -2 ∈ ℕ",
+        "B. π ∈ ℚ",
+        "C. 3/2 ∈ ℤ",
+        "D. √3 ∈ R"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following statements is correct?",
+      "id_a": "NS1",
+      "id_b": "NS1",
+      "topic_a": "sets",
+      "topic_b": "sets",
+      "subtopic_a": "numerical sets",
+      "subtopic_b": "numerical sets",
+      "type_a": "choice",
+      "type_b": "choice",
+      "n_a": null,
+      "n_b": null,
+      "answer_a": "B",
+      "answer_b": "B",
+      "options_a": [
+        "A. -1 ∈ ℕ",
+        "B. 3.14 ∈ ℚ",
+        "C. √5 ∈ ℤ",
+        "D. π + 3 ∉ R"
+      ],
+      "options_b": [
+        "A. 若  If a ∈ ℕ，b ∈ ℕ，则  then a - b ∈ ℕ   ",
+        "B. 若  If a ∈ ℕ，则  then a ∈ ℚ",
+        "C. 若  If a ≥ 0，则  then a ∈ ℕ",
+        "D. 若  If a ∈ ℤ，则 then a ∉ ℚ"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following statements is correct?",
+      "id_a": "NS1",
+      "id_b": "NS1",
+      "topic_a": "sets",
+      "topic_b": "sets",
+      "subtopic_a": "numerical sets",
+      "subtopic_b": "numerical sets",
+      "type_a": "choice",
+      "type_b": "oct",
+      "n_a": null,
+      "n_b": 1,
+      "answer_a": "B",
+      "answer_b": "D",
+      "options_a": [
+        "A. 若  If a ∈ ℕ，b ∈ ℕ，则  then a - b ∈ ℕ   ",
+        "B. 若  If a ∈ ℕ，则  then a ∈ ℚ",
+        "C. 若  If a ≥ 0，则  then a ∈ ℕ",
+        "D. 若  If a ∈ ℤ，则 then a ∉ ℚ"
+      ],
+      "options_b": [
+        "A. -2 ∈ ℕ",
+        "B. π ∈ ℚ",
+        "C. 3/2 ∈ ℤ",
+        "D. √3 ∈ R"
+      ]
+    },
+    {
+      "match_by": "english",
+      "english": "Which of the following statements is correct?",
+      "id_a": "NS1",
+      "id_b": "NS1",
+      "topic_a": "sets",
+      "topic_b": "sets",
+      "subtopic_a": "numerical sets",
+      "subtopic_b": "numerical sets",
+      "type_a": "choice",
+      "type_b": "choice",
+      "n_a": null,
+      "n_b": null,
+      "answer_a": "B",
+      "answer_b": "B",
+      "options_a": [
+        "A. 若  If a ∈ ℕ，b ∈ ℕ，则  then a - b ∈ ℕ   ",
+        "B. 若  If a ∈ ℕ，则  then a ∈ ℚ",
+        "C. 若  If a ≥ 0，则  then a ∈ ℕ",
+        "D. 若  If a ∈ ℤ，则 then a ∉ ℚ"
+      ],
+      "options_b": [
+        "A. -1 ∈ ℕ",
+        "B. 3.14 ∈ ℚ",
+        "C. √5 ∈ ℤ",
+        "D. π + 3 ∉ R"
+      ]
+    }
+  ],
+  "stats": {
+    "matched_english_keys": 400,
+    "matched_chinese_keys": 358,
+    "diff_pairs_found": 16
+  }
+}

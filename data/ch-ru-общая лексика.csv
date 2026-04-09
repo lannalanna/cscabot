@@ -1,0 +1,110 @@
+text;下列 xiàliè;-
+option;следующий;y
+option;предыдущий;n
+option;вышеуказанный;n
+option;единственный;n
+option;некоторый;n
+text;正确 zhèngquè;-
+option;правильный, верный;y
+option;ошибочный;n
+option;неточный;n
+option;приблизительный;n
+option;сомнительный;n
+text;错误 cuòwù;-
+option;ошибочный, неверный;y
+option;правильный;n
+option;точный;n
+option;безупречный;n
+option;доказанный;n
+text;选项 xuǎnxiàng;-
+option;вариант (ответа);y
+option;вопрос;n
+option;условие;n
+option;решение;n
+option;утверждение;n
+text;答案 dá'àn;-
+option;ответ;y
+option;вопрос;n
+option;задача;n
+option;решение;n
+option;доказательство;n
+text;设 shè;-
+option;пусть, предположим;y
+option;дано;n
+option;следовательно;n
+option;тогда;n
+option;если;n
+text;已知 yǐzhī;-
+option;дано, известно, что;y
+option;пусть;n
+option;требуется доказать;n
+option;найти;n
+option;определить;n
+text;则 zé;-
+option;тогда, то;y
+option;если;n
+option;и;n
+option;или;n
+option;но;n
+text;若 ruò;-
+option;если;y
+option;тогда;n
+option;и;n
+option;или;n
+option;но;n
+text;且 qiě;-
+option;и, а также;y
+option;или;n
+option;но;n
+option;если;n
+option;тогда;n
+text;或 huò;-
+option;или;y
+option;и;n
+option;но;n
+option;если;n
+option;тогда;n
+text;那么 nàme;-
+option;тогда, в таком случае;y
+option;если;n
+option;и;n
+option;но;n
+text;为什么 wèishénme;-
+option;почему;y
+option;зачем;n
+option;откуда;n
+option;когда;n
+option;где;n
+text;所以 suǒyǐ;-
+option;поэтому, следовательно;y
+option;потому что;n
+option;однако;n
+option;несмотря на;n
+option;вопреки;n
+text;因为 yīnwèi;-
+option;потому что;y
+option;поэтому;n
+option;следовательно;n
+option;однако;n
+option;зачем;n
+text;属于 shǔyú;-
+option;принадлежать;y
+option;содержать;n
+option;включать;n
+option;исключать;n
+option;состоять из;n
+text;下列哪个陈述是正确的？ xiàliè nǎge chénshù shì zhèngquè de?;-
+option;Какое из следующих утверждений является верным?;y
+option;Какое из следующих утверждений является неверным?;n
+text;下列哪个陈述是不正确的？ xiàliè nǎge chénshù shì bù zhèngquè de?;-
+option;Какое из следующих утверждений является неверным?;y
+option;Какое из следующих утверждений является верным?;n
+text;下列结论正确的是 xiàliè jiélùn zhèngquè de shì;-
+option;Какой вывод является правильным?;y
+option;Какой вывод является неправильным?;n
+text;下列说法正确的是 xiàliè shuōfǎ zhèngquè de shì;-
+option;Какое из следующих высказываний верно?;y
+option;Какое из следующих высказываний неверно?;n
+text;关于...，下列说法正确的是 guānyú..., xiàliè shuōfǎ zhèngquè de shì;-
+option;Какое из следующих утверждений о ... является верным?;y
+option;Какое из следующих утверждений о ... является неверным?;n

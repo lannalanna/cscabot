@@ -1,0 +1,84 @@
+text;区间 qūjiān;-
+option;интервал, промежуток;y
+option;множество решений;n
+option;область определения;n
+option;значение функции;n
+option;координата;n
+text;绝对值 juéduìzhí;-
+option;абсолютная величина, модуль;y
+option;расстояние;n
+option;проекция;n
+option;наклон;n
+option;коэффициент;n
+text;不等式 bùděngshì;-
+option;неравенство;y
+option;уравнение;n
+option;функция;n
+option;тождество;n
+option;выражение;n
+text;解集 jiějí;-
+option;множество решений;y
+option;область определения;n
+option;значение функции;n
+option;интервал;n
+option;переменная;n
+text;函数 hánshù;-
+option;функция;y
+option;уравнение;n
+option;график;n
+option;переменная;n
+option;последовательность;n
+text;定义域 dìngyìyù;-
+option;область определения;y
+option;область значений;n
+option;множество решений;n
+option;координатная плоскость;n
+option;промежуток;n
+text;值域 zhíyù;-
+option;область значений;y
+option;область определения;n
+option;множество решений;n
+option;точка пересечения;n
+option;значение аргумента;n
+text;单调递增 dāndiào dìzēng;-
+option;монотонно возрастающий;y
+option;монотонно убывающий;n
+option;постоянный;n
+option;периодический;n
+option;ограниченный;n
+text;单调递减 dāndiào dìjiǎn;-
+option;монотонно убывающий;y
+option;монотонно возрастающий;n
+option;постоянный;n
+option;неограниченный;n
+option;непрерывный;n
+text;奇函数 qí hánshù;-
+option;нечётная функция;y
+option;чётная функция;n
+option;периодическая функция;n
+option;обратная функция;n
+option;линейная функция;n
+text;偶函数 ǒu hánshù;-
+option;чётная функция;y
+option;нечётная функция;n
+option;периодическая функция;n
+option;монотонная функция;n
+option;степенная функция;n
+text;反函数 fǎn hánshù;-
+option;обратная функция;y
+option;производная;n
+option;первообразная;n
+option;сложная функция;n
+option;явная функция;n
+text;指数函数 zhǐshù hánshù;-
+option;показательная функция;y
+option;логарифмическая функция;n
+option;степенная функция;n
+option;тригонометрическая функция;n
+option;гиперболическая функция;n
+text;对数函数 duìshù hánshù;-
+option;логарифмическая функция;y
+option;показательная функция;n
+option;степенная функция;n
+option;тригонометрическая функция;n
+option;дробно-рациональная функция;n

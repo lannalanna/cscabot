@@ -1,0 +1,60 @@
+text;圆 yuán;-
+option;окружность, круг;y
+option;эллипс;n
+option;гипербола;n
+option;парабола;n
+option;вершина;n
+text;圆心 yuánxīn;-
+option;центр окружности;y
+option;фокус;n
+option;вершина;n
+option;радиус;n
+option;диаметр;n
+text;半径 bànjìng;-
+option;радиус;y
+option;диаметр;n
+option;вершина;n
+option;парабола;n
+option;окружность;n
+text;椭圆 tuǒyuán;-
+option;эллипс;y
+option;гипербола;n
+option;парабола;n
+option;окружность;n
+option;овал;n
+text;焦点 jiāodiǎn;-
+option;фокус;y
+option;вершина;n
+option;центр;n
+option;директриса;n
+option;асимптота;n
+text;离心率 líxīnlǜ;-
+option;эксцентриситет;y
+option;радиус;n
+option;диаметр;n
+option;окружность;n
+option;параметр;n
+text;双曲线 shuāngqūxiàn;-
+option;гипербола;y
+option;эллипс;n
+option;парабола;n
+option;окружность;n
+option;синусоида;n
+text;渐近线 jiànjìnxiàn;-
+option;асимптота;y
+option;эллипс;n
+option;гипербола;n
+option;директриса;n
+option;радиус;n
+text;抛物线 pāowùxiàn;-
+option;парабола;y
+option;гипербола;n
+option;эллипс;n
+option;окружность;n
+option;фокус;n
+text;准线 zhǔnxiàn;-
+option;директриса;y
+option;фокус;n
+option;асимптота;n
+option;гипербола;n
+option;ось симметрии;n

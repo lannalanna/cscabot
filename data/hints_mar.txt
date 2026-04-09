@@ -1,0 +1,338 @@
+[
+  {
+    "n": 1,
+    "type": "mar",
+    "hint_en": "The set A represents real numbers greater than -2 and less than or equal to 3. 3 satisfies -2 < 3 ≤ 3, so 3 ∈ A; -3 < -2, -2 does not satisfy greater than -2, and 2 satisfies the condition.",
+    "hint_ru": "Множество A представляет действительные числа больше -2 и меньше или равные 3. 3 удовлетворяет условию -2 < 3 ≤ 3, поэтому 3 ∈ A; -3 < -2, -2 не удовлетворяет условию 'больше -2', а 2 удовлетворяет условию",
+    "hint_ch": "集合A表示大于-2且小于等于3的实数, 3满足 -2 < 3 ≤ 3, 故 3 ∈ A; -3 < -2, -2 不满足大于-2、2满足条件"
+  },
+  {
+    "n": 2,
+    "type": "mar",
+    "hint_en": "The intersection takes the common part of the two sets. The range of M is -5 ≤ x < 2, the range of N is -4 ≤ x ≤ 2, the common part is -4 ≤ x < 2, that is [-4, 2).",
+    "hint_ru": "Пересечение берет общую часть двух множеств. Диапазон M: -5 ≤ x < 2, диапазон N: -4 ≤ x ≤ 2, общая часть: -4 ≤ x < 2, то есть [-4, 2).",
+    "hint_ch": "交集取两个集合的公共部分, M范围 -5 ≤ x < 2, N范围 -4 ≤ x ≤ 2, 公共部分为 -4 ≤ x < 2, 即 [-4, 2)。"
+  },
+  {
+    "n": 3,
+    "type": "mar",
+    "hint_en": "Factorize to get (x - 3)(x + 2) > 0, solve to get x < -2 or x > 3.",
+    "hint_ru": "Разложите на множители: (x - 3)(x + 2) > 0, решите: x < -2 или x > 3.",
+    "hint_ch": "因式分解得 (x - 3)(x + 2) > 0, 解得 x < -2 或 x > 3。"
+  },
+  {
+    "n": 4,
+    "type": "mar",
+    "hint_en": "The denominator of the fraction is not equal to 0, that is 1 - x ≠ 0, so x ≠ 1, the domain is (-∞, 1) ∪ (1, +∞).",
+    "hint_ru": "Знаменатель дроби не равен 0, то есть 1 - x ≠ 0, значит x ≠ 1, область определения: (-∞, 1) ∪ (1, +∞).",
+    "hint_ch": "分式分母不为 0, 即 1 - x ≠ 0, 得 x ≠ 1, 定义域为 (-∞, 1) ∪ (1, +∞)。"
+  },
+  {
+    "n": 5,
+    "type": "mar",
+    "hint_en": "a = -2 < 0, ab < 0 means b > 0. The abscissa is negative and the ordinate is positive, the point is in the second quadrant.",
+    "hint_ru": "a = -2 < 0, ab < 0 означает b > 0. Абсцисса отрицательна, ордината положительна, точка находится во второй четверти.",
+    "hint_ch": "a = -2 < 0, ab < 0 则 b > 0, 横坐标负、纵坐标正, 点在第二象限。"
+  },
+  {
+    "n": 6,
+    "type": "mar",
+    "hint_en": "cos(5π/6) = cos(π - π/6) = -cos(π/6) = -√3/2.",
+    "hint_ru": "cos(5π/6) = cos(π - π/6) = -cos(π/6) = -√3/2.",
+    "hint_ch": "cos(5π/6) = cos(π - π/6) = -cos(π/6) = -√3/2。"
+  },
+  {
+    "n": 7,
+    "type": "mar",
+    "hint_en": "The domain x ≠ 0 is symmetric about the origin, f(-x) = ln((-x)^2) = ln(x^2) = f(x), so it is an even function.",
+    "hint_ru": "Область определения x ≠ 0 симметрична относительно начала координат, f(-x) = ln((-x)^2) = ln(x^2) = f(x), следовательно, это четная функция.",
+    "hint_ch": "定义域 x ≠ 0 关于原点对称, f(-x) = ln((-x)^2) = ln(x^2) = f(x), 故为偶函数。"
+  },
+  {
+    "n": 8,
+    "type": "mar",
+    "hint_en": "Solve for x from y = (3x - 2)/(2x + 1), get x = (y + 2)/(2y - 3), exchange x and y to get the inverse function y = (x + 2)/(2x - 3).",
+    "hint_ru": "Выразите x из y = (3x - 2)/(2x + 1), получите x = (y + 2)/(2y - 3), поменяйте x и y местами, чтобы получить обратную функцию: y = (x + 2)/(2x - 3).",
+    "hint_ch": "由 y = (3x - 2)/(2x + 1) 反解 x, 得 x = (y + 2)/(2y - 3), 互换 x, y 得反函数 y = (x + 2)/(2x - 3)。"
+  },
+  {
+    "n": 9,
+    "type": "mar",
+    "hint_en": "From the graph of the sine function, it is monotonically increasing on the interval [-π/2, π/2].",
+    "hint_ru": "Из графика функции синуса видно, что она монотонно возрастает на интервале [-π/2, π/2].",
+    "hint_ch": "由正弦函数图像可知, 其在区间 [-π/2, π/2] 上单调递增。"
+  },
+  {
+    "n": 10,
+    "type": "mar",
+    "hint_en": "Parallel lines have equal slopes. The slope of 3x - y - 1 = 0 is 3, and the slope of 3x - y + 2 = 0 is also 3, so they are parallel.",
+    "hint_ru": "Параллельные прямые имеют равные угловые коэффициенты. Угловой коэффициент прямой 3x - y - 1 = 0 равен 3, и угловой коэффициент прямой 3x - y + 2 = 0 также равен 3, следовательно, они параллельны.",
+    "hint_ch": "两条直线平行, 斜率相等。3x - y - 1 = 0 的斜率为3, 3x - y + 2 = 0 的斜率也为3, 故平行。"
+  },
+  {
+    "n": 11,
+    "type": "mar",
+    "hint_en": "The fractional inequality is equivalent to {(2x - 3)(3x - 4) ≤ 0, 3x - 4 ≠ 0} solve to get 4/3 < x ≤ 3/2.",
+    "hint_ru": "Дробное неравенство эквивалентно {(2x - 3)(3x - 4) ≤ 0, 3x - 4 ≠ 0}, решите, чтобы получить 4/3 < x ≤ 3/2.",
+    "hint_ch": "分式不等式等价于 {(2x - 3)(3x - 4) ≤ 0, 3x - 4 ≠ 0} 解得 4/3 < x ≤ 3/2。"
+  },
+  {
+    "n": 12,
+    "type": "mar",
+    "hint_en": "Let the geometric mean be G, then G^2 = 3 × 12 = 36, G = ±6.",
+    "hint_ru": "Пусть среднее геометрическое равно G, тогда G^2 = 3 × 12 = 36, G = ±6.",
+    "hint_ch": "设等比中项为 G, 则 G^2 = 3 × 12 = 36, G = ±6。"
+  },
+  {
+    "n": 13,
+    "type": "mar",
+    "hint_en": "The slope of the line k = -1/√3 = -√3/3, tan θ = -√3/3, the angle of inclination θ = 150°.",
+    "hint_ru": "Угловой коэффициент прямой k = -1/√3 = -√3/3, tan θ = -√3/3, угол наклона θ = 150°.",
+    "hint_ch": "直线斜率 k = -1/√3 = -√3/3, tan θ = -√3/3, 倾斜角 θ = 150°。"
+  },
+  {
+    "n": 14,
+    "type": "mar",
+    "hint_en": "5^2 + 12^2 = 13^2, △ABC is a right triangle, ∠C = 90°, sin A = BC/AB = 5/13.",
+    "hint_ru": "5^2 + 12^2 = 13^2, △ABC - прямоугольный треугольник, ∠C = 90°, sin A = BC/AB = 5/13.",
+    "hint_ch": "5^2 + 12^2 = 13^2, △ABC为直角三角形, ∠C = 90°, sin A = BC/AB = 5/13。"
+  },
+  {
+    "n": 15,
+    "type": "mar",
+    "hint_en": "The general term of geometric sequence a_n = a_1 q^(n-1), a_4 = 4q^3 = 32 gives q = 2, a_3 = 4 × 2^2 = 16.",
+    "hint_ru": "Общий член геометрической прогрессии a_n = a_1 q^(n-1), a_4 = 4q^3 = 32, отсюда q = 2, a_3 = 4 × 2^2 = 16.",
+    "hint_ch": "等比数列通项 a_n = a_1 q^(n-1), a_4 = 4q^3 = 32 得 q = 2, a_3 = 4 × 2^2 = 16。"
+  },
+  {
+    "n": 16,
+    "type": "mar",
+    "hint_en": "The abscissa and ordinate of the point in the third quadrant are both negative, (-1, -2) meets the condition.",
+    "hint_ru": "Абсцисса и ордината точки в третьей четверти обе отрицательны, (-1, -2) соответствует условию.",
+    "hint_ch": "第三象限点的横、纵坐标均为负, (-1, -2) 符合条件。"
+  },
+  {
+    "n": 17,
+    "type": "mar",
+    "hint_en": "The distance formula between two points √[(a + 2)^2 + (3 + 1)^2] = 5, square to get (a + 2)^2 = 9, solve to get a = -1 or a = 5.",
+    "hint_ru": "Формула расстояния между двумя точками: √[(a + 2)^2 + (3 + 1)^2] = 5, возведите в квадрат, чтобы получить (a + 2)^2 = 9, решите: a = -1 или a = 5.",
+    "hint_ch": "两点间距离公式 √[(a + 2)^2 + (3 + 1)^2] = 5, 平方得 (a + 2)^2 = 9, 解得 a = -1 或 a = 5。"
+  },
+  {
+    "n": 18,
+    "type": "mar",
+    "hint_en": "Intercept form x/(-2) + y/(-1) = 1, arrange to get x + 2y + 2 = 0.",
+    "hint_ru": "Уравнение в отрезках: x/(-2) + y/(-1) = 1, преобразуйте, чтобы получить x + 2y + 2 = 0.",
+    "hint_ch": "截距式 x/(-2) + y/(-1) = 1, 整理得 x + 2y + 2 = 0。"
+  },
+  {
+    "n": 19,
+    "type": "mar",
+    "hint_en": "The power function y = x^(2/3) is monotonically increasing in (0, +∞), 2.1 > 1.2 so 2.1^(2/3) > 1.2^(2/3); B, C, D do not conform to the monotonicity of the function.",
+    "hint_ru": "Степенная функция y = x^(2/3) монотонно возрастает на (0, +∞), 2.1 > 1.2, поэтому 2.1^(2/3) > 1.2^(2/3); B, C, D не соответствуют монотонности функции.",
+    "hint_ch": "幂函数 y = x^(2/3) 在 (0, +∞) 单调递增, 2.1 > 1.2 故 2.1^(2/3) > 1.2^(2/3); B、C、D均不符合函数单调性。"
+  },
+  {
+    "n": 20,
+    "type": "mar",
+    "hint_en": "The standard equation of a circle (x - x0)^2 + (y - y0)^2 = r^2, substitute to get (x + 3)^2 + (y - 2)^2 = 9.",
+    "hint_ru": "Стандартное уравнение окружности: (x - x0)^2 + (y - y0)^2 = r^2, подставьте значения, чтобы получить (x + 3)^2 + (y - 2)^2 = 9.",
+    "hint_ch": "圆的标准方程 (x - x0)^2 + (y - y0)^2 = r^2, 代入得 (x + 3)^2 + (y - 2)^2 = 9。"
+  },
+  {
+    "n": 21,
+    "type": "mar",
+    "hint_en": "The definition of tangent function tan x = sin x / cos x, and cos x ≠ 0.",
+    "hint_ru": "Определение функции тангенса: tan x = sin x / cos x, и cos x ≠ 0.",
+    "hint_ch": "正切函数定义 tan x = sin x / cos x, 且 cos x ≠ 0。"
+  },
+  {
+    "n": 22,
+    "type": "mar",
+    "hint_en": "a_10 = a_1 + 9d = 1 + 9 × 2 = 19.",
+    "hint_ru": "a_10 = a_1 + 9d = 1 + 9 × 2 = 19.",
+    "hint_ch": "a_10 = a_1 + 9d = 1 + 9 × 2 = 19。"
+  },
+  {
+    "n": 23,
+    "type": "mar",
+    "hint_en": "The function y = x^3 is monotonically increasing on R, a > b means a^3 > b^3; B, C, D can be overturned by counterexamples.",
+    "hint_ru": "Функция y = x^3 монотонно возрастает на R, a > b означает a^3 > b^3; B, C, D можно опровергнуть контрпримерами.",
+    "hint_ch": "函数 y = x^3 在 R 上单调递增, a > b 则 a^3 > b^3; B、C、D 可举反例推翻。"
+  },
+  {
+    "n": 24,
+    "type": "mar",
+    "hint_en": "Substitute the center and radius into the standard equation of the circle to get (x + 3)^2 + (y - 2)^2 = 4.",
+    "hint_ru": "Подставьте центр и радиус в стандартное уравнение окружности, чтобы получить (x + 3)^2 + (y - 2)^2 = 4.",
+    "hint_ch": "圆标准方程代入圆心与半径, 得 (x + 3)^2 + (y - 2)^2 = 4。"
+  },
+  {
+    "n": 25,
+    "type": "mar",
+    "hint_en": "The necessary and sufficient condition for the exponential function y = a^x to be monotonically increasing is a > 1.",
+    "hint_ru": "Необходимое и достаточное условие для того, чтобы показательная функция y = a^x была монотонно возрастающей: a > 1.",
+    "hint_ch": "指数函数 y = a^x 单调递增的充要条件是 a > 1。"
+  },
+  {
+    "n": 26,
+    "type": "mar",
+    "hint_en": "Double angle formula cos 2α = 1 - 2 sin^2 α = 1 - 2 × (1/3) = 1/3.",
+    "hint_ru": "Формула двойного угла: cos 2α = 1 - 2 sin^2 α = 1 - 2 × (1/3) = 1/3.",
+    "hint_ch": "二倍角公式 cos 2α = 1 - 2 sin^2 α = 1 - 2 × (1/3) = 1/3。"
+  },
+  {
+    "n": 27,
+    "type": "mar",
+    "hint_en": "Solve 4x + 3y = 10 and 2x - y = 10 to get the intersection point (4, -2), substitute into ax + 2y + 8 = 0 to get 4a - 4 + 8 = 0, a = -1.",
+    "hint_ru": "Решите систему 4x + 3y = 10 и 2x - y = 10, чтобы получить точку пересечения (4, -2), подставьте в ax + 2y + 8 = 0, получите 4a - 4 + 8 = 0, a = -1.",
+    "hint_ch": "联立 4x + 3y = 10 与 2x - y = 10 得交点 (4, -2), 代入 ax + 2y + 8 = 0 得 4a - 4 + 8 = 0, a = -1。"
+  },
+  {
+    "n": 28,
+    "type": "mar",
+    "hint_en": "The condition for a binary quadratic equation to represent a hyperbola is that the coefficients of x^2 and y^2 have opposite signs, that is mn < 0.",
+    "hint_ru": "Условие, при котором бинарное квадратное уравнение представляет гиперболу, заключается в том, что коэффициенты при x^2 и y^2 имеют противоположные знаки, то есть mn < 0.",
+    "hint_ch": "二元二次方程表示双曲线的条件是 x^2 与 y^2 系数异号，即 mn < 0。"
+  },
+  {
+    "n": 29,
+    "type": "mar",
+    "hint_en": "a + 2b = lg 4 + 2 lg 5 = lg 4 + lg 25 = lg 100 = 2.",
+    "hint_ru": "a + 2b = lg 4 + 2 lg 5 = lg 4 + lg 25 = lg 100 = 2.",
+    "hint_ch": "a + 2b = lg 4 + 2 lg 5 = lg 4 + lg 25 = lg 100 = 2。"
+  },
+  {
+    "n": 30,
+    "type": "mar",
+    "hint_en": "Distance formula √[(3 + 1)^2 + (1 - 2)^2] = √(16 + 1) = √17.",
+    "hint_ru": "Формула расстояния: √[(3 + 1)^2 + (1 - 2)^2] = √(16 + 1) = √17.",
+    "hint_ch": "距离公式 √[(3 + 1)^2 + (1 - 2)^2] = √(16 + 1) = √17。"
+  },
+  {
+    "n": 31,
+    "type": "mar",
+    "hint_en": "The period of cosine function T = 2π/|ω|, ω = 4, so T = 2π/4 = π/2.",
+    "hint_ru": "Период функции косинуса T = 2π/|ω|, ω = 4, следовательно, T = 2π/4 = π/2.",
+    "hint_ch": "余弦函数周期 T = 2π/|ω|, ω = 4, 故 T = 2π/4 = π/2。"
+  },
+  {
+    "n": 32,
+    "type": "mar",
+    "hint_en": "Convert to standard form x^2 = -4y, 2p = 4, p = 2, directrix y = p/2 = 1.",
+    "hint_ru": "Преобразуйте в стандартный вид x^2 = -4y, 2p = 4, p = 2, директриса y = p/2 = 1.",
+    "hint_ch": "化为标准式 x^2 = -4y, 2p = 4, p = 2, 准线 y = p/2 = 1。"
+  },
+  {
+    "n": 33,
+    "type": "mar",
+    "hint_en": "Two parallel lines have equal slopes. The slope of 4x - 2y - 1 = 0 is 2, and the slope of 2x - y - 1 = 0 is also 2.",
+    "hint_ru": "Две параллельные прямые имеют равные угловые коэффициенты. Угловой коэффициент прямой 4x - 2y - 1 = 0 равен 2, и угловой коэффициент прямой 2x - y - 1 = 0 также равен 2.",
+    "hint_ch": "两直线平行斜率相等, 4x - 2y - 1 = 0 斜率为2, 2x - y - 1 = 0 斜率也为2。"
+  },
+  {
+    "n": 34,
+    "type": "mar",
+    "hint_en": "α/2 ∈ (π/4, π/2), sin(α/2) = √[(1 - cos α)/2] = √(3/4) = √3/2.",
+    "hint_ru": "α/2 ∈ (π/4, π/2), sin(α/2) = √[(1 - cos α)/2] = √(3/4) = √3/2.",
+    "hint_ch": "α/2 ∈ (π/4, π/2), sin(α/2) = √[(1 - cos α)/2] = √(3/4) = √3/2。"
+  },
+  {
+    "n": 35,
+    "type": "mar",
+    "hint_en": "sin(α+β) - sin(α-β) = 2 cos α sin β > 0, so sin(α-β) < sin(α+β).",
+    "hint_ru": "sin(α+β) - sin(α-β) = 2 cos α sin β > 0, следовательно, sin(α-β) < sin(α+β).",
+    "hint_ch": "sin(α+β) - sin(α-β) = 2 cos α sin β > 0, 故 sin(α-β) < sin(α+β)。"
+  },
+  {
+    "n": 36,
+    "type": "mar",
+    "hint_en": "|x| ≥ 0, 1 + |x| ≥ 1, 0 < 1/(1 + |x|) ≤ 1, the range is (0, 1].",
+    "hint_ru": "|x| ≥ 0, 1 + |x| ≥ 1, 0 < 1/(1 + |x|) ≤ 1, область значений: (0, 1].",
+    "hint_ch": "|x| ≥ 0, 1 + |x| ≥ 1, 0 < 1/(1 + |x|) ≤ 1, 值域 (0, 1]。"
+  },
+  {
+    "n": 37,
+    "type": "mar",
+    "hint_en": "Standard form y^2 = -2px, 2p = 1, p = 1/2, directrix x = p/2 = 1/4.",
+    "hint_ru": "Стандартный вид y^2 = -2px, 2p = 1, p = 1/2, директриса x = p/2 = 1/4.",
+    "hint_ch": "标准式 y^2 = -2px, 2p = 1, p = 1/2, 准线 x = p/2 = 1/4。"
+  },
+  {
+    "n": 38,
+    "type": "mar",
+    "hint_en": "Two lines are perpendicular, the product of their slopes is -1. The slope of x - y + 2 = 0 is 1, so the slope of the required line is -1. Passing through (3, 1), the equation is x + y - 4 = 0.",
+    "hint_ru": "Две прямые перпендикулярны, произведение их угловых коэффициентов равно -1. Угловой коэффициент прямой x - y + 2 = 0 равен 1, значит, угловой коэффициент искомой прямой равен -1. Проходя через точку (3, 1), уравнение имеет вид x + y - 4 = 0.",
+    "hint_ch": "两条直线垂直，斜率乘积为 -1。x - y + 2 = 0 的斜率为 1，所以所求直线斜率为 -1。过点 (3, 1)，得方程 x + y - 4 = 0。"
+  },
+  {
+    "n": 39,
+    "type": "mar",
+    "hint_en": "The derivative f'(x) = 3x^2 - 6x = 3x(x - 2). When x > 2, f'(x) > 0; when 0 < x < 2, f'(x) < 0; so the decreasing interval is (0, 2).",
+    "hint_ru": "Производная f'(x) = 3x^2 - 6x = 3x(x - 2). Когда x > 2, f'(x) > 0; когда 0 < x < 2, f'(x) < 0; следовательно, интервал убывания: (0, 2).",
+    "hint_ch": "导数 f'(x) = 3x^2 - 6x = 3x(x - 2)。当 x > 2 时，f'(x) > 0；当 0 < x < 2 时，f'(x) < 0；所以递减区间为 (0, 2)。"
+  },
+  {
+    "n": 40,
+    "type": "mar",
+    "hint_en": "tan x is an odd function, not an even function, B is wrong; A, C, D are all correct.",
+    "hint_ru": "tan x - нечетная функция, а не четная, B неверно; A, C, D - все верны.",
+    "hint_ch": "tan x 是奇函数，不是偶函数，B 错误；A、C、D 均正确。"
+  },
+  {
+    "n": 41,
+    "type": "mar",
+    "hint_en": "{1/a_n} is an arithmetic sequence with the first term 2 and common difference 1, 1/a_6 = 2 + 5 = 7, a_6 = 1/7.",
+    "hint_ru": "{1/a_n} - арифметическая прогрессия с первым членом 2 и разностью 1, 1/a_6 = 2 + 5 = 7, a_6 = 1/7.",
+    "hint_ch": "{1/a_n} 是首项为2、公差为1的等差数列，1/a_6 = 2 + 5 = 7, a_6 = 1/7。"
+  },
+  {
+    "n": 42,
+    "type": "mar",
+    "hint_en": "log_5(2x + 1) ≥ 0 = log_5 1, get 2x + 1 ≥ 1 and 2x + 1 > 0, solve to get x ≥ 0.",
+    "hint_ru": "log_5(2x + 1) ≥ 0 = log_5 1, получаем 2x + 1 ≥ 1 и 2x + 1 > 0, решаем: x ≥ 0.",
+    "hint_ch": "log_5(2x + 1) ≥ 0 = log_5 1, 得 2x + 1 ≥ 1 且 2x + 1 > 0, 解得 x ≥ 0。"
+  },
+  {
+    "n": 43,
+    "type": "mar",
+    "hint_en": "2a = 10 gives a = 5, c = 3, b^2 = a^2 - c^2 = 16, the ellipse equation is x^2/25 + y^2/16 = 1.",
+    "hint_ru": "2a = 10, отсюда a = 5, c = 3, b^2 = a^2 - c^2 = 16, уравнение эллипса: x^2/25 + y^2/16 = 1.",
+    "hint_ch": "2a = 10 得 a = 5, c = 3, b^2 = a^2 - c^2 = 16, 椭圆方程 x^2/25 + y^2/16 = 1。"
+  },
+  {
+    "n": 44,
+    "type": "mar",
+    "hint_en": "2b = (4, 2), a - 2b = (-2 - 4, 3 - 2) = (-6, 1).",
+    "hint_ru": "2b = (4, 2), a - 2b = (-2 - 4, 3 - 2) = (-6, 1).",
+    "hint_ch": "2b = (4, 2), a - 2b = (-2 - 4, 3 - 2) = (-6, 1)。"
+  },
+  {
+    "n": 45,
+    "type": "mar",
+    "hint_en": "The slope of l1 is -1/2, the slope of l is 2; solve l2, l3 to get the intersection point (2, -3), point-slope form gives 2x - y - 7 = 0.",
+    "hint_ru": "Угловой коэффициент l1 равен -1/2, угловой коэффициент l равен 2; решите систему l2, l3, чтобы получить точку пересечения (2, -3), используя форму уравнения прямой по точке и угловому коэффициенту, получим 2x - y - 7 = 0.",
+    "hint_ch": "l1 斜率 -1/2，l 斜率2；联立 l2, l3 得交点 (2, -3)，点斜式得 2x - y - 7 = 0。"
+  },
+  {
+    "n": 46,
+    "type": "mar",
+    "hint_en": "The roots of the equation z = 1 ± i, z1^4 = (1 + i)^4 = -4, z2^4 = (1 - i)^4 = -4, a_4 = (-4 + 4)^2 = 0.",
+    "hint_ru": "Корни уравнения: z = 1 ± i, z1^4 = (1 + i)^4 = -4, z2^4 = (1 - i)^4 = -4, a_4 = (-4 + 4)^2 = 0.",
+    "hint_ch": "方程根 z = 1 ± i, z1^4 = (1 + i)^4 = -4, z2^4 = (1 - i)^4 = -4, a_4 = (-4 + 4)^2 = 0。"
+  },
+  {
+    "n": 47,
+    "type": "mar",
+    "hint_en": "Group summation, the sum of geometric sequence is 2^(n+2) - 4, the sum of arithmetic sequence is 3n(n+1)/2, S_n = 2^(n+2) - 3n(n+1)/2 - 4.",
+    "hint_ru": "Группировка сумм: сумма геометрической прогрессии равна 2^(n+2) - 4, сумма арифметической прогрессии равна 3n(n+1)/2, S_n = 2^(n+2) - 3n(n+1)/2 - 4.",
+    "hint_ch": "分组求和, 等比数列和 2^(n+2) - 4, 等差数列和 3n(n+1)/2, S_n = 2^(n+2) - 3n(n+1)/2 - 4。"
+  },
+  {
+    "n": 48,
+    "type": "mar",
+    "hint_en": "Total cases C(5,2) = 10; different colors: 2×2 + 2×1 + 2×1 = 6, probability 6/10 = 3/5; at least one label 1: 10 - C(2,2) = 9, probability 9/10.",
+    "hint_ru": "Общее количество исходов C(5,2) = 10; разные цвета: 2×2 + 2×1 + 2×1 = 6, вероятность 6/10 = 3/5; хотя бы один шар с номером 1: 10 - C(2,2) = 9, вероятность 9/10.",
+    "hint_ch": "总情况 C(5,2) = 10; 颜色不同: 2×2 + 2×1 + 2×1 = 6, 概率 6/10 = 3/5; 至少一个标号 1: 10 - C(2,2) = 9, 概率 9/10。"
+  }
+]

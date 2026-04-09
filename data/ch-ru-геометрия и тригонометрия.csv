@@ -1,0 +1,78 @@
+text;角 jiǎo;-
+option;угол;y
+option;радиан;n
+option;градус;n
+option;дуга;n
+option;сторона;n
+text;弧度 húdù;-
+option;радиан;y
+option;градус;n
+option;угол;n
+option;сторона;n
+option;ось координат;n
+text;象限 xiàngxiàn;-
+option;квадрант;y
+option;ось координат;n
+option;сектор;n
+option;плоскость;n
+option;полуплоскость;n
+text;点 diǎn;-
+option;точка;y
+option;прямая;n
+option;плоскость;n
+option;вектор;n
+option;отрезок;n
+text;坐标 zuòbiāo;-
+option;координата;y
+option;абсцисса;n
+option;ордината;n
+option;аппликата;n
+option;расстояние;n
+text;横坐标 héngzuòbiāo;-
+option;абсцисса;y
+option;ордината;n
+option;координата;n
+option;аппликата;n
+option;фокус;n
+text;纵坐标 zòngzuòbiāo;-
+option;ордината;y
+option;абсцисса;n
+option;координата;n
+option;аппликата;n
+option;директриса;n
+text;距离 jùlí;-
+option;расстояние;y
+option;длина;n
+option;отрезок;n
+option;радиус;n
+option;диаметр;n
+text;直线 zhíxiàn;-
+option;прямая;y
+option;луч;n
+option;отрезок;n
+option;кривая;n
+option;ось;n
+text;斜率 xiélǜ;-
+option;угловой коэффициент, наклон;y
+option;угол наклона;n
+option;производная;n
+option;касательная;n
+option;переменная;n
+text;平行 píngxíng;-
+option;параллельный;y
+option;перпендикулярный;n
+option;пересекающийся;n
+option;совпадающий;n
+option;скрещивающийся;n
+text;垂直 chuízhí;-
+option;перпендикулярный;y
+option;параллельный;n
+option;наклонный;n
+option;горизонтальный;n
+option;вертикальный;n
+text;向量 xiàngliàng;-
+option;вектор;y
+option;скаляр;n
+option;матрица;n
+option;тензор;n
+option;направление;n

@@ -1,0 +1,628 @@
+[
+  {
+    "english": "Which of the following is a chemical property of a substance?",
+    "options": [
+      "A. Iron nails easily rust in a humid environment",
+      "B. The density of copper is 8.9 g·cm⁻³",
+      "C. Platinum wire turns red when heated",
+      "D. Aluminum is a silver-white metal"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "chemical properties",
+    "n": 1
+  },
+  {
+    "english": "Which of the following instruments is used for accurately measuring liquid volume?",
+    "options": [
+      "A. Measuring cylinder",
+      "B. Beaker",
+      "C. Balance",
+      "D. Gas collection bottle"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "laboratory apparatus",
+    "n": 2
+  },
+  {
+    "english": "In the laboratory, hydrogen is prepared using:",
+    "options": [
+      "A. Iron and concentrated sulfuric acid",
+      "B. Magnesium and concentrated nitric acid",
+      "C. Copper and dilute sulfuric acid",
+      "D. Zinc and dilute sulfuric acid"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "hydrogen preparation",
+    "n": 3
+  },
+  {
+    "english": "The structural formula of acetic acid is:",
+    "options": [
+      "A. CH₃CH₂OH",
+      "B. CH₃OH₃",
+      "C. CH₃COOH",
+      "D. CH₃CHO"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "organic chemistry",
+    "n": 4
+  },
+  {
+    "english": "Which of the following statements about ¹³C is incorrect?",
+    "options": [
+      "A. ¹³C and ¹²C have the same number of electrons",
+      "B. ¹³C and ¹²C have the same numbers of protons",
+      "C. ¹³C and ¹²C have the same number of neutrons",
+      "D. ¹³C is an isotope of ¹²C"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "isotopes",
+    "n": 5
+  },
+  {
+    "english": "At 25°C, which of the following solutions has a pH of 1?",
+    "options": [
+      "A. 0.1 mol·L⁻¹ hydrochloric acid solution",
+      "B. 0.1 mol·L⁻¹ sulfuric acid solution",
+      "C. 0.1 mol·L⁻¹ sodium hydroxide solution",
+      "D. 0.1 mol·L⁻¹ acetic acid solution"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "acids and bases",
+    "n": 6
+  },
+  {
+    "english": "When observing the flame test for potassium, blue cobalt glass is used to:",
+    "options": [
+      "A. Filter out the yellow light of sodium",
+      "B. Protect the eyes from burns",
+      "C. Enhance the purple light of potassium",
+      "D. Increase the observation temperature"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "flame test",
+    "n": 7
+  },
+  {
+    "english": "Which of the following groups of substances can form a solution with water?",
+    "options": [
+      "A. Ethyl acetate",
+      "B. Ethanol",
+      "C. Benzene",
+      "D. Calcium carbonate"
+    ],
+    "answer": "B",
+    "topic": "chemistry",
+    "subtopic": "solubility",
+    "n": 8
+  },
+  {
+    "english": "Which of the following substances is a pure substance?",
+    "options": [
+      "A. Medical alcohol",
+      "B. Concrete",
+      "C. Copper",
+      "D. Saline solution"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "classification of matter",
+    "n": 9
+  },
+  {
+    "english": "Which of the following substances is a homolog of C₉H₁₆?",
+    "options": [
+      "A. C₄H₈",
+      "B. C₄H₁₀",
+      "C. C₅H₈",
+      "D. C₈H₁₀"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "homologous series",
+    "n": 10
+  },
+  {
+    "english": "In which of the following reactions does sulfuric acid act as an oxidizing agent?",
+    "options": [
+      "A. 2NaCl + H₂SO₄ → Na₂SO₄ + 2HCl",
+      "B. H₂SO₄ + Ba(NO₃)₂ → 2HNO₃ + BaSO₄↓",
+      "C. S + 2H₂SO₄ → 3SO₂ + 2H₂O",
+      "D. 2KOH + H₂SO₄ → K₂SO₄ + 2H₂O"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "redox reactions",
+    "n": 11
+  },
+  {
+    "english": "Which of the following substances belongs to electrolyte?",
+    "options": [
+      "A. Sucrose",
+      "B. Carbon dioxide",
+      "C. Metal aluminum",
+      "D. NaCl"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "electrolytes",
+    "n": 12
+  },
+  {
+    "english": "When 1 mole of hydrogen burns completely in oxygen, the mass of water produced is:",
+    "options": [
+      "A. 4.5 g",
+      "B. 9 g",
+      "C. 27 g",
+      "D. 18 g"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "stoichiometry",
+    "n": 13
+  },
+  {
+    "english": "Which of the following substances is an electrolyte?",
+    "options": [
+      "A. Magnesium",
+      "B. Sodium chloride",
+      "C. Toluene",
+      "D. Helium"
+    ],
+    "answer": "B",
+    "topic": "chemistry",
+    "subtopic": "electrolytes",
+    "n": 14
+  },
+  {
+    "english": "Which of the following atoms is most likely to lose electrons and form a cation?",
+    "options": [
+      "A. Na",
+      "B. Mg",
+      "C. Cl",
+      "D. F"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "periodic trends",
+    "n": 15
+  },
+  {
+    "english": "Which of the following groups consists of allotropes of the same element?",
+    "options": [
+      "A. CH₄ and C₃H₈",
+      "B. ¹²C and ¹⁴C",
+      "C. CO and CO₂",
+      "D. Diamond and graphite"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "allotropes",
+    "n": 16
+  },
+  {
+    "english": "In which of the following substances is the oxidation number of Cl +5?",
+    "options": [
+      "A. NaClO₃",
+      "B. NaClO₄",
+      "C. CaCl₂",
+      "D. NaClO"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "oxidation states",
+    "n": 17
+  },
+  {
+    "english": "Which of the following represents the electron configuration diagram of an argon atom?",
+    "options": [
+      "A. image 1",
+      "B. image 2",
+      "C. image 3",
+      "D. image 4"
+    ],
+    "answer": "B",
+    "img" : "chem18jan.png",
+    "topic": "chemistry",
+    "subtopic": "electron configuration",
+    "n": 18
+  },
+  {
+    "english": "Which of the following gases can be collected using both downward displacement of air and water displacement?",
+    "options": [
+      "A. CO₂",
+      "B. N₂",
+      "C. H₂",
+      "D. NH₃"
+    ],
+    "answer": "",
+    "topic": "off",
+    "subtopic": "gas collection",
+    "n": 19
+  },
+  {
+    "english": "Take 50 mL of NaOH solution from 1 L of 1 mol·L⁻¹ NaOH solution. The molar concentration of this 50 mL NaOH solution is:",
+    "options": [
+      "A. 0.02 mol·L⁻¹",
+      "B. 1 mol·L⁻¹",
+      "C. 2 mol·L⁻¹",
+      "D. 0.2 mol·L⁻¹"
+    ],
+    "answer": "B",
+    "topic": "chemistry",
+    "subtopic": "concentration",
+    "n": 20
+  },
+  {
+    "english": "Which of the following substances can oxidize Fe²⁺ to Fe³⁺?",
+    "options": [
+      "A. Cl₂",
+      "B. Fe",
+      "C. Zn",
+      "D. NaOH"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "redox reactions",
+    "n": 21
+  },
+  {
+    "english": "At 25°C, which of the following substances can react with both HCl and NaOH?",
+    "options": [
+      "A. NaHCO₃",
+      "B. Ca(OH)₂",
+      "C. CH₃COOH",
+      "D. NaCl"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "amphoteric substances",
+    "n": 22
+  },
+  {
+    "english": "Which of the following elements has the smallest atomic radius?",
+    "options": [
+      "A. O",
+      "B. C",
+      "C. Na",
+      "D. F"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "periodic trends",
+    "n": 23
+  },
+  {
+    "english": "When the reaction reaches equilibrium, what is always equal in the reaction system?",
+    "options": [
+      "A. Forward reaction rate and reverse reaction rate",
+      "B. Concentration of reactants and products",
+      "C. The time that atoms exist in reactant molecules and product molecules",
+      "D. Mass of reactants and products"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "chemical equilibrium",
+    "n": 24
+  },
+  {
+    "english": "If 4.0 g of copper(II) oxide is completely reduced by H₂, the volume of H₂ consumed under standard conditions is:",
+    "options": [
+      "A. 11.2L",
+      "B. 22.4L",
+      "C. 2.24L",
+      "D. 1.12L"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "stoichiometry",
+    "n": 25
+  },
+  {
+    "english": "The English name for NaNO₂ is:",
+    "options": [
+      "A. Ammonium nitrate",
+      "B. Sodium nitride",
+      "C. Sodium nitrite",
+      "D. Sodium nitrate"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "nomenclature",
+    "n": 26
+  },
+  {
+    "english": "Which of the following substances, when dissolved in water, produces the solution with the highest pH?",
+    "options": [
+      "A. NaCl",
+      "B. HNO₃",
+      "C. H₂S",
+      "D. NH₃"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "acids and bases",
+    "n": 27
+  },
+  {
+    "english": "The reaction between hydrochloric acid and sodium hydroxide belongs to:",
+    "options": [
+      "A. decomposition reaction",
+      "B. displacement reaction",
+      "C. combination reaction",
+      "D. neutralization reaction"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "reaction types",
+    "n": 28
+  },
+  {
+    "english": "Which of the following substances contains both ionic and covalent bonds?",
+    "options": [
+      "A. Na₂O₂",
+      "B. CO₂",
+      "C. H₂O",
+      "D. KCl"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "chemical bonding",
+    "n": 29
+  },
+  {
+    "english": "Which of the following is a displacement reaction?",
+    "options": [
+      "A. 2NaHCO₃ → Na₂CO₃ + H₂O + CO₂↑",
+      "B. Fe + CuSO₄ → FeSO₄ + Cu",
+      "C. 2H₂ + O₂ → 2H₂O",
+      "D. CH₄ + 2O₂ → CO₂ + 2H₂O"
+    ],
+    "answer": "B",
+    "topic": "chemistry",
+    "subtopic": "reaction types",
+    "n": 30
+  },
+  {
+    "english": "In the laboratory preparation of oxygen from H₂O₂, the commonly used catalyst is:",
+    "options": [
+      "A. Manganese dioxide",
+      "B. Potassium chloride",
+      "C. Sodium hydroxide",
+      "D. Potassium chloride"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "oxygen preparation",
+    "n": 31
+  },
+  {
+    "english": "Which of the following substances has bleaching properties?",
+    "options": [
+      "A. KClO₃",
+      "B. Dry Cl₂",
+      "C. NaCl",
+      "D. HClO"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "bleaching agents",
+    "n": 32
+  },
+  {
+    "english": "In the periodic table, the element located in the second period and Group VIIA is:",
+    "options": [
+      "A. Oxygen",
+      "B. Nitrogen",
+      "C. Fluorine",
+      "D. Chlorine"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "periodic table",
+    "n": 33
+  },
+  {
+    "english": "Which of the following ions can coexist in large quantities in an aqueous solution?",
+    "options": [
+      "A. Mg²⁺, Cl⁻, NH₄⁺, SO₄²⁻",
+      "B. Ca²⁺, SO₄²⁻, CO₃²⁻, Na⁺",
+      "C. CO₃²⁻, Na⁺, SO₄²⁻, H⁺",
+      "D. OH⁻, Ca²⁺, Mg²⁺, NO₃⁻"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "ionic reactions",
+    "n": 34
+  },
+  {
+    "english": "In a beaker containing 50 mL of saturated potassium nitrate solution, the method to change the mass fraction of the solute is:",
+    "options": [
+      "A. Evaporate some solvent at constant temperature",
+      "B. Increase the solution temperature",
+      "C. Decrease the solution temperature",
+      "D. Add potassium nitrate solid"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "solubility",
+    "n": 35
+  },
+  {
+    "english": "What reagents can be used to detect Cl⁻ ions?",
+    "options": [
+      "A. Ba(NO₃)₂ and dilute nitric acid",
+      "B. AgNO₃ and dilute sulfuric acid",
+      "C. BaCl₂ and dilute hydrochloric acid",
+      "D. AgNO₃ and dilute nitric acid"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "qualitative analysis",
+    "n": 36
+  },
+  {
+    "english": "Which of the following substances contains the largest number of atoms?",
+    "options": [
+      "A. 11.2 L of CH₄ under standard conditions",
+      "B. 2 g He",
+      "C. 3.01 × 10²³ Al atoms",
+      "D. 1 mol HF"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "mole concept",
+    "n": 37
+  },
+  {
+    "english": "For the endothermic reaction C(s) + H₂O(g) ⇌ CO(g) + H₂(g), what can cause the equilibrium to shift in the opposite direction?",
+    "options": [
+      "A. Increase temperature, increase pressure",
+      "B. Decrease temperature, decrease pressure",
+      "C. Decrease temperature, increase pressure",
+      "D. Increase temperature, decrease pressure"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "chemical equilibrium",
+    "n": 38
+  },
+  {
+    "english": "H₂ is mixed with small amounts of CO₂ and NH₃. To purify H₂, the mixed gas should be passed through ( ) in sequence.",
+    "options": [
+      "A. Concentrated H₂SO₄, NaOH(aq)",
+      "B. CaO, NaOH(aq)",
+      "C. NaOH(aq), CaO",
+      "D. NaOH(aq), concentrated H₂SO₄"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "gas purification",
+    "n": 39
+  },
+  {
+    "english": "When 12 g of carbon powder burns in 0.8 mol of oxygen, and all the carbon is consumed, the resulting gas contains:",
+    "options": [
+      "A. Possibly both CO and CO₂",
+      "B. Only CO",
+      "C. CO₂ and O₂",
+      "D. Only CO₂"
+    ],
+    "answer": "A",
+    "topic": "chemistry",
+    "subtopic": "stoichiometry",
+    "n": 40
+  },
+  {
+    "english": "The method to remove a small amount of NaHCO₃ from Na₂CO₃ solid is to:",
+    "options": [
+      "A. Introduce carbon dioxide",
+      "B. Add sodium hydroxide",
+      "C. Heat",
+      "D. Add dilute hydrochloric acid"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "purification",
+    "n": 41
+  },
+  {
+    "english": "For the reaction 2HI(g) ⇌ H₂(g) + I₂(g) (forward reaction is exothermic), which of the following will shift the equilibrium to the right?",
+    "options": [
+      "A. Raise the temperature",
+      "B. Add a catalyst",
+      "C. Increase the system pressure",
+      "D. Remove H₂"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "chemical equilibrium",
+    "n": 42
+  },
+  {
+    "english": "Regarding the reaction CH₃COOH + C₂H₅OH → CH₃COOC₂H₅ + H₂O (where concentrated sulfuric acid is added), which of the following statements is incorrect?",
+    "options": [
+      "A. Concentrated sulfuric acid can absorb the produced water, facilitating the reaction",
+      "B. Concentrated sulfuric acid acts as a catalyst in the reaction",
+      "C. This reaction can be controlled to completely convert reactants into products",
+      "D. This reaction is an esterification reaction"
+    ],
+    "answer": "C",
+    "topic": "chemistry",
+    "subtopic": "esterification",
+    "n": 43
+  },
+  {
+    "english": "When 0.1 mol of Na reacts with 37.8 g of water, the mass fraction of the resulting NaOH solution is:",
+    "options": [
+      "A. 15%",
+      "B. 10%",
+      "C. 25%",
+      "D. 20%"
+    ],
+    "answer": "B",
+    "topic": "chemistry",
+    "subtopic": "stoichiometry",
+    "n": 44
+  },
+  {
+    "english": "The electron configuration of a ground-state potassium atom is:",
+    "options": [
+      "A. 1s²2s²2p⁷3s²3p⁶",
+      "B. 1s²2s²2p⁶3s²3p⁶4s¹",
+      "C. 1s²2s²2p⁶3s²3p⁶3s²4p¹",
+      "D. 1s²2s¹2p⁴3s²3p⁶4s²"
+    ],
+    "answer": "B",
+    "topic": "chemistry",
+    "subtopic": "electron configuration",
+    "n": 45
+  },
+  {
+    "english": "A certain white powder may be a mixture of two substances. Experiment results: 1) Take a small amount of sample and add sufficient water, the solid partly dissolves. Then add a sufficient amount of dilute hydrochloric acid, bubbles are formed, and the solid completely dissolves. 2) Take a small amount of sample and add sufficient dilute sulfuric acid, bubbles are produced. After shaking, there is still solid present. The white powder may be:",
+    "options": [
+      "A. CaCO₃, BaCO₃",
+      "B. AgNO₃, Na₂CO₃",
+      "C. NaOH, CuSO₄",
+      "D. Na₂CO₃, BaCO₃"
+    ],
+    "answer": "D",
+    "topic": "chemistry",
+    "subtopic": "qualitative analysis",
+    "n": 46
+  },
+  {
+    "english": "Scientists studied a new material containing three short-period elements X, Y, and Z with increasing nuclear charges. The outermost electron number of X is twice that of its sub-outer layer. The M-shell electron number of Y is half of its L-shell electron number. The sub-outer electron number of Z is one more than its outermost electron number. Which of the following statements is incorrect?",
+    "options": [
+      "A. The compound of X and Z is insoluble in water",
+      "B. All three elements are nonmetals",
+      "C. X and Y belong to the same group",
+      "D. The atomic radius of Y is smaller than that of Z"
+    ],
+    "answer": "B",
+    "topic": "chemistry",
+    "subtopic": "periodic table",
+    "n": 47
+  },
+  {
+    "english": "The laboratory electrolysis of brine is shown in the diagram. Which of the following statements is correct?",
+    "options": [
+      "A. After adding phenolphthalein to the U-tube, the solution near port a turns red over time",
+      "B. The gas released at port a turns moist litmus paper red",
+      "C. The gas released at port b burns with a blue flame",
+      "D. For every 1 mole of electrons transferred in the circuit, the volume of gas released at port b is 22.4 L (standard conditions)"
+    ],
+    "answer": "",
+    "img": "chem48jan.png",
+    "topic": "off",
+    "subtopic": "electrolysis",
+    "n": 48
+  }
+]

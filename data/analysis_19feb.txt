@@ -1,0 +1,43 @@
+=== 19 feb 2026 ===
+Total users (with any activity): 44
+Users who answered at least 1 task: 35
+Users only /start, no answers: 9
+
+Attempts per active user: min=1 max=86 avg=20.7
+Correct per active user: min=0 max=50 avg=12.7
+
+Top 10 by attempts (user_id attempts correct):
+  Samayazayka  86  50
+  alimusa_7  76  34
+  nexxo1986  75  46
+  6477790053  71  35
+  soshiitt  69  47
+  bkllllg  44  30
+  6712565556  34  24
+  littlekidlovesyou  30  20
+  lizamihaylova  26  17
+  svetlana_shorina  24  23
+
+By topic (attempts / correct / %%):
+  inequalities: 172 / 113 (65.7%)
+  sets: 105 / 75 (71.4%)
+  functions: 99 / 52 (52.5%)
+  trigonometry (simple): 75 / 49 (65.3%)
+  geometry: 67 / 40 (59.7%)
+  conic curves: 41 / 27 (65.9%)
+  sequences: 37 / 27 (73.0%)
+  logarithmic functions: 36 / 21 (58.3%)
+  probability: 19 / 11 (57.9%)
+  trigonometry: 8 / 3 (37.5%)
+  Algebraic and geometric mean: 4 / 2 (50.0%)
+  physics: 2 / 2 (100.0%)
+
+Peak hours (attempts):
+  16:00 - 88 attempts, 49 correct
+  15:00 - 82 attempts, 51 correct
+  17:00 - 74 attempts, 45 correct
+  12:00 - 62 attempts, 32 correct
+  19:00 - 60 attempts, 36 correct
+  13:00 - 56 attempts, 36 correct
+
+Active users with username: 22, without (None): 13
