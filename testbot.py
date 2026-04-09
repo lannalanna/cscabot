@@ -432,6 +432,7 @@ for top in topics:
 
 
 MATH_ALL_NON_RU_LINK = "https://t.me/+hN3O2vl9211mZmU6"
+MATH_ALL_NON_RU_LINK = "https://t.me/+tMDdagNot-xlNjMy"
 
 
 def _q_diff(q: dict) -> int:
@@ -1636,26 +1637,30 @@ CORRECT_PHRASES_AR = [
 ]
 
 _START_GREET_RU = """Привет! Я бот для подготовки к CSCA. 
-Помогу сдать экзамен на отлично! Проходи тестовые экзамены, узнавай свои баллы или тренируйся по любой теме. Запутался в решении? Встроенные справочные материалы и чат с обсуждением задач всегда к твоим услугам.
+Помогу сдать экзамен на отлично! Проходите тестовые экзамены, узнавайте свои баллы или тренируйтесь по любой теме. Запутались в решении? Встроенные справочные материалы и чат с обсуждением задач всегда к вашим услугам.
 
-Бот является приложением к курсу подготовки к CSCA https://stepik.org/a/268161 Станьте студентом курса для полного доступа к возможностям бота.
+Бот является приложением к курсу Подготовка к CSCA https://stepik.org/a/268161. Станьте студентом курса и пользуйтесь ботом без ограничений!
 
 Бот создан с помощью нейросети. Нашел ошибку? Пиши https://t.me/csca_math_exam/107
 
 """
 
+
+
 _START_GREET_EN = (
     "Hi!! I'm your CSCA math exam preparation bot, ready to help you pass with confidence. "
     "You can take full-length practice tests to evaluate your score or focus on specific topics for targeted practice. "
     "I'll guide you step by step until you're fully prepared for exam day.\n\n"
-    "This bot was created with the help of a neural network. Found an error? Write to https://t.me/csca_math_exam/107"
-)
+    )
+
+#"This bot was created with the help of a neural network. Found an error? Write to https://t.me/csca_math_exam/107"
 
 _START_GREET_AR = """مرحباً! أنا بوت التحضير لامتحان CSCA في الرياضيات.
 أساعدك على التحضير الجيد: امتحانات تجريبية كاملة، معرفة النتيجة، أو التدريب حسب أي موضوع. لا تعرف كيف تحل؟ هناك مواد مساعدة مدمجة ومحادثة لمناقشة المسائل.
 
-صُنع البوت بمساعدة نموذج ذكاء اصطناعي. وجدت خطأ؟ اكتب إلى https://t.me/csca_math_exam/107
+
 """
+#صُنع البوت بمساعدة نموذج ذكاء اصطناعي. وجدت خطأ؟ اكتب إلى https://t.me/csca_math_exam/107
 
 # Случайная реакция после верного ответа в режиме тренировки (тема / подтема)
 TRAINING_CORRECT_REACTION_EMOJIS = [
@@ -3790,7 +3795,7 @@ def _kb_soldn_after_ai_unclear(
             url=chat_url,
         )
     )
-    if  show_explain:
+    if  0  : #  show_explain:
         kb.row(
             InlineKeyboardButton(
                 text=_txt(lang, "Объяснить подробнее…", "Explain in more detail…", "شرح أكثر…"),
@@ -3839,8 +3844,10 @@ def _do_llm_request(
 1 задачи по математике, 
 2 физика 
 3 химия
-4 не понятно как решить задачу
-5 информация об экзамене, CSCA, о работе бота"""
+4 помочь решить задачу
+5 информация об экзамене, CSCA, о работе бота
+6 вопросы по математике химии физике формулы определения
+7 не про экзамен"""
     short = _txt(
         lang,
         "Ты бот подготовки к экзамену CSCA. Отвечай коротко и по делу.",
@@ -6232,8 +6239,9 @@ async def on_start_command(message: types.Message):
     
     lang = await _get_user_lang(message.from_user)
     await _get_user_exam_lang_by_id(message.from_user.id)
+    user_language_code = (message.from_user.language_code or "").strip()
     if message.chat.id != -1003634233318:
-        log(message.from_user, ['start', message.text])
+        log(message.from_user, ['start', message.text, 'language_code', user_language_code])
     log(message.from_user, ['status', str(user_status)])
 
     lg = _normalize_lang(lang)
@@ -6897,6 +6905,191 @@ async def cmd_admin_daily_metrics(message: types.Message):
         d1_rate = (retained_d1 / cohort_d1 * 100.0) if cohort_d1 else 0.0
         d7_rate = (retained_d7 / cohort_d7 * 100.0) if cohort_d7 else 0.0
 
+        # Ежедневные метрики за последнюю неделю (сегодня и 6 предыдущих дней).
+        # users = активные пользователи в answers за день (DISTINCT user_id).
+        week_rows = []
+        week_start = today - datetime.timedelta(days=6)
+        week_end = tomorrow
+        ws = week_start.isoformat()
+        we = week_end.isoformat()
+        for i in range(6, -1, -1):
+            day_start = today - datetime.timedelta(days=i)
+            day_end = day_start + datetime.timedelta(days=1)
+            ds = day_start.isoformat()
+            de = day_end.isoformat()
+            day_label = day_start.strftime("%Y-%m-%d")
+
+            # Количество пользователей (активных в решениях за день)
+            cur = await db_conn.execute(
+                """
+                SELECT COUNT(DISTINCT user_id)
+                FROM answers
+                WHERE created_at >= ? AND created_at < ?
+                """,
+                (ds, de),
+            )
+            row = await cur.fetchone()
+            users_day = int(row[0] or 0)
+
+            # Количество новых пользователей за день
+            cur = await db_conn.execute(
+                """
+                SELECT COUNT(*)
+                FROM users
+                WHERE created_at >= ? AND created_at < ?
+                """,
+                (ds, de),
+            )
+            row = await cur.fetchone()
+            new_users_day = int(row[0] or 0)
+
+            # Количество правильных решений и доля правильных
+            cur = await db_conn.execute(
+                """
+                SELECT
+                    SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END) AS correct_cnt,
+                    COUNT(*) AS total_cnt
+                FROM answers
+                WHERE created_at >= ? AND created_at < ?
+                """,
+                (ds, de),
+            )
+            row = await cur.fetchone()
+            correct_day = int((row[0] or 0) if row else 0)
+            total_day = int((row[1] or 0) if row else 0)
+            acc_day = (correct_day / total_day * 100.0) if total_day else 0.0
+
+            # Количество завершенных экзаменов за день
+            cur = await db_conn.execute(
+                """
+                SELECT COUNT(*)
+                FROM user_completed_exams
+                WHERE completed_at >= ? AND completed_at < ?
+                """,
+                (ds, de),
+            )
+            row = await cur.fetchone()
+            completed_exams_day = int(row[0] or 0)
+
+            week_rows.append(
+                (
+                    day_label,
+                    users_day,
+                    new_users_day,
+                    correct_day,
+                    acc_day,
+                    completed_exams_day,
+                )
+            )
+
+        # Агрегаты за неделю целиком
+        cur = await db_conn.execute(
+            """
+            SELECT COUNT(DISTINCT user_id)
+            FROM answers
+            WHERE created_at >= ? AND created_at < ?
+            """,
+            (ws, we),
+        )
+        row = await cur.fetchone()
+        week_active_users = int(row[0] or 0)
+
+        # Общее количество пользователей в базе к концу недельного окна
+        # (сопоставимо с "new users", поэтому не может быть меньше).
+        cur = await db_conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM users
+            WHERE created_at < ?
+            """,
+            (we,),
+        )
+        row = await cur.fetchone()
+        week_users_total = int(row[0] or 0)
+
+        cur = await db_conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM users
+            WHERE created_at >= ? AND created_at < ?
+            """,
+            (ws, we),
+        )
+        row = await cur.fetchone()
+        week_new_users = int(row[0] or 0)
+
+        # Распределение интерфейсов среди активных пользователей недели.
+        # Берём users.language; если пусто, fallback на users.language_code.
+        cur = await db_conn.execute(
+            """
+            WITH week_active AS (
+                SELECT DISTINCT user_id
+                FROM answers
+                WHERE created_at >= ? AND created_at < ?
+            ),
+            lang_norm AS (
+                SELECT
+                    wa.user_id AS uid,
+                    LOWER(TRIM(COALESCE(u.language, ''))) AS lang_ui,
+                    LOWER(TRIM(COALESCE(u.language_code, ''))) AS lang_code
+                FROM week_active wa
+                LEFT JOIN users u ON u.id = wa.user_id
+            )
+            SELECT
+                SUM(
+                    CASE
+                        WHEN lang_ui = 'ru' OR (lang_ui = '' AND lang_code LIKE 'ru%') THEN 1
+                        ELSE 0
+                    END
+                ) AS ru_cnt,
+                SUM(
+                    CASE
+                        WHEN lang_ui = 'ar' OR (lang_ui = '' AND lang_code LIKE 'ar%') THEN 1
+                        ELSE 0
+                    END
+                ) AS ar_cnt,
+                SUM(
+                    CASE
+                        WHEN lang_ui = 'en' OR (lang_ui = '' AND lang_code LIKE 'en%') THEN 1
+                        ELSE 0
+                    END
+                ) AS en_cnt
+            FROM lang_norm
+            """,
+            (ws, we),
+        )
+        row = await cur.fetchone()
+        week_ru = int((row[0] or 0) if row else 0)
+        week_ar = int((row[1] or 0) if row else 0)
+        week_en = int((row[2] or 0) if row else 0)
+
+        # Распределение активных пользователей недели по источнику (source).
+        cur = await db_conn.execute(
+            """
+            WITH week_active AS (
+                SELECT DISTINCT user_id
+                FROM answers
+                WHERE created_at >= ? AND created_at < ?
+            )
+            SELECT
+                SUM(CASE WHEN LOWER(TRIM(COALESCE(u.source, ''))) = 'stepik' THEN 1 ELSE 0 END) AS stepik_cnt,
+                SUM(CASE WHEN LOWER(TRIM(COALESCE(u.source, ''))) = 'cscagroup' THEN 1 ELSE 0 END) AS cscagroup_cnt,
+                SUM(
+                    CASE
+                        WHEN LOWER(TRIM(COALESCE(u.source, ''))) IN ('stepik', 'cscagroup') THEN 0
+                        ELSE 1
+                    END
+                ) AS other_cnt
+            FROM week_active wa
+            LEFT JOIN users u ON u.id = wa.user_id
+            """,
+            (ws, we),
+        )
+        row = await cur.fetchone()
+        week_stepik = int((row[0] or 0) if row else 0)
+        week_cscagroup = int((row[1] or 0) if row else 0)
+        week_other_source = int((row[2] or 0) if row else 0)
+
         hint_rows = []
         all_hint_topics = set(hint_yes_by_topic.keys()) | set(hint_no_by_topic.keys())
         for t in all_hint_topics:
@@ -6941,6 +7134,25 @@ async def cmd_admin_daily_metrics(message: types.Message):
                 lines.append(f"• {t}: {solved}/{shown} ({rate:.1f}%)")
         else:
             lines.append("• no data for today")
+
+        lines.append("")
+        lines.append("Last 7 days:")
+        lines.append("• format: date | users | new | correct | accuracy | exams_completed")
+        for d, users_day, new_users_day, correct_day, acc_day, completed_exams_day in week_rows:
+            lines.append(
+                f"• {d} | {users_day} | {new_users_day} | {correct_day} | {acc_day:.1f}% | {completed_exams_day}"
+            )
+        lines.append("")
+        lines.append("Week total (last 7 days):")
+        lines.append(f"• users total: {week_users_total}")
+        lines.append(f"• active users (answers): {week_active_users}")
+        lines.append(f"• new users: {week_new_users}")
+        lines.append(f"• interface ru/en/ar: {week_ru}/{week_en}/{week_ar}")
+        lines.append("")
+        lines.append("Week users by source (active, answers):")
+        lines.append(f"• stepik: {week_stepik}")
+        lines.append(f"• cscagroup: {week_cscagroup}")
+        lines.append(f"• others: {week_other_source}")
 
         await message.answer("\n".join(lines))
     except Exception as e:
@@ -7107,8 +7319,9 @@ async def pay(user, mode: str = "exam"):
                 f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
                 "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
                 "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
-                "250 Telegram Stars по кнопке ниже.\n"
-                "Это разовый платеж, который снимает все ограничения навсегда."
+                "200 Telegram Stars по кнопке ниже.\n"
+                "Это разовый платеж, который снимает все ограничения навсегда.\n\n"
+                "Задать вопрос об оплате можно в чате https://t.me/csca_math_exam/107"
             )
         else:
             text = (
@@ -7118,10 +7331,11 @@ async def pay(user, mode: str = "exam"):
                 f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
                 "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
                 "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
-                "250 Telegram Stars  по кнопке ниже.\n"
-                "Это разовый платеж, который снимает все ограничения навсегда."
+                "200 Telegram Stars  по кнопке ниже.\n"
+                "Это разовый платеж, который снимает все ограничения навсегда.\n\n"
+                "Задать вопрос об оплате можно в чате https://t.me/csca_math_exam/107"
             )
-        pay_btn = "⭐ Оплатить 250 Telegram Stars"
+        pay_btn = "⭐ Оплатить 200 Telegram Stars"
     elif lg == "ar":
         if mode_norm == "train":
             text = (
@@ -7131,8 +7345,9 @@ async def pay(user, mode: str = "exam"):
                 "إذا كنت في مجموعة «Preparing for CSCA»، استخدم الرابط المباشر من المجموعة.\n\n"
                 f"يمكنك أيضاً نشر رابط الدعوة الشخصي {invite_link} في أي محادثة عن CSCA — "
                 "يُفتح الوصول بعد أن يتبع رابطك ثلاثة مستخدمين جدد.\n\n"
-                "إن لم يناسبك أي خيار، يمكنك دفع 250 نجمة تيليجرام عبر الزر أدناه.\n"
-                "هذه دفعة لمرة واحدة تزيل كل القيود للأبد."
+                "إن لم يناسبك أي خيار، يمكنك دفع 200 نجمة تيليجرام عبر الزر أدناه.\n"
+                "هذه دفعة لمرة واحدة تزيل كل القيود للأبد.\n\n"
+                "يمكنك طرح أسئلة حول الدفع في المحادثة https://t.me/csca_math_exam/107"
             )
         else:
             text = (
@@ -7141,10 +7356,11 @@ async def pay(user, mode: str = "exam"):
                 "إذا كنت في مجموعة «Preparing for CSCA»، استخدم الرابط المباشر من المجموعة.\n\n"
                 f"يمكنك أيضاً نشر رابط الدعوة الشخصي {invite_link} في أي محادثة عن CSCA — "
                 "يُفتح الوصول بعد أن يتبع رابطك ثلاثة مستخدمين جدد.\n\n"
-                "إن لم يناسبك أي خيار، يمكنك دفع 250 نجمة تيليجرام عبر الزر أدناه.\n"
-                "هذه دفعة لمرة واحدة تزيل كل القيود للأبد."
+                "إن لم يناسبك أي خيار، يمكنك دفع 200 نجمة تيليجرام عبر الزر أدناه.\n"
+                "هذه دفعة لمرة واحدة تزيل كل القيود للأبد.\n\n"
+                "يمكنك طرح أسئلة حول الدفع في المحادثة https://t.me/csca_math_exam/107"
             )
-        pay_btn = "⭐ ادفع 250 نجمة تيليجرام"
+        pay_btn = "⭐ ادفع 200 نجمة تيليجرام"
     else:
         if mode_norm == "train":
             text = (
@@ -7155,9 +7371,10 @@ async def pay(user, mode: str = "exam"):
                 "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
                 f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
                 "access will be unlocked after three new users follow your link.\n\n"
-                "If none of these options works for you, you can pay 250 Telegram Stars "
+                "If none of these options works for you, you can pay 200 Telegram Stars "
                 "using the button below.\n"
-                "This is a one-time payment that removes all restrictions forever."
+                "This is a one-time payment that removes all restrictions forever.\n\n"
+                "You can ask questions about payment in the chat: https://t.me/csca_math_exam/107"
             )
         else:
             text = (
@@ -7167,11 +7384,12 @@ async def pay(user, mode: str = "exam"):
                 "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
                 f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
                 "access will be unlocked after three new users follow your link.\n\n"
-                "If none of these options works for you, you can pay 250 Telegram Stars  "
+                "If none of these options works for you, you can pay 200 Telegram Stars  "
                 "using the button below.\n"
-                "This is a one-time payment that removes all restrictions forever."
+                "This is a one-time payment that removes all restrictions forever.\n\n"
+                "You can ask questions about payment in the chat: https://t.me/csca_math_exam/107"
             )
-        pay_btn = "⭐ Pay 250 Telegram Stars"
+        pay_btn = "⭐ Pay 200 Telegram Stars"
     kb = InlineKeyboardMarkup(
         inline_keyboard=[[InlineKeyboardButton(text=pay_btn, callback_data="pay_stars")]]
     )
@@ -7181,7 +7399,7 @@ async def pay(user, mode: str = "exam"):
 
 @router.callback_query(F.data == "pay_stars")
 async def on_pay_stars(call: CallbackQuery):
-    """Кнопка «Оплатить 250 Telegram Stars» — отправляем инвойс в звёздах."""
+    """Кнопка «Оплатить 200 Telegram Stars» — отправляем инвойс в звёздах."""
     await call.answer()
     user = call.from_user
     lang = await _get_user_lang(user)
@@ -7189,24 +7407,24 @@ async def on_pay_stars(call: CallbackQuery):
 
     if lg == "ru":
         title = "Доступ к режиму экзамена"
-        description = "Оплата 250 Telegram Stars за неограниченный доступ ко всем функциям бота."
+        description = "Оплата 200 Telegram Stars за неограниченный доступ ко всем функциям бота."
         price_label = "Доступ к экзамену"
     elif lg == "ar":
         title = "الوصول لوضع الامتحان"
-        description = "ادفع 250 نجمة تيليجرام للوصول غير المحدود إلى جميع وظائف البوت."
+        description = "ادفع 200 نجمة تيليجرام للوصول غير المحدود إلى جميع وظائف البوت."
         price_label = "وصول الامتحان"
     else:
         title = "Exam mode access"
-        description = "Get unlimited access to all bot functionality for 250 Telegram Stars."
+        description = "Get unlimited access to all bot functionality for 200 Telegram Stars."
         price_label = "Exam access"
 
-    # 250 Stars (для XTR amount — число звёзд)
-    prices = [types.LabeledPrice(label=price_label, amount=250)]
+    # 200 Stars (для XTR amount — число звёзд)
+    prices = [types.LabeledPrice(label=price_label, amount=200)]
     await bot.send_invoice(
         chat_id=user.id,
         title=title,
         description=description,
-        payload="exam_access_250stars",
+        payload="exam_access_200stars",
         currency="XTR",
         prices=prices,
         provider_token="",
@@ -7272,11 +7490,11 @@ async def process_successful_payment(message: types.Message):
     lang = await _get_user_lang(message.from_user)
     lg = _normalize_lang(lang)
     if lg == "ru":
-        text = "Оплата 250 Telegram Stars получена. Доступ к режиму экзамена и Mock Exam открыт."
+        text = "Оплата 200 Telegram Stars получена. Доступ к режиму экзамена и Mock Exam открыт."
     elif lg == "ar":
-        text = "تم استلام دفع 250 نجمة تيليجرام. وضع الامتحان وMock Exam متاحان الآن."
+        text = "تم استلام دفع 200 نجمة تيليجرام. وضع الامتحان وMock Exam متاحان الآن."
     else:
-        text = "Payment of 250 Telegram Stars received. Exam mode and Mock Exam are now unlocked for you."
+        text = "Payment of 200 Telegram Stars received. Exam mode and Mock Exam are now unlocked for you."
     await message.answer(text)
 
 
@@ -7525,6 +7743,51 @@ async def on_any_message(message: Message):
                             except Exception:
                                 pass
                             await message.answer(second_answer)
+                    elif first_token in ("6", "6."):
+                        # 6: отправляем исходный запрос пользователя в LLM и показываем ответ.
+                        log(message.from_user, ["llm_classifier_direct", str(chat_id)])
+                        async with ChatActionSender(
+                            bot=bot, chat_id=message.chat.id, action="typing"
+                        ):
+                            second_answer = await asyncio.to_thread(
+                                _do_llm_request,
+                                LLM_CONTEXT_ADDTEXT_ONLY,
+                                _llm_text,
+                                message.from_user.id,
+                                chat_id,
+                                message.from_user,
+                                lang,
+                                access_token,
+                                exam_lang,
+                            )
+                        if second_answer:
+                            try:
+                                ans_one_line = (second_answer or "").replace("\n", " ").strip()
+                                if len(ans_one_line) > 2000:
+                                    ans_one_line = ans_one_line[:2000] + "..."
+                                log(
+                                    message.from_user,
+                                    [
+                                        "llm_followup_direct",
+                                        str(chat_id),
+                                        f"len={len(second_answer or '')}",
+                                        ans_one_line,
+                                    ],
+                                )
+                            except Exception:
+                                pass
+                            await message.answer(second_answer)
+                    elif first_token in ("7", "7."):
+                        # 7: вне тематики CSCA — вежливо ограничиваем область ответов.
+                        log(message.from_user, ["llm_classifier_out_of_scope", str(chat_id)])
+                        await message.answer(
+                            _txt(
+                                lang,
+                                "Бот умеет отвечать только на вопросы об экзамене CSCA.",
+                                "The bot can only answer questions about the CSCA exam.",
+                                "يمكن للبوت الإجابة فقط عن الأسئلة المتعلقة بامتحان CSCA.",
+                            )
+                        )
                     else:
                         try:
                             ans_one_line = (answer_text or "").replace("\n", " ").strip()
