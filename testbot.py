@@ -17,6 +17,23 @@ from aiogram.types import Message
 from aiogram.utils.chat_action import ChatActionSender
 from langchain_amvera import AmveraLLM
 from langchain_core.messages import SystemMessage, HumanMessage
+
+# Amvera API при tool calls может вернуть message.text = null; dict.get("text","") тогда даёт None,
+# а AIMessage (langchain_core + Pydantic v2) требует str | list, не None.
+_orig_amvera_parse_response = AmveraLLM._parse_response
+
+
+def _parse_response_coerce_content(self, response_data):
+    content, generation_info, tool_calls = _orig_amvera_parse_response(self, response_data)
+    if content is None:
+        content = ""
+    return content, generation_info, tool_calls
+
+
+AmveraLLM._parse_response = _parse_response_coerce_content
+#from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.tools import tool
 #from dotenv import load_dotenv
 
 
@@ -431,7 +448,7 @@ for top in topics:
         questions_by_topic_subtopic[key].append(j)
 
 
-MATH_ALL_NON_RU_LINK = "https://t.me/+hN3O2vl9211mZmU6"
+MATH_ALL_NON_RU_LINK = "https://t.me/+tMDdagNot-xlNjMy"
 MATH_ALL_NON_RU_LINK = "https://t.me/+tMDdagNot-xlNjMy"
 
 
@@ -618,6 +635,7 @@ _llm_solution_shown_for_task: dict[int, set[tuple[str, int]]] = {}
 LLM_CONTEXT_ADDTEXT_ONLY = "addtext_only"  # addtext в системных сообщениях, без RAG
 LLM_CONTEXT_RAG_ONLY = "rag_only"  # только RAG, без addtext-классификатора
 LLM_CONTEXT_LAST_TASK = "last_task"  # условие и варианты последней показанной задачи
+LLM_CONTEXT_THEORY = "theory"  # теоретические вопросы по math/physics/chemistry
 
 
 def _record_last_seen_question(
@@ -1173,7 +1191,7 @@ def _wrong_answer_training_extra_message(lang: str, wrong_today: int, total_toda
         if err_pct > 40:
             block += "\nНеобходимо сначала выучить теорию."
         # Сообщение про лимит начинаем показывать, когда ошибок стало больше 10,
-        # само значение лимита берём из константы N (сейчас 20).
+        # само значение лимита берём из константы N (сейчас 10).
         if wrong_today > 10:
             block += (
                 f"\n\nОграничение по ошибкам сегодня: не более {N}. "
@@ -2138,6 +2156,180 @@ def exams_menu_kb(lang: str = "en") -> InlineKeyboardMarkup:
     )
     builder.adjust(1)
     return builder.as_markup()
+
+
+def _agent_tasks_catalog_text(lang: str, max_chars: int = 12000) -> str:
+    """Текстовая сводка тем/подтем и числа задач: математика, физика, химия."""
+    math_topics = [t for t in topics if t not in ("physics", "chemistry")]
+    phys_topics = [t for t in topics if t == "physics"]
+    chem_topics = [t for t in topics if t == "chemistry"]
+
+    lines: list[str] = []
+    h_math = _txt(lang, "Математика (темы в боте):", "Mathematics (bot topics):", "الرياضيات (مواضيع البوت):")
+    h_phys = _txt(lang, "Физика:", "Physics:", "الفيزياء:")
+    h_chem = _txt(lang, "Химия:", "Chemistry:", "الكيمياء:")
+    task_w = _txt(lang, "задач", "tasks", "مهام")
+
+    def append_block(header: str, topic_names: list[str]) -> None:
+        lines.append(header)
+        for top in topic_names:
+            if top not in kapibara:
+                continue
+            n = len(kapibara[top])
+            td = _topic_display(top, lang)
+            lines.append(f"- {td} (topic={top}): {n} {task_w}")
+            for sub in subtopics_by_topic.get(top, []):
+                cnt = len(questions_by_topic_subtopic.get((top, sub), []))
+                sd = _subtopic_display(top, sub, lang)
+                lines.append(f"  • {sd}: {cnt}")
+
+    append_block(h_math, math_topics)
+    append_block(h_phys, phys_topics)
+    append_block(h_chem, chem_topics)
+    text = "\n".join(lines).strip()
+    if len(text) > max_chars:
+        tail = _txt(lang, "\n... [обрезано]", "\n... [truncated]", "\n... [مختصر]")
+        text = text[: max_chars - len(tail)] + tail
+    return text or _txt(lang, "Нет загруженных задач.", "No tasks loaded.", "لا توجد مهام محمّلة.")
+
+
+def llm_agent(
+    user_text: str,
+    user_id: int,
+    lang: str,
+    access_token: str,
+    exam_lang: str | None = None,
+) -> tuple[str, InlineKeyboardMarkup | None]:
+    """
+    Агент LangChain (tool calling) для ответов с опорой на данные бота.
+
+    Инструменты:
+      - последняя открытая задача пользователя;
+      - текст из rag.txt (экзамен и бот);
+      - список тем/подтем и числа задач (математика, физика, химия);
+      - запрос на показ меню экзаменов (возвращается InlineKeyboardMarkup).
+
+    Returns:
+        (ответ_текстом, reply_markup или None)
+    """
+    if not (access_token or "").strip():
+        return (
+            _txt(lang, "Нет ключа LLM.", "LLM key missing.", "مفتاح LLM غير موجود."),
+            None,
+        )
+
+    side: dict[str, bool] = {"open_exams_menu": False}
+
+    @tool
+    def get_last_user_task(unused: str = "") -> str:
+        """Last CSCA practice task the user opened in the bot (problem text and options). Use for 'my task', 'this problem', help with the question on screen."""
+        block = _format_last_seen_task_for_llm(user_id, lang, exam_lang)
+        if not block:
+            return _txt(
+                lang,
+                "Пользователь ещё не открывал задачу в боте.",
+                "The user has not opened a task in the bot yet.",
+                "لم يفتح المستخدم مسألة في البوت بعد.",
+            )
+        return block
+
+    @tool
+    def get_exam_and_bot_rag(unused: str = "") -> str:
+        """FAQ about the CSCA exam and how this bot works (from rag.txt). Use for exam rules, access, payment, bot behavior."""
+        rag = load_rag_text()
+        if not rag:
+            return _txt(
+                lang,
+                "Справочный файл пока пуст или недоступен.",
+                "The reference file is empty or unavailable.",
+                "ملف المرجع فارغ أو غير متوفر.",
+            )
+        return rag
+
+    @tool
+    def list_tasks_math_physics_chemistry(unused: str = "") -> str:
+        """List practice topics and subtopics with task counts for math, physics, and chemistry."""
+        return _agent_tasks_catalog_text(lang)
+
+    @tool
+    def open_exams_menu(unused: str = "") -> str:
+        """Use when the user wants the exam list, mock exam, or to pick January/December/March exams. Schedules the exam keyboard below the reply."""
+        side["open_exams_menu"] = True
+        return _txt(
+            lang,
+            "Меню выбора экзамена будет показано под ответом.",
+            "The exam selection menu will appear below the answer.",
+            "ستظهر قائمة اختيار الامتحان أسفل الإجابة.",
+        )
+
+    tools = [
+        get_last_user_task,
+        get_exam_and_bot_rag,
+        list_tasks_math_physics_chemistry,
+        open_exams_menu,
+    ]
+
+    brief = _txt(
+        lang,
+        "Ты помощник бота подготовки к CSCA. Вызывай инструменты, когда нужны факты из бота или RAG; не придумывай списки тем — для них есть инструмент.",
+        "You are the CSCA exam prep assistant. Call tools for bot state or RAG; do not invent topic lists—use the tool.",
+        "أنت مساعد التحضير لامتحان CSCA. استخدم الأدوات للحقائق؛ لا تخترع قوائم المواضيع.",
+    )
+    lang_rule = _txt(
+        lang,
+        "Отвечай на русском.",
+        "Answer in English.",
+        "أجب بالعربية.",
+    )
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", f"{brief}\n{lang_rule}"),
+            MessagesPlaceholder("chat_history", optional=True),
+            ("human", "{input}"),
+            MessagesPlaceholder("agent_scratchpad"),
+        ]
+    )
+
+    token = (access_token or "").strip()
+    # AmveraLLM.bind_tools (внутри create_tool_calling_agent) клонирует модель через
+    # self.dict() — секрет api_token туда не попадает, и новый экземпляр падает на
+    # валидации, если нет AMVERA_API_TOKEN в окружении. Временно выставляем env.
+    prev_amvera = os.environ.get("AMVERA_API_TOKEN")
+    try:
+        os.environ["AMVERA_API_TOKEN"] = token
+        llm = AmveraLLM(model="gpt-5", api_token=token)
+        agent = create_tool_calling_agent(llm, tools, prompt)
+        executor = AgentExecutor(
+            agent=agent,
+            tools=tools,
+            verbose=False,
+            max_iterations=10,
+            handle_parsing_errors=True,
+        )
+        out = executor.invoke({"input": (user_text or "").strip() or ".", "chat_history": []})
+        text = (out.get("output") or "").strip()
+        if not text:
+            text = _txt(lang, "Пустой ответ модели.", "Empty model reply.", "رد فارغ من النموذج.")
+        kb = exams_menu_kb(lang) if side["open_exams_menu"] else None
+        return text, kb
+    except Exception as e:
+        logging.error(f"llm_agent error: {e}")
+        logging.error(traceback.format_exc())
+        return (
+            _txt(
+                lang,
+                "Ошибка агента LLM. Попробуйте позже.",
+                "LLM agent error. Please try again later.",
+                "خطأ في وكيل LLM. حاول لاحقًا.",
+            ),
+            None,
+        )
+    finally:
+        if prev_amvera is None:
+            os.environ.pop("AMVERA_API_TOKEN", None)
+        else:
+            os.environ["AMVERA_API_TOKEN"] = prev_amvera
 
 
 
@@ -3372,7 +3564,7 @@ def inline_kb_explain_sub(topic_idx: int, sub_idx: int, k: int, showvideo: int =
     )
     topiclink = topic_links.get(k_item.get('subtopic', ''), '') or topic_links.get(k_item.get('topic'), '')
     if _normalize_lang(lang_code) != "ru":
-        topiclink = "https://t.me/+hN3O2vl9211mZmU6"
+        topiclink = "https://t.me/+tMDdagNot-xlNjMy"
     if topiclink:
         builder.row(
             InlineKeyboardButton(
@@ -3416,7 +3608,7 @@ def inline_kb_explain(top, j, k, lang_code: str = "en") :
     )
    topiclink  = topic_links.get(k.get('subtopic',''),'') or topic_links.get(k.get('topic'),'')
    if _normalize_lang(lang_code) != "ru":
-      topiclink = "https://t.me/+hN3O2vl9211mZmU6"
+      topiclink = "https://t.me/+tMDdagNot-xlNjMy"
    if topiclink :
       
       builder.row(
@@ -3518,7 +3710,7 @@ def inline_kb_math_all_explain(top: str, j: int, q: dict, lang_code: str = "en")
 
    topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
    if _normalize_lang(lang_code) != "ru":
-       topiclink = "https://t.me/+hN3O2vl9211mZmU6"
+       topiclink = "https://t.me/+tMDdagNot-xlNjMy"
    if topiclink:
        builder.row(
            InlineKeyboardButton(
@@ -3540,7 +3732,7 @@ def inline_kb_math_all_explain(top: str, j: int, q: dict, lang_code: str = "en")
 def _topic_chat_link_for_lang(q: dict, lang_code: str) -> str:
    topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
    if _normalize_lang(lang_code) != "ru":
-       topiclink = "https://t.me/+hN3O2vl9211mZmU6"
+       topiclink = "https://t.me/+tMDdagNot-xlNjMy"
    return topiclink
 
 
@@ -3787,7 +3979,7 @@ def _kb_soldn_after_ai_unclear(
         chat_url = (
             DEFAULT_CHAT_FALLBACK_RU
             if _normalize_lang(lang) == "ru"
-            else "https://t.me/+hN3O2vl9211mZmU6"
+            else "https://t.me/+tMDdagNot-xlNjMy"
         )
     kb.row(
         InlineKeyboardButton(
@@ -3795,7 +3987,7 @@ def _kb_soldn_after_ai_unclear(
             url=chat_url,
         )
     )
-    if  0  : #  show_explain:
+    if   show_explain:
         kb.row(
             InlineKeyboardButton(
                 text=_txt(lang, "Объяснить подробнее…", "Explain in more detail…", "شرح أكثر…"),
@@ -3816,7 +4008,7 @@ def _discussion_url_for_task(q: dict, lang: str) -> str:
     URL для кнопки «Перейти в чат» после 👎 к решению из data.txt.
     Не-ru — инвайт-ссылка; ru — тема из topic_links, иначе DEFAULT_CHAT_FALLBACK_RU.
     """
-    fallback_en = "https://t.me/+hN3O2vl9211mZmU6"
+    fallback_en = "https://t.me/+tMDdagNot-xlNjMy"
     topiclink = topic_links.get(q.get("subtopic", ""), "") or topic_links.get(q.get("topic"), "")
     if _normalize_lang(lang) != "ru":
         return fallback_en
@@ -3825,8 +4017,14 @@ def _discussion_url_for_task(q: dict, lang: str) -> str:
 
 def _get_llm_access_token() -> str:
     access_token = os.environ.get("LLM_TOKEN", "").strip()
-  #  access_token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtVmV0T3hCQlJhcWNpZHdnYUJROEF4UjcwMkk4QmtrRjRseXJWazFKU1BjIn0.eyJleHAiOjE4NjkwNTI4MDgsImlhdCI6MTc3NDk2NzQzMywiYXV0aF90aW1lIjoxNzc0MDk5MjA4LCJqdGkiOiJmYTZlOTU2My02ZGFjLTRjYTEtYTBhMi03NWQ1NTcxNDVlMTgiLCJpc3MiOiJodHRwczovL2lkLmFtdmVyYS5ydS9hdXRoL3JlYWxtcy9hbXZlcmEiLCJhdWQiOlsiYWNjb3VudCIsImtvbmctMSJdLCJzdWIiOiJlMTViZGY5ZS1hNzU4LTQ5ZjktYTA2YS01MTVmZGJiMGQxOWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhbXZlcmEtYXBpIiwic2lkIjoiZWFmNWYxODYtNjIzZi00MjE1LTgxOGUtZDE4ZGJlZWFhY2E3IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtYW12ZXJhIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcGhvbmUgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdmV0bGFuYXNob3JpbmEiLCJlbWFpbCI6InN2ZXRsYW5hX3Nob3JpbmFAbWFpbC5ydSJ9.McrZQDL2b3KOAV5-a4YLna3wKQnxa1gWVDOX6RmgmdGXMSpdGMjHLDgHuUsEyhLoepFXZqCAL1PmLAq081mbRLscu_c-HInXijfCj2n-raK_MBUfaU3KY1XIGcWh7XzHtaEwMorO5goENF4L_COLBreBz8Am4kRquwIZ4AWZkv6iyfc7YFQpSWEJd8y_7DFgMRe6kNy18Qmvg3bxTaVfjNctcm6qmnNiLUhLg35PnPkKASs3ftGw0YIKqEN47dAf_WVKfoSJnnI6ycxmQMHRGpwX1nfiD7XxXfOXTcoZlDnWAJa_7Q4_Nm0CbJskjAQvjqV3XpoVYQyafbX2dDrrag"
-    return access_token
+    if access_token:
+        return access_token
+    token_path = os.path.join(BASE_DIR, "llm_token.txt")
+    try:
+        with open(token_path, "r", encoding="utf-8") as f:
+            return f.read().strip()
+    except OSError:
+        return ""
 
 
 def _do_llm_request(
@@ -3841,13 +4039,15 @@ def _do_llm_request(
 ) -> str:
     llm = AmveraLLM(model="gpt-5",  api_token=access_token)
     addtext = """Определи о чем вопрос и верни одно из чисел: 
-1 задачи по математике, 
-2 физика 
-3 химия
+1 все задачи, математика
+2 задачи по физике
+3 задачи по химии
 4 помочь решить задачу
-5 информация об экзамене, CSCA, о работе бота
-6 вопросы по математике химии физике формулы определения
-7 не про экзамен"""
+5 вопрос об экзамене, CSCA, о работе бота,  приветствие
+6 вопросы по математике химии физике формулы определения теория
+7 не про экзамен
+8 тестовый экзамен, пробный экзамен, прогноз баллов, сколько набрал бы, mock exam, прошлые экзамены
+9 сообщение об ошибке в задачах или в боте"""
     short = _txt(
         lang,
         "Ты бот подготовки к экзамену CSCA. Отвечай коротко и по делу.",
@@ -3882,6 +4082,18 @@ def _do_llm_request(
         messages = [
             SystemMessage(content=hint),
             SystemMessage(content=task_block),
+            HumanMessage(content=user_text),
+        ]
+    elif mode == LLM_CONTEXT_THEORY:
+        theory_hint = _txt(
+            lang,
+            "Отвечай на теоретические вопросы по математике, физике и химии в контексте подготовки к CSCA для школьников старших классов. Рассказывай просто и понятно.",
+            "Answer theory questions in mathematics, physics, and chemistry in the context of CSCA exam prep for high school students. Explain in a simple and clear way.",
+            "أجب عن الأسئلة النظرية في الرياضيات والفيزياء والكيمياء ضمن سياق التحضير لامتحان CSCA لطلاب المرحلة الثانوية. اشرح بطريقة بسيطة وواضحة.",
+        )
+        messages = [
+            SystemMessage(content=theory_hint),
+            SystemMessage(content=short),
             HumanMessage(content=user_text),
         ]
     else:
@@ -4480,9 +4692,9 @@ async def on_math_solution_down(call: CallbackQuery):
     show_explain = not _user_has_viewed_llm_solution_for_task(uid, top, j)
     msg = _txt(
         lang,
-        "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
-        "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
-        "الحل مُولَّد بالذكاء الاصطناعي وقد يكون غامضًا 😢 اكتب في المحادثة، وسيساعدك الناس هناك. وسأفكّر في جعل الحل أوضح.",
+        "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. Или нажми Объяснить подробнее , я попробую еще раз.",
+        "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. Or tap Explain in more detail, and I will try again.",
+        "الحل مُولَّد بالذكاء الاصطناعي وقد يكون غامضًا 😢 اكتب في المحادثة، وسيساعدك الناس هناك. أو اضغط شرح أكثر، وسأحاول مرة أخرى.",
     )
     await call.message.answer(
         msg,
@@ -4587,9 +4799,9 @@ async def on_topic_solution_down(call: CallbackQuery):
     show_explain = not _user_has_viewed_llm_solution_for_task(uid, top, j)
     msg = _txt(
         lang,
-        "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
-        "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
-        "الحل مُولَّد بالذكاء الاصطناعي وقد يكون غامضًا 😢 اكتب في المحادثة، وسيساعدك الناس هناك. وسأفكّر في جعل الحل أوضح.",
+        "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. Или нажми Объяснить подробнее , я попробую еще раз.",
+        "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. Or tap Explain in more detail, and I will try again.",
+        "الحل مُولَّد بالذكاء الاصطناعي وقد يكون غامضًا 😢 اكتب في المحادثة، وسيساعدك الناس هناك. أو اضغط شرح أكثر، وسأحاول مرة أخرى.",
     )
     await call.message.answer(
         msg,
@@ -4688,9 +4900,9 @@ async def on_sub_solution_down(call: CallbackQuery):
     show_explain = not _user_has_viewed_llm_solution_for_task(uid, top, j)
     msg = _txt(
         lang,
-        "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. А я пока подумаю, как сделать решение понятнее.",
-        "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. And I will think about how to make the solution clearer",
-        "الحل مُولَّد بالذكاء الاصطناعي وقد يكون غامضًا 😢 اكتب في المحادثة، وسيساعدك الناس هناك. وسأفكّر في جعل الحل أوضح.",
+        "Решение сгенерировано нейросетью, действительно ничего не понятно 😢\nНапиши в чат, там тебе помогут по-человечески. Или нажми Объяснить подробнее , я попробую еще раз.",
+        "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. Or tap Explain in more detail, and I will try again.",
+        "الحل مُولَّد بالذكاء الاصطناعي وقد يكون غامضًا 😢 اكتب في المحادثة، وسيساعدك الناس هناك. أو اضغط شرح أكثر، وسأحاول مرة أخرى.",
     )
     await call.message.answer(
         msg,
@@ -4731,6 +4943,7 @@ async def on_llm_explain_last(call: CallbackQuery):
     llm_task_snapshot: tuple[str, int] | None = None
     if ks_snap and len(ks_snap) >= 2:
         llm_task_snapshot = (ks_snap[0], int(ks_snap[1]))
+    await call.message.answer("думаю... ")
     try:
         async with ChatActionSender(bot=bot, chat_id=call.message.chat.id, action="typing"):
             answer_text = await asyncio.to_thread(
@@ -4989,7 +5202,7 @@ def _format_exam_stats_line(state) -> str:
 
 # Лимит ошибок/ответов для ограничения доступа.
 # N — максимально допустимое число неверных ответов в день в бесплатном режиме.
-N = 20
+N = 10
 
 
 def _inline_kb_exam_entry_choice() -> InlineKeyboardMarkup:
@@ -7259,32 +7472,52 @@ async def cmd_exam_mock_stats(message: types.Message):
 
 @router.message(Command("inviteusers"))
 async def cmd_inviteusers(message: types.Message):
-    """Показать список пользователей, по приглашениям которых пришли новые пользователи."""
-    # Строим список (inviter_id, username, count) из invite_relations
-    if not invite_relations:
-        lang = await _get_user_lang(message.from_user)
-        if lang.startswith("ru"):
-            text = "Пока нет данных о приглашениях."
-        else:
-            text = "There is no invitation data yet."
-        await message.answer(text)
+    """Показать invite-коды, число приглашённых и суммарно решённые ими задачи."""
+    lang = await _get_user_lang(message.from_user)
+    if not db_conn:
+        await message.answer(
+            _txt(
+                lang,
+                "База данных недоступна.",
+                "Database is unavailable.",
+                "قاعدة البيانات غير متاحة.",
+            )
+        )
         return
 
-    # Сортируем по количеству приглашённых (по убыванию)
-    items = sorted(
-        ((inviter_id, len(invited)) for inviter_id, invited in invite_relations.items()),
-        key=lambda x: x[1],
-        reverse=True,
-    )
-    lang = await _get_user_lang(message.from_user)
+    try:
+        items = await db.get_invite_code_stats(db_conn)
+    except Exception as e:
+        logging.error(f"Ошибка чтения invite-кодов: {e}")
+        await message.answer(
+            _txt(
+                lang,
+                "Не удалось получить статистику приглашений.",
+                "Failed to load invitation stats.",
+                "تعذّر تحميل إحصاءات الدعوات.",
+            )
+        )
+        return
+
+    if not items:
+        await message.answer(
+            _txt(
+                lang,
+                "Пока нет данных по invite-кодам.",
+                "There is no invite-code data yet.",
+                "لا توجد بيانات لرموز الدعوة بعد.",
+            )
+        )
+        return
+
     if lang.startswith("ru"):
-        lines = ["📨 Пользователи, по приглашениям которых пришли новые пользователи:\n"]
-        for inviter_id, count in items:
-            lines.append(f"- id {inviter_id}: пригласил(а) {count} пользовател(ей)")
+        lines = ["📨 Invite-коды: приглашённые пользователи и решённые задачи:\n"]
+        for code, users_count, solved_tasks_total in items:
+            lines.append(f"- {code}: пользователей={users_count}, задач={solved_tasks_total}")
     else:
-        lines = ["📨 Users whose invitations brought new users:\n"]
-        for inviter_id, count in items:
-            lines.append(f"- id {inviter_id}: invited {count} user(s)")
+        lines = ["📨 Invite codes: invited users and solved tasks:\n"]
+        for code, users_count, solved_tasks_total in items:
+            lines.append(f"- {code}: users={users_count}, tasks={solved_tasks_total}")
     await message.answer("\n".join(lines))
 
 
@@ -7314,12 +7547,13 @@ async def pay(user, mode: str = "exam"):
             text = (
                 f"Вы сделали больше {N} ошибок сегодня. Можете продолжить тренироваку завтра.\n\n"
                 "Как снять ограничения:\n"
+                "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n"
                 "Если вы приобретали курс  https://stepik.org/a/268161, перейдите в бот по ссылке из первого урока.\n"
-                "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
+                "Вы можете стать студентом курса прямо сейчас и получить полный досуп к возможностям бота, а также видео-лекции и подробный разбор задач\n\n"
                 f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
                 "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
                 "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
-                "200 Telegram Stars по кнопке ниже.\n"
+                "100 Telegram Stars ниже.\n"
                 "Это разовый платеж, который снимает все ограничения навсегда.\n\n"
                 "Задать вопрос об оплате можно в чате https://t.me/csca_math_exam/107"
             )
@@ -7327,15 +7561,15 @@ async def pay(user, mode: str = "exam"):
             text = (
                 "Режим экзамена недоступен.\n\n"
                 "Если вы приобретали курс  https://stepik.org/a/268161, перейдите в бот по ссылке из первого урока.\n"
+                "Вы можете стать студентом курса прямо сейчас и получить полный досуп к возможностям бота, видео-лекции и подробный разбор задач"
                 "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
                 f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
                 "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
                 "Если ни один из этих способов вам не подходит, вы можете оплатить доступ "
-                "200 Telegram Stars  по кнопке ниже.\n"
+                "100 Telegram Stars ниже.\n"
                 "Это разовый платеж, который снимает все ограничения навсегда.\n\n"
                 "Задать вопрос об оплате можно в чате https://t.me/csca_math_exam/107"
             )
-        pay_btn = "⭐ Оплатить 200 Telegram Stars"
     elif lg == "ar":
         if mode_norm == "train":
             text = (
@@ -7345,7 +7579,7 @@ async def pay(user, mode: str = "exam"):
                 "إذا كنت في مجموعة «Preparing for CSCA»، استخدم الرابط المباشر من المجموعة.\n\n"
                 f"يمكنك أيضاً نشر رابط الدعوة الشخصي {invite_link} في أي محادثة عن CSCA — "
                 "يُفتح الوصول بعد أن يتبع رابطك ثلاثة مستخدمين جدد.\n\n"
-                "إن لم يناسبك أي خيار، يمكنك دفع 200 نجمة تيليجرام عبر الزر أدناه.\n"
+                "إن لم يناسبك أي خيار، يمكنك دفع 100 نجمة تيليجرام أدناه.\n"
                 "هذه دفعة لمرة واحدة تزيل كل القيود للأبد.\n\n"
                 "يمكنك طرح أسئلة حول الدفع في المحادثة https://t.me/csca_math_exam/107"
             )
@@ -7356,11 +7590,10 @@ async def pay(user, mode: str = "exam"):
                 "إذا كنت في مجموعة «Preparing for CSCA»، استخدم الرابط المباشر من المجموعة.\n\n"
                 f"يمكنك أيضاً نشر رابط الدعوة الشخصي {invite_link} في أي محادثة عن CSCA — "
                 "يُفتح الوصول بعد أن يتبع رابطك ثلاثة مستخدمين جدد.\n\n"
-                "إن لم يناسبك أي خيار، يمكنك دفع 200 نجمة تيليجرام عبر الزر أدناه.\n"
+                "إن لم يناسبك أي خيار، يمكنك دفع 100 نجمة تيليجرام أدناه.\n"
                 "هذه دفعة لمرة واحدة تزيل كل القيود للأبد.\n\n"
                 "يمكنك طرح أسئلة حول الدفع في المحادثة https://t.me/csca_math_exam/107"
             )
-        pay_btn = "⭐ ادفع 200 نجمة تيليجرام"
     else:
         if mode_norm == "train":
             text = (
@@ -7371,8 +7604,8 @@ async def pay(user, mode: str = "exam"):
                 "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
                 f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
                 "access will be unlocked after three new users follow your link.\n\n"
-                "If none of these options works for you, you can pay 200 Telegram Stars "
-                "using the button below.\n"
+                "If none of these options works for you, you can pay 100 Telegram Stars "
+                "below.\n"
                 "This is a one-time payment that removes all restrictions forever.\n\n"
                 "You can ask questions about payment in the chat: https://t.me/csca_math_exam/107"
             )
@@ -7384,47 +7617,66 @@ async def pay(user, mode: str = "exam"):
                 "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
                 f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
                 "access will be unlocked after three new users follow your link.\n\n"
-                "If none of these options works for you, you can pay 200 Telegram Stars  "
-                "using the button below.\n"
+                "If none of these options works for you, you can pay 100 Telegram Stars  "
+                "below.\n"
                 "This is a one-time payment that removes all restrictions forever.\n\n"
                 "You can ask questions about payment in the chat: https://t.me/csca_math_exam/107"
             )
-        pay_btn = "⭐ Pay 200 Telegram Stars"
-    kb = InlineKeyboardMarkup(
-        inline_keyboard=[[InlineKeyboardButton(text=pay_btn, callback_data="pay_stars")]]
-    )
+    await bot.send_message(chat_id=user.id, text=text)
 
-    await bot.send_message(chat_id=user.id, text=text, reply_markup=kb)
+    if lg == "ru":
+        title = "Все функции бота"
+        description = "Оплата 100 Telegram Stars за неограниченный доступ ко всем функциям бота."
+        price_label = "Доступ к экзамену"
+    elif lg == "ar":
+        title = "جميع وظائف البوت"
+        description = "ادفع 100 نجمة تيليجرام للوصول غير المحدود إلى جميع وظائف البوت."
+        price_label = "وصول الامتحان"
+    else:
+        title = "All bot features"
+        description = "Get unlimited access to all bot functionality for 100 Telegram Stars."
+        price_label = "Exam access"
+
+    prices = [types.LabeledPrice(label=price_label, amount=100)]
+    await bot.send_invoice(
+        chat_id=user.id,
+        title=title,
+        description=description,
+        payload="access",
+        currency="XTR",
+        prices=prices,
+        provider_token="",
+    )
 
 
 @router.callback_query(F.data == "pay_stars")
 async def on_pay_stars(call: CallbackQuery):
-    """Кнопка «Оплатить 200 Telegram Stars» — отправляем инвойс в звёздах."""
+    """Кнопка «Оплатить 100 Telegram Stars» — отправляем инвойс в звёздах."""
     await call.answer()
     user = call.from_user
     lang = await _get_user_lang(user)
     lg = _normalize_lang(lang)
 
     if lg == "ru":
-        title = "Доступ к режиму экзамена"
-        description = "Оплата 200 Telegram Stars за неограниченный доступ ко всем функциям бота."
+        title = "Все функции бота"
+        description = "Оплата 100 Telegram Stars за неограниченный доступ ко всем функциям бота."
         price_label = "Доступ к экзамену"
     elif lg == "ar":
-        title = "الوصول لوضع الامتحان"
-        description = "ادفع 200 نجمة تيليجرام للوصول غير المحدود إلى جميع وظائف البوت."
+        title = "جميع وظائف البوت"
+        description = "ادفع 100 نجمة تيليجرام للوصول غير المحدود إلى جميع وظائف البوت."
         price_label = "وصول الامتحان"
     else:
-        title = "Exam mode access"
-        description = "Get unlimited access to all bot functionality for 200 Telegram Stars."
+        title = "All bot features"
+        description = "Get unlimited access to all bot functionality for 100 Telegram Stars."
         price_label = "Exam access"
 
-    # 200 Stars (для XTR amount — число звёзд)
-    prices = [types.LabeledPrice(label=price_label, amount=200)]
+    # 100 Stars (для XTR amount — число звёзд)
+    prices = [types.LabeledPrice(label=price_label, amount=100)]
     await bot.send_invoice(
         chat_id=user.id,
         title=title,
         description=description,
-        payload="exam_access_200stars",
+        payload="access",
         currency="XTR",
         prices=prices,
         provider_token="",
@@ -7490,12 +7742,286 @@ async def process_successful_payment(message: types.Message):
     lang = await _get_user_lang(message.from_user)
     lg = _normalize_lang(lang)
     if lg == "ru":
-        text = "Оплата 200 Telegram Stars получена. Доступ к режиму экзамена и Mock Exam открыт."
+        text = "Оплата 100 Telegram Stars получена. Доступ ко всем функциям бота открыт."
     elif lg == "ar":
-        text = "تم استلام دفع 200 نجمة تيليجرام. وضع الامتحان وMock Exam متاحان الآن."
+        text = "تم استلام دفع 100 نجمة تيليجرام. الوصول إلى جميع وظائف البوت متاح الآن."
     else:
-        text = "Payment of 200 Telegram Stars received. Exam mode and Mock Exam are now unlocked for you."
-    await message.answer(text)
+        text = "Payment of 100 Telegram Stars received. Access to all bot features is now unlocked for you."
+    kb = await start_kb(message.from_user.id)
+    await message.answer(text, reply_markup=kb)
+
+
+async def _on_any_message_llm_legacy_classifier(
+    message: Message,
+    chat_id: int,
+    _llm_text: str,
+    lang: str,
+    exam_lang: str | None,
+    access_token: str,
+) -> None:
+    """
+    Прежняя обработка произвольного текста через LLM: режим addtext_only и ветвление по классификатору (1–9).
+    Оставлена для отката или отладки; основной путь — llm_agent в on_any_message.
+    """
+    llm_context_mode = LLM_CONTEXT_ADDTEXT_ONLY
+
+    try:
+        llm_task_snapshot: tuple[str, int] | None = None
+        if llm_context_mode == LLM_CONTEXT_LAST_TASK:
+            ks = _last_seen_kapibara_question.get(message.from_user.id)
+            if ks and len(ks) >= 2:
+                llm_task_snapshot = (ks[0], int(ks[1]))
+        async with ChatActionSender(bot=bot, chat_id=message.chat.id, action="typing"):
+            answer_text = await asyncio.to_thread(
+                _do_llm_request,
+                llm_context_mode,
+                _llm_text,
+                message.from_user.id,
+                chat_id,
+                message.from_user,
+                lang,
+                access_token,
+                exam_lang,
+            )
+        if answer_text == "__NO_LAST_TASK__":
+            await message.answer(
+                _txt(
+                    lang,
+                    "Если вам нужна помощь по задаче, сначала откройте задачу в боте, затем снова напишите сообщение.",
+                    "If you need help, open a task in the bot first, then send your message again.",
+                    "إذا كنت بحاجة إلى مساعدة، افتح مسألة في البوت أولًا، ثم أرسل رسالتك مرة أخرى.",
+                )
+            )
+            return
+        if answer_text:
+            if llm_context_mode != LLM_CONTEXT_ADDTEXT_ONLY:
+                try:
+                    ans_one_line = (answer_text or "").replace("\n", " ").strip()
+                    if len(ans_one_line) > 2000:
+                        ans_one_line = ans_one_line[:2000] + "..."
+                    log(
+                        message.from_user,
+                        [
+                            "llm_answer",
+                            str(chat_id),
+                            llm_context_mode,
+                            f"len={len(answer_text or '')}",
+                            ans_one_line,
+                        ],
+                    )
+                except Exception:
+                    pass
+                fb = (
+                    _kb_llm_task_feedback(message.from_user.id, lang)
+                    if llm_context_mode == LLM_CONTEXT_LAST_TASK
+                    else None
+                )
+                if (
+                    llm_context_mode == LLM_CONTEXT_LAST_TASK
+                    and llm_task_snapshot
+                    and answer_text
+                ):
+                    _mark_llm_solution_shown(
+                        message.from_user.id,
+                        llm_task_snapshot[0],
+                        llm_task_snapshot[1],
+                    )
+                await message.answer(answer_text, reply_markup=fb)
+            else:
+                resp_stripped = (answer_text or "").strip()
+                first_line = resp_stripped.split("\n")[0].strip() if resp_stripped else ""
+                first_token = first_line.split()[0] if first_line.split() else ""
+                # Классификатор LLM: 1 — математика (меню тем), 2 — физика, 3 — химия
+                if first_token in ("1", "1."):
+                    await message.answer(
+                        _txt(
+                            lang,
+                            "Ниже — список тем по математике. Выберите тему: в задачах есть проверка ответов и доступ к решению после попытки.",
+                            "Below is the math topic list. Pick a topic: you get answer checking and access to the solution after you try.",
+                            "فيما يلي قائمة مواضيع الرياضيات. اختر موضوعًا: ستجد التحقق من الإجابة والوصول إلى الحل بعد المحاولة.",
+                        ),
+                        reply_markup=topics_menu_kb(lang),
+                    )
+                    log(message.from_user, ["llm_topics_menu", str(chat_id), "classifier=1"])
+                elif first_token in ("2", "2."):
+                    await _start_topic_training_from_message(message, "physics", "menu_physics")
+                    log(message.from_user, ["llm_classifier_physics", str(chat_id)])
+                elif first_token in ("3", "3."):
+                    await _start_topic_training_from_message(message, "chemistry", "menu_chemistry")
+                    log(message.from_user, ["llm_classifier_chemistry", str(chat_id)])
+                elif first_token in ("4", "4."):
+                    log(message.from_user, ["llm_classifier_last_task", str(chat_id)])
+                    ks4 = _last_seen_kapibara_question.get(message.from_user.id)
+                    llm_task_snapshot_4: tuple[str, int] | None = None
+                    if ks4 and len(ks4) >= 2:
+                        llm_task_snapshot_4 = (ks4[0], int(ks4[1]))
+                    async with ChatActionSender(
+                        bot=bot, chat_id=message.chat.id, action="typing"
+                    ):
+                        second_answer = await asyncio.to_thread(
+                            _do_llm_request,
+                            LLM_CONTEXT_LAST_TASK,
+                            _llm_text,
+                            message.from_user.id,
+                            chat_id,
+                            message.from_user,
+                            lang,
+                            access_token,
+                            exam_lang,
+                        )
+                    if second_answer == "__NO_LAST_TASK__":
+                        await message.answer(
+                            _txt(
+                                lang,
+                                "Если вам нужна помощь по задаче, откройте задачу в боте, затем снова напишите сообщение.",
+                                "Open a task in the bot first, then send your message again.",
+                                "إذا كنت بحاجة إلى مساعدة، افتح مسألة في البوت، ثم أرسل رسالتك مرة أخرى.",
+                            )
+                        )
+                        return
+                    if second_answer:
+                        try:
+                            ans_one_line = (second_answer or "").replace("\n", " ").strip()
+                            if len(ans_one_line) > 2000:
+                                ans_one_line = ans_one_line[:2000] + "..."
+                            log(
+                                message.from_user,
+                                [
+                                    "llm_followup_last_task",
+                                    str(chat_id),
+                                    f"len={len(second_answer or '')}",
+                                    ans_one_line,
+                                ],
+                            )
+                        except Exception:
+                            pass
+                        if llm_task_snapshot_4:
+                            _mark_llm_solution_shown(
+                                message.from_user.id,
+                                llm_task_snapshot_4[0],
+                                llm_task_snapshot_4[1],
+                            )
+                        fb = _kb_llm_task_feedback(message.from_user.id, lang)
+                        await message.answer(second_answer, reply_markup=fb)
+                elif first_token in ("5", "5."):
+                    log(message.from_user, ["llm_classifier_rag", str(chat_id)])
+                    async with ChatActionSender(
+                        bot=bot, chat_id=message.chat.id, action="typing"
+                    ):
+                        second_answer = await asyncio.to_thread(
+                            _do_llm_request,
+                            LLM_CONTEXT_RAG_ONLY,
+                            _llm_text,
+                            message.from_user.id,
+                            chat_id,
+                            message.from_user,
+                            lang,
+                            access_token,
+                            None,
+                        )
+                    if second_answer:
+                        try:
+                            ans_one_line = (second_answer or "").replace("\n", " ").strip()
+                            if len(ans_one_line) > 2000:
+                                ans_one_line = ans_one_line[:2000] + "..."
+                            log(
+                                message.from_user,
+                                [
+                                    "llm_followup_rag",
+                                    str(chat_id),
+                                    f"len={len(second_answer or '')}",
+                                    ans_one_line,
+                                ],
+                            )
+                        except Exception:
+                            pass
+                        await message.answer(second_answer)
+                elif first_token in ("6", "6."):
+                    # 6: повторный запрос в LLM с контекстом THEORY.
+                    log(message.from_user, ["llm_classifier_direct", str(chat_id)])
+                    async with ChatActionSender(
+                        bot=bot, chat_id=message.chat.id, action="typing"
+                    ):
+                        second_answer = await asyncio.to_thread(
+                            _do_llm_request,
+                            LLM_CONTEXT_THEORY,
+                            _llm_text,
+                            message.from_user.id,
+                            chat_id,
+                            message.from_user,
+                            lang,
+                            access_token,
+                            exam_lang,
+                        )
+                    if second_answer:
+                        try:
+                            ans_one_line = (second_answer or "").replace("\n", " ").strip()
+                            if len(ans_one_line) > 2000:
+                                ans_one_line = ans_one_line[:2000] + "..."
+                            log(
+                                message.from_user,
+                                [
+                                    "llm_followup_direct",
+                                    str(chat_id),
+                                    f"len={len(second_answer or '')}",
+                                    ans_one_line,
+                                ],
+                            )
+                        except Exception:
+                            pass
+                        await message.answer(second_answer)
+                elif first_token in ("7", "7."):
+                    # 7: вне тематики CSCA — вежливо ограничиваем область ответов.
+                    log(message.from_user, ["llm_classifier_out_of_scope", str(chat_id)])
+                    await message.answer(
+                        _txt(
+                            lang,
+                            "Бот умеет отвечать только на вопросы об экзамене CSCA.",
+                            "The bot can only answer questions about the CSCA exam.",
+                            "يمكن للبوت الإجابة فقط عن الأسئلة المتعلقة بامتحان CSCA.",
+                        )
+                    )
+                elif first_token in ("8", "8."):
+                    log(message.from_user, ["llm_classifier_exams_menu", str(chat_id)])
+                    title = _txt(
+                        lang,
+                        "Выберите экзамен:",
+                        "Choose exam:",
+                        "اختر الامتحان:",
+                    )
+                    await message.answer(title, reply_markup=exams_menu_kb(lang))
+                elif first_token in ("9", "9."):
+                    log(message.from_user, ["llm_classifier_feedback_bug", str(chat_id)])
+                    await message.answer(
+                        _txt(
+                            lang,
+                            "Спасибо! Бот создан с помощью ИИ. Ваша обратная связь поможет исправить ошибки.",
+                            "Thanks! The bot is AI-assisted. Your feedback helps fix mistakes.",
+                            "شكرًا! البوت مبني بمساعدة الذكاء الاصطناعي. ملاحظاتك تساعد على تصحيح الأخطاء.",
+                        )
+                    )
+                else:
+                    try:
+                        ans_one_line = (answer_text or "").replace("\n", " ").strip()
+                        if len(ans_one_line) > 2000:
+                            ans_one_line = ans_one_line[:2000] + "..."
+                        log(
+                            message.from_user,
+                            ["llm_answer", str(chat_id), f"len={len(answer_text or '')}", ans_one_line],
+                        )
+                    except Exception:
+                        pass
+                    await message.answer(answer_text)
+    except Exception as e:
+        logging.error(f"LLM request error: {e}")
+        await message.answer(
+            _txt(
+                lang,
+                "Ошибка при обращении к LLM. Попробуйте позже.",
+                "Something went wrong while contacting the LLM. Please try again later.",
+                "حدث خطأ أثناء الاتصال بالنموذج اللغوي. حاول لاحقًا.",
+            )
+        )
 
 
 @router.message()
@@ -7551,7 +8077,7 @@ async def on_any_message(message: Message):
         await _refresh_log_lang_cache(message.from_user)
         log(message.from_user, ['message', str(chat_id), message.text.replace("\n"," ") if message.text else "" ])
         _llm_text = message.text or ""
-        if not (7 < len(_llm_text) < 300):
+        if not (2 < len(_llm_text) < 300):
             return
         log(message.from_user, ['llm_len',str(len(_llm_text))])
         access_token = _get_llm_access_token()
@@ -7569,247 +8095,15 @@ async def on_any_message(message: Message):
 
         lang = await _get_user_lang(message.from_user)
         exam_lang = await _get_user_exam_lang_by_id(message.from_user.id)
-        # Режим контекста LLM: addtext_only | rag_only | last_task (см. константы LLM_CONTEXT_*)
-        llm_context_mode = LLM_CONTEXT_ADDTEXT_ONLY
 
-        try:
-            llm_task_snapshot: tuple[str, int] | None = None
-            if llm_context_mode == LLM_CONTEXT_LAST_TASK:
-                ks = _last_seen_kapibara_question.get(message.from_user.id)
-                if ks and len(ks) >= 2:
-                    llm_task_snapshot = (ks[0], int(ks[1]))
-            async with ChatActionSender(bot=bot, chat_id=message.chat.id, action="typing"):
-                answer_text = await asyncio.to_thread(
-                    _do_llm_request,
-                    llm_context_mode,
-                    _llm_text,
-                    message.from_user.id,
-                    chat_id,
-                    message.from_user,
-                    lang,
-                    access_token,
-                    exam_lang,
-                )
-            if answer_text == "__NO_LAST_TASK__":
-                await message.answer(
-                    _txt(
-                        lang,
-                        "Если вам нужна помощь по задаче, сначала откройте задачу в боте, затем снова напишите сообщение.",
-                        "If you need help, open a task in the bot first, then send your message again.",
-                        "إذا كنت بحاجة إلى مساعدة، افتح مسألة في البوت أولًا، ثم أرسل رسالتك مرة أخرى.",
-                    )
-                )
-                return
-            if answer_text:
-                if llm_context_mode != LLM_CONTEXT_ADDTEXT_ONLY:
-                    try:
-                        ans_one_line = (answer_text or "").replace("\n", " ").strip()
-                        if len(ans_one_line) > 2000:
-                            ans_one_line = ans_one_line[:2000] + "..."
-                        log(
-                            message.from_user,
-                            [
-                                "llm_answer",
-                                str(chat_id),
-                                llm_context_mode,
-                                f"len={len(answer_text or '')}",
-                                ans_one_line,
-                            ],
-                        )
-                    except Exception:
-                        pass
-                    fb = (
-                        _kb_llm_task_feedback(message.from_user.id, lang)
-                        if llm_context_mode == LLM_CONTEXT_LAST_TASK
-                        else None
-                    )
-                    if (
-                        llm_context_mode == LLM_CONTEXT_LAST_TASK
-                        and llm_task_snapshot
-                        and answer_text
-                    ):
-                        _mark_llm_solution_shown(
-                            message.from_user.id,
-                            llm_task_snapshot[0],
-                            llm_task_snapshot[1],
-                        )
-                    await message.answer(answer_text, reply_markup=fb)
-                else:
-                    resp_stripped = (answer_text or "").strip()
-                    first_line = resp_stripped.split("\n")[0].strip() if resp_stripped else ""
-                    first_token = first_line.split()[0] if first_line.split() else ""
-                    # Классификатор LLM: 1 — математика (меню тем), 2 — физика, 3 — химия
-                    if first_token in ("1", "1."):
-                        await message.answer(
-                            _txt(
-                                lang,
-                                "Ниже — список тем по математике. Выберите тему: в задачах есть проверка ответов и доступ к решению после попытки.",
-                                "Below is the math topic list. Pick a topic: you get answer checking and access to the solution after you try.",
-                                "فيما يلي قائمة مواضيع الرياضيات. اختر موضوعًا: ستجد التحقق من الإجابة والوصول إلى الحل بعد المحاولة.",
-                            ),
-                            reply_markup=topics_menu_kb(lang),
-                        )
-                        log(message.from_user, ["llm_topics_menu", str(chat_id), "classifier=1"])
-                    elif first_token in ("2", "2."):
-                        await _start_topic_training_from_message(message, "physics", "menu_physics")
-                        log(message.from_user, ["llm_classifier_physics", str(chat_id)])
-                    elif first_token in ("3", "3."):
-                        await _start_topic_training_from_message(message, "chemistry", "menu_chemistry")
-                        log(message.from_user, ["llm_classifier_chemistry", str(chat_id)])
-                    elif first_token in ("4", "4."):
-                        log(message.from_user, ["llm_classifier_last_task", str(chat_id)])
-                        ks4 = _last_seen_kapibara_question.get(message.from_user.id)
-                        llm_task_snapshot_4: tuple[str, int] | None = None
-                        if ks4 and len(ks4) >= 2:
-                            llm_task_snapshot_4 = (ks4[0], int(ks4[1]))
-                        async with ChatActionSender(
-                            bot=bot, chat_id=message.chat.id, action="typing"
-                        ):
-                            second_answer = await asyncio.to_thread(
-                                _do_llm_request,
-                                LLM_CONTEXT_LAST_TASK,
-                                _llm_text,
-                                message.from_user.id,
-                                chat_id,
-                                message.from_user,
-                                lang,
-                                access_token,
-                                exam_lang,
-                            )
-                        if second_answer == "__NO_LAST_TASK__":
-                            await message.answer(
-                                _txt(
-                                    lang,
-                                    "Если вам нужна помощь по задаче, откройте задачу в боте, затем снова напишите сообщение.",
-                                    "Open a task in the bot first, then send your message again.",
-                                    "إذا كنت بحاجة إلى مساعدة، افتح مسألة في البوت، ثم أرسل رسالتك مرة أخرى.",
-                                )
-                            )
-                            return
-                        if second_answer:
-                            try:
-                                ans_one_line = (second_answer or "").replace("\n", " ").strip()
-                                if len(ans_one_line) > 2000:
-                                    ans_one_line = ans_one_line[:2000] + "..."
-                                log(
-                                    message.from_user,
-                                    [
-                                        "llm_followup_last_task",
-                                        str(chat_id),
-                                        f"len={len(second_answer or '')}",
-                                        ans_one_line,
-                                    ],
-                                )
-                            except Exception:
-                                pass
-                            if llm_task_snapshot_4:
-                                _mark_llm_solution_shown(
-                                    message.from_user.id,
-                                    llm_task_snapshot_4[0],
-                                    llm_task_snapshot_4[1],
-                                )
-                            fb = _kb_llm_task_feedback(message.from_user.id, lang)
-                            await message.answer(second_answer, reply_markup=fb)
-                    elif first_token in ("5", "5."):
-                        log(message.from_user, ["llm_classifier_rag", str(chat_id)])
-                        async with ChatActionSender(
-                            bot=bot, chat_id=message.chat.id, action="typing"
-                        ):
-                            second_answer = await asyncio.to_thread(
-                                _do_llm_request,
-                                LLM_CONTEXT_RAG_ONLY,
-                                _llm_text,
-                                message.from_user.id,
-                                chat_id,
-                                message.from_user,
-                                lang,
-                                access_token,
-                                None,
-                            )
-                        if second_answer:
-                            try:
-                                ans_one_line = (second_answer or "").replace("\n", " ").strip()
-                                if len(ans_one_line) > 2000:
-                                    ans_one_line = ans_one_line[:2000] + "..."
-                                log(
-                                    message.from_user,
-                                    [
-                                        "llm_followup_rag",
-                                        str(chat_id),
-                                        f"len={len(second_answer or '')}",
-                                        ans_one_line,
-                                    ],
-                                )
-                            except Exception:
-                                pass
-                            await message.answer(second_answer)
-                    elif first_token in ("6", "6."):
-                        # 6: отправляем исходный запрос пользователя в LLM и показываем ответ.
-                        log(message.from_user, ["llm_classifier_direct", str(chat_id)])
-                        async with ChatActionSender(
-                            bot=bot, chat_id=message.chat.id, action="typing"
-                        ):
-                            second_answer = await asyncio.to_thread(
-                                _do_llm_request,
-                                LLM_CONTEXT_ADDTEXT_ONLY,
-                                _llm_text,
-                                message.from_user.id,
-                                chat_id,
-                                message.from_user,
-                                lang,
-                                access_token,
-                                exam_lang,
-                            )
-                        if second_answer:
-                            try:
-                                ans_one_line = (second_answer or "").replace("\n", " ").strip()
-                                if len(ans_one_line) > 2000:
-                                    ans_one_line = ans_one_line[:2000] + "..."
-                                log(
-                                    message.from_user,
-                                    [
-                                        "llm_followup_direct",
-                                        str(chat_id),
-                                        f"len={len(second_answer or '')}",
-                                        ans_one_line,
-                                    ],
-                                )
-                            except Exception:
-                                pass
-                            await message.answer(second_answer)
-                    elif first_token in ("7", "7."):
-                        # 7: вне тематики CSCA — вежливо ограничиваем область ответов.
-                        log(message.from_user, ["llm_classifier_out_of_scope", str(chat_id)])
-                        await message.answer(
-                            _txt(
-                                lang,
-                                "Бот умеет отвечать только на вопросы об экзамене CSCA.",
-                                "The bot can only answer questions about the CSCA exam.",
-                                "يمكن للبوت الإجابة فقط عن الأسئلة المتعلقة بامتحان CSCA.",
-                            )
-                        )
-                    else:
-                        try:
-                            ans_one_line = (answer_text or "").replace("\n", " ").strip()
-                            if len(ans_one_line) > 2000:
-                                ans_one_line = ans_one_line[:2000] + "..."
-                            log(
-                                message.from_user,
-                                ["llm_answer", str(chat_id), f"len={len(answer_text or '')}", ans_one_line],
-                            )
-                        except Exception:
-                            pass
-                        await message.answer(answer_text)
-        except Exception as e:
-            logging.error(f"LLM request error: {e}")
-            await message.answer(
-                _txt(
-                    lang,
-                    "Ошибка при обращении к LLM. Попробуйте позже.",
-                    "Something went wrong while contacting the LLM. Please try again later.",
-                    "حدث خطأ أثناء الاتصال بالنموذج اللغوي. حاول لاحقًا.",
-                )
-            )
+        await _on_any_message_llm_legacy_classifier(
+            message=message,
+            chat_id=chat_id,
+            _llm_text=_llm_text,
+            lang=lang,
+            exam_lang=exam_lang,
+            access_token=access_token,
+        )
 
     # else: (группа) — без LLM ответа
 

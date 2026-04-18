@@ -155,6 +155,12 @@ async def init_db() -> aiosqlite.Connection:
     except Exception:
         # Колонка уже существует или ALTER не применим — это ок
         pass
+    # Миграция: добавляем поле invite_code в users, если база старая
+    try:
+        await conn.execute("ALTER TABLE users ADD COLUMN invite_code TEXT")
+    except Exception:
+        # Колонка уже существует или ALTER не применим — это ок
+        pass
     
     await conn.commit()
     return conn
@@ -171,6 +177,8 @@ def parse_source(start_text: Optional[str]) -> Optional[str]:
     
     if 'stepik' in start_text:
         return 'stepik'
+    elif 'cscacourse' in start_text:
+        return 'cscacourse'
     elif 'cscagroup' in start_text:
         return 'cscagroup'
     elif start_text.startswith('invite'):
@@ -178,6 +186,14 @@ def parse_source(start_text: Optional[str]) -> Optional[str]:
     # Можно добавить другие варианты здесь
     
     return None
+
+
+def make_invite_code(username: Optional[str], user_id: int) -> str:
+    """
+    Строит персональный invite-код в формате: username[:3] + user_id[:3].
+    """
+    uname = str(username or "")
+    return uname[:3] + str(user_id)[:3]
 
 
 async def ensure_user(conn: aiosqlite.Connection, user, start_text: Optional[str] = None) -> None:
@@ -191,44 +207,57 @@ async def ensure_user(conn: aiosqlite.Connection, user, start_text: Optional[str
     """
     now = datetime.now().isoformat()
     new_source = parse_source(start_text)
+    invite_code = make_invite_code(user.username, user.id)
     
+    start_clean = (start_text or "").strip()
+    is_invite_start = start_clean.lower().startswith("invite")
+
     # Проверяем, существует ли пользователь
     cursor = await conn.execute(
-        "SELECT id, source FROM users WHERE id = ?",
+        "SELECT id, source, invited_by FROM users WHERE id = ?",
         (user.id,)
     )
     row = await cursor.fetchone()
     
     if row:
-        _, old_source = row
-        # Если у пользователя уже был непустой source, а новое значение пустое,
-        # оставляем старое значение.
-        effective_source = old_source if (old_source and not new_source) else new_source
-        # Обновляем существующего пользователя
-        await conn.execute("""
-            UPDATE users 
-            SET username = ?, language_code = ?, source = ?, invited_by = ?, updated_at = ?
-            WHERE id = ?
-        """, (
-            user.username,
-            user.language_code,
-            effective_source,
-            start_text if start_text else None,
-            now,
-            user.id
-        ))
+        _, old_source, old_invited_by = row
+
+        # source обновляем только для специальных меток кампаний.
+        effective_source = old_source
+        if new_source in ("stepik", "cscacourse"):
+            effective_source = new_source
+
+        # invited_by фиксируется один раз при первом invite-start и больше не перезаписывается.
+        effective_invited_by = old_invited_by
+        if (not old_invited_by) and is_invite_start:
+            effective_invited_by = start_clean
+
+        # В остальных случаях информация не меняется.
+        if effective_source != old_source or effective_invited_by != old_invited_by:
+            await conn.execute("""
+                UPDATE users 
+                SET source = ?, invited_by = ?, invite_code = COALESCE(invite_code, ?), updated_at = ?
+                WHERE id = ?
+            """, (
+                effective_source,
+                effective_invited_by,
+                invite_code,
+                now,
+                user.id
+            ))
     else:
         # Создаём нового пользователя
         await conn.execute("""
-            INSERT INTO users (id, username, language_code, language, source, invited_by, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO users (id, username, language_code, language, source, invited_by, invite_code, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             user.id,
             user.username,
             user.language_code,
             user.language_code,
             new_source,
-            start_text if start_text else None,
+            start_clean if is_invite_start else None,
+            invite_code,
             now,
             now
         ))
@@ -525,6 +554,43 @@ async def get_all_users(conn: aiosqlite.Connection) -> List[Tuple[int, Optional[
     """)
     rows = await cursor.fetchall()
     return [(row[0], row[1], row[2], row[3]) for row in rows]
+
+
+async def get_invite_code_stats(conn: aiosqlite.Connection) -> List[Tuple[str, int, int]]:
+    """
+    Возвращает агрегат по invite-кодам из users.invited_by.
+
+    Возвращает:
+        Список кортежей (invite_code, users_count, solved_tasks_total),
+        отсортированный по users_count DESC.
+        Учитываются только непустые значения, начинающиеся с "invite" (без учета регистра).
+    """
+    cursor = await conn.execute(
+        """
+        SELECT
+            LOWER(TRIM(u.invited_by)) AS invite_code,
+            COUNT(DISTINCT u.id) AS users_count,
+            COUNT(a.id) AS solved_tasks_total
+        FROM users u
+        LEFT JOIN answers a ON a.user_id = u.id
+        WHERE u.invited_by IS NOT NULL
+          AND TRIM(u.invited_by) <> ''
+          AND LOWER(TRIM(u.invited_by)) LIKE 'invite%'
+          AND NOT (
+              -- Основной случай: есть сохраненный invite_code и invited_by совпадает с ним.
+              (u.invite_code IS NOT NULL AND TRIM(u.invite_code) <> '' AND LOWER(TRIM(u.invited_by)) = LOWER(TRIM(u.invite_code)))
+              OR
+              -- Legacy-случай: старый пользователь без username.
+              -- Считаем self-invite по 3 цифрам префикса id, даже если префикс username в коде произвольный:
+              -- например invite671 и inviteNon745 нормализуются до сравнения по "...671"/"...745".
+              ((u.username IS NULL OR TRIM(u.username) = '') AND SUBSTR(CAST(u.id AS TEXT), 1, 3) = SUBSTR(LOWER(TRIM(u.invited_by)), -3))
+          )
+        GROUP BY LOWER(TRIM(u.invited_by))
+        ORDER BY users_count DESC, solved_tasks_total DESC, invite_code ASC
+        """
+    )
+    rows = await cursor.fetchall()
+    return [(str(row[0]), int(row[1]), int(row[2])) for row in rows]
 
 
 async def clear_user_stats(conn: aiosqlite.Connection, user_id: int) -> None:

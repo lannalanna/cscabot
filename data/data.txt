@@ -47,6 +47,28 @@
   },
 
   {
+    "n": 23,
+    "chinese": "关于函数 y = 2ˣ 和 y = log₂x，下列结论中正确的是",
+    "english": "Regarding the functions y = 2ˣ and y = log₂x, which conclusion is correct?",
+    "options": [
+      "A. 两函数的图像关于 x 轴对称 / Graphs are symmetric with respect to the x-axis",
+      "B. 两函数的图像关于直线 y = x 对称 / Graphs are symmetric with respect to the line y = x",
+      "C. 两函数的图像关于 y 轴对称 / Graphs are symmetric with respect to the y-axis",
+      "D. 两函数的图像关于原点对称 / Graphs are symmetric with respect to the origin"
+    ],
+    "answer": "B",
+    "topic": "logarithmic functions",
+    "subtopic": "logarithms",
+    "type": "extra",
+    "difficulty": 3,
+    "id": "LLL24",
+    "solution_ru": "Функции y = 2ˣ и y = log₂x являются взаимно обратными, поэтому их графики симметричны относительно прямой y = x.",
+    "solution_en": "The functions y = 2ˣ and y = log₂x are inverse to each other, so their graphs are symmetric with respect to the line y = x.",
+    "solution_ru2": "Логарифмическая функция y = log₂x — это обратная функция к показательной y = 2ˣ. Для любой пары обратных функций графики получаются отражением относительно прямой y = x: точка (a, 2ᵃ) переходит в точку (2ᵃ, a). Поэтому верно утверждение о симметрии относительно y = x.",
+    "solution_en2": "The logarithmic function y = log₂x is the inverse of the exponential function y = 2ˣ. For any pair of inverse functions, the graphs are reflections across the line y = x: a point (a, 2ᵃ) corresponds to (2ᵃ, a). Therefore, the correct statement is symmetry with respect to y = x."
+  },
+
+  {
     "n": 1,
     "chinese": "设集合 A = {x | -2 < x ≤ 3}。下列哪个说法是正确的？",
     "english": "Let A = {x | -2 < x ≤ 3} be a set. Which of the following statements is correct?",
@@ -322,6 +344,49 @@
       "C. 若 a ≥ 0，则 a ∈ ℕ",
       "D. 若 a ∈ ℤ，则 a ∉ ℚ"
     ]
+  },
+
+  {
+    "n": 2,
+    "chinese": "选择正确的说法",
+    "english": "Choose the correct statement",
+    "options": [
+      "A. ∅ = {}",
+      "B. ∅ = {0}",
+      "C. ∅ ∈ {0}",
+      "D. ∅ = 0"
+    ],
+    "answer": "A",
+    "topic": "sets",
+    "subtopic": "numerical sets",
+    "type": "extra",
+    "difficulty": 1,
+    "id": "NS11",
+    "solution_ru": "Пустое множество обозначают как ∅ или {}. Значит утверждение A верное.",
+    "solution_en": "The empty set is denoted by either ∅ or {}. Therefore, statement A is correct.",
+    "solution_ru2": "Пустое множество не содержит элементов. Записи ∅ и {} обозначают один и тот же объект — пустое множество. Утверждение B неверно, потому что {0} содержит элемент 0 и не пусто. Утверждение C неверно: в множестве {0} единственный элемент — число 0, а не ∅. Утверждение D неверно, поскольку 0 — число, а ∅ — множество.",
+    "solution_en2": "The empty set has no elements. The notations ∅ and {} denote the same object: the empty set. Statement B is false because {0} contains the element 0 and is not empty. Statement C is false because the only element of {0} is the number 0, not ∅. Statement D is false since 0 is a number, while ∅ is a set."
+  },
+  {
+    "n": 2,
+    "chinese": "设 A = (1,3]，下列哪个说法正确？",
+    "english": "Let A = (1,3]. Which statement is correct?",
+    "options": [
+      "A. 1 ∈ A",
+      "B. 2 ∉ A",
+      "C. 3 ∈ A",
+      "D. 3 ∉ A"
+    ],
+    "answer": "C",
+    "topic": "sets",
+    "subtopic": "numerical sets",
+    "type": "extra",
+    "difficulty": 1,
+    "id": "NS12",
+    "solution_ru": "В интервале (1,3] число 1 не входит, а число 3 входит. Поэтому верно утверждение 3 ∈ A.",
+    "solution_en": "In the interval (1,3], 1 is excluded and 3 is included. Therefore, the correct statement is 3 ∈ A.",
+    "solution_ru2": "Запись (1,3] означает: левая граница 1 не включена, правая граница 3 включена. Тогда 1 ∉ A, 2 ∈ A, 3 ∈ A. Следовательно, верно утверждение 3 ∈ A.",
+    "solution_en2": "The notation (1,3] means the left endpoint 1 is excluded and the right endpoint 3 is included. So 1 ∉ A, 2 ∈ A, and 3 ∈ A. Therefore, the true statement is 3 ∈ A."
   },
 
   {
@@ -1291,14 +1356,14 @@
     "chinese": "不等式 x² - 7x - 18 > 0 的解集是",
     "english": "The solution set of the inequality x² - 7x - 18 > 0 is",
     "options": [
-      "A. {x | x < -1 或  or x > 2} ",
-      "B. {x | -1 < x < 2}",
-      "C. {x | x < -2 或 or x > -1} ",
-      "D. {x | -2 < x ≤ 1}"
+      "A. {x | x < -2 或  or x > 2} ",
+      "B. {x | -2 < x < 9}",
+      "C. {x | x < -2 或 or x > 9} ",
+      "D. {x | -2 < x ≤ 9}"
     ],
     "topic": "inequalities",
     "type": "choice",
-    "answer": "A",
+    "answer": "C",
     "subtopic": "quadratic inequalities",
     "difficulty": 3,
     "id": "QI11",
@@ -2059,6 +2124,27 @@
     "solution_ar2": "يتم تعريف الدالة الأسية y = aˣ لـ a > 0 وa ≠ 1. بالنسبة لـ > 1، فإن الدالة تتزايد بشكل صارم لأنه لأي x₁ < x₂، لديناˣ¹ < aˣ². بالنسبة إلى 0 < a < 1، تكون الدالة متناقصة. بالنسبة لـ ≥ 0، لم يتم تعريف الدالة لكل ℝ (على سبيل المثال، a = -2، (-2)^{1/2} غير معرف). وبالتالي، فإن شرط الزيادة الرتيبة في ℝ ينطبق فقط على a > 1."
   },
   {
+    "n": 25,
+    "chinese": "下列函数中单调递增的是",
+    "english": "Which of the following functions is monotonically increasing?",
+    "options": [
+      "A. y = (1/3)ˣ",
+      "B. y = log₀.₅ x",
+      "C. y = 2x + 1",
+      "D. y = sin x"
+    ],
+    "answer": "C",
+    "topic": "functions",
+    "subtopic": "functions properties",
+    "type": "extra",
+    "difficulty": 3,
+    "id": "FP23",
+    "solution_ru": "Монотонно возрастающей на всей области определения является только линейная функция y = 2x + 1 (угловой коэффициент 2 > 0).",
+    "solution_en": "Only the linear function y = 2x + 1 is monotonically increasing on its entire domain (its slope is 2 > 0).",
+    "solution_ru2": "Проверим функции: y=(1/3)^x — показательная функция с основанием 0<a<1, значит убывает. y=log_{0.5}x — логарифм с основанием 0<a<1, тоже убывает на (0,+∞). y=2x+1 — линейная функция с положительным коэффициентом при x, поэтому строго возрастает на ℝ. y=sin x не монотонна на всей ℝ, так как периодически возрастает и убывает. Следовательно, монотонно возрастающей является y = 2x + 1.",
+    "solution_en2": "Check each function: y=(1/3)^x is an exponential function with base 0<a<1, so it is decreasing. y=log_{0.5}x is a logarithm with base 0<a<1, so it is also decreasing on (0,+∞). y=2x+1 is linear with a positive coefficient of x, hence strictly increasing on ℝ. y=sin x is not monotonic on all ℝ because it alternates between increasing and decreasing periodically. Therefore, the monotonically increasing function is y = 2x + 1."
+  },
+  {
     "n": 40,
     "chinese": "关于函数 f(x) = tan x 的描述，下列哪个是错误的？",
     "english": "Which of the following descriptions about the function f(x) = tan x is incorrect?",
@@ -2168,6 +2254,48 @@
     ]
   },
   {
+    "n": 23,
+    "chinese": "关于函数 y = 2^x 和 y = (1/2)^x，下列结论中正确的是",
+    "english": "Regarding the functions y = 2^x and y = (1/2)^x, which conclusion is correct?",
+    "options": [
+      "A. 两函数的图像关于 x 轴对称 / Graphs are symmetric with respect to the x-axis",
+      "B. 两函数的图像关于直线 y = x 对称 / Graphs are symmetric with respect to the line y = x",
+      "C. 两函数的图像关于 y 轴对称 / Graphs are symmetric with respect to the y-axis",
+      "D. 两函数的图像关于原点对称 / Graphs are symmetric with respect to the origin"
+    ],
+    "answer": "C",
+    "topic": "functions",
+    "subtopic": "graphs",
+    "type": "extra",
+    "difficulty": 3,
+    "id": "GG5",
+    "solution_ru": "Так как (1/2)^x = 2^{-x}, второй график получается из y = 2^x заменой x на -x, то есть отражением относительно оси y.",
+    "solution_en": "Since (1/2)^x = 2^{-x}, the second graph is obtained from y = 2^x by replacing x with -x, i.e., reflection about the y-axis.",
+    "solution_ru2": "Рассмотрим f(x)=2^x. Тогда g(x)=(1/2)^x=2^{-x}=f(-x). Замена x на -x в формуле функции означает отражение графика относительно оси Oy. Следовательно, графики y=2^x и y=(1/2)^x симметричны относительно оси y. Остальные варианты неверны: это не симметрия относительно оси x, не относительно начала координат и не относительно прямой y=x.",
+    "solution_en2": "Let f(x)=2^x. Then g(x)=(1/2)^x=2^{-x}=f(-x). Replacing x by -x reflects a graph across the y-axis. Therefore, the graphs of y=2^x and y=(1/2)^x are symmetric with respect to the y-axis. The other options are incorrect: this is not symmetry about the x-axis, not about the origin, and not about the line y=x."
+  },
+  {
+    "n": 23,
+    "chinese": "关于函数 y = 2x 和 y = (1/2)x，下列结论中正确的是",
+    "english": "Regarding the functions y = 2x and y = (1/2)x, which conclusion is correct?",
+    "options": [
+      "A. 两函数的图像关于 x 轴对称 / Graphs are symmetric with respect to the x-axis",
+      "B. 两函数的图像关于直线 y = x 对称 / Graphs are symmetric with respect to the line y = x",
+      "C. 两函数的图像关于 y 轴对称 / Graphs are symmetric with respect to the y-axis",
+      "D. 两函数的图像关于直线 y = -x 对称 / Graphs are symmetric with respect to the line y = -x"
+    ],
+    "answer": "B",
+    "topic": "functions",
+    "subtopic": "graphs",
+    "type": "extra",
+    "difficulty": 2,
+    "id": "GG6",
+    "solution_ru": "Функции y = 2x и y = (1/2)x являются взаимно обратными, поэтому их графики симметричны относительно прямой y = x.",
+    "solution_en": "The functions y = 2x and y = (1/2)x are inverse to each other, so their graphs are symmetric with respect to the line y = x.",
+    "solution_ru2": "Для линейной функции y = 2x обратная функция находится из уравнения x = 2y, откуда y = x/2 = (1/2)x. Значит вторая функция — обратная к первой. Графики любых взаимно обратных функций симметричны относительно прямой y = x.",
+    "solution_en2": "For the linear function y = 2x, the inverse is found from x = 2y, so y = x/2 = (1/2)x. Hence the second function is the inverse of the first. Graphs of inverse functions are symmetric with respect to the line y = x."
+  },
+  {
     "chinese": "如果函数 f(x) = aˣ（其中 a > 0 且 a ≠ 1）经过点 (2, 9)，那么 f(-1) 的值是多少？",
     "english": "If the function f(x) = aˣ (where a > 0 and a ≠ 1) passes through the point (2, 9), what is the value of f(-1)?",
     "options": [
@@ -2209,6 +2337,48 @@
     "solution_ru2": "Чтобы найти обратную функцию, нужно выразить x из уравнения y = 2x. Получаем x = y/2. Затем меняем обозначения переменных: x и y местами, чтобы получить привычную запись y = f⁻¹(x). В результате: y = x/2.",
     "solution_en2": "To find the inverse function, solve the equation y = 2x for x. We get x = y/2. Then swap the variable names to obtain the usual notation y = f⁻¹(x). The result is y = x/2.",
     "solution_ar2": "لإيجاد الدالة العكسية، حل المعادلة y = 2x لـ x. نحصل على س = ص / 2. ثم قم بتبديل أسماء المتغيرات للحصول على التدوين المعتاد y = f⁻¹(x). والنتيجة هي ص = س/2."
+  },
+  {
+    "n": 9,
+    "chinese": "函数 y = 3x - 2 的反函数是（ ）。",
+    "english": "The inverse function of y = 3x - 2 is ( ).",
+    "options": [
+      "A. y = (x + 3)/2",
+      "B. y = (x - 3)/2",
+      "C. y = (x - 2)/3",
+      "D. y = (x + 2)/3"
+    ],
+    "answer": "D",
+    "topic": "functions",
+    "subtopic": "inverse functions",
+    "type": "extra",
+    "difficulty": 2,
+    "id": "IF5",
+    "solution_ru": "Из y = 3x - 2 получаем 3x = y + 2, значит x = (y + 2)/3. Меняем x и y: y = (x + 2)/3.",
+    "solution_en": "From y = 3x - 2, we get 3x = y + 2, so x = (y + 2)/3. Swap x and y: y = (x + 2)/3.",
+    "solution_ru2": "Чтобы найти обратную функцию, выражаем x через y: y = 3x - 2 ⇒ 3x = y + 2 ⇒ x = (y + 2)/3. Затем меняем обозначения переменных x и y местами. Получаем f⁻¹(x) = (x + 2)/3.",
+    "solution_en2": "To find the inverse function, solve for x in terms of y: y = 3x - 2 ⇒ 3x = y + 2 ⇒ x = (y + 2)/3. Then swap the variable names x and y. Hence f⁻¹(x) = (x + 2)/3."
+  },
+  {
+    "n": 9,
+    "chinese": "函数 y = 5x + 3 的反函数是（ ）。",
+    "english": "The inverse function of y = 5x + 3 is ( ).",
+    "options": [
+      "A. y = (x - 5)/3",
+      "B. y = (x - 3)/5",
+      "C. y = (x + 3)/5",
+      "D. y = (x + 5)/3"
+    ],
+    "answer": "B",
+    "topic": "functions",
+    "subtopic": "inverse functions",
+    "type": "extra",
+    "difficulty": 2,
+    "id": "IF6",
+    "solution_ru": "Из y = 5x + 3 получаем 5x = y - 3, значит x = (y - 3)/5. Меняем x и y: y = (x - 3)/5.",
+    "solution_en": "From y = 5x + 3, we get 5x = y - 3, so x = (y - 3)/5. Swap x and y: y = (x - 3)/5.",
+    "solution_ru2": "Для обратной функции выразим x через y: y = 5x + 3 ⇒ 5x = y - 3 ⇒ x = (y - 3)/5. Затем меняем переменные местами (x ↔ y). Получаем f⁻¹(x) = (x - 3)/5.",
+    "solution_en2": "To find the inverse, solve for x in terms of y: y = 5x + 3 ⇒ 5x = y - 3 ⇒ x = (y - 3)/5. Then swap variables (x ↔ y). Therefore, f⁻¹(x) = (x - 3)/5."
   },
   {
     "chinese": "设函数 y = 1 - x³，则其反函数为",
@@ -3599,6 +3769,69 @@
     "solution_ru2": "Для функции f(x) = sin(ωx + φ) период вычисляется по формуле T = 2π/|ω|. Здесь ω = 2, следовательно, T = 2π/2 = π. Фазовый сдвиг π/3 не влияет на период.",
     "solution_en2": "For a function f(x) = sin(ωx + φ), the period is given by T = 2π/|ω|. Here ω = 2, so T = 2π/2 = π. The phase shift π/3 does not affect the period.",
     "solution_ar2": "بالنسبة للدالة f(x) = sin(ωx + φ)، يتم إعطاء الفترة بواسطة T = 2π/|ω|. هنا ω = 2، لذا T = 2π/2 = π. لا يؤثر تحول الطور π/3 على الفترة."
+  },
+  {
+    "n": 30,
+    "chinese": "函数 y = 4sin(3x + π/2) 的最小正周期是",
+    "english": "The minimum positive period of the function y = 4sin(3x + π/2) is",
+    "options": [
+      "A. π",
+      "B. 3π",
+      "C. π/3",
+      "D. 2π/3"
+    ],
+    "answer": "D",
+    "topic": "trigonometry",
+    "subtopic": "properties",
+    "type": "extra",
+    "difficulty": 2,
+    "id": "PP7",
+    "solution_ru": "Для y = A·sin(ωx + φ) период T = 2π/|ω|. Здесь ω = 3, значит T = 2π/3.",
+    "solution_en": "For y = A·sin(ωx + φ), the period is T = 2π/|ω|. Here ω = 3, so T = 2π/3.",
+    "solution_ru2": "Амплитуда 4 и сдвиг фазы π/2 не влияют на период синуса. Период функции вида sin(ωx + φ) равен T = 2π/|ω|. В данной задаче ω = 3, поэтому T = 2π/3. Следовательно, минимальный положительный период равен 2π/3.",
+    "solution_en2": "The amplitude 4 and phase shift π/2 do not affect the sine period. For a function sin(ωx + φ), the period is T = 2π/|ω|. In this problem, ω = 3, so T = 2π/3. Therefore, the minimum positive period is 2π/3."
+  },
+  {
+    "n": 30,
+    "chinese": "函数 y = tan x 的最小正周期是",
+    "english": "The minimum positive period of the function y = tan x is",
+    "options": [
+      "A. 2π",
+      "B. π",
+      "C. π/2",
+      "D. π/4"
+    ],
+    "answer": "B",
+    "topic": "trigonometry",
+    "subtopic": "properties",
+    "type": "extra",
+    "difficulty": 1,
+    "id": "PP8",
+    "solution_ru": "Минимальный положительный период функции tan x равен π.",
+    "solution_en": "The minimum positive period of tan x is π.",
+    "solution_ru2": "Для тангенса выполняется тождество tan(x + π) = tan x для всех x из области определения. Значит π — период функции. Меньшего положительного периода нет, поэтому минимальный положительный период равен π.",
+    "solution_en2": "For tangent, the identity tan(x + π) = tan x holds for all x in its domain. So π is a period of the function. There is no smaller positive period, hence the minimum positive period is π."
+  },
+  {
+    "n": 30,
+    "chinese": "函数 f(x)=sin 2x 单调递增的区间是",
+    "english": "The function f(x)=sin 2x is monotonic increasing over",
+    "options": [
+      "A. [−π/2, π/2]",
+      "B. [−π, π]",
+      "C. [−π/4, π/4]",
+      "D. [0, π]"
+    ],
+    "answer": "C",
+    "topic": "trigonometry",
+    "subtopic": "properties",
+    "type": "extra",
+    "difficulty": 2,
+    "id": "PP9",
+    "solution_ru": "Так как f'(x)=2cos(2x), функция возрастает там, где cos(2x)≥0. Базовый интервал возрастания: [−π/4, π/4].",
+    "solution_en": "Since f'(x)=2cos(2x), the function increases where cos(2x)≥0. The basic increasing interval is [−π/4, π/4].",
+    "solution_ru2": "Для f(x)=sin(2x) производная равна f'(x)=2cos(2x). Функция монотонно возрастает на промежутках, где f'(x)≥0, то есть cos(2x)≥0. Это выполняется при 2x∈[-π/2+2πk, π/2+2πk], значит x∈[-π/4+πk, π/4+πk]. Из предложенных вариантов подходит [−π/4, π/4].",
+    "solution_en2": "For f(x)=sin(2x), the derivative is f'(x)=2cos(2x). The function is increasing where f'(x)≥0, i.e., where cos(2x)≥0. This means 2x∈[-π/2+2πk, π/2+2πk], so x∈[-π/4+πk, π/4+πk]. Among the given options, [−π/4, π/4] is correct."
   },
   {
     "chinese": "若 cos α = 1/3，则 cos 2α =",
@@ -5376,6 +5609,48 @@
     ]
   },
   {
+    "n": 33,
+    "chinese": "直线 l₁: 2x + y - 1 = 0 与直线 l₂: y = x - 2 相交于点 (a, b)。则 a - b =",
+    "english": "Line l₁: 2x + y - 1 = 0 and line l₂: y = x - 2 intersect at point (a, b). Then a - b =",
+    "options": [
+      "A. 1",
+      "B. 0",
+      "C. -1",
+      "D. 2"
+    ],
+    "answer": "D",
+    "topic": "geometry",
+    "subtopic": "lines",
+    "type": "extra",
+    "difficulty": 2,
+    "id": "LL16",
+    "solution_ru": "Из l₁ получаем y = 1 - 2x. Приравниваем с y = x - 2: 1 - 2x = x - 2 ⇒ 3 = 3x ⇒ x = 1, y = -1. Тогда a - b = 1 - (-1) = 2.",
+    "solution_en": "From l₁, y = 1 - 2x. Set equal to y = x - 2: 1 - 2x = x - 2 ⇒ 3 = 3x ⇒ x = 1, y = -1. Hence a - b = 1 - (-1) = 2.",
+    "solution_ru2": "Найдём точку пересечения. Из первого уравнения: y = 1 - 2x. Из второго: y = x - 2. Приравниваем: 1 - 2x = x - 2 ⇒ 3 = 3x ⇒ x = 1. Тогда y = x - 2 = -1. Значит (a, b) = (1, -1), и a - b = 1 - (-1) = 2.",
+    "solution_en2": "Find the intersection point. From the first line: y = 1 - 2x. From the second: y = x - 2. Equate them: 1 - 2x = x - 2 ⇒ 3 = 3x ⇒ x = 1. Then y = x - 2 = -1. So (a, b) = (1, -1), and a - b = 1 - (-1) = 2."
+  },
+  {
+    "n": 33,
+    "chinese": "直线 l₁: x + y = 0 与直线 l₂: y = 2x - 3 相交于点 (a, b)。则 a*b =",
+    "english": "Line l₁: x + y = 0 and line l₂: y = 2x - 3 intersect at point (a, b). Then a*b =",
+    "options": [
+      "A. -2",
+      "B. -1",
+      "C. 0",
+      "D. 1"
+    ],
+    "answer": "B",
+    "topic": "geometry",
+    "subtopic": "lines",
+    "type": "extra",
+    "difficulty": 2,
+    "id": "LL17",
+    "solution_ru": "Из l₁ получаем y = -x. Приравниваем к y = 2x - 3: -x = 2x - 3 ⇒ x = 1, y = -1. Тогда a*b = 1*(-1) = -1.",
+    "solution_en": "From l₁, we get y = -x. Set equal to y = 2x - 3: -x = 2x - 3 ⇒ x = 1, y = -1. Therefore, a*b = 1*(-1) = -1.",
+    "solution_ru2": "Найдём точку пересечения. Из x + y = 0 имеем y = -x. Из второй прямой y = 2x - 3. Приравниваем: -x = 2x - 3 ⇒ 3x = 3 ⇒ x = 1. Тогда y = -1. Значит (a, b) = (1, -1), и произведение a*b = -1.",
+    "solution_en2": "Find the intersection point. From x + y = 0, we have y = -x. From the second line, y = 2x - 3. Equate: -x = 2x - 3 ⇒ 3x = 3 ⇒ x = 1. Then y = -1. So (a, b) = (1, -1), and the product a*b = -1."
+  },
+  {
     "chinese": "设向量 a = (-1, 2), b = (3, -1)，则 3a - b =",
     "english": "Given vectors a = (-1, 2), b = (3, -1), then 3a - b =",
     "options": [
@@ -6664,6 +6939,27 @@
     "solution_ar2": "ج = √5، البؤر (±√5،0)."
   },
   {
+    "n": 29,
+    "chinese": "设 mx² + ny² = 1 表示椭圆。则 m, n 满足",
+    "english": "Let mx² + ny² = 1 be an ellipse. Then m, n satisfy",
+    "options": [
+      "A. 1) n > 0, m < 0 or n < 0, m > 0",
+      "B. 2) n > 0 and m > 0",
+      "C. 3) n < 0 and m < 0",
+      "D. 4) n < 0 and m > 0"
+    ],
+    "answer": "B",
+    "topic": "conic curves",
+    "subtopic": "ellipse",
+    "type": "extra",
+    "difficulty": 4,
+    "id": "EE10",
+    "solution_ru": "Чтобы уравнение mx² + ny² = 1 задавало эллипс, коэффициенты при x² и y² должны быть одного знака, то есть mn > 0 (в стандартном случае оба положительные).",
+    "solution_en": "For mx² + ny² = 1 to represent an ellipse, the coefficients of x² and y² must have the same sign, so mn > 0 (in the standard real case both are positive).",
+    "solution_ru2": "Квадратичная кривая mx² + ny² = 1 является эллипсом, когда коэффициенты при x² и y² одинакового знака. Для действительного эллипса в обычной форме они положительные: m > 0 и n > 0. В любом случае это даёт условие mn > 0. При mn < 0 получается гипербола.",
+    "solution_en2": "The conic mx² + ny² = 1 is an ellipse when the coefficients of x² and y² have the same sign. For a real ellipse in standard form they are positive: m > 0 and n > 0. In particular, this implies mn > 0. If mn < 0, the curve is a hyperbola."
+  },
+  {
     "chinese": "双曲线 x² - y² = 1 的焦点坐标是",
     "english": "The coordinates of the foci of the hyperbola x² - y² = 1 are",
     "options": [
@@ -6685,6 +6981,51 @@
     "solution_ru2": "Для гиперболы x²/a² - y²/b² = 1, здесь a² = 1, b² = 1. c = √(a² + b²) = √(1+1) = √2. Фокусы лежат на оси Ox: (±c, 0) = (±√2, 0).",
     "solution_en2": "For the hyperbola x²/a² - y²/b² = 1, here a² = 1, b² = 1. c = √(a² + b²) = √(1+1) = √2. The foci lie on the x-axis: (±c, 0) = (±√2, 0).",
     "solution_ar2": "بالنسبة للقطع الزائد x²/a² - y²/b² = 1، هنا a² = 1، b² = 1. c = √(a² + b²) = √(1+1) = √2. تقع البؤر على المحور السيني: (±c, 0) = (±√2, 0)."
+  },
+   {
+    "chinese": "双曲线 x²/9 - y²/4 = 1 的焦点坐标是",
+    "english": "The coordinates of the foci of the hyperbola x²/9 - y²/4 = 1 are",
+    "options": [
+      "A. (±5, 0)",
+      "B. (0, ±5)",
+      "C. (±√13, 0)",
+      "D. (0, ±√13)"
+    ],
+    "answer": "C",
+    "topic": "conic curves",
+    "subtopic": "hyperbola",
+    "type": "extra",
+    "n": 27,
+    "difficulty": 3,
+    "id": "HH3",
+    "solution_ru2": "a² = 9, b² = 4, c = √(9+4) = √13. Фокусы на оси x: (±√13, 0).",
+    "solution_en2": "a² = 9, b² = 4, c = √(9+4) = √13. Foci on x-axis: (±√13, 0).",
+    "solution_ru": "c = √(9+4)=√13, фокусы (±√13,0).",
+    "solution_en": "c = √(9+4)=√13, foci (±√13,0)."
+    
+  },
+
+  {
+    "chinese": "双曲线 x²/7 - y²/9 = 1 的焦点坐标是",
+    "english": "The coordinates of the foci of the hyperbola x²/7 - y²/9 = 1 are",
+    "options": [
+      "A. (0, 4)",
+      "B. (4, 0)",
+      "C. (0, ±4)",
+      "D. (±4, 0)"
+    ],
+    "answer": "D",
+    "topic": "conic curves",
+    "subtopic": "hyperbola",
+    "type": "oct",
+    "n": 26,
+    "difficulty": 3,
+    "id": "HH2",
+    "solution_ru": "a² = 7, b² = 9, c = √(7+9) = 4. Фокусы на оси x: (±4, 0).",
+    "solution_en": "a² = 7, b² = 9, c = √(7+9) = 4. Foci on x-axis: (±4, 0).",
+    "solution_ru2": "a² = 7, b² = 9, c = √(a² + b²) = √16 = 4. Фокусы на оси Ox: (±4, 0).",
+    "solution_en2": "a² = 7, b² = 9, c = √(a² + b²) = √16 = 4. Foci on the x-axis: (±4, 0).",
+    "solution_ar2": "a² = 7، b² = 9، c = √(a² + b²) = √16 = 4. البؤر على المحور x: (±4, 0)."
   },
   {
     "chinese": "双曲线 x²/16 - y²/9 = 1 的渐近线方程是",
@@ -6783,50 +7124,8 @@
       "D. 半短轴的长度是 8"
     ]
   },
-  {
-    "chinese": "双曲线 x²/7 - y²/9 = 1 的焦点坐标是",
-    "english": "The coordinates of the foci of the hyperbola x²/7 - y²/9 = 1 are",
-    "options": [
-      "A. (0, 4)",
-      "B. (4, 0)",
-      "C. (0, ±4)",
-      "D. (±4, 0)"
-    ],
-    "answer": "D",
-    "topic": "conic curves",
-    "subtopic": "hyperbola",
-    "type": "oct",
-    "n": 26,
-    "difficulty": 3,
-    "id": "HH2",
-    "solution_ru": "a² = 7, b² = 9, c = √(7+9) = 4. Фокусы на оси x: (±4, 0).",
-    "solution_en": "a² = 7, b² = 9, c = √(7+9) = 4. Foci on x-axis: (±4, 0).",
-    "solution_ru2": "a² = 7, b² = 9, c = √(a² + b²) = √16 = 4. Фокусы на оси Ox: (±4, 0).",
-    "solution_en2": "a² = 7, b² = 9, c = √(a² + b²) = √16 = 4. Foci on the x-axis: (±4, 0).",
-    "solution_ar2": "a² = 7، b² = 9، c = √(a² + b²) = √16 = 4. البؤر على المحور x: (±4, 0)."
-  },
-  {
-    "chinese": "双曲线 x²/9 - y²/4 = 1 的焦点坐标是",
-    "english": "The coordinates of the foci of the hyperbola x²/9 - y²/4 = 1 are",
-    "options": [
-      "A. (±5, 0)",
-      "B. (0, ±5)",
-      "C. (±√13, 0)",
-      "D. (0, ±√13)"
-    ],
-    "answer": "C",
-    "topic": "conic curves",
-    "subtopic": "hyperbola",
-    "type": "extra",
-    "n": 27,
-    "difficulty": 3,
-    "id": "HH3",
-    "solution_ru": "a² = 9, b² = 4, c = √(9+4) = √13. Фокусы на оси x: (±√13, 0).",
-    "solution_en": "a² = 9, b² = 4, c = √(9+4) = √13. Foci on x-axis: (±√13, 0).",
-    "solution_ru2": "c = √(9+4)=√13, фокусы (±√13,0).",
-    "solution_en2": "c = √(9+4)=√13, foci (±√13,0).",
-    "solution_ar2": "ج = √(9+4)=√13، البؤر (±√13,0)."
-  },
+  
+ 
   {
     "chinese": "双曲线 x²/a² - y²/b² = 1 的两个焦点之间的距离是",
     "english": "The distance between the foci of the hyperbola x²/a² - y²/b² = 1 is",
@@ -7805,6 +8104,27 @@
     "solution_ar2": "صيغة الحد النوني للمتتابعة الحسابية هي aₙ = a₁ + (n-1)d. عوض أ₁ = 2، د = 3، ن = 100: أ₁₀₀ = 2 + (100-1)·3 = 2 + 99·3 = 2 + 297 = 299."
   },
   {
+    "n": 30,
+    "chinese": "已知数列 {aₙ} 的前 n 项和 Sₙ = n² + 1，则 a₁₀ =（ ）",
+    "english": "If the sum of the first n terms of the sequence {aₙ} is given by Sₙ = n² + 1, then a₁₀ = ( ).",
+    "options": [
+      "A. 18",
+      "B. 19",
+      "C. 20",
+      "D. 21"
+    ],
+    "answer": "B",
+    "topic": "sequences",
+    "subtopic": "complex tasks",
+    "type": "extra",
+    "difficulty": 4,
+    "id": "SEQC1",
+    "solution_ru": "Используем формулу aₙ = Sₙ - Sₙ₋₁. Тогда a₁₀ = S₁₀ - S₉ = (10² + 1) - (9² + 1) = 101 - 82 = 19.",
+    "solution_en": "Use aₙ = Sₙ - Sₙ₋₁. Then a₁₀ = S₁₀ - S₉ = (10² + 1) - (9² + 1) = 101 - 82 = 19.",
+    "solution_ru2": "По определению суммы первых n членов: Sₙ = a₁ + a₂ + ... + aₙ, значит aₙ = Sₙ - Sₙ₋₁. Подставим n = 10: a₁₀ = S₁₀ - S₉ = (10² + 1) - (9² + 1) = 101 - 82 = 19.",
+    "solution_en2": "By definition, Sₙ = a₁ + a₂ + ... + aₙ, so aₙ = Sₙ - Sₙ₋₁. For n = 10: a₁₀ = S₁₀ - S₉ = (10² + 1) - (9² + 1) = 101 - 82 = 19."
+  },
+  {
     "n": 22,
     "chinese": "在等差数列 {aₙ} 中, 若 a₁ = 1, 公差 d = 2, 则 a₁₀ =",
     "english": "In an arithmetic sequence {aₙ} , if a₁ = 1 and its common difference d = 2 , then a₁₀ =",
@@ -8763,5 +9083,26 @@
     "solution_ru2": "Каждый студент выбирает 2 из 3 видов, всего 3 варианта (обозначим их A, B, C). Общее число исходов для трех студентов: 3³ = 27. Найдем число исходов, где ровно двое выбрали одинаковую пару. Сначала выберем пару, которую выберут двое: 3 способа. Выберем, какие двое студентов будут иметь эту пару: C(3,2)=3 способа. Третий студент должен выбрать любую из двух оставшихся пар: 2 способа. Таким образом, благоприятных исходов: 3·3·2 = 18. Вероятность = 18/27 = 2/3.",
     "solution_en2": "Each student chooses 2 out of 3 events, so there are 3 possible choices (let's label them A, B, C). Total outcomes for three students: 3³ = 27. Count outcomes where exactly two students choose the same pair. First, choose the pair that the two students will take: 3 ways. Choose which two students will have that pair: C(3,2)=3 ways. The third student must choose one of the remaining two pairs: 2 ways. Thus, favorable outcomes: 3·3·2 = 18. Probability = 18/27 = 2/3.",
     "solution_ar2": "يختار كل طالب حدثين من أصل 3 أحداث، لذا هناك 3 اختيارات محتملة (دعنا نسميها أ، ب، ج). إجمالي النتائج لثلاثة طلاب: 3³ = 27. قم بحساب النتائج عندما يختار طالبان بالضبط نفس الزوج. أولاً، اختر الزوج الذي سيأخذه الطالبان: 3 طرق. اختر الطالبين اللذين سيحصلان على هذا الزوج: C(3,2)=3 طرق. يجب على الطالب الثالث اختيار أحد الزوجين المتبقيين: طريقتان. وبالتالي، النتائج الإيجابية: 3·3·2 = 18. الاحتمال = 18/27 = 2/3."
+  },
+  {
+    "chinese": "设 mx²+ny²=1 是一个椭圆，则 m,n 满足",
+    "english": "Let mx² + ny² = 1 be an ellipse. Then m, n satisfy",
+    "options": [
+      "A. mn > 1",
+      "B. mn < 0",
+      "C. mn < 1",
+      "D. mn > 0"
+    ],
+    "answer": "D",
+    "topic": "conic curves",
+    "subtopic": "ellipse",
+    "type": "choice",
+    "difficulty": 4,
+    "id": "EE_MN_POS",
+    "solution_ru": "Для эллипса в виде mx² + ny² = 1 коэффициенты при x² и y² должны быть положительными: m>0 и n>0, значит mn>0.",
+    "solution_en": "For an ellipse in the form mx² + ny² = 1, both quadratic coefficients must be positive: m>0 and n>0, hence mn>0.",
+    "solution_ru2": "Уравнение mx² + ny² = 1 можно переписать как x²/(1/m) + y²/(1/n) = 1. Чтобы это был эллипс, знаменатели должны быть положительными, то есть 1/m > 0 и 1/n > 0. Следовательно, m > 0 и n > 0, а значит их произведение mn > 0. Остальные варианты не являются обязательными для любого эллипса.",
+    "solution_en2": "Rewrite mx² + ny² = 1 as x²/(1/m) + y²/(1/n) = 1. For this to represent an ellipse, both denominators must be positive, i.e., 1/m > 0 and 1/n > 0. Therefore m > 0 and n > 0, so their product satisfies mn > 0. The other options are not universally true for all ellipses.",
+    "solution_ar2": "يمكن إعادة كتابة mx² + ny² = 1 على الصورة x²/(1/m) + y²/(1/n) = 1. لكي تمثل هذه المعادلة قطعًا ناقصًا، يجب أن يكون المقامان موجبين، أي 1/m > 0 و 1/n > 0. إذن m > 0 و n > 0 وبالتالي mn > 0. أما الخيارات الأخرى فليست صحيحة دائمًا لكل قطع ناقص."
   }
 ]
