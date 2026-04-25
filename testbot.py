@@ -636,6 +636,7 @@ LLM_CONTEXT_ADDTEXT_ONLY = "addtext_only"  # addtext в системных со�
 LLM_CONTEXT_RAG_ONLY = "rag_only"  # только RAG, без addtext-классификатора
 LLM_CONTEXT_LAST_TASK = "last_task"  # условие и варианты последней показанной задачи
 LLM_CONTEXT_THEORY = "theory"  # теоретические вопросы по math/physics/chemistry
+LLM_CONTEXT_EXAM_RESULT = "exam_result"  # распределение ошибок по темам и рекомендации к экзамену
 
 
 def _record_last_seen_question(
@@ -1025,8 +1026,10 @@ EXAM_CONFIG = _exam_config()
 # Mock Exam: для каждой задачи из экзамена jan подбираем случайную задачу с той же подтемой и сложностью.
 # В пул кандидатов не попадают задачи с type=jan и type=mar.
 EXAM_MOCK_ID = "exam_mock"
+EXAM_MOCK2_ID = "exam_mock2"
 mock_questions = []  # список (topic, j) той же длины что exam_questions
 MOCK_TOTAL_DIFFICULTY = 0
+MOCK2_TOTAL_DIFFICULTY = 0
 
 _mock_substitute_pool = {}  # (subtopic, difficulty) -> [(topic, j), ...] без jan/mar
 for top in topics:
@@ -1071,6 +1074,73 @@ for n_val, t_top, t_j in exam_questions:
     MOCK_TOTAL_DIFFICULTY += _exam_points_for_n(int(n_val or 0))
 
 exam_state_mock = {}
+exam_state_mock2 = {}
+
+# Mock Exam 2: для каждой задачи из экзамена mar подбираем задачу с той же подтемой
+# и по возможности с той же сложностью. Предпочтительно исключаем задачи type=jan и type=mar.
+# Если точного совпадения по сложности нет — берем ближайшую сложность.
+mock_questions2 = []  # список (topic, j) той же длины что exam_questions_mar
+
+_mock2_pool_by_sub = {}  # subtopic -> [(topic, j, difficulty, type_lower), ...]
+for top in topics:
+    for j, item in enumerate(kapibara.get(top, [])):
+        if not isinstance(item, dict):
+            continue
+        sub = (item.get("subtopic") or "").strip() or "general"
+        try:
+            diff = int(item.get("difficulty") or 1)
+        except (TypeError, ValueError):
+            diff = 1
+        if diff < 1:
+            diff = 1
+        t = (item.get("type") or "").strip().lower()
+        if sub not in _mock2_pool_by_sub:
+            _mock2_pool_by_sub[sub] = []
+        _mock2_pool_by_sub[sub].append((top, j, diff, t))
+
+
+def _pick_mock2_candidate(
+    subtopic: str,
+    target_diff: int,
+    used: set[tuple[str, int]],
+) -> tuple[str, int] | None:
+    """Подбирает задачу по подтеме и максимально близкой сложности; приоритетно не jan/mar."""
+    candidates = _mock2_pool_by_sub.get(subtopic) or []
+    if not candidates:
+        return None
+
+    available = [c for c in candidates if (c[0], c[1]) not in used]
+    if not available:
+        return None
+
+    preferred = [c for c in available if c[3] not in ("jan", "mar")]
+    pool = preferred if preferred else available
+    # Сортируем по минимальной разнице сложности; как стабильный тай-брейк — случайность.
+    random.shuffle(pool)
+    pool.sort(key=lambda c: abs(c[2] - target_diff))
+    chosen = pool[0]
+    return (chosen[0], chosen[1])
+
+
+_used_for_mock2: set[tuple[str, int]] = set()
+for n_val, t_top, t_j in exam_questions_mar:
+    q = kapibara[t_top][t_j]
+    sub = (q.get("subtopic") or "").strip() or "general"
+    try:
+        diff = int(q.get("difficulty") or 1)
+    except (TypeError, ValueError):
+        diff = 1
+    if diff < 1:
+        diff = 1
+
+    chosen = _pick_mock2_candidate(sub, diff, _used_for_mock2)
+    if chosen is None:
+        # На случай пустой подвыборки оставляем исходную задачу из mar.
+        chosen = (t_top, t_j)
+    _used_for_mock2.add(chosen)
+    mock_questions2.append(chosen)
+    # Баллы в Mock Exam 2 — по номеру n из экзамена mar
+    MOCK2_TOTAL_DIFFICULTY += _exam_points_for_n(int(n_val or 0))
 
 # Связи приглашений: пригласивший -> множество приглашённых
 invite_relations = {}  # type: dict[int, set[int]]
@@ -1192,7 +1262,7 @@ def _wrong_answer_training_extra_message(lang: str, wrong_today: int, total_toda
             block += "\nНеобходимо сначала выучить теорию."
         # Сообщение про лимит начинаем показывать, когда ошибок стало больше 10,
         # само значение лимита берём из константы N (сейчас 10).
-        if wrong_today > 10:
+        if wrong_today > 1 :
             block += (
                 f"\n\nОграничение по ошибкам сегодня: не более {N}. "
                 f"\n{_wrong_answer_limit_phrase(lang)}"
@@ -1271,6 +1341,19 @@ async def _wrong_answer_training_message(user_id: int, lang: str) -> str:
         + "\n"
         + extra
     )
+
+
+async def _append_wrong_today_log_fields(user_id: int, base_fields: list) -> list:
+    """
+    Добавляет в лог поля wrong_today для ответов на задачи.
+    """
+    wrong_today = "na"
+    if db_conn:
+        try:
+            wrong_today, _ = await db.get_training_answers_today_counts(db_conn, user_id)
+        except Exception as e:
+            logging.error(f"Ошибка получения wrong_today для лога: {e}")
+    return list(base_fields) + ["wrong_today", wrong_today]
 
 
 def _capitalize_display_en(s: str) -> str:
@@ -2145,7 +2228,14 @@ def exams_menu_kb(lang: str = "en") -> InlineKeyboardMarkup:
         builder.add(
             InlineKeyboardButton(
                 text=_txt(lang, "📝 Пробный экзамен", "📝 Mock Exam", "📝 امتحان تجريبي"),
-                callback_data="exam_mock_start",
+                callback_data="exam_mock_start_1",
+            )
+        )
+    if mock_questions2:
+        builder.add(
+            InlineKeyboardButton(
+                text=_txt(lang, "📝 Пробный экзамен 2", "📝 Mock Exam 2", "📝 امتحان تجريبي 2"),
+                callback_data="exam_mock_start_2",
             )
         )
     builder.add(
@@ -2702,7 +2792,8 @@ async def _exam_wrong_by_topic(user_id: int, exam_type: str) -> dict:
      - 'jan' — экзамен 25 января
      - 'dec' — экзамен 21 декабря
      - 'mar' — экзамен 15 марта
-     - 'mock' — пробный экзамен
+     - 'mock' — пробный экзамен 1
+     - 'mock2' — пробный экзамен 2
    """
    wrong_by_topic: dict[str, int] = {}
    if not db_conn:
@@ -2721,6 +2812,10 @@ async def _exam_wrong_by_topic(user_id: int, exam_type: str) -> dict:
            exam_id = EXAM_MOCK_ID
            # mock_questions: список (topic, j), где question_index == idx
            questions = mock_questions
+       elif exam_type == "mock2":
+           exam_id = EXAM_MOCK2_ID
+           # mock_questions2: список (topic, j), где question_index == idx
+           questions = mock_questions2
        else:
            return wrong_by_topic
        if not questions:
@@ -2734,7 +2829,7 @@ async def _exam_wrong_by_topic(user_id: int, exam_type: str) -> dict:
            continue
        if idx < 0 or idx >= len(questions):
            continue
-       if exam_type == "mock":
+       if exam_type in ("mock", "mock2"):
            top, _j = questions[idx]
        else:
            _, top, _j = questions[idx]
@@ -3234,50 +3329,92 @@ def _inline_kb_exam_dec_finished(lang: str = "en") -> InlineKeyboardMarkup:
    return _inline_kb_exam_finished_by_type("dec", lang)
 
 
-# --- Mock Exam (задачи по подтеме/сложности как у jan; кандидаты без type=jan и type=mar) ---
-async def _get_exam_mock_state(user_id: int):
-   state = exam_state_mock.get(user_id)
+# --- Mock Exam (m=1 и m=2) ---
+def _mock_exam_id_by_m(m: int) -> str:
+   return EXAM_MOCK2_ID if m == 2 else EXAM_MOCK_ID
+
+
+def _mock_questions_by_m(m: int) -> list[tuple[str, int]]:
+   return mock_questions2 if m == 2 else mock_questions
+
+
+def _mock_n_source_by_m(m: int) -> list[tuple[int, str, int]]:
+   return exam_questions_mar if m == 2 else exam_questions
+
+
+def _mock_total_difficulty_by_m(m: int) -> int:
+   return MOCK2_TOTAL_DIFFICULTY if m == 2 else MOCK_TOTAL_DIFFICULTY
+
+
+def _mock_state_store_by_m(m: int) -> dict[int, dict]:
+   return exam_state_mock2 if m == 2 else exam_state_mock
+
+
+def _mock_exam_type_for_stats(m: int) -> str:
+   return "mock2" if m == 2 else "mock"
+
+
+def _mock_exam_db_type(m: int) -> str:
+   return "mock2" if m == 2 else "mock"
+
+
+def _mock_exam_title(lang: str, m: int) -> str:
+   return _txt(
+       lang,
+       f"Mock Exam {m} (пробный экзамен {m})",
+       f"Mock Exam {m}",
+       f"الامتحان التجريبي {m}",
+   )
+
+
+async def _get_exam_mock_state(user_id: int, m: int = 1):
+   store = _mock_state_store_by_m(m)
+   state = store.get(user_id)
+   questions = _mock_questions_by_m(m)
+   n_source = _mock_n_source_by_m(m)
+   exam_id = _mock_exam_id_by_m(m)
    if state is None:
        state = {"answered": set(), "correct_count": 0, "correct_difficulty": 0}
        if db_conn:
            try:
-               exam_answers = await db.get_exam_answers(db_conn, user_id, EXAM_MOCK_ID)
+               exam_answers = await db.get_exam_answers(db_conn, user_id, exam_id)
                answered_set = set()
                correct_count = 0
                correct_difficulty = 0
                for idx, answer_data in exam_answers.items():
                    answered_set.add(idx)
-                   if answer_data["correct"] and 0 <= idx < len(mock_questions):
+                   if answer_data["correct"] and 0 <= idx < len(questions):
                        correct_count += 1
-                       # В Mock Exam баллы считаем по n позиции (как в exam_questions)
-                       if 0 <= idx < len(exam_questions):
-                           n_val, _, _ = exam_questions[idx]
+                       if 0 <= idx < len(n_source):
+                           n_val, _, _ = n_source[idx]
                            correct_difficulty += _exam_points_for_n(int(n_val or 0))
                state["answered"] = answered_set
                state["correct_count"] = correct_count
                state["correct_difficulty"] = correct_difficulty
            except Exception as e:
-               logging.error(f"Ошибка загрузки состояния Mock Exam из БД: {e}")
-       exam_state_mock[user_id] = state
+               logging.error(f"Ошибка загрузки состояния Mock Exam m={m} из БД: {e}")
+       store[user_id] = state
    return state
 
 
-def _find_next_exam_mock_index(state):
+def _find_next_exam_mock_index(state, m: int = 1):
    answered = state.get("answered", set())
-   for idx in range(len(mock_questions)):
+   questions = _mock_questions_by_m(m)
+   for idx in range(len(questions)):
        if idx not in answered:
            return idx
    return None
 
 
 def inline_kb_exam_mock(
-    idx: int, *, option_order: list[int] | None = None, exam_lang: str | None = None
+    idx: int, m: int = 1, *, option_order: list[int] | None = None, exam_lang: str | None = None
 ) -> InlineKeyboardMarkup:
    builder = InlineKeyboardBuilder()
-   if idx < 0 or idx >= len(mock_questions):
+   questions = _mock_questions_by_m(m)
+   if idx < 0 or idx >= len(questions):
        builder.adjust(1)
        return builder.as_markup()
-   top, j = mock_questions[idx]
+   top, j = questions[idx]
    q = kapibara[top][j]
    opts_src = _task_options_for_display(q, exam_lang)
    k = _keyboard_option_labels_from_display(opts_src)
@@ -3293,39 +3430,41 @@ def inline_kb_exam_mock(
        builder.add(
            InlineKeyboardButton(
                text=_option_button_text_shuffled(k[i], letter),
-               callback_data=f'exam_mock_q_{idx}_{i}',
+               callback_data=f'exam_mock_q_{m}_{idx}_{i}',
            )
        )
    builder.adjust(1)
    return builder.as_markup()
 
 
-async def _send_exam_mock_question(call: CallbackQuery, user_id: int, idx: int):
-   # Блокируем показ следующего вопроса Mock Exam для пользователя 7567696330
+async def _send_exam_mock_question(call: CallbackQuery, user_id: int, idx: int, m: int = 1):
    if user_id == 7567696331:
-       log(call.from_user, [EXAM_MOCK_ID, "next_blocked"])
+       log(call.from_user, [_mock_exam_id_by_m(m), "next_blocked", f"m={m}"])
        return
 
    lang = await _get_user_lang(call.from_user)
-   if idx < 0 or idx >= len(mock_questions):
+   questions = _mock_questions_by_m(m)
+   n_source = _mock_n_source_by_m(m)
+   if idx < 0 or idx >= len(questions):
        kb = await start_kb(user_id)
        await call.message.answer(_msg_exam_tasks_over(lang), reply_markup=kb)
        return
-   top, j = mock_questions[idx]
+   top, j = questions[idx]
    q = kapibara[top][j]
    if q.get("img"):
        photo_path = os.path.join(DATA_DIR, "images", q["img"])
        await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
-   total = len(mock_questions)
+   total = len(questions)
+   title = _mock_exam_title(lang, m)
    header = _txt(
        lang,
-       f"Пробный экзамен — вопрос {idx + 1} из {total}\n\n",
-       f"Mock Exam — question {idx + 1} of {total}\n\n",
-       f"امتحان تجريبي — السؤال {idx + 1} من {total}\n\n",
+       f"{title} — вопрос {idx + 1} из {total}\n\n",
+       f"{title} — question {idx + 1} of {total}\n\n",
+       f"{title} — السؤال {idx + 1} من {total}\n\n",
    )
    n_val = 0
-   if 0 <= idx < len(exam_questions):
-       n_val, _, _ = exam_questions[idx]
+   if 0 <= idx < len(n_source):
+       n_val, _, _ = n_source[idx]
    stars = _exam_stars_for_n(n_val)
    diff_line = (
        _txt(lang, f"Сложность: {stars}\n", f"Difficulty: {stars}\n", f"الصعوبة: {stars}\n")
@@ -3334,7 +3473,7 @@ async def _send_exam_mock_question(call: CallbackQuery, user_id: int, idx: int):
    )
    exam_lang = await _get_user_exam_lang_by_id(user_id)
    question_text = header + diff_line + _full_task_question_text(q, exam_lang)
-   log(call.from_user, [EXAM_MOCK_ID, "question", idx, _exam_log_task_id(q)])
+   log(call.from_user, [_mock_exam_id_by_m(m), "question", f"m={m}", idx, _exam_log_task_id(q)])
    opts_n = _task_options_for_display(q, exam_lang)
    order = _option_display_indices(
        top, q, len(opts_n), opts_for_shuffle_check=opts_n
@@ -3342,35 +3481,39 @@ async def _send_exam_mock_question(call: CallbackQuery, user_id: int, idx: int):
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(
            question_text,
-           reply_markup=inline_kb_exam_mock(idx, option_order=order, exam_lang=exam_lang),
+           reply_markup=inline_kb_exam_mock(idx, m, option_order=order, exam_lang=exam_lang),
        )
    _record_last_seen_question(user_id, top, j, order)
 
 
-async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
-   state = await _get_exam_mock_state(user_id)
+async def _send_exam_mock_summary(call: CallbackQuery, user_id: int, m: int = 1):
+   state = await _get_exam_mock_state(user_id, m)
    correct = state.get("correct_count", 0)
-   total_q = len(mock_questions)
-   k = (state.get("correct_difficulty", 0) / MOCK_TOTAL_DIFFICULTY * 100) if MOCK_TOTAL_DIFFICULTY else 0.0
+   questions = _mock_questions_by_m(m)
+   total_q = len(questions)
+   total_d = _mock_total_difficulty_by_m(m)
+   k = (state.get("correct_difficulty", 0) / total_d * 100) if total_d else 0.0
    lang = await _get_user_lang(call.from_user)
-   kb = _inline_kb_exam_mock_finished(lang)
-   wrong_by_topic = await _exam_wrong_by_topic(user_id, "mock")
+   kb = _inline_kb_exam_mock_finished(lang, m)
+   wrong_by_topic = await _exam_wrong_by_topic(user_id, _mock_exam_type_for_stats(m))
    sorted_wrong = sorted(wrong_by_topic.items(), key=lambda kv: (-kv[1], kv[0]))
    problematic_topics = [topic_name for topic_name, _ in sorted_wrong]
 
    if db_conn:
        try:
-           await db.mark_user_exam_completed(db_conn, user_id=user_id, exam_type="mock")
+           db_exam_type = _mock_exam_db_type(m)
+           await db.mark_user_exam_completed(db_conn, user_id=user_id, exam_type=db_exam_type)
            await db.save_user_exam_recommendations(
                db_conn,
                user_id=user_id,
-               exam_type="mock",
+               exam_type=db_exam_type,
                topics_json=json.dumps(problematic_topics, ensure_ascii=False),
            )
        except Exception as e:
-           logging.error(f"Ошибка сохранения рекомендаций mock для пользователя {user_id}: {e}")
+           logging.error(f"Ошибка сохранения рекомендаций mock m={m} для пользователя {user_id}: {e}")
 
    lg = _normalize_lang(lang)
+   title = _mock_exam_title(lang, m)
    if lg == "ru":
        if sorted_wrong:
            rec_lines = ["\nРекомендации (по важности):"]
@@ -3380,7 +3523,7 @@ async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
        else:
            rec_text = "\n\nНеверных ответов не было. Рекомендации не требуются."
        msg = (
-           f"Ваш результат Mock Exam (пробный экзамен):\n\n"
+           f"Ваш результат {title}:\n\n"
            f"Вы решили правильно {correct} из {total_q} задач и набрали {k:.2f} баллов."
            f"{rec_text}"
        )
@@ -3393,7 +3536,7 @@ async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
        else:
            rec_text = "\n\nلم تكن هناك إجابات خاطئة. لا حاجة لتوصيات."
        msg = (
-           f"نتيجة الامتحان التجريبي:\n\n"
+           f"نتيجتك في {title}:\n\n"
            f"أجبت بشكل صحيح عن {correct} من أصل {total_q} مسألة وحصلت على {k:.2f} نقطة."
            f"{rec_text}"
        )
@@ -3406,49 +3549,50 @@ async def _send_exam_mock_summary(call: CallbackQuery, user_id: int):
        else:
            rec_text = "\n\nNo incorrect answers. No recommendations needed."
        msg = (
-           f"Your Mock Exam result:\n\n"
+           f"Your {title} result:\n\n"
            f"You solved {correct} out of {total_q} tasks correctly and scored {k:.2f} points."
            f"{rec_text}"
        )
    await _refresh_log_lang_cache(call.from_user)
-   log(call.from_user, [EXAM_MOCK_ID, "summary", round(k, 2)])
+   log(call.from_user, [_mock_exam_id_by_m(m), "summary", f"m={m}", round(k, 2)])
    async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
        await call.message.answer(msg, reply_markup=kb)
 
 
-def _format_exam_mock_stats_line(state, lang: str = "en") -> str:
+def _format_exam_mock_stats_line(state, lang: str = "en", m: int = 1) -> str:
    correct = state.get("correct_count", 0)
-   total_q = len(mock_questions)
-   k = (state.get("correct_difficulty", 0) / MOCK_TOTAL_DIFFICULTY * 100) if MOCK_TOTAL_DIFFICULTY else 0.0
+   total_q = len(_mock_questions_by_m(m))
+   total_d = _mock_total_difficulty_by_m(m)
+   k = (state.get("correct_difficulty", 0) / total_d * 100) if total_d else 0.0
    return _txt(
        lang,
-       f"Правильно {correct} из {total_q}, балл {k:.2f}.",
-       f"Correct {correct} of {total_q}, score {k:.2f}.",
-       f"صحيح {correct} من {total_q}، النقاط {k:.2f}.",
+       f"Правильно {correct} из {total_q}, балл {k:.2f}. (m={m})",
+       f"Correct {correct} of {total_q}, score {k:.2f}. (m={m})",
+       f"صحيح {correct} من {total_q}، النقاط {k:.2f}. (m={m})",
    )
 
 
-def _inline_kb_exam_mock_entry_choice(lang: str = "en") -> InlineKeyboardMarkup:
+def _inline_kb_exam_mock_entry_choice(lang: str = "en", m: int = 1) -> InlineKeyboardMarkup:
    builder = InlineKeyboardBuilder()
    builder.row(
        InlineKeyboardButton(
            text=_txt(lang, "Очистить статистику", "Clear stats", "مسح الإحصائيات"),
-           callback_data="exam_mock_clear",
+           callback_data=f"exam_mock_clear_{m}",
        ),
        InlineKeyboardButton(
            text=_txt(lang, "Продолжить", "Continue", "متابعة"),
-           callback_data="exam_mock_continue",
+           callback_data=f"exam_mock_continue_{m}",
        ),
    )
    return builder.as_markup()
 
 
-def _inline_kb_exam_mock_finished(lang: str = "en") -> InlineKeyboardMarkup:
+def _inline_kb_exam_mock_finished(lang: str = "en", m: int = 1) -> InlineKeyboardMarkup:
    builder = InlineKeyboardBuilder()
    builder.row(
        InlineKeyboardButton(
            text=_txt(lang, "Очистить статистику", "Clear stats", "مسح الإحصائيات"),
-           callback_data="exam_mock_clear",
+           callback_data=f"exam_mock_clear_{m}",
        ),
        InlineKeyboardButton(
            text=_txt(lang, "Список тем", "Topic list", "قائمة المواضيع"),
@@ -4096,6 +4240,18 @@ def _do_llm_request(
             SystemMessage(content=short),
             HumanMessage(content=user_text),
         ]
+    elif mode == LLM_CONTEXT_EXAM_RESULT:
+        exam_result_hint = _txt(
+            lang,
+            "Ниже распределение ошибок пользователя по темам. Дай рекомендации по подготовке к экзамену.",
+            "Below is the user's error distribution by topic. Give recommendations for exam preparation.",
+            "فيما يلي توزيع أخطاء المستخدم حسب المواضيع. قدّم توصيات للتحضير للامتحان.",
+        )
+        messages = [
+            SystemMessage(content=exam_result_hint),
+            SystemMessage(content=short),
+            HumanMessage(content=user_text),
+        ]
     else:
         messages = [
           #  SystemMessage(content=addtext),
@@ -4458,7 +4614,11 @@ async def on_math_all_answer(call: CallbackQuery):
         except Exception as e:
             logging.error(f"Ошибка сохранения ответа math_all в БД: {e}")
     qid = str(q.get("id") or "")
-    log(call.from_user, ["math_all_answer", top, j, ans_id, ansok, qid])
+    log_fields = await _append_wrong_today_log_fields(
+        call.from_user.id,
+        ["math_all_answer", top, j, ans_id, ansok, qid],
+    )
+    log(call.from_user, log_fields)
 
     if ansok:
         msg_text = _correct_phrase_training(lang)
@@ -5202,7 +5362,7 @@ def _format_exam_stats_line(state) -> str:
 
 # Лимит ошибок/ответов для ограничения доступа.
 # N — максимально допустимое число неверных ответов в день в бесплатном режиме.
-N = 10
+N = 20
 
 
 def _inline_kb_exam_entry_choice() -> InlineKeyboardMarkup:
@@ -5272,16 +5432,7 @@ async def _should_redirect__to_pay(user_id: int, mode: str = "exam") -> bool:
         and not paid_access
     )
 
-    meets_activity_limits = False
-    if user_created_at:
-        try:
-            from datetime import datetime, timedelta
-
-            created_dt = datetime.fromisoformat(user_created_at)
-            if datetime.now() - created_dt > timedelta(days=3) and total_answered > N:
-                meets_activity_limits = True
-        except Exception as e:
-            logging.error(f"Ошибка разбора created_at для пользователя {user_id}: {e}")
+    meets_activity_limits = total_answered > N
 
     return no_privileges and meets_activity_limits
 
@@ -5425,103 +5576,140 @@ async def on_exam_continue(call: CallbackQuery):
     await _send_exam_question_by_type(call, user_id, next_idx, exam_type)
 
 
-# --- Mock Exam: вход, очистка, продолжение ---
-@router.callback_query(F.data == "exam_mock_start")
+# --- Mock Exam: вход, очистка, продолжение (m=1|2) ---
+@router.callback_query(F.data.startswith("exam_mock_start"))
 async def on_exam_mock_start(call: CallbackQuery):
     await call.answer()
     user_id = call.from_user.id
     lang = await _get_user_lang(call.from_user)
+    m = 1
+    parts = (call.data or "").split("_")
+    if len(parts) >= 4:
+        try:
+            m = int(parts[3])
+        except ValueError:
+            m = 1
+    if m not in (1, 2):
+        m = 1
     if await _should_redirect__to_pay(user_id, mode="exam"):
-        log(call.from_user, ["mockexamreject"])
+        log(call.from_user, ["mockexamreject", f"m={m}"])
         # Показываем то же сообщение об оплате/условиях доступа, что и в команде /pay
         await pay(call.from_user)
         return
-    if not mock_questions:
+    questions = _mock_questions_by_m(m)
+    if not questions:
         kb = await start_kb(user_id)
         await call.message.answer(
-            _txt(lang, "Mock Exam пока не настроен.", "Mock Exam is not configured yet.", "الامتحان التجريبي غير مُعدّ بعد."),
+            _txt(
+                lang,
+                f"Mock Exam {m} пока не настроен.",
+                f"Mock Exam {m} is not configured yet.",
+                f"الامتحان التجريبي {m} غير مُعدّ بعد.",
+            ),
             reply_markup=kb,
         )
         return
-    state = await _get_exam_mock_state(user_id)
-    next_idx = _find_next_exam_mock_index(state)
+    state = await _get_exam_mock_state(user_id, m)
+    next_idx = _find_next_exam_mock_index(state, m)
     if next_idx is None:
-        log(call.from_user, [EXAM_MOCK_ID, "start", "summary"])
-        await _send_exam_mock_summary(call, user_id)
+        log(call.from_user, [_mock_exam_id_by_m(m), "start", "summary", f"m={m}"])
+        await _send_exam_mock_summary(call, user_id, m)
         return
     if state.get("answered"):
-        log(call.from_user, [EXAM_MOCK_ID, "start", "entry"])
+        log(call.from_user, [_mock_exam_id_by_m(m), "start", "entry", f"m={m}"])
+        title = _mock_exam_title(lang, m)
         intro = _txt(
             lang,
-            "Режим «Mock Exam» (пробный экзамен).",
-            'Mode "Mock Exam" (trial exam).',
-            'وضع «امتحان تجريبي».',
+            f"Режим «{title}».",
+            f'Mode "{title}".',
+            f'وضع «{title}».',
         )
         action = _txt(lang, "Выберите действие:", "Choose action:", "اختر الإجراء:")
-        msg = intro + "\n\n" + _format_exam_mock_stats_line(state, lang) + "\n\n" + action
+        msg = intro + "\n\n" + _format_exam_mock_stats_line(state, lang, m) + "\n\n" + action
         async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
-            await call.message.answer(msg, reply_markup=_inline_kb_exam_mock_entry_choice(lang))
+            await call.message.answer(msg, reply_markup=_inline_kb_exam_mock_entry_choice(lang, m))
         return
-    total_m = len(mock_questions)
+    total_m = len(questions)
+    title = _mock_exam_title(lang, m)
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
         await call.message.answer(
             _txt(
                 lang,
-                f"Mock Exam / Пробный экзамен.\n"
+                f"{title}.\n"
                 f"Неограниченный доступ для студентов курса 'Подготовка к CSCA' https://stepik.org/a/268161  и  участников групп подготовки по метематике https://t.me/+c1ksuGkuO1BiNDk6 и физике https://t.me/+dUnPAdJO1w4zZWUy \n\n"
                 f"Всего {total_m} задач. Второй раз решить одну и ту же задачу нельзя.\n\n",
-                f"Mock Exam / Trial exam.\n"
+                f"{title}.\n"
                 f"Unlimited access for students of the CSCA prep course https://stepik.org/a/268161 and participants of math https://t.me/+c1ksuGkuO1BiNDk6 and physics https://t.me/+dUnPAdJO1w4zZWUy prep groups.\n\n"
                 f"There are {total_m} tasks. You cannot solve the same task twice.\n\n",
-                f"امتحان تجريبي.\n"
+                f"{title}.\n"
                 f"وصول غير محدود لطلاب دورة التحضير لـ CSCA على Stepik والمجموعات المرتبطة.\n\n"
                 f"إجمالي {total_m} مسألة. لا يمكن حل نفس المسألة مرتين.",
             )
         )
-    await _send_exam_mock_question(call, user_id, next_idx)
+    await _send_exam_mock_question(call, user_id, next_idx, m)
 
 
-@router.callback_query(F.data == "exam_mock_clear")
+@router.callback_query(F.data.startswith("exam_mock_clear"))
 async def on_exam_mock_clear(call: CallbackQuery):
     await call.answer()
-    log(call.from_user, [EXAM_MOCK_ID, "clear"])
+    m = 1
+    parts = (call.data or "").split("_")
+    if len(parts) >= 4:
+        try:
+            m = int(parts[3])
+        except ValueError:
+            m = 1
+    if m not in (1, 2):
+        m = 1
+    exam_id = _mock_exam_id_by_m(m)
+    log(call.from_user, [exam_id, "clear", f"m={m}"])
     user_id = call.from_user.id
     if db_conn:
         try:
-            await db.clear_exam_answers(db_conn, user_id, EXAM_MOCK_ID)
+            await db.clear_exam_answers(db_conn, user_id, exam_id)
         except Exception as e:
-            logging.error(f"Ошибка очистки Mock Exam: {e}")
-    if user_id in exam_state_mock:
-        del exam_state_mock[user_id]
-    state = await _get_exam_mock_state(user_id)
-    next_idx = _find_next_exam_mock_index(state)
+            logging.error(f"Ошибка очистки Mock Exam m={m}: {e}")
+    store = _mock_state_store_by_m(m)
+    if user_id in store:
+        del store[user_id]
+    state = await _get_exam_mock_state(user_id, m)
+    next_idx = _find_next_exam_mock_index(state, m)
     lang = await _get_user_lang(call.from_user)
     async with ChatActionSender(bot=bot, chat_id=user_id, action="typing"):
         await call.message.answer(
             _txt(
                 lang,
-                "Статистика Mock Exam очищена. Можете начать заново.",
-                "Mock exam stats cleared. You can start again.",
-                "تم مسح إحصائيات الامتحان التجريبي. يمكنك البدء من جديد.",
+                f"Статистика Mock Exam {m} очищена. Можете начать заново.",
+                f"Mock Exam {m} stats cleared. You can start again.",
+                f"تم مسح إحصائيات الامتحان التجريبي {m}. يمكنك البدء من جديد.",
             )
         )
     if next_idx is not None:
-        await _send_exam_mock_question(call, user_id, next_idx)
+        await _send_exam_mock_question(call, user_id, next_idx, m)
     else:
-        await _send_exam_mock_summary(call, user_id)
+        await _send_exam_mock_summary(call, user_id, m)
 
 
-@router.callback_query(F.data == "exam_mock_continue")
+@router.callback_query(F.data.startswith("exam_mock_continue"))
 async def on_exam_mock_continue(call: CallbackQuery):
     await call.answer()
-    log(call.from_user, [EXAM_MOCK_ID, "continue"])
+    m = 1
+    parts = (call.data or "").split("_")
+    if len(parts) >= 4:
+        try:
+            m = int(parts[3])
+        except ValueError:
+            m = 1
+    if m not in (1, 2):
+        m = 1
+    log(call.from_user, [_mock_exam_id_by_m(m), "continue", f"m={m}"])
     user_id = call.from_user.id
-    state = await _get_exam_mock_state(user_id)
-    next_idx = _find_next_exam_mock_index(state)
+    state = await _get_exam_mock_state(user_id, m)
+    next_idx = _find_next_exam_mock_index(state, m)
     if next_idx is None:
-        await _send_exam_mock_summary(call, user_id)
+        await _send_exam_mock_summary(call, user_id, m)
         return
-    await _send_exam_mock_question(call, user_id, next_idx)
+    await _send_exam_mock_question(call, user_id, next_idx, m)
 
 
 @router.callback_query(F.data.startswith("exam_q_"))
@@ -5599,7 +5787,11 @@ async def on_exam_answer(call: CallbackQuery):
         except Exception as e:
             logging.error(f"Ошибка сохранения ответа экзамена ({exam_type}): {e}")
 
-    log(call.from_user, [cfg["id"], idx, ans_id, ansok, _exam_log_task_id(q)])
+    log_fields = await _append_wrong_today_log_fields(
+        call.from_user.id,
+        [cfg["id"], idx, ans_id, ansok, _exam_log_task_id(q)],
+    )
+    log(call.from_user, log_fields)
 
     result_msg = _correct_phrase(lang) if ansok else _txt(lang, "Неправильно.", "Incorrect.", "غير صحيح.")
     correct_now = state.get("correct_count", 0)
@@ -5650,38 +5842,51 @@ async def on_exam_answer(call: CallbackQuery):
 
 @router.callback_query(F.data.startswith("exam_mock_q_"))
 async def on_exam_mock_answer(call: CallbackQuery):
-    """Обработка ответа в режиме Mock Exam. callback_data = exam_mock_q_{idx}_{i} (при split 5 частей)."""
+    """Обработка ответа в режиме Mock Exam. Формат: exam_mock_q_{m}_{idx}_{i}."""
     correct_h = {'A': '0', 'B': '1', 'C': '2', 'D': '3', 'E': '4'}
     await call.answer()
     lang = await _get_user_lang(call.from_user)
     data = call.data.split("_")
-    # exam_mock_q_0_1 -> ["exam", "mock", "q", "0", "1"] -> idx=data[3], ans_id=data[4]
+    # Новый формат: exam_mock_q_1_0_1 -> ["exam","mock","q","1","0","1"]
+    # Старый формат: exam_mock_q_0_1 -> ["exam","mock","q","0","1"] (m=1)
     if len(data) < 5:
         await call.message.answer(
             _txt(lang, "Ошибка формата ответа экзамена.", "Invalid exam answer format.", "تنسيق إجابة الامتحان غير صالح."),
         )
         return
+    m = 1
     try:
-        idx = int(data[3])
-        ans_id = data[4]
+        if len(data) >= 6:
+            m = int(data[3])
+            idx = int(data[4])
+            ans_id = data[5]
+        else:
+            idx = int(data[3])
+            ans_id = data[4]
     except (ValueError, IndexError):
         await call.message.answer(
             _txt(lang, "Ошибка формата ответа экзамена.", "Invalid exam answer format.", "تنسيق إجابة الامتحان غير صالح."),
         )
         return
+    if m not in (1, 2):
+        m = 1
+    questions = _mock_questions_by_m(m)
+    n_source = _mock_n_source_by_m(m)
+    total_d = _mock_total_difficulty_by_m(m)
+    exam_id = _mock_exam_id_by_m(m)
     user_id = call.from_user.id
-    if idx < 0 or idx >= len(mock_questions):
+    if idx < 0 or idx >= len(questions):
         await call.message.answer(
             _txt(lang, "Экзаменационный вопрос не найден.", "Exam question not found.", "سؤال الامتحان غير موجود."),
         )
         return
-    state = await _get_exam_mock_state(user_id)
+    state = await _get_exam_mock_state(user_id, m)
     if idx in state["answered"]:
         await call.message.answer(
             _txt(lang, "Вы уже решили эту задачу.", "You have already solved this task.", "لقد حلّيت هذه المسألة بالفعل."),
         )
         return
-    top, j = mock_questions[idx]
+    top, j = questions[idx]
     q = kapibara[top][j]
     correct = correct_h.get(q["answer"], "")
     try:
@@ -5696,9 +5901,8 @@ async def on_exam_mock_answer(call: CallbackQuery):
     state["answered"].add(idx)
     if ansok:
         state["correct_count"] = state.get("correct_count", 0) + 1
-        # В Mock Exam баллы считаем по n позиции (как в exam_questions)
-        if 0 <= idx < len(exam_questions):
-            n_val, _, _ = exam_questions[idx]
+        if 0 <= idx < len(n_source):
+            n_val, _, _ = n_source[idx]
             state["correct_difficulty"] = state.get("correct_difficulty", 0) + _exam_points_for_n(int(n_val or 0))
 
     if db_conn:
@@ -5706,22 +5910,26 @@ async def on_exam_mock_answer(call: CallbackQuery):
             await db.save_answer(
                 db_conn,
                 user_id,
-                EXAM_MOCK_ID,
+                exam_id,
                 idx,
                 ans_id_int,
                 ansok == 1,
             )
         except Exception as e:
-            logging.error(f"Ошибка сохранения ответа Mock Exam: {e}")
-    log(call.from_user, [EXAM_MOCK_ID, idx, ans_id, ansok, _exam_log_task_id(q)])
+            logging.error(f"Ошибка сохранения ответа Mock Exam m={m}: {e}")
+    log_fields = await _append_wrong_today_log_fields(
+        call.from_user.id,
+        [exam_id, f"m={m}", idx, ans_id, ansok, _exam_log_task_id(q)],
+    )
+    log(call.from_user, log_fields)
 
     result_msg = _correct_phrase(lang) if ansok else _txt(lang, "Неправильно.", "Incorrect.", "غير صحيح.")
     correct_now = state.get("correct_count", 0)
-    total_q = len(mock_questions)
-    k_now = (state.get("correct_difficulty", 0) / MOCK_TOTAL_DIFFICULTY * 100) if MOCK_TOTAL_DIFFICULTY else 0.0
-    stats_ru = f"Сейчас по экзамену: {correct_now} из {total_q} верно, набранный балл {k_now:.2f}."
-    stats_en = f"Current exam stats: {correct_now} out of {total_q} correct, score {k_now:.2f}."
-    stats_ar = f"إحصائيات الامتحان الآن: {correct_now} من {total_q} صحيح، النقاط {k_now:.2f}."
+    total_q = len(questions)
+    k_now = (state.get("correct_difficulty", 0) / total_d * 100) if total_d else 0.0
+    stats_ru = f"Сейчас по пробному экзамену {m}: {correct_now} из {total_q} верно, набранный балл {k_now:.2f}."
+    stats_en = f"Current Mock Exam {m} stats: {correct_now} out of {total_q} correct, score {k_now:.2f}."
+    stats_ar = f"إحصائيات الامتحان التجريبي {m}: {correct_now} من {total_q} صحيح، النقاط {k_now:.2f}."
     lg = _normalize_lang(lang)
     if lg == "ru":
         stats_msg = stats_ru
@@ -5731,14 +5939,13 @@ async def on_exam_mock_answer(call: CallbackQuery):
         stats_msg = stats_en
     full_msg = result_msg + "\n" + stats_msg
 
-    next_idx = _find_next_exam_mock_index(state)
+    next_idx = _find_next_exam_mock_index(state, m)
     if next_idx is None:
         await call.message.answer(full_msg)
-        await _send_exam_mock_summary(call, user_id)
+        await _send_exam_mock_summary(call, user_id, m)
     else:
         await call.message.answer(full_msg)
-        await _send_exam_mock_question(call, user_id, next_idx)
-
+        await _send_exam_mock_question(call, user_id, next_idx, m)
 
 @router.callback_query(F.data == "random_any")
 async def random_any_task(call: CallbackQuery):
@@ -6053,7 +6260,11 @@ async def on_answer_sub(call: CallbackQuery):
         msg_text = await _wrong_answer_training_message(uid, lang_code)
         reply = inline_kb_explain_sub(topic_idx, sub_idx, k, lang_code=lang_code)
         send_kb = None
-    log(call.from_user, [topic, j, ans_id, ansok, str(q.get("id") or "")])
+    log_fields = await _append_wrong_today_log_fields(
+        call.from_user.id,
+        [topic, j, ans_id, ansok, str(q.get("id") or "")],
+    )
+    log(call.from_user, log_fields)
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
         if reply:
             await call.message.answer(msg_text, reply_markup=reply)
@@ -6143,7 +6354,11 @@ async def on_answer_topic(call: CallbackQuery):
             async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
                 kb = await start_kb(uid)
                 await call.message.answer(msg_text, reply_markup=kb)
-            log(call.from_user, [top, j, ans_id, ansok, str(k.get("id") or "")])
+            log_fields = await _append_wrong_today_log_fields(
+                call.from_user.id,
+                [top, j, ans_id, ansok, str(k.get("id") or "")],
+            )
+            log(call.from_user, log_fields)
             return
         else:
             reply = inline_kb_next(top, j, lang_code, uid)
@@ -6151,7 +6366,11 @@ async def on_answer_topic(call: CallbackQuery):
         msg_text = await _wrong_answer_training_message(uid, lang_code)
         reply = inline_kb_explain(top, j, k, lang_code=lang_code)
 
-    log(call.from_user, [top, j, ans_id, ansok, str(k.get("id") or "")])
+    log_fields = await _append_wrong_today_log_fields(
+        call.from_user.id,
+        [top, j, ans_id, ansok, str(k.get("id") or "")],
+    )
+    log(call.from_user, log_fields)
     async with ChatActionSender(bot=bot, chat_id=call.from_user.id, action="typing"):
         await call.message.answer(msg_text, reply_markup=reply)
 
@@ -7373,100 +7592,120 @@ async def cmd_admin_daily_metrics(message: types.Message):
         await message.answer("Ошибка при построении метрик /admin.")
 
 
-@router.message(Command("exam25stats"))
-async def cmd_exam25stats(message: types.Message):
-    """Показать результаты экзамена 25 января для текущего пользователя."""
-    if not exam_questions:
-        await message.answer("Экзамен 25 января ещё не настроен.")
-        return
+@router.message(Command("examstats"))
+async def cmd_examstats(message: types.Message):
+    """Показать результаты всех пройденных экзаменов для текущего пользователя."""
     user_id = message.from_user.id
-    state = await _get_exam_state(user_id)
-    if not state or not state.get("answered"):
-        await message.answer("Вы ещё не проходили экзамен 25 января.")
+    blocks = []
+    completed_count = 0
+    total_score_sum = 0.0
+
+    if exam_questions:
+        jan_state = await _get_exam_state(user_id)
+        if jan_state and jan_state.get("answered"):
+            jan_correct = jan_state.get("correct_count", 0)
+            jan_total_q = len(exam_questions)
+            jan_score = (
+                jan_state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY * 100
+                if EXAM_TOTAL_DIFFICULTY
+                else 0.0
+            )
+            blocks.append(
+                "\n".join(
+                    [
+                        "📊 Экзамен 25 января:",
+                        f"RU: Правильно {jan_correct} из {jan_total_q}, балл {jan_score:.2f}.",
+                        f"EN: Correct {jan_correct} of {jan_total_q}, score {jan_score:.2f}.",
+                    ]
+                )
+            )
+            completed_count += 1
+            total_score_sum += jan_score
+
+    if exam_questions_dec:
+        dec_state = await _get_exam_dec_state(user_id)
+        if dec_state and dec_state.get("answered"):
+            dec_correct = dec_state.get("correct_count", 0)
+            dec_total_q = len(exam_questions_dec)
+            dec_score = (
+                dec_state.get("correct_difficulty", 0) / EXAM_DEC_TOTAL_DIFFICULTY * 100
+                if EXAM_DEC_TOTAL_DIFFICULTY
+                else 0.0
+            )
+            blocks.append(
+                "\n".join(
+                    [
+                        "📊 Экзамен 21 декабря:",
+                        f"RU: Правильно {dec_correct} из {dec_total_q}, балл {dec_score:.2f}.",
+                        f"EN: Correct {dec_correct} of {dec_total_q}, score {dec_score:.2f}.",
+                    ]
+                )
+            )
+            completed_count += 1
+            total_score_sum += dec_score
+
+    if mock_questions:
+        mock_state = await _get_exam_mock_state(user_id, 1)
+        if mock_state and mock_state.get("answered"):
+            mock_correct = mock_state.get("correct_count", 0)
+            mock_total_q = len(mock_questions)
+            mock_score = (
+                mock_state.get("correct_difficulty", 0) / MOCK_TOTAL_DIFFICULTY * 100
+                if MOCK_TOTAL_DIFFICULTY
+                else 0.0
+            )
+            blocks.append(
+                "\n".join(
+                    [
+                        "📊 Mock Exam 1 (пробный экзамен 1):",
+                        f"RU: Правильно {mock_correct} из {mock_total_q}, балл {mock_score:.2f}.",
+                        f"EN: Correct {mock_correct} of {mock_total_q}, score {mock_score:.2f}.",
+                    ]
+                )
+            )
+            completed_count += 1
+            total_score_sum += mock_score
+
+    if mock_questions2:
+        mock2_state = await _get_exam_mock_state(user_id, 2)
+        if mock2_state and mock2_state.get("answered"):
+            mock2_correct = mock2_state.get("correct_count", 0)
+            mock2_total_q = len(mock_questions2)
+            mock2_score = (
+                mock2_state.get("correct_difficulty", 0) / MOCK2_TOTAL_DIFFICULTY * 100
+                if MOCK2_TOTAL_DIFFICULTY
+                else 0.0
+            )
+            blocks.append(
+                "\n".join(
+                    [
+                        "📊 Mock Exam 2 (пробный экзамен 2):",
+                        f"RU: Правильно {mock2_correct} из {mock2_total_q}, балл {mock2_score:.2f}.",
+                        f"EN: Correct {mock2_correct} of {mock2_total_q}, score {mock2_score:.2f}.",
+                    ]
+                )
+            )
+            completed_count += 1
+            total_score_sum += mock2_score
+
+    if not blocks:
+        await message.answer(
+            "Вы ещё не проходили ни один экзамен.\n\n"
+            "You have not passed any exams yet."
+        )
         return
-    correct = state.get("correct_count", 0)
-    total_q = len(exam_questions)
-    if EXAM_TOTAL_DIFFICULTY:
-        k = state.get("correct_difficulty", 0) / EXAM_TOTAL_DIFFICULTY * 100
-    else:
-        k = 0.0
-    # Дублируем результат сразу на русском и английском
-    ru_block = (
-        "📊 Ваш результат экзамена 25 января:\n\n"
-        f"Вы решили правильно {correct} из {total_q} задач "
-        f"и набрали {k:.2f} баллов."
+
+    avg_score = total_score_sum / completed_count if completed_count else 0.0
+    text = (
+        "📈 Статистика по всем пройденным экзаменам:\n\n"
+        + "\n\n".join(blocks)
+        + "\n\n"
+        + f"Средний балл по всем экзаменам: {avg_score:.2f}.\n"
+        + f"Average score across all exams: {avg_score:.2f}."
     )
-    en_block = (
-        "📊 Your January 25 exam result:\n\n"
-        f"You solved {correct} out of {total_q} tasks correctly "
-        f"and scored {k:.2f} points."
-    )
-    text = ru_block + "\n\n" + en_block
-    kb = await start_kb(message.from_user.id)
+    kb = await start_kb(user_id)
     await _refresh_log_lang_cache(message.from_user)
-    log(message.from_user, [EXAM_25JAN_ID, "summary", round(k, 2)])
-    await message.answer(text, reply_markup=kb)
-
-
-@router.message(Command("exam21decstats"))
-async def cmd_exam21decstats(message: types.Message):
-    """Показать результаты экзамена 21 декабря для текущего пользователя."""
-    if not exam_questions_dec:
-        await message.answer("Экзамен 21 декабря ещё не настроен.")
-        return
-    user_id = message.from_user.id
-    state = await _get_exam_dec_state(user_id)
-    if not state or not state.get("answered"):
-        await message.answer("Вы ещё не проходили экзамен 21 декабря.")
-        return
-    correct = state.get("correct_count", 0)
-    total_q = len(exam_questions_dec)
-    k = (state.get("correct_difficulty", 0) / EXAM_DEC_TOTAL_DIFFICULTY * 100) if EXAM_DEC_TOTAL_DIFFICULTY else 0.0
-    ru_block = (
-        "📊 Ваш результат экзамена 21 декабря:\n\n"
-        f"Вы решили правильно {correct} из {total_q} задач "
-        f"и набрали {k:.2f} баллов."
-    )
-    en_block = (
-        "📊 Your December 21 exam result:\n\n"
-        f"You solved {correct} out of {total_q} tasks correctly "
-        f"and scored {k:.2f} points."
-    )
-    text = ru_block + "\n\n" + en_block
-    kb = await start_kb(message.from_user.id)
-    await _refresh_log_lang_cache(message.from_user)
-    log(message.from_user, [EXAM_21DEC_ID, "summary", round(k, 2)])
-    await message.answer(text, reply_markup=kb)
-
-
-@router.message(Command("exam_mock_stats"))
-async def cmd_exam_mock_stats(message: types.Message):
-    """Показать результаты Mock Exam для текущего пользователя."""
-    if not mock_questions:
-        await message.answer("Mock Exam ещё не настроен.")
-        return
-    user_id = message.from_user.id
-    state = await _get_exam_mock_state(user_id)
-    if not state or not state.get("answered"):
-        await message.answer("Вы ещё не проходили Mock Exam.")
-        return
-    correct = state.get("correct_count", 0)
-    total_q = len(mock_questions)
-    k = (state.get("correct_difficulty", 0) / MOCK_TOTAL_DIFFICULTY * 100) if MOCK_TOTAL_DIFFICULTY else 0.0
-    ru_block = (
-        "📊 Ваш результат Mock Exam (пробный экзамен):\n\n"
-        f"Вы решили правильно {correct} из {total_q} задач "
-        f"и набрали {k:.2f} баллов."
-    )
-    en_block = (
-        "📊 Your Mock Exam result:\n\n"
-        f"You solved {correct} out of {total_q} tasks correctly "
-        f"and scored {k:.2f} points."
-    )
-    text = ru_block + "\n\n" + en_block
-    kb = await start_kb(message.from_user.id)
-    await _refresh_log_lang_cache(message.from_user)
-    log(message.from_user, [EXAM_MOCK_ID, "summary", round(k, 2)])
+    log(message.from_user, ["examstats", "summary", completed_count])
     await message.answer(text, reply_markup=kb)
 
 
@@ -8140,10 +8379,7 @@ async def main():
                 [
                     types.BotCommand(command="start", description="Начать тренировку"),
                     types.BotCommand(command="stats", description="Показать мою статистику"),
-                    types.BotCommand(command="clearstats", description="Очистить мою статистику"),
-                    types.BotCommand(command="exam25stats", description="Результат экзамена 25 января"),
-                    types.BotCommand(command="exam21decstats", description="Результат экзамена 21 декабря"),
-                    types.BotCommand(command="exam_mock_stats", description="Результат Mock Exam"),
+                    types.BotCommand(command="examstats", description="Статистика всех экзаменов"),
 
                 ]
             )
