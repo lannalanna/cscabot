@@ -4512,10 +4512,19 @@ def _math_all_next_question(session: dict) -> tuple[str, int] | None:
     return None
 
 
-def _math_all_session_answer_update(session: dict, key: tuple[str, int], ansok: bool) -> None:
+def _math_all_session_answer_update(
+    session: dict,
+    key: tuple[str, int],
+    ansok: bool,
+    *,
+    first_attempt_after_show: bool = False,
+) -> None:
     at = session.setdefault("attempts", {})
     at[key] = at.get(key, 0) + 1
-    if ansok and at[key] == 1:
+    # Правило режима "Все задачи":
+    # если задача решена правильным первым ответом сразу после показа,
+    # больше её не повторяем.
+    if ansok and (first_attempt_after_show or at[key] == 1):
         session.setdefault("solved_first_try", set()).add(key)
         qid = _math_all_task_id(key[0], key[1])
         pref = _derive_subtopic_id(qid) or qid
@@ -4539,6 +4548,7 @@ async def _math_all_send_question(call: CallbackQuery, user_id: int, key: tuple[
         await bot.send_photo(call.message.chat.id, photo=types.FSInputFile(photo_path))
     session = _math_all_sessions.setdefault(user_id, {})
     session["current_question"] = key
+    session["current_question_answered"] = False
     session.setdefault("shown_history", []).append(key)
     qid = str(q.get("id") or "")
     log(call.from_user, ["math_all_question", top, j, qid])
@@ -4644,7 +4654,17 @@ async def on_math_all_answer(call: CallbackQuery):
     correct_h = {"A": "0", "B": "1", "C": "2", "D": "3", "E": "4"}
     correct = correct_h.get(q.get("answer", ""), "")
     ansok = 1 if correct == ans_id else 0
-    _math_all_session_answer_update(session, key, bool(ansok))
+    first_attempt_after_show = (
+        session.get("current_question") == key
+        and not session.get("current_question_answered", False)
+    )
+    session["current_question_answered"] = True
+    _math_all_session_answer_update(
+        session,
+        key,
+        bool(ansok),
+        first_attempt_after_show=first_attempt_after_show,
+    )
     await _math_all_save_state(user_id)
     if db_conn:
         try:
