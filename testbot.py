@@ -971,7 +971,26 @@ for n_val, _, _ in exam_questions_mar:
 
 exam_state_mar = {}
 
-# Общая конфигурация экзаменов jan / dec / mar (своя статистика у каждого)
+# Экзамен 25 апреля: задачи с type == "apr" (по полю n, отсортированные)
+EXAM_APR25_ID = "exam_apr25"
+exam_questions_apr = []  # список кортежей (n, topic, j)
+EXAM_APR_TOTAL_DIFFICULTY = 0
+
+for top in topics:
+    for j, item in enumerate(kapibara.get(top, [])):
+        if not isinstance(item, dict):
+            continue
+        if (item.get("type") or "").strip().lower() == "apr":
+            n_val = item.get("n") or 0
+            exam_questions_apr.append((n_val, top, j))
+
+exam_questions_apr.sort(key=lambda x: x[0])
+for n_val, _, _ in exam_questions_apr:
+    EXAM_APR_TOTAL_DIFFICULTY += _exam_points_for_n(int(n_val or 0))
+
+exam_state_apr = {}
+
+# Общая конфигурация экзаменов jan / dec / mar / apr (своя статистика у каждого)
 def _exam_config():
     return {
         "jan": {
@@ -1018,6 +1037,21 @@ def _exam_config():
             "header_ru": "Экзамен 15 марта",
             "header_en": "March 15 exam",
             "header_ar": "امتحان 15 مارس",
+        },
+        "apr": {
+            "id": EXAM_APR25_ID,
+            "questions": exam_questions_apr,
+            "total_difficulty": EXAM_APR_TOTAL_DIFFICULTY,
+            "state": exam_state_apr,
+            "title_ru": "25 апреля",
+            "title_en": "Apr 25",
+            "title_ar": "25 أبريل",
+            "short_ru": "Экзамен 25 апр",
+            "short_en": "Exam Apr 25",
+            "short_ar": "امتحان 25 أبريل",
+            "header_ru": "Экзамен 25 апреля",
+            "header_en": "April 25 exam",
+            "header_ar": "امتحان 25 أبريل",
         },
     }
 
@@ -2224,6 +2258,13 @@ def exams_menu_kb(lang: str = "en") -> InlineKeyboardMarkup:
                 callback_data="exam_start_mar",
             )
         )
+    if exam_questions_apr:
+        builder.add(
+            InlineKeyboardButton(
+                text=_txt(lang, "📝 Экзамен 25 апр", "📝 Exam Apr 25", "📝 امتحان 25 أبريل"),
+                callback_data="exam_start_apr",
+            )
+        )
     if mock_questions:
         builder.add(
             InlineKeyboardButton(
@@ -2792,6 +2833,7 @@ async def _exam_wrong_by_topic(user_id: int, exam_type: str) -> dict:
      - 'jan' — экзамен 25 января
      - 'dec' — экзамен 21 декабря
      - 'mar' — экзамен 15 марта
+     - 'apr' — экзамен 25 апреля
      - 'mock' — пробный экзамен 1
      - 'mock2' — пробный экзамен 2
    """
@@ -2799,28 +2841,31 @@ async def _exam_wrong_by_topic(user_id: int, exam_type: str) -> dict:
    if not db_conn:
        return wrong_by_topic
    try:
-       if exam_type == "jan":
-           exam_id = EXAM_25JAN_ID
-           questions = exam_questions
-       elif exam_type == "dec":
-           exam_id = EXAM_21DEC_ID
-           questions = exam_questions_dec
-       elif exam_type == "mar":
-           exam_id = EXAM_MAR15_ID
-           questions = exam_questions_mar
-       elif exam_type == "mock":
-           exam_id = EXAM_MOCK_ID
-           # mock_questions: список (topic, j), где question_index == idx
-           questions = mock_questions
-       elif exam_type == "mock2":
-           exam_id = EXAM_MOCK2_ID
-           # mock_questions2: список (topic, j), где question_index == idx
-           questions = mock_questions2
-       else:
-           return wrong_by_topic
-       if not questions:
-           return wrong_by_topic
-       exam_answers = await db.get_exam_answers(db_conn, user_id, exam_id)
+      if exam_type == "jan":
+          exam_id = EXAM_25JAN_ID
+          questions = exam_questions
+      elif exam_type == "dec":
+          exam_id = EXAM_21DEC_ID
+          questions = exam_questions_dec
+      elif exam_type == "mar":
+          exam_id = EXAM_MAR15_ID
+          questions = exam_questions_mar
+      elif exam_type == "apr":
+          exam_id = EXAM_APR25_ID
+          questions = exam_questions_apr
+      elif exam_type == "mock":
+          exam_id = EXAM_MOCK_ID
+          # mock_questions: список (topic, j), где question_index == idx
+          questions = mock_questions
+      elif exam_type == "mock2":
+          exam_id = EXAM_MOCK2_ID
+          # mock_questions2: список (topic, j), где question_index == idx
+          questions = mock_questions2
+      else:
+          return wrong_by_topic
+      if not questions:
+          return wrong_by_topic
+      exam_answers = await db.get_exam_answers(db_conn, user_id, exam_id)
    except Exception as e:
        logging.error(f"Ошибка загрузки ответов экзамена ({exam_type}) для статистики ошибок: {e}")
        return wrong_by_topic
@@ -2837,7 +2882,7 @@ async def _exam_wrong_by_topic(user_id: int, exam_type: str) -> dict:
    return wrong_by_topic
 
 
-# --- Общие хелперы для экзаменов jan / dec / mar ---
+# --- Общие хелперы для экзаменов jan / dec / mar / apr ---
 def _exam_cfg(exam_type: str):
     return EXAM_CONFIG.get(exam_type)
 
@@ -5458,7 +5503,7 @@ async def _maybe_redirect_train_limit_to_pay(user) -> bool:
     return False
 
 
-@router.callback_query(F.data.in_(["exam_start_jan", "exam_start_dec", "exam_start_mar"]))
+@router.callback_query(F.data.in_(["exam_start_jan", "exam_start_dec", "exam_start_mar", "exam_start_apr"]))
 async def on_exam_start(call: CallbackQuery):
     """Старт экзамена по типу: jan, dec, mar."""
     await call.answer()
@@ -5528,7 +5573,7 @@ async def on_exam_start(call: CallbackQuery):
     await _send_exam_question_by_type(call, user_id, next_idx, exam_type)
 
 
-@router.callback_query(F.data.in_(["exam_clear_jan", "exam_clear_dec", "exam_clear_mar"]))
+@router.callback_query(F.data.in_(["exam_clear_jan", "exam_clear_dec", "exam_clear_mar", "exam_clear_apr"]))
 async def on_exam_clear(call: CallbackQuery):
     """Очистка статистики экзамена по типу."""
     await call.answer()
@@ -5558,7 +5603,7 @@ async def on_exam_clear(call: CallbackQuery):
         await _send_exam_summary_by_type(call, user_id, exam_type)
 
 
-@router.callback_query(F.data.in_(["exam_continue_jan", "exam_continue_dec", "exam_continue_mar"]))
+@router.callback_query(F.data.in_(["exam_continue_jan", "exam_continue_dec", "exam_continue_mar", "exam_continue_apr"]))
 async def on_exam_continue(call: CallbackQuery):
     """Продолжить экзамен по типу."""
     await call.answer()
@@ -5714,7 +5759,7 @@ async def on_exam_mock_continue(call: CallbackQuery):
 
 @router.callback_query(F.data.startswith("exam_q_"))
 async def on_exam_answer(call: CallbackQuery):
-    """Общий обработчик ответа по экзаменам jan / dec / mar. Формат: exam_q_{type}_{idx}_{ans_id}."""
+    """Общий обработчик ответа по экзаменам jan / dec / mar / apr. Формат: exam_q_{type}_{idx}_{ans_id}."""
     correct_h = {'A': '0', 'B': '1', 'C': '2', 'D': '3', 'E': '4'}
     await call.answer()
     lang = await _get_user_lang(call.from_user)
@@ -7105,6 +7150,7 @@ async def cmd_adminstat(message: types.Message):
             ("21 dec", EXAM_21DEC_ID),
             ("25 jan", EXAM_25JAN_ID),
             ("15 mar", EXAM_MAR15_ID),
+            ("25 apr", EXAM_APR25_ID),
         ]
         if "EXAM_MOCK_ID" in globals():
             exam_map.append(("mock", EXAM_MOCK_ID))
