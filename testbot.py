@@ -1774,7 +1774,7 @@ CORRECT_PHRASES_AR = [
 _START_GREET_RU = """Привет! Я бот для подготовки к CSCA. 
 Помогу сдать экзамен на отлично! Проходите тестовые экзамены, узнавайте свои баллы или тренируйтесь по любой теме. Запутались в решении? Встроенные справочные материалы и чат с обсуждением задач всегда к вашим услугам.
 
-Бот является приложением к курсу Подготовка к CSCA https://stepik.org/a/268161. Станьте студентом курса и пользуйтесь ботом без ограничений!
+Бот является приложением к курсу Подготовка к CSCA <a href="https://stepik.org/a/268161?utm_source=b">https://stepik.org/a/268161</a>. Станьте студентом курса и пользуйтесь ботом без ограничений!
 
 Бот создан с помощью нейросети. Нашел ошибку? Пиши https://t.me/csca_math_exam/107
 
@@ -5340,7 +5340,7 @@ async def on_set_language(call: CallbackQuery):
         greet = _START_GREET_AR
     else:
         greet = _START_GREET_EN
-    await call.message.answer(greet, reply_markup=kb)
+    await call.message.answer(greet, reply_markup=kb, parse_mode="HTML")
 
 
 @router.callback_query(F.data.in_(["set_exam_lang_en", "set_exam_lang_zh"]))
@@ -5559,17 +5559,17 @@ async def on_exam_start(call: CallbackQuery):
             lang,
             f"Режим «{cfg['short_ru']}».\n"
             f"Всего {total} задач. Второй раз решить одну и ту же задачу нельзя.\n\n"
-            "Разборы всех задач в https://stepik.org/a/268161\n"
+            "Разборы всех задач в <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>\n"
             "Используйте промокод CSCABOT для скидки.",
             f"Mode \"{cfg['short_en']}\".\n"
             f"There are {total} tasks. You cannot solve the same task twice.\n\n"
-            "Solutions for all tasks are available at https://stepik.org/a/268161\n"
+            "Solutions for all tasks are available at <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>\n"
             "Use promo code CSCABOT for a discount.",
             f"وضع «{cfg.get('short_ar', cfg['short_en'])}».\n"
             f"إجمالي {total} مسألة. لا يمكن حل نفس المسألة مرتين.\n\n"
-            "الحلول على https://stepik.org/a/268161\n"
+            "الحلول على <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>\n"
             "استخدم رمز CSCABOT للخصم.",
-        ))
+        ), parse_mode="HTML")
     await _send_exam_question_by_type(call, user_id, next_idx, exam_type)
 
 
@@ -5681,16 +5681,16 @@ async def on_exam_mock_start(call: CallbackQuery):
             _txt(
                 lang,
                 f"{title}.\n"
-                f"Неограниченный доступ для студентов курса 'Подготовка к CSCA' https://stepik.org/a/268161  и  участников групп подготовки по метематике https://t.me/+c1ksuGkuO1BiNDk6 и физике https://t.me/+dUnPAdJO1w4zZWUy \n\n"
+                f"Неограниченный доступ для студентов курса 'Подготовка к CSCA' <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>  и  участников групп подготовки по метематике https://t.me/+c1ksuGkuO1BiNDk6 и физике https://t.me/+dUnPAdJO1w4zZWUy \n\n"
                 f"Всего {total_m} задач. Второй раз решить одну и ту же задачу нельзя.\n\n",
                 f"{title}.\n"
-                f"Unlimited access for students of the CSCA prep course https://stepik.org/a/268161 and participants of math https://t.me/+c1ksuGkuO1BiNDk6 and physics https://t.me/+dUnPAdJO1w4zZWUy prep groups.\n\n"
+                f"Unlimited access for students of the CSCA prep course <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a> and participants of math https://t.me/+c1ksuGkuO1BiNDk6 and physics https://t.me/+dUnPAdJO1w4zZWUy prep groups.\n\n"
                 f"There are {total_m} tasks. You cannot solve the same task twice.\n\n",
                 f"{title}.\n"
                 f"وصول غير محدود لطلاب دورة التحضير لـ CSCA على Stepik والمجموعات المرتبطة.\n\n"
                 f"إجمالي {total_m} مسألة. لا يمكن حل نفس المسألة مرتين.",
             )
-        )
+        , parse_mode="HTML")
     await _send_exam_mock_question(call, user_id, next_idx, m)
 
 
@@ -6732,14 +6732,14 @@ async def on_start_command(message: types.Message):
     if is_new_user:
         _pending_exam_language_selection.add(message.from_user.id)
         # На первом входе: приветствие + кнопка переключения интерфейса, затем выбор языка экзамена.
-        await message.answer(greet, reply_markup=_language_switch_kb(lang))
+        await message.answer(greet, reply_markup=_language_switch_kb(lang), parse_mode="HTML")
         await message.answer(
             _txt(lang, "Выберите язык экзамена:", "Choose exam language:", "اختر لغة الامتحان:"),
             reply_markup=_exam_language_kb(),
         )
     else:
         kb = await start_kb(message.from_user.id)
-        await message.answer(greet, reply_markup=kb)
+        await message.answer(greet, reply_markup=kb, parse_mode="HTML")
    
    # await message.answer("Это тестовая версия бота. Нашел ошибку? Есть идея? Пиши @csca_math_exam или прямо здесь.", reply_markup=start_kb()) 
    # await message.answer("Видео-разборы задач в группе https://t.me/milgecru/385") 
@@ -7833,7 +7833,7 @@ async def pay(user, mode: str = "exam"):
                 f"Вы сделали больше {N} ошибок сегодня. Можете продолжить тренироваку завтра.\n\n"
                 "Как снять ограничения:\n"
                 "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n"
-                "Если вы приобретали курс  https://stepik.org/a/268161, перейдите в бот по ссылке из первого урока.\n"
+                "Если вы приобретали курс  <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>, перейдите в бот по ссылке из первого урока.\n"
                 "Вы можете стать студентом курса прямо сейчас и получить полный досуп к возможностям бота, а также видео-лекции и подробный разбор задач\n\n"
                 f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
                 "доступ откроется после перехода по вашей ссылке трёх новых пользователей.\n\n"
@@ -7845,7 +7845,7 @@ async def pay(user, mode: str = "exam"):
         else:
             text = (
                 "Режим экзамена недоступен.\n\n"
-                "Если вы приобретали курс  https://stepik.org/a/268161, перейдите в бот по ссылке из первого урока.\n"
+                "Если вы приобретали курс  <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>, перейдите в бот по ссылке из первого урока.\n"
                 "Вы можете стать студентом курса прямо сейчас и получить полный досуп к возможностям бота, видео-лекции и подробный разбор задач"
                 "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n\n"
                 f"Также вы можете разместить вашу персональную ссылку {invite_link} в любом чате о CSCA — "
@@ -7860,7 +7860,7 @@ async def pay(user, mode: str = "exam"):
             text = (
                 f"لقد تجاوزت {N} خطأ اليوم. يمكنك مواصلة التدريب غداً.\n\n"
                 "كيف تزيل القيود:\n"
-                "إذا اشتريت الدورة https://stepik.org/a/268161، افتح البوت عبر الرابط من الدرس الأول.\n"
+                "إذا اشتريت الدورة <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>، افتح البوت عبر الرابط من الدرس الأول.\n"
                 "إذا كنت في مجموعة «Preparing for CSCA»، استخدم الرابط المباشر من المجموعة.\n\n"
                 f"يمكنك أيضاً نشر رابط الدعوة الشخصي {invite_link} في أي محادثة عن CSCA — "
                 "يُفتح الوصول بعد أن يتبع رابطك ثلاثة مستخدمين جدد.\n\n"
@@ -7871,7 +7871,7 @@ async def pay(user, mode: str = "exam"):
         else:
             text = (
                 "وضع الامتحان غير متاح حالياً.\n\n"
-                "إذا اشتريت الدورة https://stepik.org/a/268161، افتح البوت عبر الرابط من الدرس الأول.\n"
+                "إذا اشتريت الدورة <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>، افتح البوت عبر الرابط من الدرس الأول.\n"
                 "إذا كنت في مجموعة «Preparing for CSCA»، استخدم الرابط المباشر من المجموعة.\n\n"
                 f"يمكنك أيضاً نشر رابط الدعوة الشخصي {invite_link} في أي محادثة عن CSCA — "
                 "يُفتح الوصول بعد أن يتبع رابطك ثلاثة مستخدمين جدد.\n\n"
@@ -7884,7 +7884,7 @@ async def pay(user, mode: str = "exam"):
             text = (
                 f"You made more than {N} mistakes today. You can continue training tomorrow.\n\n"
                 "How to remove restrictions:\n"
-                "If you purchased the course https://stepik.org/a/268161, please open the bot using the link "
+                "If you purchased the course <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>, please open the bot using the link "
                 "from the first lesson.\n"
                 "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
                 f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
@@ -7897,7 +7897,7 @@ async def pay(user, mode: str = "exam"):
         else:
             text = (
                 "The exam mode is currently unavailable.\n\n"
-                "If you purchased the course https://stepik.org/a/268161, please open the bot using the link "
+                "If you purchased the course <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>, please open the bot using the link "
                 "from the first lesson.\n"
                 "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
                 f"You can also share your personal invitation link {invite_link} in any CSCA-related chat — "
@@ -7907,7 +7907,7 @@ async def pay(user, mode: str = "exam"):
                 "This is a one-time payment that removes all restrictions forever.\n\n"
                 "You can ask questions about payment in the chat: https://t.me/csca_math_exam/107"
             )
-    await bot.send_message(chat_id=user.id, text=text)
+    await bot.send_message(chat_id=user.id, text=text, parse_mode="HTML")
 
     if lg == "ru":
         title = "Все функции бота"
@@ -8330,7 +8330,7 @@ async def on_any_message(message: Message):
         log(message.from_user, ["set_language_by_text", old_lang, "ar", save_status, "trigger=arabic"])
         kb = await start_kb(message.from_user.id)
         await message.answer("تم تبديل لغة الواجهة إلى العربية.", reply_markup=kb)
-        await message.answer(_START_GREET_AR, reply_markup=kb)
+        await message.answer(_START_GREET_AR, reply_markup=kb, parse_mode="HTML")
         return
     if message.chat.type == "private" and "english" in text_l:
         old_lang = await _get_user_lang(message.from_user)
