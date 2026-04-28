@@ -1771,14 +1771,21 @@ CORRECT_PHRASES_AR = [
    "مبروك!",
 ]
 
-_START_GREET_RU = """Привет! Я бот для подготовки к CSCA. 
+_START_GREET_RU_BASE = """Привет! Я бот для подготовки к CSCA. 
 Помогу сдать экзамен на отлично! Проходите тестовые экзамены, узнавайте свои баллы или тренируйтесь по любой теме. Запутались в решении? Встроенные справочные материалы и чат с обсуждением задач всегда к вашим услугам.
 
-Бот является приложением к курсу Подготовка к CSCA <a href="https://stepik.org/a/268161?utm_source=b">https://stepik.org/a/268161</a>. Станьте студентом курса и пользуйтесь ботом без ограничений!
-
+{promo_block}
 Бот создан с помощью нейросети. Нашел ошибку? Пиши https://t.me/csca_math_exam/107
 
 """
+
+_START_GREET_RU_PROMO = "Ваш промокод на скидку 30% MATHBOT\n\n"
+_START_GREET_RU_STEPIK_PROMO = (
+    'Бот является приложением к курсу Подготовка к CSCA '
+    '<a href="https://stepik.org/a/268161?utm_source=b">https://stepik.org/a/268161</a>. '
+    'Станьте студентом курса и пользуйтесь ботом без ограничений!\n\n'
+    "Ваш промокод на скидку 30% MATHBOT\n\n"
+)
 
 
 
@@ -1796,6 +1803,32 @@ _START_GREET_AR = """مرحباً! أنا بوت التحضير لامتحان C
 
 """
 #صُنع البوت بمساعدة نموذج ذكاء اصطناعي. وجدت خطأ؟ اكتب إلى https://t.me/csca_math_exam/107
+
+
+async def _is_stepik_user(user_id: int) -> bool:
+    """Возвращает True, если пользователь пришёл из Stepik."""
+    if db_conn:
+        try:
+            cursor = await db_conn.execute("SELECT source FROM users WHERE id = ?", (user_id,))
+            row = await cursor.fetchone()
+            if row and row[0] in ("stepik", "staoik"):
+                return True
+        except Exception:
+            pass
+    return str(user_id) in stepik
+
+
+async def _build_start_greet(user) -> str:
+    """Формирует приветствие /start с учётом источника пользователя."""
+    lang = await _get_user_lang(user)
+    lg = _normalize_lang(lang)
+    if lg == "ru":
+        is_stepik_user = await _is_stepik_user(user.id)
+        promo_block = _START_GREET_RU_STEPIK_PROMO if is_stepik_user else _START_GREET_RU_PROMO
+        return _START_GREET_RU_BASE.format(promo_block=promo_block)
+    if lg == "ar":
+        return _START_GREET_AR
+    return _START_GREET_EN
 
 # Случайная реакция после верного ответа в режиме тренировки (тема / подтема)
 TRAINING_CORRECT_REACTION_EMOJIS = [
@@ -5353,13 +5386,7 @@ async def on_set_language(call: CallbackQuery):
     # После смены языка запускаем тот же пользовательский сценарий, что и при /start:
     # показываем приветствие и главное меню с актуальным языком.
     kb = await start_kb(call.from_user.id)
-    lg = _normalize_lang(lang)
-    if lg == "ru":
-        greet = _START_GREET_RU
-    elif lg == "ar":
-        greet = _START_GREET_AR
-    else:
-        greet = _START_GREET_EN
+    greet = await _build_start_greet(call.from_user)
     await call.message.answer(greet, reply_markup=kb, parse_mode="HTML")
 
 
@@ -6741,13 +6768,7 @@ async def on_start_command(message: types.Message):
         log(message.from_user, ['start', message.text, 'language_code', user_language_code])
     log(message.from_user, ['status', str(user_status)])
 
-    lg = _normalize_lang(lang)
-    if lg == "ru":
-        greet = _START_GREET_RU
-    elif lg == "ar":
-        greet = _START_GREET_AR
-    else:
-        greet = _START_GREET_EN
+    greet = await _build_start_greet(message.from_user)
   
     if is_new_user:
         _pending_exam_language_selection.add(message.from_user.id)
