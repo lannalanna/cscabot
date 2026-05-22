@@ -9,7 +9,7 @@ import random
 import re
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
@@ -84,6 +84,9 @@ def detect_data_dir() -> str:
 
 
 DATA_DIR = detect_data_dir()
+
+# URL Telegram Mini App (HTTPS, например https://your-host.example.com)
+MINIAPP_URL = os.environ.get("MINIAPP_URL", "").strip().rstrip("/")
 
 # Гарантируем, что все модули (db, миграции и т.п.) используют ту же директорию данных
 os.environ["BOT_DATA_DIR"] = DATA_DIR
@@ -1771,20 +1774,19 @@ CORRECT_PHRASES_AR = [
    "مبروك!",
 ]
 
-_START_GREET_RU_BASE = """Привет! Я бот для подготовки к CSCA. 
-Помогу сдать экзамен на отлично! Проходите тестовые экзамены, узнавайте свои баллы или тренируйтесь по любой теме. Запутались в решении? Встроенные справочные материалы и чат с обсуждением задач всегда к вашим услугам.
+_START_GREET_RU_BASE = """Привет!  Я бот для подготовки к CSCA. 
+🚀 Помогу сдать экзамен на отлично! Проходите тестовые экзамены, узнавайте свои баллы или тренируйтесь по любой теме. Запутались в решении? Встроенные справочные материалы и чат с обсуждением задач всегда к вашим услугам.
 
 {promo_block}
-Бот создан с помощью нейросети. Нашел ошибку? Пиши https://t.me/csca_math_exam/107
+🤖 Бот создан с помощью нейросети. Нашел ошибку? Пиши https://t.me/csca_math_exam/107
 
 """
 
-_START_GREET_RU_PROMO = "Ваш промокод на скидку 30% MATHBOT\n\n"
-_START_GREET_RU_STEPIK_PROMO = (
+_START_GREET_RU_PROMO_BLOCK = (
     'Бот является приложением к курсу Подготовка к CSCA '
     '<a href="https://stepik.org/a/268161?utm_source=b">https://stepik.org/a/268161</a>. '
     'Станьте студентом курса и пользуйтесь ботом без ограничений!\n\n'
-    "Ваш промокод на скидку 30% MATHBOT\n\n"
+    "Ваш промокод на скидку 30% 🎁 MATHBOT\n\n"
 )
 
 
@@ -1811,7 +1813,7 @@ async def _is_stepik_user(user_id: int) -> bool:
         try:
             cursor = await db_conn.execute("SELECT source FROM users WHERE id = ?", (user_id,))
             row = await cursor.fetchone()
-            if row and row[0] in ("stepik", "staoik"):
+            if row and row[0] == "stepik":
                 return True
         except Exception:
             pass
@@ -1824,7 +1826,7 @@ async def _build_start_greet(user) -> str:
     lg = _normalize_lang(lang)
     if lg == "ru":
         is_stepik_user = await _is_stepik_user(user.id)
-        promo_block = _START_GREET_RU_STEPIK_PROMO if is_stepik_user else _START_GREET_RU_PROMO
+        promo_block = "" if is_stepik_user else _START_GREET_RU_PROMO_BLOCK
         return _START_GREET_RU_BASE.format(promo_block=promo_block)
     if lg == "ar":
         return _START_GREET_AR
@@ -2181,6 +2183,19 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
         except Exception as e:
             logging.error(f"Ошибка получения прогресса для start_kb: {e}")
             pass  # Если ошибка при получении прогресса, просто показываем обычное меню
+
+    if MINIAPP_URL:
+        builder.row(
+            InlineKeyboardButton(
+                text=_txt(
+                    lang,
+                    "📱 Открыть приложение",
+                    "📱 Open Mini App",
+                    "📱 فتح التطبيق",
+                ),
+                web_app=WebAppInfo(url=MINIAPP_URL),
+            )
+        )
 
     builder.row(
         InlineKeyboardButton(
@@ -5559,7 +5574,7 @@ async def on_exam_start(call: CallbackQuery):
     if not cfg:
         return
     user_id = call.from_user.id
-    if await _should_redirect__to_pay(user_id, mode="exam"):
+    if 0: #await _should_redirect__to_pay(user_id, mode="exam"):
         log(call.from_user, [f"{cfg['id']}_reject"])
         await pay(call.from_user)
         return
@@ -5683,7 +5698,7 @@ async def on_exam_mock_start(call: CallbackQuery):
             m = 1
     if m not in (1, 2):
         m = 1
-    if await _should_redirect__to_pay(user_id, mode="exam"):
+    if 0: #await _should_redirect__to_pay(user_id, mode="exam"):
         log(call.from_user, ["mockexamreject", f"m={m}"])
         # Показываем то же сообщение об оплате/условиях доступа, что и в команде /pay
         await pay(call.from_user)
@@ -7537,6 +7552,24 @@ async def cmd_admin_daily_metrics(message: types.Message):
         row = await cur.fetchone()
         week_new_users = int(row[0] or 0)
 
+        # Новые активные: зарегистрировались за неделю и ответили хотя бы на 1 вопрос.
+        cur = await db_conn.execute(
+            """
+            SELECT COUNT(*)
+            FROM users u
+            WHERE u.created_at >= ? AND u.created_at < ?
+              AND EXISTS (
+                SELECT 1
+                FROM answers a
+                WHERE a.user_id = u.id
+                  AND a.created_at >= ? AND a.created_at < ?
+              )
+            """,
+            (ws, we, ws, we),
+        )
+        row = await cur.fetchone()
+        week_new_active_users = int(row[0] or 0)
+
         # Распределение интерфейсов среди активных пользователей недели.
         # Берём users.language; если пусто, fallback на users.language_code.
         cur = await db_conn.execute(
@@ -7666,6 +7699,7 @@ async def cmd_admin_daily_metrics(message: types.Message):
         lines.append(f"• users total: {week_users_total}")
         lines.append(f"• active users (answers): {week_active_users}")
         lines.append(f"• new users: {week_new_users}")
+        lines.append(f"• new active users: {week_new_active_users}")
         lines.append(f"• interface ru/en/ar: {week_ru}/{week_en}/{week_ar}")
         lines.append("")
         lines.append("Week users by source (active, answers):")
@@ -8472,6 +8506,18 @@ async def main():
             )
         except Exception as e:
             logging.warning(f"Не удалось установить команды бота: {e}")
+
+        if MINIAPP_URL:
+            try:
+                await bot.set_chat_menu_button(
+                    menu_button=types.MenuButtonWebApp(
+                        text="📱 CSCA App",
+                        web_app=WebAppInfo(url=MINIAPP_URL),
+                    )
+                )
+                logging.info("Mini App menu button: %s", MINIAPP_URL)
+            except Exception as e:
+                logging.warning(f"Не удалось установить кнопку Mini App: {e}")
 
         await dp.start_polling(bot)
     finally:

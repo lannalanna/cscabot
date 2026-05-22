@@ -2,3 +2,5 @@ aiogram
 aiosqlite
 langchain-amvera
 langchain
+fastapi
+uvicorn[standard]
