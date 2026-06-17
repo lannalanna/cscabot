@@ -103,6 +103,24 @@ TOPIC_TITLE_RU: dict[str, str] = {
     "chemistry": "Химия",
 }
 
+TOPIC_TITLE_FA: dict[str, str] = {
+    "sets": "مجموعه‌ها",
+    "inequalities": "نامعادله‌ها",
+    "functions": "توابع",
+    "trigonometry (simple)": "مثلثات (سطح پایه)",
+    "trigonometry": "مثلثات",
+    "geometry": "هندسه",
+    "conic curves": "مقاطع مخروطی",
+    "logarithmic functions": "توابع لگاریتمی",
+    "arithmetic and geometric mean": "میانگین حسابی و هندسی",
+    "Algebraic and geometric mean": "میانگین حسابی و هندسی",
+    "sequences": "دنباله‌ها",
+    "complex numbers": "اعداد مختلط",
+    "probability": "احتمال",
+    "physics": "فیزیک",
+    "chemistry": "شیمی",
+}
+
 CORRECT_LETTER_TO_INDEX = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4}
 
 EXAM_TYPES = {
@@ -192,6 +210,8 @@ class QuestionBank:
     def topic_title(self, topic: str, lang: str = "ru") -> str:
         if lang == "ru":
             return TOPIC_TITLE_RU.get(topic, topic.replace("_", " ").title())
+        if lang == "fa":
+            return TOPIC_TITLE_FA.get(topic, topic.replace("_", " ").title())
         return topic.replace("_", " ").title()
 
     def get_question(self, topic: str, index: int) -> dict | None:

@@ -153,11 +153,13 @@ def _load_rag_text() -> str:
 
 
 def _lang_suffix(lang_code: str) -> str:
-    """Суффикс файлов подсказок: для арабского откатываемся на en (если нет *ar*)."""
+    """Суффикс файлов подсказок: для арабского и фарси откатываемся на en (если нет своих картинок)."""
     lang = (lang_code or "").lower()
     if lang.startswith("ru"):
         return "ru"
     if lang.startswith("ar"):
+        return "en"
+    if lang.startswith("fa"):
         return "en"
     return "en"
 
@@ -372,11 +374,17 @@ try:
         "complex numbers": ["simple tasks", "hard tasks"],
         "conic curves": ["circle", "parabola", "ellipse", "hyperbola"],
         "functions": [
+            "function graphs",
             "Function domain",
-            "functions properties",
-            "graphs",
+            "function range",
+            "function monotonicity",
+            "function parity",
+            "identical functions",
             "inverse functions",
+            "graphs",
+            "exponential function",
             "inequalities",
+            "functions properties",
             "function equality",
         ],
         "geometry": [
@@ -1229,6 +1237,8 @@ def _normalize_lang(lang: str) -> str:
        return "ru"
    if v.startswith("ar"):
        return "ar"
+   if v.startswith("fa") or v.startswith("pe"):  # fa / fa-IR / persian
+       return "fa"
    return "en"
 
 
@@ -1254,12 +1264,127 @@ async def _refresh_log_lang_cache(user) -> None:
    await _get_user_exam_lang_by_id(user.id)
 
 
-def _txt(lang: str, ru_text: str, en_text: str, ar_text: str | None = None) -> str:
+# Персидские переводы интерфейса: ключ — английский текст из вызова _txt(...).
+# _txt() автоматически подставляет перевод для языка 'fa' (если явный fa_text не задан).
+_FA_UI: dict[str, str] = {
+    "All clear! 👍": "همه چیز روشن است! 👍",
+    "All tasks in this subtopic are done.\n\nChoose another subtopic or topic.": "همهٔ مسائل این زیرموضوع حل شد.\n\nزیرموضوع یا موضوع دیگری انتخاب کنید.",
+    "All tasks in this topic are done.": "همهٔ مسائل این موضوع حل شد.",
+    "All tasks in this topic are done.\n\nChoose another topic or subtopic.": "همهٔ مسائل این موضوع حل شد.\n\nموضوع یا زیرموضوع دیگری انتخاب کنید.",
+    "Answer in English.": "به زبان فارسی پاسخ بده.",
+    "Ask a question": "پرسیدن سؤال",
+    "Back": "بازگشت",
+    "Below is the math topic list. Pick a topic: you get answer checking and access to the solution after you try.": "در زیر فهرست موضوع‌های ریاضی آمده است. یک موضوع انتخاب کنید: پس از تلاش، پاسخ شما بررسی می‌شود و به راه‌حل دسترسی پیدا می‌کنید.",
+    "Chemistry:": "شیمی:",
+    "Choose action:": "یک گزینه را انتخاب کنید:",
+    "Choose exam language:": "زبان آزمون را انتخاب کنید:",
+    "Choose exam:": "آزمون را انتخاب کنید:",
+    "Choose subtopic:": "زیرموضوع را انتخاب کنید:",
+    "Choose topic:": "موضوع را انتخاب کنید:",
+    "Clear stats": "پاک کردن آمار",
+    "Continue": "ادامه",
+    "Could not pick a task with current rules.": "با قوانین فعلی نمی‌توان مسئله‌ای انتخاب کرد.",
+    "Database is unavailable.": "پایگاه داده در دسترس نیست.",
+    "Did the hint help?": "آیا راهنمایی کمک کرد؟",
+    "Empty model reply.": "پاسخ مدل خالی بود.",
+    "Error. Choose the topic again.": "خطا. دوباره موضوع را انتخاب کنید.",
+    "Exam question not found.": "سؤال آزمون پیدا نشد.",
+    "Exam tasks are over.": "سؤالات آزمون تمام شد.",
+    "Explain in more detail…": "توضیح بیشتر…",
+    "Failed to load invitation stats.": "بارگذاری آمار دعوت‌ها انجام نشد.",
+    "Go to chat": "رفتن به گفتگو",
+    "Great": "عالی",
+    "Great.": "عالی.",
+    "If you need help, open a task in the bot first, then send your message again.": "اگر به کمک نیاز دارید، ابتدا یک مسئله را در ربات باز کنید، سپس دوباره پیام خود را بفرستید.",
+    "If you need help, open a task in the bot first, then tap the button again.": "اگر به کمک نیاز دارید، ابتدا یک مسئله را در ربات باز کنید، سپس دوباره روی دکمه بزنید.",
+    "Incorrect.": "نادرست.",
+    "Invalid exam answer format.": "قالب پاسخ آزمون نامعتبر است.",
+    "Invalid format.": "قالب نامعتبر.",
+    "Invalid format. Choose the topic again.": "قالب نامعتبر. دوباره موضوع را انتخاب کنید.",
+    "Invalid format. Choose the topic from the menu.": "قالب نامعتبر. موضوع را از منو انتخاب کنید.",
+    "LLM agent error. Please try again later.": "خطای عامل LLM. لطفاً بعداً دوباره تلاش کنید.",
+    "LLM key missing.": "کلید LLM موجود نیست.",
+    "LLM token is not set. Set env var `LLM_TOKEN` to enable chat Q&A.": "توکن LLM تنظیم نشده است. برای فعال‌سازی پرسش و پاسخ، متغیر محیطی `LLM_TOKEN` را تنظیم کنید.",
+    "Math - tasks by topic:": "ریاضی — مسائل بر اساس موضوع:",
+    "Mathematics (bot topics):": "ریاضیات (موضوع‌های ربات):",
+    "Next question": "سؤال بعدی",
+    "Next task": "مسئلهٔ بعدی",
+    "No available topics for training.": "موضوعی برای تمرین در دسترس نیست.",
+    "No chemistry tasks yet.": "هنوز مسئلهٔ شیمی موجود نیست.",
+    "No more matching tasks. Choose another mode.": "مسئلهٔ متناسب دیگری نیست. حالت دیگری انتخاب کنید.",
+    "No physics tasks yet.": "هنوز مسئلهٔ فیزیک موجود نیست.",
+    "No tasks available for random pick yet.": "هنوز مسئله‌ای برای انتخاب تصادفی موجود نیست.",
+    "No tasks for training.": "مسئله‌ای برای تمرین نیست.",
+    "No tasks loaded.": "هیچ مسئله‌ای بارگذاری نشده است.",
+    "No, it didn't help 👎": "نه، کمک نکرد 👎",
+    "Nothing is clear 👎": "هیچ چیز روشن نیست 👎",
+    "One more time!": "یک بار دیگر!",
+    "Open a task in the bot first, then send your message again.": "ابتدا یک مسئله را در ربات باز کنید، سپس دوباره پیام خود را بفرستید.",
+    "Physics:": "فیزیک:",
+    "Question not found.": "سؤال پیدا نشد.",
+    "Question not found. Choose the topic again.": "سؤال پیدا نشد. دوباره موضوع را انتخاب کنید.",
+    "Random task\n\n": "مسئلهٔ تصادفی\n\n",
+    "Repeat": "تکرار",
+    "Show hint": "نمایش راهنمایی",
+    "Solution": "راه‌حل",
+    "Solution is not available yet.": "راه‌حل هنوز موجود نیست.",
+    "Solve once more": "یک بار دیگر حل کن",
+    "Something went wrong while contacting the LLM. Please try again later.": "هنگام ارتباط با LLM مشکلی پیش آمد. لطفاً بعداً دوباره تلاش کنید.",
+    "Sorry, you are wrong 😢": "متأسفم، اشتباه است 😢",
+    "Subtopic not found.": "زیرموضوع پیدا نشد.",
+    "Subtopic tasks are finished.": "مسائل این زیرموضوع تمام شد.",
+    "Tasks in this subtopic are finished. Choose another subtopic or topic.": "مسائل این زیرموضوع تمام شد. زیرموضوع یا موضوع دیگری انتخاب کنید.",
+    "Thanks for the feedback, I will improve hints. For now you can read the solution or ask for help in chat.": "ممنون از بازخورد، راهنمایی‌ها را بهتر می‌کنم. فعلاً می‌توانید راه‌حل را بخوانید یا در گفتگو کمک بخواهید.",
+    "Thanks! The bot is AI-assisted. Your feedback helps fix mistakes.": "ممنون! این ربات با کمک هوش مصنوعی کار می‌کند. بازخورد شما به رفع خطاها کمک می‌کند.",
+    "The bot can only answer questions about the CSCA exam.": "این ربات فقط می‌تواند به سؤالات مربوط به آزمون CSCA پاسخ دهد.",
+    "The exam selection menu will appear below the answer.": "منوی انتخاب آزمون در زیر پاسخ نمایش داده می‌شود.",
+    "The reference file is empty or unavailable.": "فایل مرجع خالی یا در دسترس نیست.",
+    "The solution is AI-generated, so it can indeed be unclear 😢 Write in the chat, people will help you there. Or tap Explain in more detail, and I will try again.": "راه‌حل توسط هوش مصنوعی تولید شده، پس ممکن است واقعاً نامفهوم باشد 😢 در گفتگو بنویسید، آنجا به شما کمک می‌کنند. یا روی «توضیح بیشتر» بزنید تا دوباره تلاش کنم.",
+    "The user has not opened a task in the bot yet.": "کاربر هنوز مسئله‌ای را در ربات باز نکرده است.",
+    "There is no invite-code data yet.": "هنوز داده‌ای دربارهٔ کد دعوت موجود نیست.",
+    "There is no solution in your selected language.": "در زبان انتخابی شما راه‌حلی موجود نیست.",
+    "Topic list": "فهرست موضوع‌ها",
+    "Topic not found.": "موضوع پیدا نشد.",
+    "Topic not found. Choose the topic from the menu.": "موضوع پیدا نشد. موضوع را از منو انتخاب کنید.",
+    "Training session not found. Start again.": "جلسهٔ تمرین پیدا نشد. دوباره شروع کنید.",
+    "Unknown exam type.": "نوع آزمون ناشناخته.",
+    "Video walkthroughs are temporarily unavailable.": "ویدئوهای آموزشی موقتاً در دسترس نیستند.",
+    "Yes, thanks! 👍": "بله، ممنون! 👍",
+    "You have already solved this task.": "این مسئله را قبلاً حل کرده‌اید.",
+    "tasks": "مسئله",
+    "◀️ Back": "◀️ بازگشت",
+    "⚛️ Physics": "⚛️ فیزیک",
+    "📋 All questions": "📋 همهٔ سؤال‌ها",
+    "📚 Smart math tasks": "📚 مسائل هوشمند ریاضی",
+    "📝 Exam Apr 25": "📝 آزمون ۲۵ آوریل",
+    "📝 Exam Dec 21": "📝 آزمون ۲۱ دسامبر",
+    "📝 Exam Jan 25": "📝 آزمون ۲۵ ژانویه",
+    "📝 Exam Mar 15": "📝 آزمون ۱۵ مارس",
+    "📝 Mock Exam": "📝 آزمون آزمایشی",
+    "📝 Mock Exam 2": "📝 آزمون آزمایشی ۲",
+    "📝 Take exam": "📝 شرکت در آزمون",
+    "📱 Open Mini App": "📱 باز کردن مینی‌اپ",
+    "🧪 Chemistry": "🧪 شیمی",
+    "🧮 Math - tasks by topic": "🧮 ریاضی — مسائل بر اساس موضوع",
+}
+
+
+def _txt(
+    lang: str,
+    ru_text: str,
+    en_text: str,
+    ar_text: str | None = None,
+    fa_text: str | None = None,
+) -> str:
    lg = _normalize_lang(lang)
    if lg == "ru":
        return ru_text
    if lg == "ar":
        return ar_text if ar_text is not None else en_text
+   if lg == "fa":
+       if fa_text is not None:
+           return fa_text
+       return _FA_UI.get(en_text, en_text)
    return en_text
 
 
@@ -1435,6 +1560,23 @@ TOPIC_TITLE_AR: dict[str, str] = {
     "physics": "الفيزياء",
 }
 
+TOPIC_TITLE_FA: dict[str, str] = {
+    "sets": "مجموعه‌ها",
+    "inequalities": "نامعادله‌ها",
+    "functions": "توابع",
+    "trigonometry (simple)": "مثلثات (سطح پایه)",
+    "trigonometry": "مثلثات",
+    "geometry": "هندسه",
+    "conic curves": "مقاطع مخروطی",
+    "logarithmic functions": "توابع لگاریتمی",
+    "arithmetic and geometric mean": "میانگین حسابی و هندسی",
+    "Algebraic and geometric mean": "میانگین حسابی و هندسی",
+    "sequences": "دنباله‌ها",
+    "complex numbers": "اعداد مختلط",
+    "probability": "احتمال",
+    "physics": "فیزیک",
+}
+
 _AGM_SUBTOPICS_RU = {
     "arithmetic mean": "Среднее арифметическое",
     "geometric mean": "Среднее геометрическое",
@@ -1445,6 +1587,12 @@ _AGM_SUBTOPICS_AR = {
     "arithmetic mean": "المتوسط الحسابي",
     "geometric mean": "المتوسط الهندسي",
     "general": "عام",
+}
+
+_AGM_SUBTOPICS_FA = {
+    "arithmetic mean": "میانگین حسابی",
+    "geometric mean": "میانگین هندسی",
+    "general": "عمومی",
 }
 
 _PHYSICS_SUBTOPICS_RU: dict[str, str] = {
@@ -1547,6 +1695,56 @@ _PHYSICS_SUBTOPICS_AR: dict[str, str] = {
     "general": "عام",
 }
 
+_PHYSICS_SUBTOPICS_FA: dict[str, str] = {
+    "Coulomb's law": "قانون کولن",
+    "Hooke's law": "قانون هوک",
+    "Newton's second law": "قانون دوم نیوتن",
+    "average velocity": "سرعت متوسط",
+    "charge sharing and Coulomb's law": "تقسیم بار و قانون کولن",
+    "circular motion": "حرکت دایره‌ای",
+    "conservation of momentum": "پایستگی تکانه",
+    "current division": "تقسیم جریان",
+    "distance vs displacement": "مسافت و جابه‌جایی",
+    "electric field": "میدان الکتریکی",
+    "electric field strength": "شدت میدان الکتریکی",
+    "electric field superposition": "برهم‌نهی میدان الکتریکی",
+    "electric field symmetry": "تقارن میدان الکتریکی",
+    "electric force": "نیروی الکتریکی",
+    "electric potential difference": "اختلاف پتانسیل الکتریکی",
+    "electromagnetic induction": "القای الکترومغناطیسی",
+    "force resultant": "برآیند نیروها",
+    "free fall": "سقوط آزاد",
+    "friction": "اصطکاک",
+    "gravitational potential energy": "انرژی پتانسیل گرانشی",
+    "gravity": "گرانش",
+    "ideal gas law": "قانون گاز ایده‌آل",
+    "impulse": "ضربه (تکانهٔ نیرو)",
+    "incline motion": "حرکت روی سطح شیب‌دار",
+    "isobaric process": "فرایند هم‌فشار",
+    "kinematics": "سینماتیک",
+    "kinetic energy from force-time graph": "انرژی جنبشی از نمودار نیرو-زمان",
+    "magnetic force on current": "نیروی مغناطیسی بر جریان",
+    "magnetic force on wire": "نیروی مغناطیسی بر سیم",
+    "momentum": "تکانه",
+    "motion graphs": "نمودارهای حرکت",
+    "projectile motion": "حرکت پرتابی",
+    "projectile motion with friction": "حرکت پرتابی با اصطکاک",
+    "reflection": "بازتاب",
+    "refraction": "شکست",
+    "resistors in parallel": "مقاومت‌های موازی",
+    "resultant force and acceleration": "برآیند نیرو و شتاب",
+    "rotational motion": "حرکت دورانی",
+    "simple harmonic motion": "حرکت هماهنگ ساده",
+    "units": "یکاها",
+    "vectors and scalars": "بردارها و کمیت‌های نرده‌ای",
+    "waves": "امواج",
+    "work": "کار",
+    "work-energy in penetration": "کار و انرژی در نفوذ",
+    "work-energy theorem": "قضیهٔ کار و انرژی",
+    "work-energy with friction and electric force": "کار و انرژی (اصطکاک و نیروی الکتریکی)",
+    "general": "عمومی",
+}
+
 # Русские названия подтем: topic -> subtopic (как в данных) -> строка
 SUBTOPIC_TITLE_RU: dict[str, dict[str, str]] = {
     "sets": {
@@ -1565,7 +1763,12 @@ SUBTOPIC_TITLE_RU: dict[str, dict[str, str]] = {
     "functions": {
         "Function domain": "Область определения",
         "functions properties": "Свойства функций",
-        "graphs": "Графики",
+        "function parity": "Чётность функций",
+        "function monotonicity": "Монотонность функций",
+        "function range": "Область значений",
+        "exponential function": "Показательная функция",
+        "graphs": "Симметрия графиков",
+        "function graphs": "Графики функций",
         "inverse functions": "Обратные функции",
         "inequalities": "Неравенства",
         "function equality": "Равенство функций",
@@ -1634,7 +1837,12 @@ SUBTOPIC_TITLE_AR: dict[str, dict[str, str]] = {
     "functions": {
         "Function domain": "مجال الدالة",
         "functions properties": "خصائص الدوال",
-        "graphs": "الرسوم البيانية",
+        "function parity": "زوجية الدوال",
+        "function monotonicity": "رتابة الدوال",
+        "function range": "مجال القيم",
+        "exponential function": "الدالة الأسية",
+        "graphs": "تماثل الرسوم البيانية",
+        "function graphs": "رسوم الدوال",
         "inverse functions": "الدوال العكسية",
         "inequalities": "المتباينات",
         "function equality": "تساوي الدوال",
@@ -1686,6 +1894,80 @@ SUBTOPIC_TITLE_AR: dict[str, dict[str, str]] = {
     "physics": _PHYSICS_SUBTOPICS_AR,
 }
 
+SUBTOPIC_TITLE_FA: dict[str, dict[str, str]] = {
+    "sets": {
+        "set operations": "عملیات روی مجموعه‌ها",
+        "numerical sets": "مجموعه‌های عددی",
+        "general": "عمومی",
+    },
+    "inequalities": {
+        "properties of inequalities": "ویژگی‌های نامعادله‌ها",
+        "absolute value": "قدر مطلق",
+        "real numbers": "اعداد حقیقی",
+        "rational inequalities": "نامعادله‌های گویا",
+        "quadratic inequalities": "نامعادله‌های درجهٔ دوم",
+        "general": "عمومی",
+    },
+    "functions": {
+        "Function domain": "دامنهٔ تابع",
+        "functions properties": "ویژگی‌های توابع",
+        "function parity": "زوج و فرد بودن تابع",
+        "function monotonicity": "یکنوایی تابع",
+        "function range": "برد تابع",
+        "exponential function": "تابع نمایی",
+        "graphs": "تقارن نمودارها",
+        "function graphs": "نمودار توابع",
+        "inverse functions": "توابع وارون",
+        "inequalities": "نامعادله‌ها",
+        "function equality": "تساوی توابع",
+        "identical functions": "توابع یکسان",
+        "general": "عمومی",
+    },
+    "geometry": {
+        "coordinate geometry": "هندسهٔ مختصاتی",
+        "distance formula": "فرمول فاصله",
+        "analytic geometry": "هندسهٔ تحلیلی",
+        "lines": "خط‌ها",
+        "vectors": "بردارها",
+        "general": "عمومی",
+    },
+    "conic curves": {
+        "circle": "دایره",
+        "parabola": "سهمی",
+        "ellipse": "بیضی",
+        "hyperbola": "هذلولی",
+        "general": "عمومی",
+    },
+    "logarithmic functions": {"logarithms": "لگاریتم‌ها", "general": "عمومی"},
+    "probability": {"Simple Probability": "احتمال ساده", "general": "عمومی"},
+    "sequences": {
+        "simple tasks": "مسائل ساده",
+        "hard tasks": "مسائل دشوار",
+        "general": "عمومی",
+    },
+    "complex numbers": {
+        "simple tasks": "مسائل ساده",
+        "hard tasks": "مسائل دشوار",
+        "complex numbers": "اعداد مختلط",
+        "general": "عمومی",
+    },
+    "trigonometry": {
+        "trigonometric values": "مقادیر مثلثاتی",
+        "terminal side through point": "ضلع نهایی از طریق یک نقطه",
+        "trigonometric identities": "اتحادهای مثلثاتی",
+        "properties": "ویژگی‌های توابع مثلثاتی",
+        "Properties of trigonometric functions": "ویژگی‌های توابع مثلثاتی",
+        "double angle formula": "فرمول‌های زاویهٔ دوبرابر",
+        "trigonometric expressions": "عبارت‌های مثلثاتی",
+        "half-angle formula": "فرمول‌های نیم‌زاویه",
+        "sin and cos of sum": "سینوس و کسینوس مجموع",
+        "general": "عمومی",
+    },
+    "arithmetic and geometric mean": _AGM_SUBTOPICS_FA,
+    "Algebraic and geometric mean": _AGM_SUBTOPICS_FA,
+    "physics": _PHYSICS_SUBTOPICS_FA,
+}
+
 
 def _topic_display(topic: str, lang: str) -> str:
     """Название темы для интерфейса с учётом языка."""
@@ -1698,6 +1980,10 @@ def _topic_display(topic: str, lang: str) -> str:
         ar = TOPIC_TITLE_AR.get(topic)
         if ar:
             return ar
+    elif lg == "fa":
+        fa = TOPIC_TITLE_FA.get(topic)
+        if fa:
+            return fa
     return _capitalize_display_en(topic)
 
 
@@ -1742,9 +2028,32 @@ def _subtopic_display(topic: str, sub: str, lang: str) -> str:
         }:
             return "خصائص الدوال المثلثية"
         return _capitalize_display_en(sub_key)
+    if lg == "fa":
+        if sub_key == "general":
+            return "عمومی"
+        inner = SUBTOPIC_TITLE_FA.get(topic, {})
+        fa = inner.get(sub_key)
+        if fa:
+            return fa
+        sub_l = sub_key.lower()
+        for k, v in inner.items():
+            if k.lower() == sub_l:
+                return v
+        if topic == "physics":
+            fa_ph = _PHYSICS_SUBTOPICS_FA.get(sub_key)
+            if fa_ph:
+                return fa_ph
+        if topic == "trigonometry" and sub_key.lower() in {
+            "properties",
+            "properties of trigonometric functions",
+        }:
+            return "ویژگی‌های توابع مثلثاتی"
+        return _capitalize_display_en(sub_key)
     # Английский: точечные переопределения для некоторых подтем.
     if topic == "trigonometry" and sub_key.lower() in {"properties", "properties of trigonometric functions"}:
         return "Properties of trigonometric functions"
+    if topic == "functions" and sub_key.lower() == "graphs":
+        return "Symmetry of graphs"
     if sub_key == "general":
         return "General"
     return _capitalize_display_en(sub_key)
@@ -1772,6 +2081,14 @@ CORRECT_PHRASES_AR = [
    "أحسنت!",
    "رائع!",
    "مبروك!",
+]
+
+CORRECT_PHRASES_FA = [
+   "درست است!",
+   "عالی!",
+   "آفرین!",
+   "خیلی خوب!",
+   "احسنت!",
 ]
 
 _START_GREET_RU_BASE = """Привет!  Я бот для подготовки к CSCA. 
@@ -1806,6 +2123,13 @@ _START_GREET_AR = """مرحباً! أنا بوت التحضير لامتحان C
 """
 #صُنع البوت بمساعدة نموذج ذكاء اصطناعي. وجدت خطأ؟ اكتب إلى https://t.me/csca_math_exam/107
 
+_START_GREET_FA = """سلام! من ربات آماده‌سازی برای آزمون ریاضی CSCA هستم.
+به شما کمک می‌کنم خوب آماده شوید: آزمون‌های آزمایشی کامل، مشاهدهٔ نمره، یا تمرین بر اساس هر موضوع. نمی‌دانید چطور حل کنید؟ مطالب کمکی داخلی و گفتگو برای بحث دربارهٔ مسائل همیشه در دسترس شماست.
+
+
+"""
+#ربات با کمک یک شبکهٔ عصبی ساخته شده است. خطایی پیدا کردید؟ به https://t.me/csca_math_exam/107 بنویسید
+
 
 async def _is_stepik_user(user_id: int) -> bool:
     """Возвращает True, если пользователь пришёл из Stepik."""
@@ -1830,6 +2154,8 @@ async def _build_start_greet(user) -> str:
         return _START_GREET_RU_BASE.format(promo_block=promo_block)
     if lg == "ar":
         return _START_GREET_AR
+    if lg == "fa":
+        return _START_GREET_FA
     return _START_GREET_EN
 
 # Случайная реакция после верного ответа в режиме тренировки (тема / подтема)
@@ -1876,6 +2202,8 @@ def _correct_phrase(lang: str) -> str:
        return random.choice(CORRECT_PHRASES_RU)
    if lg == "ar":
        return random.choice(CORRECT_PHRASES_AR)
+   if lg == "fa":
+       return random.choice(CORRECT_PHRASES_FA)
    return random.choice(CORRECT_PHRASES_EN)
 
 
@@ -2031,9 +2359,9 @@ def _keyboard_option_labels_from_display(opts_display: list[str]) -> list[str]:
 
 def _other_lang_inline_buttons(
     current_lang: str, *, long_labels: bool = False
-) -> tuple[InlineKeyboardButton, InlineKeyboardButton]:
+) -> list[InlineKeyboardButton]:
     """
-    Две кнопки переключения интерфейса на языки, отличные от current_lang (после _normalize_lang).
+    Кнопки переключения интерфейса на языки, отличные от current_lang (после _normalize_lang).
     long_labels — подписи как при первом входе; иначе короткие (главное меню).
     """
     lg = _normalize_lang(current_lang)
@@ -2042,26 +2370,28 @@ def _other_lang_inline_buttons(
             ("ru", "🇷🇺 Русский", "set_lang_ru"),
             ("en", "🇬🇧 English", "set_lang_en"),
             ("ar", "🇸🇦 العربية", "set_lang_ar"),
+            ("fa", "🇮🇷 فارسی", "set_lang_fa"),
         ]
     else:
         specs = [
             ("ru", "🇷🇺 RU", "set_lang_ru"),
             ("en", "🇬🇧 EN", "set_lang_en"),
             ("ar", "🇸🇦 AR", "set_lang_ar"),
+            ("fa", "🇮🇷 FA", "set_lang_fa"),
         ]
-    pair = [
+    return [
         InlineKeyboardButton(text=t, callback_data=cb)
         for code, t, cb in specs
         if code != lg
     ]
-    return pair[0], pair[1]
 
 
 def _language_switch_kb(current_lang: str) -> InlineKeyboardMarkup:
-    """Первый вход: одна строка — два языка, отличных от текущего (Telegram/БД)."""
+    """Первый вход: языки, отличные от текущего (Telegram/БД), по 2 в ряд."""
     builder = InlineKeyboardBuilder()
-    b1, b2 = _other_lang_inline_buttons(current_lang, long_labels=True)
-    builder.row(b1, b2)
+    for btn in _other_lang_inline_buttons(current_lang, long_labels=True):
+        builder.add(btn)
+    builder.adjust(2)
     return builder.as_markup()
 
 
@@ -2253,12 +2583,12 @@ async def start_kb(user_id: int = None) -> InlineKeyboardMarkup:
                 f"🈯 Изменить язык экзамена ({'English' if exam_lang == 'en' else '中文'})",
                 f"🈯 Change exam language ({'English' if exam_lang == 'en' else '中文'})",
                 f"🈯 تغيير لغة الامتحان ({'English' if exam_lang == 'en' else '中文'})",
+                f"🈯 تغییر زبان آزمون ({'English' if exam_lang == 'en' else '中文'})",
             ),
             callback_data="menu_exam_language",
         )
     )
-    lb1, lb2 = _other_lang_inline_buttons(lang, long_labels=False)
-    builder.row(lb1, lb2)
+    builder.row(*_other_lang_inline_buttons(lang, long_labels=False))
     return builder.as_markup()
 
 
@@ -3457,6 +3787,7 @@ def _mock_exam_title(lang: str, m: int) -> str:
        f"Mock Exam {m} (пробный экзамен {m})",
        f"Mock Exam {m}",
        f"الامتحان التجريبي {m}",
+       f"آزمون آزمایشی {m}",
    )
 
 
@@ -4887,7 +5218,9 @@ async def on_math_solution_show(call: CallbackQuery):
     if top not in kapibara or j < 0 or j >= len(kapibara[top]):
         await call.message.answer(_msg_question_not_found(lang))
         return
-    if await _maybe_redirect_train_limit_to_pay(call.from_user):
+    if not await _has_paid_privileges(call.from_user.id):
+        log(call.from_user, ["solution_pay_redirect", "math", top, j])
+        await pay(call.from_user, mode="message")
         return
     q = kapibara[top][j]
     if not _has_solution_for_lang(q, lang):
@@ -4998,6 +5331,10 @@ async def on_topic_solution_show(call: CallbackQuery):
     if top not in kapibara or j < 0 or j >= len(kapibara[top]):
         await call.message.answer(_msg_question_not_found(lang))
         return
+    if not await _has_paid_privileges(call.from_user.id):
+        log(call.from_user, ["solution_pay_redirect", "topic", top, j])
+        await pay(call.from_user, mode="message")
+        return
     q = kapibara[top][j]
     if not _has_solution_for_lang(q, lang):
         await call.message.answer(
@@ -5102,6 +5439,10 @@ async def on_sub_solution_show(call: CallbackQuery):
     top, j = _get_subtopic_j(topic_idx, sub_idx, k)
     if top is None:
         await call.message.answer(_msg_question_not_found(lang))
+        return
+    if not await _has_paid_privileges(call.from_user.id):
+        log(call.from_user, ["solution_pay_redirect", "sub", top, j])
+        await pay(call.from_user, mode="message")
         return
     q = kapibara[top][j]
     if not _has_solution_for_lang(q, lang):
@@ -5372,10 +5713,10 @@ async def on_menu_exams(call: CallbackQuery):
     await call.message.answer(title, reply_markup=exams_menu_kb(lang))
 
 
-@router.callback_query(F.data.in_(["set_lang_ru", "set_lang_en", "set_lang_ar"]))
+@router.callback_query(F.data.in_(["set_lang_ru", "set_lang_en", "set_lang_ar", "set_lang_fa"]))
 async def on_set_language(call: CallbackQuery):
     await call.answer()
-    new_lang = {"set_lang_ru": "ru", "set_lang_en": "en", "set_lang_ar": "ar"}[call.data]
+    new_lang = {"set_lang_ru": "ru", "set_lang_en": "en", "set_lang_ar": "ar", "set_lang_fa": "fa"}[call.data]
     old_lang = await _get_user_lang(call.from_user)
     save_status = "no_db"
     if db_conn:
@@ -5393,7 +5734,7 @@ async def on_set_language(call: CallbackQuery):
     # Для новых пользователей в сценарии /start сначала выбираем язык экзамена.
     if call.from_user.id in _pending_exam_language_selection:
         await call.message.answer(
-            _txt(lang, "Выберите язык экзамена:", "Choose exam language:", "اختر لغة الامتحان:"),
+            _txt(lang, "Выберите язык экзамена:", "Choose exam language:", "اختر لغة الامتحان:", "زبان آزمون را انتخاب کنید:"),
             reply_markup=_exam_language_kb(),
         )
         return
@@ -5438,6 +5779,7 @@ async def on_set_exam_language(call: CallbackQuery):
             f"Язык экзамена — {ex_lab}",
             f"Exam language — {ex_lab}",
             f"لغة الامتحان — {ex_lab}",
+            f"زبان آزمون — {ex_lab}",
         ),
         reply_markup=kb,
     )
@@ -5448,7 +5790,7 @@ async def on_menu_exam_language(call: CallbackQuery):
     await call.answer()
     lang = await _get_user_lang(call.from_user)
     await call.message.answer(
-        _txt(lang, "Выберите язык экзамена:", "Choose exam language:", "اختر لغة الامتحان:"),
+        _txt(lang, "Выберите язык экзамена:", "Choose exam language:", "اختر لغة الامتحان:", "زبان آزمون را انتخاب کنید:"),
         reply_markup=_exam_language_kb(),
     )
 
@@ -5499,6 +5841,28 @@ def _inline_kb_exam_finished(lang: str = "en") -> InlineKeyboardMarkup:
 
 
 # --- Общий обработчик экзаменов jan / dec / mar ---
+async def _has_paid_privileges(user_id: int) -> bool:
+    """
+    Привилегии платного использования: была оплата, статус Stepik, статус
+    cscagroup или 3+ приглашённых новых пользователя по ссылке-приглашению.
+    Единая проверка — используется и при достижении N ошибок в день
+    (_should_redirect__to_pay), и при показе решения.
+    """
+    if str(user_id) in stepik:
+        return True
+    if str(user_id) in cscagroup:
+        return True
+    if len(invite_relations.get(user_id, set())) >= 3:
+        return True
+    if db_conn:
+        try:
+            if await db.user_has_access_by_payment(db_conn, user_id):
+                return True
+        except Exception as e:
+            logging.error(f"Ошибка проверки привилегий доступа (пользователь {user_id}): {e}")
+    return False
+
+
 async def _should_redirect__to_pay(user_id: int, mode: str = "exam") -> bool:
     """
     Единая проверка доступа к экзаменам (как в Mock Exam сейчас).
@@ -5519,26 +5883,15 @@ async def _should_redirect__to_pay(user_id: int, mode: str = "exam") -> bool:
             logging.error(f"Ошибка проверки завершённых экзаменов для пользователя {user_id}: {e}")
             return False
 
-    invites_count = len(invite_relations.get(user_id, set()))
-    paid_access = False
-    user_created_at = None
     total_answered = 0
     if db_conn:
         try:
-            paid_access = await db.user_has_access_by_payment(db_conn, user_id)
-            user_created_at = await db.get_user_created_at(db_conn, user_id)
             stats = await db.get_user_stats(db_conn, user_id)
             total_answered = stats.get("total_answered", 0)
         except Exception as e:
             logging.error(f"Ошибка проверки доступа к экзаменам для пользователя {user_id}: {e}")
 
-    no_privileges = (
-        str(user_id) not in stepik
-        and str(user_id) not in cscagroup
-        and invites_count < 3
-        and not paid_access
-    )
-
+    no_privileges = not await _has_paid_privileges(user_id)
     meets_activity_limits = total_answered > N
 
     return no_privileges and meets_activity_limits
@@ -5562,6 +5915,26 @@ async def _maybe_redirect_train_limit_to_pay(user) -> bool:
         log(user, ["train_limit_pay_redirect", f"wrong_today={wrong_today}", f"N={N}"])
         await pay(user, mode="train")
         return True
+    return False
+
+
+async def _ai_support_allowed(user_id: int) -> bool:
+    """
+    Доступ к ИИ-поддержке (ответы в чате): разрешён при наличии оплаты,
+    статуса Stepik или 3+ приглашённых пользователей — теми же средствами,
+    что и проверка привилегий при достижении N ошибок в день
+    (см. _should_redirect__to_pay).
+    """
+    if str(user_id) in stepik:
+        return True
+    if len(invite_relations.get(user_id, set())) >= 3:
+        return True
+    if db_conn:
+        try:
+            if await db.user_has_access_by_payment(db_conn, user_id):
+                return True
+        except Exception as e:
+            logging.error(f"Ошибка проверки оплаты для ИИ-поддержки (пользователь {user_id}): {e}")
     return False
 
 
@@ -6790,7 +7163,7 @@ async def on_start_command(message: types.Message):
         # На первом входе: приветствие + кнопка переключения интерфейса, затем выбор языка экзамена.
         await message.answer(greet, reply_markup=_language_switch_kb(lang), parse_mode="HTML")
         await message.answer(
-            _txt(lang, "Выберите язык экзамена:", "Choose exam language:", "اختر لغة الامتحان:"),
+            _txt(lang, "Выберите язык экзамена:", "Choose exam language:", "اختر لغة الامتحان:", "زبان آزمون را انتخاب کنید:"),
             reply_markup=_exam_language_kb(),
         )
     else:
@@ -7605,7 +7978,13 @@ async def cmd_admin_daily_metrics(message: types.Message):
                         WHEN lang_ui = 'en' OR (lang_ui = '' AND lang_code LIKE 'en%') THEN 1
                         ELSE 0
                     END
-                ) AS en_cnt
+                ) AS en_cnt,
+                SUM(
+                    CASE
+                        WHEN lang_ui = 'fa' OR (lang_ui = '' AND (lang_code LIKE 'fa%' OR lang_code LIKE 'pe%')) THEN 1
+                        ELSE 0
+                    END
+                ) AS fa_cnt
             FROM lang_norm
             """,
             (ws, we),
@@ -7614,6 +7993,7 @@ async def cmd_admin_daily_metrics(message: types.Message):
         week_ru = int((row[0] or 0) if row else 0)
         week_ar = int((row[1] or 0) if row else 0)
         week_en = int((row[2] or 0) if row else 0)
+        week_fa = int((row[3] or 0) if row else 0)
 
         # Распределение активных пользователей недели по источнику (source).
         cur = await db_conn.execute(
@@ -7700,7 +8080,7 @@ async def cmd_admin_daily_metrics(message: types.Message):
         lines.append(f"• active users (answers): {week_active_users}")
         lines.append(f"• new users: {week_new_users}")
         lines.append(f"• new active users: {week_new_active_users}")
-        lines.append(f"• interface ru/en/ar: {week_ru}/{week_en}/{week_ar}")
+        lines.append(f"• interface ru/en/ar/fa: {week_ru}/{week_en}/{week_ar}/{week_fa}")
         lines.append("")
         lines.append("Week users by source (active, answers):")
         lines.append(f"• stepik: {week_stepik}")
@@ -7830,6 +8210,164 @@ async def cmd_examstats(message: types.Message):
     await message.answer(text, reply_markup=kb)
 
 
+def _show_chunks(text: str, limit: int = 3900):
+    """Режет длинный текст на части по границам строк (лимит Telegram ~4096)."""
+    chunks = []
+    cur = ""
+    for line in text.split("\n"):
+        if len(cur) + len(line) + 1 > limit and cur:
+            chunks.append(cur)
+            cur = ""
+        cur += (line + "\n")
+    if cur.strip():
+        chunks.append(cur)
+    return chunks or [text]
+
+
+@router.message(Command("show"))
+async def cmd_show(message: types.Message):
+    """
+    Показать активность пользователя за неделю (в меню НЕ добавляется).
+    Использование: /show username  или  /show "username".
+    1) По дням: дата | тема | подтема | число задач | доля верных.
+    2) Сданные экзамены: тип | балл | статистика по темам.
+    """
+    if not db_conn:
+        await message.answer("База данных недоступна.")
+        return
+
+    parts = (message.text or "").split(maxsplit=1)
+    arg = parts[1].strip() if len(parts) > 1 else ""
+    # Убираем кавычки и ведущий '@'
+    arg = arg.strip().strip('"').strip("'").lstrip("@").strip()
+    if not arg:
+        await message.answer('Использование: /show username  или  /show <user_id>')
+        return
+
+    if arg.isdigit():
+        # Поиск по числовому user id
+        target_id = int(arg)
+        target_username = await db.get_username_by_id(db_conn, target_id)
+    else:
+        found = await db.get_user_id_by_username(db_conn, arg)
+        if not found:
+            await message.answer(f"Пользователь @{arg} не найден.")
+            return
+        target_id, target_username = found
+
+    # Окно — последние 7 дней
+    since = datetime.datetime.now() - datetime.timedelta(days=7)
+    since_iso = since.isoformat()
+
+    exam_ids = {cfg["id"] for cfg in EXAM_CONFIG.values()} | {EXAM_MOCK_ID, EXAM_MOCK2_ID}
+    get_subtopic = db._get_subtopic_getter(kapibara)
+
+    lines = [
+        f"📋 Активность @{target_username or arg} (id {target_id}) за неделю с {since_iso[:10]}:",
+        "",
+        "1) По дням (дата | тема | подтема | задач | % верных):",
+    ]
+
+    # --- 1) Тренировочные ответы по дням/темам/подтемам (без экзаменов) ---
+    try:
+        rows = await db.get_user_answers_since(db_conn, target_id, since_iso)
+    except Exception as e:
+        logging.error(f"/show: ошибка выборки ответов для {target_id}: {e}")
+        rows = []
+
+    agg: dict[tuple, list] = {}  # (date, topic, subtopic) -> [count, correct]
+    for topic, qidx, correct, created_at in rows:
+        if topic in exam_ids:
+            continue
+        date = (created_at or "")[:10]
+        sub = get_subtopic(topic, qidx)
+        cell = agg.setdefault((date, topic, sub), [0, 0])
+        cell[0] += 1
+        cell[1] += correct
+
+    if agg:
+        for (date, topic, sub) in sorted(agg.keys()):
+            cnt, cor = agg[(date, topic, sub)]
+            pct = (cor / cnt * 100) if cnt else 0.0
+            lines.append(
+                f"• {date} | {_topic_display(topic, 'ru')} | "
+                f"{_subtopic_display(topic, sub, 'ru')} | {cnt} | {pct:.0f}%"
+            )
+    else:
+        lines.append("• нет тренировочных ответов за неделю")
+
+    # --- 2) Сданные экзамены: тип | балл | дата завершения | по темам ---
+    lines.append("")
+    lines.append("2) Сданные экзамены (тип | балл | дата завершения | по темам):")
+
+    try:
+        completed = await db.get_user_completed_exams(db_conn, target_id)
+    except Exception as e:
+        logging.error(f"/show: ошибка чтения завершённых экзаменов {target_id}: {e}")
+        completed = {}
+
+    descriptors = []
+    for et, cfg in EXAM_CONFIG.items():
+        descriptors.append(
+            (cfg["title_ru"], cfg["id"], cfg["questions"], cfg["total_difficulty"], ("type", et), 1)
+        )
+    descriptors.append(
+        ("Mock Exam 1", EXAM_MOCK_ID, mock_questions, MOCK_TOTAL_DIFFICULTY, ("mock", 1), 0)
+    )
+    descriptors.append(
+        ("Mock Exam 2", EXAM_MOCK2_ID, mock_questions2, MOCK2_TOTAL_DIFFICULTY, ("mock", 2), 0)
+    )
+
+    exam_blocks = []
+    for title, exam_id, questions, total_d, kind, topic_pos in descriptors:
+        try:
+            exam_answers = await db.get_exam_answers(db_conn, target_id, exam_id)
+        except Exception as e:
+            logging.error(f"/show: ошибка чтения экзамена {exam_id}: {e}")
+            exam_answers = {}
+        if not exam_answers:
+            continue
+
+        # Балл и число верных берём из штатного состояния экзамена
+        if kind[0] == "type":
+            st = await _get_exam_state_by_type(target_id, kind[1])
+        else:
+            st = await _get_exam_mock_state(target_id, kind[1])
+        score = (st.get("correct_difficulty", 0) / total_d * 100) if total_d else 0.0
+        correct_cnt = st.get("correct_count", 0)
+
+        by_topic: dict[str, list] = {}  # topic -> [total, correct]
+        for idx, ad in exam_answers.items():
+            if idx < 0 or idx >= len(questions):
+                continue
+            top = questions[idx][topic_pos]
+            cell = by_topic.setdefault(top, [0, 0])
+            cell[0] += 1
+            if ad.get("correct"):
+                cell[1] += 1
+
+        completed_key = kind[1] if kind[0] == "type" else ("mock" if kind[1] == 1 else "mock2")
+        done_at = completed.get(completed_key)
+        done_str = f" | завершён {done_at[:10]}" if done_at else " | дата завершения неизвестна"
+
+        blk = [f"• {title} | балл {score:.2f}{done_str} | верно {correct_cnt}/{len(exam_answers)}"]
+        for top in sorted(by_topic.keys()):
+            t_tot, t_cor = by_topic[top]
+            t_pct = (t_cor / t_tot * 100) if t_tot else 0.0
+            blk.append(f"   - {_topic_display(top, 'ru')}: {t_cor}/{t_tot} ({t_pct:.0f}%)")
+        exam_blocks.append("\n".join(blk))
+
+    if exam_blocks:
+        lines.extend(exam_blocks)
+    else:
+        lines.append("• нет сданных экзаменов")
+
+    await _refresh_log_lang_cache(message.from_user)
+    log(message.from_user, ["show", str(target_id)])
+    for chunk in _show_chunks("\n".join(lines)):
+        await message.answer(chunk)
+
+
 @router.message(Command("inviteusers"))
 async def cmd_inviteusers(message: types.Message):
     """Показать invite-коды, число приглашённых и суммарно решённые ими задачи."""
@@ -7903,10 +8441,10 @@ async def pay(user, mode: str = "exam"):
 
     lg = _normalize_lang(lang)
     if lg == "ru":
-        if mode_norm == "train":
+        if mode_norm in ("train", "message"):
             text = (
-                f"Вы сделали больше {N} ошибок сегодня. Можете продолжить тренироваку завтра.\n\n"
-                "Как снять ограничения:\n"
+                (f"Вы сделали больше {N} ошибок сегодня. Можете продолжить тренироваку завтра.\n\n" if mode_norm == "train" else "")
+                + "Как снять ограничения:\n"
                 "Если вы в группе «Готовим к CSCA», перейдите по прямой ссылке из группы.\n"
                 "Если вы приобретали курс  <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>, перейдите в бот по ссылке из первого урока.\n"
                 "Вы можете стать студентом курса прямо сейчас и получить полный досуп к возможностям бота, а также видео-лекции и подробный разбор задач\n\n"
@@ -7931,10 +8469,10 @@ async def pay(user, mode: str = "exam"):
                 "Задать вопрос об оплате можно в чате https://t.me/csca_math_exam/107"
             )
     elif lg == "ar":
-        if mode_norm == "train":
+        if mode_norm in ("train", "message"):
             text = (
-                f"لقد تجاوزت {N} خطأ اليوم. يمكنك مواصلة التدريب غداً.\n\n"
-                "كيف تزيل القيود:\n"
+                (f"لقد تجاوزت {N} خطأ اليوم. يمكنك مواصلة التدريب غداً.\n\n" if mode_norm == "train" else "")
+                + "كيف تزيل القيود:\n"
                 "إذا اشتريت الدورة <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>، افتح البوت عبر الرابط من الدرس الأول.\n"
                 "إذا كنت في مجموعة «Preparing for CSCA»، استخدم الرابط المباشر من المجموعة.\n\n"
                 f"يمكنك أيضاً نشر رابط الدعوة الشخصي {invite_link} في أي محادثة عن CSCA — "
@@ -7955,10 +8493,10 @@ async def pay(user, mode: str = "exam"):
                 "يمكنك طرح أسئلة حول الدفع في المحادثة https://t.me/csca_math_exam/107"
             )
     else:
-        if mode_norm == "train":
+        if mode_norm in ("train", "message"):
             text = (
-                f"You made more than {N} mistakes today. You can continue training tomorrow.\n\n"
-                "How to remove restrictions:\n"
+                (f"You made more than {N} mistakes today. You can continue training tomorrow.\n\n" if mode_norm == "train" else "")
+                + "How to remove restrictions:\n"
                 "If you purchased the course <a href=\"https://stepik.org/a/268161?utm_source=b\">https://stepik.org/a/268161</a>, please open the bot using the link "
                 "from the first lesson.\n"
                 "If you are in the “Preparing for CSCA” group, use the direct link from that group.\n\n"
@@ -8391,6 +8929,7 @@ async def on_any_message(message: Message):
     text_l = (message.text or "").lower()
     raw_t = message.text or ""
     wants_ar = "arabic" in text_l or "عربي" in raw_t or "العربية" in raw_t
+    wants_fa = "farsi" in text_l or "persian" in text_l or "فارسی" in raw_t
     if message.chat.type == "private" and wants_ar:
         old_lang = await _get_user_lang(message.from_user)
         save_status = "no_db"
@@ -8406,6 +8945,22 @@ async def on_any_message(message: Message):
         kb = await start_kb(message.from_user.id)
         await message.answer("تم تبديل لغة الواجهة إلى العربية.", reply_markup=kb)
         await message.answer(_START_GREET_AR, reply_markup=kb, parse_mode="HTML")
+        return
+    if message.chat.type == "private" and wants_fa:
+        old_lang = await _get_user_lang(message.from_user)
+        save_status = "no_db"
+        if db_conn:
+            try:
+                await db.set_user_language(db_conn, message.from_user.id, "fa")
+                save_status = "saved"
+            except Exception as e:
+                save_status = "save_error"
+                logging.error(f"Ошибка сохранения языка по текстовому триггеру для пользователя {message.from_user.id}: {e}")
+        _sync_log_lang_ui(message.from_user.id, "fa")
+        log(message.from_user, ["set_language_by_text", old_lang, "fa", save_status, "trigger=farsi"])
+        kb = await start_kb(message.from_user.id)
+        await message.answer("زبان رابط به فارسی تغییر کرد.", reply_markup=kb)
+        await message.answer(_START_GREET_FA, reply_markup=kb, parse_mode="HTML")
         return
     if message.chat.type == "private" and "english" in text_l:
         old_lang = await _get_user_lang(message.from_user)
@@ -8455,6 +9010,22 @@ async def on_any_message(message: Message):
 
         lang = await _get_user_lang(message.from_user)
         exam_lang = await _get_user_exam_lang_by_id(message.from_user.id)
+
+        # Доступ к ИИ-поддержке: только при оплате или статусе Stepik
+        # (как при достижении N ошибок в день — используем ту же функцию pay()).
+        if not await _ai_support_allowed(message.from_user.id):
+            log(message.from_user, ["ai_support_blocked_pay_redirect"])
+            await message.answer(
+                _txt(
+                    lang,
+                    "Вам недоступна поддержка ИИ.",
+                    "AI support is not available to you.",
+                    "دعم الذكاء الاصطناعي غير متاح لك.",
+                    "پشتیبانی هوش مصنوعی برای شما در دسترس نیست.",
+                )
+            )
+            await pay(message.from_user, mode="message")
+            return
 
         await _on_any_message_llm_legacy_classifier(
             message=message,

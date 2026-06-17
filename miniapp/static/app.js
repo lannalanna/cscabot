@@ -39,11 +39,41 @@
   const titleEl = $("#page-title");
   const btnBack = $("#btn-back");
 
-  function t(ru, en, ar) {
+  function t(ru, en, ar, fa) {
     const lang = state.me?.ui_lang || "ru";
     if (lang === "ru") return ru;
     if (lang === "ar") return ar || en;
+    if (lang === "fa") return fa || en;
     return en;
+  }
+
+  const LANGS = [
+    { code: "ru", label: "🇷🇺 Русский" },
+    { code: "en", label: "🇬🇧 English" },
+    { code: "ar", label: "🇸🇦 العربية" },
+    { code: "fa", label: "🇮🇷 فارسی" },
+  ];
+
+  function applyDir() {
+    const lang = state.me?.ui_lang || "ru";
+    const rtl = lang === "ar" || lang === "fa";
+    document.documentElement.setAttribute("dir", rtl ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", lang);
+  }
+
+  async function setLang(code) {
+    if (code === state.me?.ui_lang) return;
+    try {
+      await api("/api/settings/language", {
+        method: "POST",
+        body: JSON.stringify({ language: code }),
+      });
+      await loadMe();
+      applyDir();
+      render();
+    } catch (e) {
+      toast(e.message, "bad");
+    }
   }
 
   function toast(msg, type) {
@@ -83,7 +113,7 @@
 
   function renderMenu() {
     titleEl.textContent = "CSCA";
-    main.innerHTML = `<div class="loading">${t("Загрузка…", "Loading…", "جاري التحميل…")}</div>`;
+    main.innerHTML = `<div class="loading">${t("Загрузка…", "Loading…", "جاري التحميل…", "در حال بارگذاری…")}</div>`;
     api("/api/menu")
       .then((data) => {
         let html = `<div class="menu-list">`;
@@ -91,7 +121,7 @@
           html += `<button type="button" class="card" data-menu="${item.id}" data-topic="${item.topic || ""}">${item.title}</button>`;
         });
         if (state.me?.continue?.length) {
-          html += `<p style="color:var(--hint);margin:12px 0 6px">${t("Продолжить", "Continue", "متابعة")}</p>`;
+          html += `<p style="color:var(--hint);margin:12px 0 6px">${t("Продолжить", "Continue", "متابعة", "ادامه")}</p>`;
           state.me.continue.forEach((c) => {
             html += `<button type="button" class="card" data-continue="${c.topic}" data-index="${c.last_index}">
               ▶ ${c.title} (${c.last_index}/${c.total})
@@ -99,6 +129,15 @@
           });
         }
         html += `</div>`;
+
+        html += `<p style="color:var(--hint);margin:18px 0 6px">${t("Язык", "Language", "اللغة", "زبان")}</p>`;
+        html += `<div class="lang-row">`;
+        LANGS.forEach((l) => {
+          const active = state.me?.ui_lang === l.code ? " active" : "";
+          html += `<button type="button" class="lang-btn${active}" data-lang="${l.code}">${l.label}</button>`;
+        });
+        html += `</div>`;
+
         main.innerHTML = html;
 
         main.querySelectorAll("[data-menu]").forEach((btn) => {
@@ -117,19 +156,22 @@
             startTopic(btn.dataset.continue, null, parseInt(btn.dataset.index, 10));
           });
         });
+        main.querySelectorAll("[data-lang]").forEach((btn) => {
+          btn.addEventListener("click", () => setLang(btn.dataset.lang));
+        });
       })
       .catch(showError);
   }
 
   function renderTopics() {
-    titleEl.textContent = t("Темы", "Topics", "المواضيع");
+    titleEl.textContent = t("Темы", "Topics", "المواضيع", "موضوع‌ها");
     main.innerHTML = `<div class="loading">…</div>`;
     api("/api/topics")
       .then((data) => {
         let html = `<div class="topic-list">`;
         (data.topics || []).forEach((top) => {
           html += `<button type="button" class="card" data-topic="${top.key}">
-            ${top.title}<small>${top.count} ${t("задач", "tasks", "مسائل")}</small>
+            ${top.title}<small>${top.count} ${t("задач", "tasks", "مسائل", "مسئله")}</small>
           </button>`;
         });
         html += `</div>`;
@@ -150,7 +192,7 @@
       .then((data) => {
         let html = `<div class="topic-list">`;
         html += `<button type="button" class="card" data-all="1">
-          ${t("Все задачи темы", "All topic tasks", "كل مسائل الموضوع")}
+          ${t("Все задачи темы", "All topic tasks", "كل مسائل الموضوع", "همهٔ مسائل موضوع")}
         </button>`;
         (data.subtopics || []).forEach((s) => {
           html += `<button type="button" class="card" data-sub="${encodeURIComponent(s.key)}">
@@ -223,12 +265,12 @@
     });
     html += `</div><div class="actions">`;
     if (q.has_hint) {
-      html += `<button type="button" class="btn secondary" id="btn-hint">${t("Подсказка", "Hint", "تلميح")}</button>`;
+      html += `<button type="button" class="btn secondary" id="btn-hint">${t("Подсказка", "Hint", "تلميح", "راهنمایی")}</button>`;
     }
     if (q.has_solution) {
-      html += `<button type="button" class="btn secondary" id="btn-sol">${t("Решение", "Solution", "الحل")}</button>`;
+      html += `<button type="button" class="btn secondary" id="btn-sol">${t("Решение", "Solution", "الحل", "راه‌حل")}</button>`;
     }
-    html += `<button type="button" class="btn" id="btn-submit" disabled>${t("Ответить", "Submit", "إرسال")}</button>`;
+    html += `<button type="button" class="btn" id="btn-submit" disabled>${t("Ответить", "Submit", "إرسال", "ثبت پاسخ")}</button>`;
     html += `</div><div id="sol-box"></div><div id="hint-box"></div>`;
     main.innerHTML = html;
 
@@ -276,7 +318,7 @@
       setTimeout(() => {
         if (isExam) {
           if (res.finished) {
-            toast(t("Экзамен завершён", "Exam finished", "اكتمل الامتحان"), "ok");
+            toast(t("Экзамен завершён", "Exam finished", "اكتمل الامتحان", "آزمون به پایان رسید"), "ok");
             state.stack = [];
             state.ctx = { view: "exams" };
             updateBack();
@@ -286,7 +328,7 @@
             renderQuestion();
           }
         } else if (res.finished) {
-          toast(t("Тема завершена", "Topic done", "اكتمل الموضوع"), "ok");
+          toast(t("Тема завершена", "Topic done", "اكتمل الموضوع", "موضوع تمام شد"), "ok");
           popView();
           popView();
         } else {
@@ -315,13 +357,13 @@
   }
 
   function renderExams() {
-    titleEl.textContent = t("Экзамены", "Exams", "الامتحانات");
+    titleEl.textContent = t("Экзамены", "Exams", "الامتحانات", "آزمون‌ها");
     api("/api/exams")
       .then((data) => {
         let html = `<div class="topic-list">`;
         (data.exams || []).forEach((ex) => {
           html += `<button type="button" class="card" data-exam="${ex.key}">
-            ${ex.title}<small>${ex.count} ${t("задач", "tasks", "مسائل")}</small>
+            ${ex.title}<small>${ex.count} ${t("задач", "tasks", "مسائل", "مسئله")}</small>
           </button>`;
         });
         html += `</div>`;
@@ -334,24 +376,24 @@
   }
 
   function renderStats() {
-    titleEl.textContent = t("Статистика", "Statistics", "الإحصائيات");
+    titleEl.textContent = t("Статистика", "Statistics", "الإحصائيات", "آمار");
     api("/api/stats")
       .then((s) => {
         const pct = s.accuracy_percent ?? 0;
         main.innerHTML = `
           <div class="stats-grid">
             <div class="stat-card">
-              <div>${t("Всего ответов", "Total answers", "إجمالي الإجابات")}</div>
+              <div>${t("Всего ответов", "Total answers", "إجمالي الإجابات", "کل پاسخ‌ها")}</div>
               <strong>${s.total_answered ?? 0}</strong>
             </div>
             <div class="stat-card">
-              <div>${t("Верных", "Correct", "صحيح")}</div>
+              <div>${t("Верных", "Correct", "صحيح", "درست")}</div>
               <strong>${s.total_correct ?? 0}</strong>
               <div class="progress-bar"><span style="width:${pct}%"></span></div>
               <small>${pct}%</small>
             </div>
             <div class="stat-card">
-              <div>${t("Тем с прогрессом", "Topics with progress", "مواضيع مع تقدم")}</div>
+              <div>${t("Тем с прогрессом", "Topics with progress", "مواضيع مع تقدم", "موضوع‌های دارای پیشرفت")}</div>
               <strong>${s.topics_count ?? 0}</strong>
             </div>
           </div>`;
@@ -367,7 +409,7 @@
 
   function showError(e) {
     main.innerHTML = `<p style="color:var(--bad)">${escapeHtml(e.message)}</p>
-      <p>${t("Откройте приложение из Telegram-бота.", "Open from Telegram bot.", "افتح من بوت تيليجرام.")}</p>`;
+      <p>${t("Откройте приложение из Telegram-бота.", "Open from Telegram bot.", "افتح من بوت تيليجرام.", "برنامه را از ربات تلگرام باز کنید.")}</p>`;
   }
 
   function render() {
@@ -382,11 +424,12 @@
 
   async function init() {
     if (!initData()) {
-      showError(new Error(t("Нет данных Telegram", "No Telegram data", "لا بيانات تيليجرام")));
+      showError(new Error(t("Нет данных Telegram", "No Telegram data", "لا بيانات تيليجرام", "دادهٔ تلگرام موجود نیست")));
       return;
     }
     try {
       await loadMe();
+      applyDir();
       state.ctx = { view: "home" };
       render();
     } catch (e) {

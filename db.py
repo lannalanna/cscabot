@@ -556,6 +556,74 @@ async def get_all_users(conn: aiosqlite.Connection) -> List[Tuple[int, Optional[
     return [(row[0], row[1], row[2], row[3]) for row in rows]
 
 
+async def get_user_id_by_username(
+    conn: aiosqlite.Connection, username: str
+) -> Optional[Tuple[int, Optional[str]]]:
+    """
+    Находит пользователя по username (без учёта регистра, ведущий '@' игнорируется).
+    Возвращает (user_id, username) или None, если не найден.
+    """
+    uname = (username or "").strip().lstrip("@").strip()
+    if not uname:
+        return None
+    cursor = await conn.execute(
+        """
+        SELECT id, username
+        FROM users
+        WHERE LOWER(username) = LOWER(?)
+        ORDER BY updated_at DESC
+        LIMIT 1
+        """,
+        (uname,),
+    )
+    row = await cursor.fetchone()
+    return (row[0], row[1]) if row else None
+
+
+async def get_username_by_id(
+    conn: aiosqlite.Connection, user_id: int
+) -> Optional[str]:
+    """Возвращает username пользователя по его id (или None, если нет записи)."""
+    cursor = await conn.execute("SELECT username FROM users WHERE id = ?", (user_id,))
+    row = await cursor.fetchone()
+    return row[0] if row else None
+
+
+async def get_user_answers_since(
+    conn: aiosqlite.Connection, user_id: int, since_iso: str
+) -> List[Tuple[str, int, int, str]]:
+    """
+    Возвращает ответы пользователя начиная с момента since_iso (включительно).
+    Список кортежей (topic, question_index, correct, created_at), отсортированный по времени.
+    """
+    cursor = await conn.execute(
+        """
+        SELECT topic, question_index, correct, created_at
+        FROM answers
+        WHERE user_id = ? AND created_at >= ?
+        ORDER BY created_at
+        """,
+        (user_id, since_iso),
+    )
+    rows = await cursor.fetchall()
+    return [(row[0], row[1], int(row[2] or 0), row[3]) for row in rows]
+
+
+async def get_user_completed_exams(
+    conn: aiosqlite.Connection, user_id: int
+) -> Dict[str, str]:
+    """
+    Возвращает завершённые экзамены пользователя: {exam_type: completed_at}.
+    exam_type — 'jan'/'dec'/'mar'/'apr'/'mock'/'mock2'.
+    """
+    cursor = await conn.execute(
+        "SELECT exam_type, completed_at FROM user_completed_exams WHERE user_id = ?",
+        (user_id,),
+    )
+    rows = await cursor.fetchall()
+    return {row[0]: row[1] for row in rows}
+
+
 async def get_invite_code_stats(conn: aiosqlite.Connection) -> List[Tuple[str, int, int]]:
     """
     Возвращает агрегат по invite-кодам из users.invited_by.

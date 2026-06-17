@@ -79,13 +79,31 @@ async def _ensure_db_user(user: WebUser) -> None:
     await db.ensure_user(_db_conn, FakeTGUser(user))
 
 
-def _ui_lang(user: WebUser) -> str:
-    code = (user.language_code or "en").lower()
-    if code.startswith("ru"):
+def _norm_lang(code: str | None) -> str | None:
+    s = (code or "").lower()
+    if not s:
+        return None
+    if s.startswith("ru"):
         return "ru"
-    if code.startswith("ar"):
+    if s.startswith("ar"):
         return "ar"
-    return "en"
+    if s.startswith("fa") or s.startswith("pe"):
+        return "fa"
+    if s.startswith("en"):
+        return "en"
+    return None
+
+
+async def _ui_lang(user: WebUser) -> str:
+    """Язык интерфейса: приоритет — сохранённый язык пользователя, затем язык Telegram."""
+    if _db_conn is not None:
+        try:
+            saved = _norm_lang(await db.get_user_language(_db_conn, user.id))
+            if saved:
+                return saved
+        except Exception:
+            pass
+    return _norm_lang(user.language_code) or "en"
 
 
 async def _exam_lang(user_id: int) -> str:
@@ -111,11 +129,13 @@ class AnswerBody(BaseModel):
     exam_pos: int | None = None
 
 
-def _t(lang: str, ru: str, en: str, ar: str | None = None) -> str:
+def _t(lang: str, ru: str, en: str, ar: str | None = None, fa: str | None = None) -> str:
     if lang == "ru":
         return ru
     if lang == "ar":
         return ar if ar is not None else en
+    if lang == "fa":
+        return fa if fa is not None else en
     return en
 
 
@@ -127,7 +147,7 @@ async def health():
 @app.get("/api/me")
 async def me(user: WebUser = Depends(get_web_user)):
     await _ensure_db_user(user)
-    lang = _ui_lang(user)
+    lang = await _ui_lang(user)
     exam_lang = await _exam_lang(user.id)
     stats = await db.get_user_stats(_db_conn, user.id)
     progress = await db.get_progress(_db_conn, user.id)
@@ -159,8 +179,8 @@ async def me(user: WebUser = Depends(get_web_user)):
 
 @app.post("/api/settings/language")
 async def set_language(body: LangBody, user: WebUser = Depends(get_web_user)):
-    if body.language not in ("ru", "en", "ar"):
-        raise HTTPException(400, "language must be ru, en or ar")
+    if body.language not in ("ru", "en", "ar", "fa"):
+        raise HTTPException(400, "language must be ru, en, ar or fa")
     await _ensure_db_user(user)
     await db.set_user_language(_db_conn, user.id, body.language)
     return {"ok": True, "language": body.language}
@@ -177,29 +197,29 @@ async def set_exam_language(body: ExamLangBody, user: WebUser = Depends(get_web_
 
 @app.get("/api/menu")
 async def menu(user: WebUser = Depends(get_web_user)):
-    lang = _ui_lang(user)
+    lang = await _ui_lang(user)
     items = [
         {
             "id": "topics",
-            "title": _t(lang, "Математика по темам", "Math by topic", "رياضيات حسب الموضوع"),
+            "title": _t(lang, "Математика по темам", "Math by topic", "رياضيات حسب الموضوع", "ریاضی بر اساس موضوع"),
         },
         {
             "id": "physics",
-            "title": _t(lang, "Физика", "Physics", "الفيزياء"),
+            "title": _t(lang, "Физика", "Physics", "الفيزياء", "فیزیک"),
             "topic": "physics",
         },
         {
             "id": "chemistry",
-            "title": _t(lang, "Химия", "Chemistry", "الكيمياء"),
+            "title": _t(lang, "Химия", "Chemistry", "الكيمياء", "شیمی"),
             "topic": "chemistry",
         },
         {
             "id": "exams",
-            "title": _t(lang, "Экзамены", "Exams", "الامتحانات"),
+            "title": _t(lang, "Экзамены", "Exams", "الامتحانات", "آزمون‌ها"),
         },
         {
             "id": "stats",
-            "title": _t(lang, "Статистика", "Statistics", "الإحصائيات"),
+            "title": _t(lang, "Статистика", "Statistics", "الإحصائيات", "آمار"),
         },
     ]
     return {"items": items}
@@ -207,7 +227,7 @@ async def menu(user: WebUser = Depends(get_web_user)):
 
 @app.get("/api/topics")
 async def topics(user: WebUser = Depends(get_web_user)):
-    lang = _ui_lang(user)
+    lang = await _ui_lang(user)
     out = []
     for top in bank.topics:
         if top in ("physics", "chemistry"):
@@ -226,7 +246,7 @@ async def topics(user: WebUser = Depends(get_web_user)):
 async def subtopics(topic: str, user: WebUser = Depends(get_web_user)):
     if topic not in bank.kapibara:
         raise HTTPException(404, "topic not found")
-    lang = _ui_lang(user)
+    lang = await _ui_lang(user)
     subs = bank.subtopics_by_topic.get(topic, [])
     return {
         "subtopics": [
@@ -307,7 +327,7 @@ async def question(
 @app.post("/api/answer")
 async def submit_answer(body: AnswerBody, user: WebUser = Depends(get_web_user)):
     await _ensure_db_user(user)
-    lang = _ui_lang(user)
+    lang = await _ui_lang(user)
 
     if body.mode == "exam":
         if body.exam_key not in bank.exam_questions:
@@ -380,7 +400,7 @@ async def solution(
     q = bank.get_question(topic, index)
     if not q:
         raise HTTPException(404, "question not found")
-    lang = _ui_lang(user)
+    lang = await _ui_lang(user)
     text = bank.solution_text(q, lang)
     if not text:
         raise HTTPException(404, "no solution")
@@ -396,7 +416,7 @@ async def hint_image(
     q = bank.get_question(topic, index)
     if not q:
         raise HTTPException(404, "question not found")
-    lang = _ui_lang(user)
+    lang = await _ui_lang(user)
     path = bank.hint_image_path(q, lang)
     if not path:
         raise HTTPException(404, "no hint")
@@ -419,7 +439,7 @@ async def task_image(
 
 @app.get("/api/exams")
 async def exams_list(user: WebUser = Depends(get_web_user)):
-    lang = _ui_lang(user)
+    lang = await _ui_lang(user)
     out = []
     for key, cfg in EXAM_TYPES.items():
         qs = bank.exam_questions.get(key) or []
@@ -454,7 +474,7 @@ async def exam_question(
         raise HTTPException(404, "question not found")
     exam_lang = await _exam_lang(user.id)
     cfg = EXAM_TYPES[exam_key]
-    lang = _ui_lang(user)
+    lang = await _ui_lang(user)
     return {
         "exam_key": exam_key,
         "exam_id": cfg["id"],

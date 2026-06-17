@@ -208,3 +208,33 @@ body {
   border-radius: 8px;
   margin-top: 12px;
 }
+
+.lang-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lang-btn {
+  flex: 1 1 calc(50% - 8px);
+  background: var(--sec);
+  color: var(--text);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+}
+
+.lang-btn.active {
+  border-color: var(--btn);
+  color: var(--btn);
+  font-weight: 600;
+}
+
+.lang-btn:active { opacity: 0.85; }
+
+/* Зеркалим выравнивание для языков с письмом справа налево (ar, fa). */
+[dir="rtl"] .card,
+[dir="rtl"] .opt-btn { text-align: right; }
